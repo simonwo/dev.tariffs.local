@@ -1,0 +1,167 @@
+<?php
+	require ("includes/db.php");
+	require ("includes/header.php");
+?>
+
+<!-- Start breadcrumbs //-->
+<div id="wrapper" class="direction-ltr">
+	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
+	<ol class="govuk-breadcrumbs__list">
+		<li class="govuk-breadcrumbs__list-item">
+			<a class="govuk-breadcrumbs__link" href="/">Home</a>
+		</li>
+		<li class="govuk-breadcrumbs__list-item">
+			Quota order numbers
+		</li>
+	</ol>
+	</div>
+	<!-- End breadcrumbs //-->
+	<main id="content" lang="en">
+		<div class="grid-row">
+			<div class="column-two-thirds">
+				<div class="gem-c-title gem-c-title--margin-bottom-5">
+					<h1 class="gem-c-title__text">Quota order numbers</h1></div>
+				</div>
+			</div>
+
+<?php
+	# Get all the quota order number exclusions
+	$sql = "SELECT quota_order_number_origin_sid, excluded_geographical_area_sid, ga.description
+	FROM quota_order_number_origin_exclusions qonoe, ml.ml_geographical_areas ga
+	WHERE qonoe.excluded_geographical_area_sid = ga.geographical_area_sid";
+	$result = pg_query($conn, $sql);
+	$quota_order_number_origin_exclusions = array();
+	if ($result) {
+		while ($row = pg_fetch_array($result)) {
+			$quota_order_number_origin_sid      = $row['quota_order_number_origin_sid'];
+			$excluded_geographical_area_sid     = $row['excluded_geographical_area_sid'];
+			$description                        = $row['description'];
+			$qonoe = new quota_order_number_origin_exclusion;
+			$qonoe->set_properties($quota_order_number_origin_sid, $excluded_geographical_area_sid, $description);
+			array_push($quota_order_number_origin_exclusions, $qonoe);
+		}
+	}
+
+	# Get the complete list of quota order number origins
+	$sql = "SELECT qono.quota_order_number_origin_sid, qono.quota_order_number_sid, qono.geographical_area_id, ga.description, qon.quota_order_number_id
+	FROM quota_order_number_origins qono, ml.ml_geographical_areas ga, quota_order_numbers qon
+	WHERE ga.geographical_area_id = qono.geographical_area_id
+	AND qon.quota_order_number_sid = qono.quota_order_number_sid
+	AND (qono.validity_end_date IS NULL OR qono.validity_end_date > CURRENT_DATE)
+	ORDER BY qono.quota_order_number_sid, ga.description";
+
+	$result = pg_query($conn, $sql);
+	$quota_order_number_origins = array();
+	if ($result) {
+		while ($row = pg_fetch_array($result)) {
+			$geographical_area_id           = $row['geographical_area_id'];
+			$quota_order_number_origin_sid  = $row['quota_order_number_origin_sid'];
+			$quota_order_number_sid         = $row['quota_order_number_sid'];
+			$quota_order_number_id          = $row['quota_order_number_id'];
+			$description                    = $row['description'];
+			$qono = new quota_order_number_origin;
+			$qono->set_properties($quota_order_number_origin_sid, $geographical_area_id, $quota_order_number_id, $quota_order_number_sid, $description);
+			$qonoe_count = count($quota_order_number_origin_exclusions);
+			for($i = 0; $i < $qonoe_count; $i++) {
+				$t = $quota_order_number_origin_exclusions[$i];
+				if ($t->quota_order_number_origin_sid == $quota_order_number_origin_sid) {
+					array_push($qono->exclusions, $t);
+					#p ("Adding exclusion");
+				}
+			}
+			array_push($quota_order_number_origins, $qono);
+		}
+	}
+
+	# Get the complete list of quota order numbers
+	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date
+	FROM quota_order_numbers WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+	ORDER BY quota_order_number_sid";
+	$result = pg_query($conn, $sql);
+	$quota_order_numbers = array();
+	if ($result) {
+		while ($row = pg_fetch_array($result)) {
+			$quota_order_number_sid = $row['quota_order_number_sid'];
+			$quota_order_number_id  = $row['quota_order_number_id'];
+			$validity_start_date    = $row['validity_start_date'];
+			$validity_end_date      = $row['validity_end_date'];
+			$rowclass               = rowclass($validity_start_date, $validity_end_date);
+
+			$qon = new quota_order_number;
+			$qon->set_properties($quota_order_number_id, $validity_start_date, $validity_end_date);
+			$qono_count = count($quota_order_number_origins);
+			for($i = 0; $i < $qono_count; $i++) {
+				$t = $quota_order_number_origins[$i];
+				if ($t->quota_order_number_sid == $quota_order_number_sid) {
+					array_push($qon->origins, $t);
+				}
+			}
+
+			# Add the quota to the main list
+			array_push($quota_order_numbers, $qon);
+		}
+	
+?>
+
+<table class="govuk-table" cellspacing="0">
+<thead class="govuk-table__head">
+	<tr class="govuk-table__row">
+		<th class="govuk-table__header" scope="col" style="width:15%">Order number</th>
+		<th class="govuk-table__header" scope="col" style="width:61%">Origins</th>
+		<th class="govuk-table__header c" scope="col" style="width:12%">Start date</th>
+		<th class="govuk-table__header c" scope="col" style="width:12%">End date</th>
+	</tr>
+	</thead>
+<?php    
+		$qon_count = count($quota_order_numbers);
+		for($i = 0; $i < $qon_count; $i++) {
+			$t                      = $quota_order_numbers[$i];
+			$quota_order_number_id  = $t->quota_order_number_id;
+			$validity_start_date    = string_to_date($t->validity_start_date);
+			$validity_end_date      = string_to_date($t->validity_end_date);
+			$rowclass               = rowclass($validity_start_date, $validity_end_date);
+			$origins    = "";
+			$exclusions = "";
+			$qono_count = count($t->origins);
+			for($j = 0; $j < $qono_count; $j++) {
+				$origin = $t->origins[$j];
+				$url = "geographical_area_view.php?geographical_area_id=" . $origin->geographical_area_id;
+				$origins .= "<p><a href='" . $url . "'>" . $origin->description . "</a></p>";
+				$qonoe_count = count($origin->exclusions);
+				$exclusions = "";
+				if ($qonoe_count > 0) {
+					$exclusions .= "<p class='exclusions explanatory'><strong>Exclusions:</strong>&nbsp;&nbsp;";
+					for($k = 0; $k < $qonoe_count; $k++) {
+						$exclusions .= $origin->exclusions[$k]->description;
+						if ($k != ($qonoe_count - 1)) {
+							$exclusions .= ", ";
+						}
+					}
+					$exclusions .= "</p>";
+				}
+			}
+			$origins .= $exclusions;
+			if ($origins == "") {
+				$origins = "No origins";
+				$rowclass = "dead";
+			}
+			$url = "http://ec.europa.eu/taxation_customs/dds2/taric/quota_consultation.jsp?Lang=en&Origin=&Code=" . $quota_order_number_id . "&Year=2019&Critical=&Status=&Expand=true"
+?>
+	<tr class="<?=$rowclass?>">
+		<td class="govuk-table__cell">
+			<a href="quota_order_number_view.php?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>&nbsp;
+			<a target="_blank" href="<?=$url?>">EU</a>
+		</td>
+		<td class="govuk-table__cell"><?=$origins?></td>
+		<td class="govuk-table__cell c"><?=$validity_start_date?></td>
+		<td class="govuk-table__cell c"><?=$validity_end_date?></td>
+	</tr>
+<?php            
+		}
+	}
+?>
+</table>
+</div>
+<?php
+	require ("includes/footer.php")
+?>

@@ -1,0 +1,148 @@
+xbody {
+    font-family: "nta",Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+
+}
+ul.main-menu {
+    margin-left:0px;
+    list-style-image: none;
+    list-style: none;
+    padding:0px;
+    margin:0px;
+}
+ul.main-menu li {
+    margin-bottom:0.5em;
+}
+h2 {
+    font-size:1.6em;
+    font-weight:bold;
+    clear: both;
+    margin-top:2em;
+    margin-bottom:0.5em;
+}
+h2.small {
+    font-size:1.2em;
+}
+.nomargin{
+    margin-top:0px !important;
+}
+.c {
+    text-align:center !important;
+}
+.b {
+    font-weight:bold !important;
+}
+.column-one-third {
+    float:left;
+    width:33%;
+}
+.clearer {
+    clear:both;
+    float:none;
+}
+.uk {
+    background-color:#f0f0ff;
+}
+.dead {
+    background-color:#eee;
+}
+.paging {
+    border:1px black solid;
+    padding:4px 0x 0px 0px !important;
+    margin-right:5px;
+    margin-top:1em;
+    width:1.5em;
+    text-align:center;
+    display:block !important;
+    float:left;
+}
+.selected {
+    background-color: #f0f0ff;
+}
+.selected a {
+    font-weight:bold !important;
+}
+.paging a {
+    text-decoration: none;
+}
+.explanatory {
+    font-size:0.8em !important;
+    line-height: 1em !important;
+    display: block;
+    color: green;
+}
+.explanatory-inline {
+    color: green !important;
+}
+.back_to_top {
+    margin-top:0.5em;
+    display:block;
+}
+.indent0 {padding-left:0px;font-weight:bold;}
+.indent1 {padding-left:1.5em !important;}
+.indent2 {padding-left:3em !important;}
+.indent3 {padding-left:4.5em !important;}
+.indent4 {padding-left:6em !important;}
+.indent5 {padding-left:7.5em !important;}
+.indent6 {padding-left:9em !important;}
+.indent7 {padding-left:10.5em !important;}
+.indent8 {padding-left:12em !important;}
+.indent9 {padding-left:13.5em !important;}
+.indent10 {padding-left:15em !important;}
+.indent11 {padding-left:16.5em !important;}
+.indent12 {padding-left:18em !important;}
+
+ul.tariff_menu {
+    display:block;
+    padding-left:1em !important;
+    margin-bottom:1em;
+}
+.options {
+    text-align: right;
+    float:right;
+    width:250px;
+    margin-top:6px;
+    margin-right:1em !important;
+    color:#fff;
+}
+.options a {
+    color:#ffff00
+}
+main .gem-c-title {
+    margin-top:1.5em !important;
+    margin-bottom:2em !important;
+}
+.exclusions {
+    font-size:small;
+}
+.vsmall {
+    font-size:9pt;   
+}
+.break {
+    clear:both !important;
+}
+.radio_text {
+    float:left;
+    margin-top:9px;
+}
+@media (min-width: 40.0625em) .app-pane__body .app-pane__content main#main-content {padding:0px !important}
+.options {
+    font-family: "nta",Arial,sans-serif;
+    font-size:10pt;
+}
+.govuk-table__header, .govuk-table__cell {
+    vertical-align: top !important;
+    font-size:13pt !important;
+}
+.hidden {
+    display: none;
+}
+.indented {
+    margin-left:56px;
+}
+.govuk-form-group .govuk-error-message {
+    display:none !important;
+}
+.govuk-form-group--error .govuk-error-message {
+    display:block !important;
+}
