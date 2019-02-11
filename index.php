@@ -9,13 +9,13 @@
                     <h2 class="small">Measures</h2>
                     <ul class="main-menu">
                         <li><a href="/measures.php">Measures</a></li>
-                        <li><a href="/measure_create.php">Create measure</a></li>
+                        <!--<li><a href="/measure_create.php">Create measure</a></li>//-->
                     </ul>
 
                     <h2 class="small">Quotas</h2>
                     <ul class="main-menu">
                         <li><a href="/quota_order_numbers.php">Quota order numbers</a></li>
-                        <li><a href="/quota_order_numbers.php">Create quota</a></li>
+                        <!--<li><a href="/quota_order_numbers.php">Create quota</a></li>//-->
                     </ul>
 
                     <h2 class="small">Regulations</h2>

@@ -1,4 +1,4 @@
-<?php
+    <?php
     require ("includes/db.php");
     require ("includes/header.php");
     $geographical_area_id = get_querystring("geographical_area_id");
@@ -87,7 +87,7 @@
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">SID</th>
-                    <th class="govuk-table__header" style="width:10%">Commodity code</th>
+                    <th class="govuk-table__header" style="width:10%">Commodity</th>
                     <th class="govuk-table__header" style="width:11%">Start date</th>
                     <th class="govuk-table__header" style="width:11%">End date</th>
                     <th class="govuk-table__header" style="width:20%">Geographical area</th>
@@ -189,10 +189,10 @@
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">Parent ID</th>
-                    <th class="govuk-table__header" style="width:10%">Description</th>
+                    <th class="govuk-table__header" style="width:60%">Description</th>
                     <th class="govuk-table__header" style="width:10%">Parent SID</th>
-                    <th class="govuk-table__header" style="width:10%">Validity start date</th>
-                    <th class="govuk-table__header" style="width:10%">Validity end date</th>
+                    <th class="govuk-table__header" style="width:10%">Start date</th>
+                    <th class="govuk-table__header" style="width:10%">End date</th>
                 </tr>
                 <?php
 	$sql = "SELECT parent_sid, parent_id, parent_description, validity_start_date, validity_end_date

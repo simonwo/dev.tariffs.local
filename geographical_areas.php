@@ -2,6 +2,7 @@
     require ("includes/db.php");
     require ("includes/header.php");
     $regulation_group_id    = get_querystring("regulation_group_id");
+    $geographical_area_text = get_querystring("geographical_area_text");
 ?>
 
 <!-- Start breadcrumbs //-->
@@ -29,16 +30,50 @@
     <div class="app-content__header">
         <h1 class="govuk-heading-xl">Geographical areas</h1>
     </div>
+
+    <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
+            <h3>Filter results</h3>
+            <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+            <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
+            <div class="column-one-third" style="width:320px">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+                        <span id="base_regulation_hint" class="govuk-hint">Search geographical area IDs - enter free text</span>
+                        <div class="govuk-date-input" id="measure_start">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                                    <input value="<?=$geographical_area_text?>" class="govuk-input govuk-date-input__input govuk-input--width-16" id="geographical_area_text" maxlength="100" style="width:300px" name="geographical_area_text" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <div class="column-one-third">
+                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                    <button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
+                </div>
+            </div>
+            <div class="clearer"><!--&nbsp;//--></div>
+            </form>
 <?php
     $clause = "";
     $offset         = intval($pagesize) * ($page - 1);
-    $limit_clause   = "LIMIT " . $pagesize . " OFFSET " . $offset;
+    $limit_clause   = " LIMIT " . $pagesize . " OFFSET " . $offset;
 
     if ($regulation_group_id != "") {
         $clause .= "WHERE b.regulation_group_id = '" . $regulation_group_id . "'";
     }
+    $geo_clause = "";
+    if ($geographical_area_text != "") {
+        $geo_clause = " (LOWER(geographical_area_id) LIKE '%" . strtolower($geographical_area_text) . "%' OR LOWER(description) LIKE '%" . strtolower($geographical_area_text) . "%')";
+    }
 
-    $countsql = "SELECT COUNT(DISTINCT geographical_area_id) FROM ml.ml_geographical_areas";
+    $countsql = "SELECT COUNT(DISTINCT geographical_area_id) FROM ml.ml_geographical_areas ";
+    if ($geo_clause != "") {
+        $countsql .= " WHERE " . $geo_clause;
+    }
     $result = pg_query($conn, $countsql);
     if ($result) {
         $row = pg_fetch_row($result);
@@ -47,7 +82,13 @@
     }
 
     $sql = "SELECT geographical_area_sid, geographical_area_id, description, geographical_code,
-    validity_start_date, validity_end_date FROM ml.ml_geographical_areas ORDER BY 2 " . $limit_clause;
+    validity_start_date, validity_end_date FROM ml.ml_geographical_areas ";
+    if ($geo_clause != "") {
+        $sql .= " WHERE " . $geo_clause;
+    }
+    $sql .= " ORDER BY 2";
+    $sql .= $limit_clause;
+    #echo ($sql);
     $result = pg_query($conn, $sql);
 	if (($result) && pg_num_rows($result) > 0) {
 ?>
@@ -56,7 +97,7 @@
     <tr class="govuk-table__row">
         <th class="govuk-table__header" style="width:10%">Area ID</th>
         <th class="govuk-table__header c" style="width:10%">Area SID</th>
-        <th class="govuk-table__header" style="width:41%">Description</th>
+        <th class="govuk-table__header" style="width:46%">Description</th>
         <th class="govuk-table__header c" style="width:10%">Geographical code</th>
         <th class="govuk-table__header" style="width:12%">Start date</th>
         <th class="govuk-table__header" style="width:12%">End date</th>

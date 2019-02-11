@@ -45,7 +45,7 @@
                 <li><a href="#hierarchy">Position in hierarchy</a></li>
                 <li><a href="#historical">Historical descriptions</a></li>
                 <li><a href="#assigned">Assigned measures</a></li>
-                <li><a href="#parental">Inherited measures</a></li>
+                <li><a href="#inherited">Inherited measures</a></li>
                 <li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in Trade Tariff Service</a></li>
             </ul>
 

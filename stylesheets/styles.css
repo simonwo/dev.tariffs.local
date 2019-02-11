@@ -47,6 +47,8 @@ h2.small {
     background-color:#eee;
 }
 .paging {
+    font-family: "nta",Arial,sans-serif !important;
+    -webkit-font-smoothing: antialiased;
     border:1px black solid;
     padding:4px 0x 0px 0px !important;
     margin-right:5px;
@@ -185,4 +187,7 @@ p, h3 {
 .govuk-breadcrumbs, .govuk-breadcrumbs__list {
     max-width: 100% !important;
     width: 100% !important;   
+}
+.govuk-hint, .govuk-input {
+    font-size:12pt !important;
 }
