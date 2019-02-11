@@ -73,7 +73,7 @@
 	# Get the complete list of quota order numbers
 	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date
 	FROM quota_order_numbers WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
-	ORDER BY quota_order_number_sid";
+	ORDER BY quota_order_number_id";
 	$result = pg_query($conn, $sql);
 	$quota_order_numbers = array();
 	if ($result) {
@@ -99,12 +99,15 @@
 		}
 	
 ?>
-
+<p>The table below is a list of all of the First-Come-First-Served (FCFS) quotas in place. Licensed quotas
+	are not managed via this quota order mechanism.
+</p>
 <table class="govuk-table" cellspacing="0">
 <thead class="govuk-table__head">
 	<tr class="govuk-table__row">
 		<th class="govuk-table__header" scope="col" style="width:15%">Order number</th>
-		<th class="govuk-table__header" scope="col" style="width:61%">Origins</th>
+		<th class="govuk-table__header c" scope="col" style="width:10%">EU Link</th>
+		<th class="govuk-table__header" scope="col" style="width:51%">Origins</th>
 		<th class="govuk-table__header c" scope="col" style="width:12%">Start date</th>
 		<th class="govuk-table__header c" scope="col" style="width:12%">End date</th>
 	</tr>
@@ -146,9 +149,9 @@
 ?>
 	<tr class="<?=$rowclass?>">
 		<td class="govuk-table__cell">
-			<a href="quota_order_number_view.php?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>&nbsp;
-			<a target="_blank" href="<?=$url?>">EU</a>
+			<a href="quota_order_number_view.php?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>
 		</td>
+		<td class="govuk-table__cell c"><a target="_blank" href="<?=$url?>">EU</a></td>
 		<td class="govuk-table__cell"><?=$origins?></td>
 		<td class="govuk-table__cell c"><?=$validity_start_date?></td>
 		<td class="govuk-table__cell c"><?=$validity_end_date?></td>

@@ -182,3 +182,7 @@ p, h3 {
     padding-bottom: 0px !important;
     margin-bottom: 0px !important;
 }
+.govuk-breadcrumbs, .govuk-breadcrumbs__list {
+    max-width: 100% !important;
+    width: 100% !important;   
+}

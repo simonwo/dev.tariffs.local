@@ -7,7 +7,7 @@
     #exit();
 ?>
 <div id="wrapper" class="direction-ltr">
-    <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
+    <div class="gem-c-breadcrumbs govuk-breadcrumbs">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>

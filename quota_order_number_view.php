@@ -208,10 +208,11 @@
 			$regulation_id_full         = $row['measure_generating_regulation_id'];
 			$validity_start_date        = string_to_date($row['validity_start_date']);
 			$validity_end_date          = string_to_date($row['validity_end_date']);
+            $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 			
 			$commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-				<tr class="govuk-table__row">
+				<tr class="govuk-table__row <?=$rowclass?>">
 					<td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
 					<td class="govuk-table__cell C"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
 					<td class="govuk-table__cell C"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
