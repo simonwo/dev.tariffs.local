@@ -2,7 +2,89 @@
 class application
 {
 	// Class properties and methods go here
-	public $measure_types = array ();
+	public $measure_types           = array ();
+	public $countries_and_regions   = array ();
+	public $geographical_areas      = array ();
+    public $members                 = array ();
+
+	public function get_geographical_areas() {
+		global $conn;
+        $sql = "SELECT geographical_area_sid, geographical_area_id, description, geographical_code, validity_start_date,
+        validity_end_date FROM ml.ml_geographical_areas WHERE geographical_code = '1' AND
+        (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+        ORDER BY geographical_area_id;";
+
+        $result = pg_query($conn, $sql);
+        $temp = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $geographical_area_sid  = $row['geographical_area_sid'];
+                $geographical_area_id   = $row['geographical_area_id'];
+                $description            = $row['description'];
+                $geographical_code      = $row['geographical_code'];
+                $validity_start_date    = string_to_date($row['validity_start_date']);
+                $validity_end_date      = string_to_date($row['validity_end_date']);
+                
+                $geographical_area      = new geographical_area;
+                $geographical_area->set_properties($geographical_area_sid, $geographical_area_id, $description,
+                $geographical_code, $validity_start_date, $validity_end_date);
+                array_push($temp, $geographical_area);
+            }
+            $this->geographical_areas = $temp;
+        }
+    }
+
+	public function get_geographical_members($parent_id) {
+		global $conn;
+        $sql = "SELECT child_id as geographical_area_id, child_description as description FROM ml.ml_geo_memberships WHERE parent_id = '" . $parent_id . "'
+        AND (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+        ORDER BY child_id";
+
+        $result = pg_query($conn, $sql);
+        $temp = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $geographical_area_sid  = 0;
+                $geographical_area_id   = $row['geographical_area_id'];
+                $description            = $row['description'];
+                $geographical_code      = 0;
+                $validity_start_date    = "";
+                $validity_end_date      = "";
+                
+                $member      = new geographical_area;
+                $member->set_properties($geographical_area_sid, $geographical_area_id, $description,
+                $geographical_code, $validity_start_date, $validity_end_date);
+                array_push($temp, $member);
+            }
+            $this->countries_and_regions = $temp;
+        }
+    }
+	public function get_countries_and_regions() {
+		global $conn;
+        $sql = "SELECT geographical_area_sid, geographical_area_id, description, geographical_code, validity_start_date,
+        validity_end_date FROM ml.ml_geographical_areas WHERE geographical_code != '1' AND
+        (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+        ORDER BY geographical_area_id;";
+
+        $result = pg_query($conn, $sql);
+        $temp = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $geographical_area_sid  = $row['geographical_area_sid'];
+                $geographical_area_id   = $row['geographical_area_id'];
+                $description            = $row['description'];
+                $geographical_code      = $row['geographical_code'];
+                $validity_start_date    = string_to_date($row['validity_start_date']);
+                $validity_end_date      = string_to_date($row['validity_end_date']);
+                
+                $geographical_area      = new geographical_area;
+                $geographical_area->set_properties($geographical_area_sid, $geographical_area_id, $description,
+                $geographical_code, $validity_start_date, $validity_end_date);
+                array_push($temp, $geographical_area);
+            }
+            $this->countries_and_regions = $temp;
+        }
+    }
 
 	public function get_measure_types() {
 		global $conn;

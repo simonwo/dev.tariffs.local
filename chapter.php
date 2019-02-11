@@ -22,7 +22,7 @@
     </div>
 
 
-    <table cellspacing="0" class="noborder tbl">
+    <table cellspacing="0" class="govuk-table">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header" style="width:15%">Section</th>
                 <th class="govuk-table__header" style="width:85%">Description</th>

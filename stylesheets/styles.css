@@ -6,7 +6,8 @@ ul.main-menu {
     margin:0px;
 }
 ul.main-menu li {
-    margin-bottom:0.5em;
+    margin-bottom:0.25em;
+    font-size:12pt;
 }
 h2 {
     font-size:1.6em;
@@ -17,6 +18,8 @@ h2 {
 }
 h2.small {
     font-size:1.2em;
+    padding-bottom:0px;
+    margin-bottom: 0.5em;
 }
 .nomargin{
     margin-top:0px !important;
@@ -34,6 +37,8 @@ h2.small {
 .clearer {
     clear:both;
     float:none;
+    height:1px;
+    line-height: 1px;
 }
 .uk {
     background-color:#f0f0ff;
@@ -140,10 +145,12 @@ main .gem-c-title {
 .govuk-table__cell {
     vertical-align: top !important;
     font-size:12pt !important;
+    padding-left: 8px;
 }
 .govuk-table__header {
     vertical-align: bottom !important;
     font-size:12pt !important;
+    padding-left: 8px ;
 }
 .hidden {
     display: none;
@@ -156,4 +163,22 @@ main .gem-c-title {
 }
 .govuk-form-group--error .govuk-error-message {
     display:block !important;
+}
+p, h3 {
+    font-family: "nta",Arial,sans-serif !important;
+    max-width:100% !important;
+}
+.inline_form {
+    padding:0em 1em 0px 1em;
+    background-color:#f0f0f0;
+    border:1px solid #ccc;
+    margin-bottom:1em;
+}
+.govuk-heading-xl {
+    max-width: 100% !important;
+    width: 100% !important;
+}
+.app-content__header {
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }

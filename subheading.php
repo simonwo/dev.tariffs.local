@@ -26,7 +26,7 @@
     <div class="app-content__header">
         <h1 class="govuk-heading-xl">Nomenclature subheading</h1>
     </div>
-    <table cellspacing="0" class="noborder tbl tight">
+    <table cellspacing="0" class="govuk-table tight">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" style="width:20%">Commodity / suffix</th>
             <th class="govuk-table__header" style="width:80%">Description</th>

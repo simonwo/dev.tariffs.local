@@ -4,10 +4,21 @@
     require ("classes/goods_nomenclature.php");
 
     $goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
-    $productline_suffix        = get_querystring("productline_suffix");
+    $geographical_area_id       = get_querystring("geographical_area_id");
+    $measure_type_id            = get_querystring("measure_type_id");
+    $productline_suffix         = get_querystring("productline_suffix");
     if ($productline_suffix == "") {
         $productline_suffix = "80";
     }
+
+    /*
+    p ("commodity" . $goods_nomenclature_item_id);
+    p ("suffix" . $productline_suffix);
+    p ("geo" . $geographical_area_id);
+    p ("measure type" . $measure_type_id);
+    */   
+
+
     $obj_goods_nomenclature_item = new goods_nomenclature;
     $obj_goods_nomenclature_item->set_properties($goods_nomenclature_item_id, $productline_suffix, "", "");
 
@@ -28,7 +39,7 @@
         <h1 class="govuk-heading-xl">View commodity <?=$goods_nomenclature_item_id?></h1>
     </div>
             <!-- MENU //-->
-            <p class="b">Page content</p>
+            <h2>Page content</h2>
             <ul class="tariff_menu">
                 <li><a href="#details">Commodity code details</a></li>
                 <li><a href="#hierarchy">Position in hierarchy</a></li>
@@ -94,10 +105,10 @@
             <p>The table below shows the position of this commodity code in the hierarchy.</p>
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
-                    <th style="width:10%" class="c">Commodity</th>
-                    <th style="width:10%" class="c">Suffix</th>
-                    <th style="width:10%" class="c">Indents</th>
-                    <th style="width:70%">Description</th>
+                    <th style="width:10%" class="govuk-table__header">Commodity</th>
+                    <th style="width:10%" class="govuk-table__header c">Suffix</th>
+                    <th style="width:10%" class="govuk-table__header c">Indents</th>
+                    <th style="width:70%" class="govuk-table__header">Description</th>
                 </tr>
 <?php
     $array      = $obj_goods_nomenclature_item->ar_hierarchies;
@@ -107,7 +118,7 @@
     for($i = 0; $i < $hier_count; $i++) {
         $t      = $array[$i];
         $concat = $t->goods_nomenclature_item_id . $t->productline_suffix;
-        $url    = "goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $t->goods_nomenclature_item_id . "&productline_suffix=" . $t->productline_suffix;
+        $url    = "goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $t->goods_nomenclature_item_id . "&productline_suffix=" . $t->productline_suffix . "#hierarchy";
         $class  = "indent" . $t->number_indents;
         if (($t->goods_nomenclature_item_id == $goods_nomenclature_item_id) && ($t->productline_suffix == $productline_suffix)) {
             $class .= " selected";
@@ -118,9 +129,9 @@
 
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell c"><a href="<?=$url?>"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id?></a></td>
+                    <td class="govuk-table__cell"><a href="<?=$url?>"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id?></a></td>
                     <td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix?></td>
-                    <td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->number_indents?></td>
+                    <td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->number_indents + 1?></td>
                     <td class="govuk-table__cell <?=$class?>"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->description?></td>
                 </tr>
 
@@ -142,8 +153,8 @@
             <p>The table below shows the historical descriptions for this commodity code.</p>
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" style="width:30%">Date</th>
-                    <th class="govuk-table__header" style="width:70%">Description</th>
+                    <th class="govuk-table__header" style="width:15%">Date</th>
+                    <th class="govuk-table__header" style="width:85%">Description</th>
                 </tr>
 <?php
 	$sql = "SELECT gndp.validity_start_date, gnd.description FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
@@ -169,12 +180,54 @@
 
             <h2 id="assigned">Assigned measures</h2>
             <p>The measures below have been directly assigned to this commodity code.</p>
+
+            <form action="/actions/goods_nomenclature_actions.php" method="get" class="inline_form">
+            <h3>Filter results</h3>
+            <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+            <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
+            <div class="column-one-third" style="width:280px">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+                        <span id="base_regulation_hint" class="govuk-hint">Filter by geographical area ID</span>
+                        <div class="govuk-date-input" id="measure_start">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                                    <input value="<?=$geographical_area_id?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="geographical_area_id" maxlength="4" name="geographical_area_id" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="column-one-third" style="width:280px">
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+                        <span id="base_regulation_hint" class="govuk-hint">Filter by measure type ID</span>
+                        <div class="govuk-date-input" id="measure_start">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                                    <input value="<?=$measure_type_id?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="measure_type_id" maxlength="3" name="measure_type_id" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="column-one-third">
+                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                    <!--<input type="submit" class="govuk-button" value="Search" />//-->
+                    <button type="submit" class="govuk-button" style="margin-top:40px">Search</button>
+                </div>
+            </div>
+            <div class="clearer"><!--&nbsp;//--></div>
+            </form>
+
 <?php
     if ($productline_suffix == "80") {
 ?>        
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header c">Commodity</th>
+                    <th class="govuk-table__header">Commodity</th>
                     <th class="govuk-table__header c">Measure SID</th>
                     <th class="govuk-table__header c">Measure type ID</th>
                     <th class="govuk-table__header c">Geographical area ID</th>
@@ -184,7 +237,17 @@
                     <th class="govuk-table__header c">End date</th>
                 </tr>
 <?php
-        $sql = "SELECT * FROM measures WHERE goods_nomenclature_item_id = '" . $goods_nomenclature_item_id ."' ORDER BY validity_start_date DESC";
+        $sql = "SELECT * FROM measures WHERE goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'";
+        if ($geographical_area_id != "") {
+            $sql .= " AND geographical_area_id = '" . $geographical_area_id . "'";
+        }
+        if ($measure_type_id != "") {
+            $sql .= " AND measure_type_id = '" . $measure_type_id . "'";
+        }
+        $sql .= " ORDER BY validity_start_date DESC";
+        #echo ($sql);
+        #exit();
+
         $result = pg_query($conn, $sql);
         if  (($result) && (pg_num_rows($result) > 0)){
             while ($row = pg_fetch_array($result)) {
@@ -200,7 +263,7 @@
                 $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 ?>
                 <tr class="<?=$rowclass?>">
-                    <td class="govuk-table__cell c"><?=$goods_nomenclature_item_id?></td>
+                    <td class="govuk-table__cell"><?=$goods_nomenclature_item_id?></td>
                     <td class="govuk-table__cell c"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
                     <td class="govuk-table__cell c"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
                     <td class="govuk-table__cell c"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
@@ -238,7 +301,14 @@
                     <th class="govuk-table__header c">End date</th>
                 </tr>
 <?php
-        $sql = "SELECT * FROM measures WHERE goods_nomenclature_item_id IN (" . $parent_string  . ") ORDER BY goods_nomenclature_item_id, validity_start_date DESC";
+        $sql = "SELECT * FROM measures WHERE goods_nomenclature_item_id IN (" . $parent_string  . ") ";
+        if ($geographical_area_id != "") {
+            $sql .= " AND geographical_area_id = '" . $geographical_area_id . "'";
+        }
+        if ($measure_type_id != "") {
+            $sql .= " AND measure_type_id = '" . $measure_type_id . "'";
+        }
+        $sql .= " ORDER BY goods_nomenclature_item_id, validity_start_date DESC";
         $result = pg_query($conn, $sql);
         if  (($result) && (pg_num_rows($result) > 0)){
             while ($row = pg_fetch_array($result)) {

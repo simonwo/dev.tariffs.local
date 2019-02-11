@@ -22,15 +22,19 @@ $(document).ready(function() {
         document.location.reload();
     });
 
+// Scripts to handle the selection of the measure origin sections
     $("#geographical_area_id_all").click(function() {
+        $("#geographical_area_id_erga_omnes_content").show();
         $("#geographical_area_id_group_content").hide();
         $("#geographical_area_id_country_content").hide();
     });
     $("#geographical_area_id_group").click(function() {
+        $("#geographical_area_id_erga_omnes_content").hide();
         $("#geographical_area_id_group_content").show();
         $("#geographical_area_id_country_content").hide();
     });
     $("#geographical_area_id_country").click(function() {
+        $("#geographical_area_id_erga_omnes_content").hide();
         $("#geographical_area_id_group_content").hide();
         $("#geographical_area_id_country_content").show();
     });

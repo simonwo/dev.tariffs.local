@@ -14,38 +14,47 @@
         </li>
     </ol>
     </div>
-    <main id="content" lang="en">
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="gem-c-title gem-c-title--margin-bottom-5">
-                    <h1 class="gem-c-title__text">View regulation <?=$regulation_id?></h1></div>
-                </div>
-            </div>
-
+    <div class="app-content__header">
+        <h1 class="govuk-heading-xl">View regulation <?=$regulation_id?></h1>
+    </div>
             <h2 class="nomargin">Regulation details</h2>
-            <table class="govuk-table" cellspacing="0">
-                <tr class="govuk-table__row">
-                    <th style="width:15%">Regulation ID</th>
-                    <th style="width:50%">Information text</th>
-                    <th style="width:35%">Regulation group</th>
-                </tr>
+            <p style="max-width:100%">The European Union often splits a regulation into multiple parts for ease of management. There may
+            be multiple regulation records here to represent just a single actual regulation.</p>
 <?php
-	$sql = "SELECT b.base_regulation_id, b.information_text, b.regulation_group_id, rgd.description as regulation_group_description
-    FROM base_regulations b, regulation_group_descriptions rgd
-    WHERE b.regulation_group_id = rgd.regulation_group_id
-    AND base_regulation_id LIKE '" . $regulation_id . "%' ORDER BY 1";
+	$sql = "SELECT 'Base' as regulation_type, b.base_regulation_id as regulation_id, b.information_text, b.regulation_group_id, rgd.description as regulation_group_description
+    FROM base_regulations b, regulation_group_descriptions rgd WHERE b.regulation_group_id = rgd.regulation_group_id
+    AND base_regulation_id LIKE '" . $regulation_id . "%' 
+    UNION
+    SELECT 'Modification' as regulation_type, m.modification_regulation_id as regulation_id, m.information_text, b.regulation_group_id, rgd.description
+    FROM modification_regulations m, base_regulations b, regulation_group_descriptions rgd
+    WHERE m.base_regulation_id = b.base_regulation_id
+    AND b.regulation_group_id = rgd.regulation_group_id
+    AND m.modification_regulation_id LIKE '" . $regulation_id . "%'
+    ORDER BY 1";
+    #echo ($sql);
     $result = pg_query($conn, $sql);
 	if  ($result) {
+?>
+            <table class="govuk-table" cellspacing="0">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" style="width:12%">Regulation&nbsp;ID</th>
+                    <th class="govuk-table__header" style="width:10%">Type</th>
+                    <th class="govuk-table__header" style="width:40%">Information text</th>
+                    <th class="govuk-table__header" style="width:38%">Regulation group</th>
+                </tr>
+<?php        
         while ($row = pg_fetch_array($result)) {
-            $regulation_id                  = $row['base_regulation_id'];
+            $regulation_type                = $row['regulation_type'];
+            $regulation_id                  = $row['regulation_id'];
             $information_text               = $row['information_text'];
             $regulation_group_id            = $row['regulation_group_id'];
             $regulation_group_description   = $row['regulation_group_description'];
 ?>
                 <tr class="govuk-table__row">
-                    <td><?=$regulation_id?></td>
-                    <td><?=$information_text?></td>
-                    <td><?=$regulation_group_id?> - <?=$regulation_group_description?></td>
+                    <td class="govuk-table__cell"><?=$regulation_id?></td>
+                    <td class="govuk-table__cell"><?=$regulation_type?></td>
+                    <td class="govuk-table__cell"><?=$information_text?></td>
+                    <td class="govuk-table__cell"><?=$regulation_group_id?> - <?=$regulation_group_description?></td>
                 </tr>
 <?php
         }
@@ -55,16 +64,9 @@
             </table>
             
             <h2>Measure details</h2>
-            <table class="govuk-table" cellspacing="0">
-                <tr class="govuk-table__row">
-                    <th class="govuk-table__header" style="width:10%">SID</th>
-                    <th class="govuk-table__header" style="width:10%">Commodity code</th>
-                    <th class="govuk-table__header" style="width:13%">Start date</th>
-                    <th class="govuk-table__header" style="width:13%">End date</th>
-                    <th class="govuk-table__header" style="width:24%">Geographical area</th>
-                    <th class="govuk-table__header" style="width:20%">Type</th>
-                    <th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
-                </tr>
+            <p style="max-width:100%">The list below identifies any measures that have come into force as a result of this regulation.
+            Any measures that are shaded in grey are now in the past and closed. Any highlighted in blue
+            are due to start on or around Brexit and have been created by DIT.</p>
 <?php
     $regulation_id = $_GET["regulation_id"];
 	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
@@ -75,7 +77,21 @@
     AND regulation_id_full LIKE '" . $regulation_id . "%'";
     #echo ($sql);
     $result = pg_query($conn, $sql);
+    echo ("<p>There are <strong>" . pg_num_rows($result) . "</strong> measures that have been generated by this regulation.");
 	if  ($result) {
+?>
+            <table class="govuk-table" cellspacing="0">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" style="width:10%">SID</th>
+                    <th class="govuk-table__header" style="width:10%">Commodity</th>
+                    <th class="govuk-table__header" style="width:11%">Start date</th>
+                    <th class="govuk-table__header" style="width:11%">End date</th>
+                    <th class="govuk-table__header" style="width:24%">Geographical area</th>
+                    <th class="govuk-table__header" style="width:24%">Type</th>
+                    <th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
+                </tr>
+
+<?php
         while ($row = pg_fetch_array($result)) {
             $measure_sid                = $row['measure_sid'];
             $goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];

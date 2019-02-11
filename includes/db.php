@@ -2,6 +2,7 @@
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
 require (dirname(__FILE__) . "../../classes/measure_type.php");
+require (dirname(__FILE__) . "../../classes/geographical_area.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.php");
@@ -41,7 +42,6 @@ function get_cookie($key) {
 	} else {
 		return ("");
 	}
-	echo ("here");
 }
 
 function get_formvar($key) {

@@ -18,13 +18,13 @@ class goods_nomenclature
 
 	public function get_hierarchy() {
 		global $conn;
-		$stem = substr($this->goods_nomenclature_item_id, 0, 4);
+		$stem = substr($this->goods_nomenclature_item_id, 0, 2);
 		$sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents, description FROM ml.goods_nomenclature_export('" . $stem . "%') ORDER BY goods_nomenclature_item_id, producline_suffix";
 		$result = pg_query($conn, $sql);
 		if  ($result) {
 			$ar_goods_nomenclatures[]	= new goods_nomenclature;
 			$ar_hierarchies[]			= new goods_nomenclature;
-			#$ar_hierarchies[0].set_properties($goods_nomenclature_item_id, $productline_suffix, $description, $number_indents);
+
 			while ($row = pg_fetch_array($result)) {
 				$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
 				$productline_suffix         = $row['productline_suffix'];
@@ -32,6 +32,7 @@ class goods_nomenclature
 				$description             	= $row['description'];
 				$gn = new goods_nomenclature;
 				$gn->set_properties($goods_nomenclature_item_id, $productline_suffix, $description, $number_indents);
+				$gn->deal_with_double_zeroes();
 				array_push($ar_goods_nomenclatures, $gn);
 			}
 			$record_count = sizeof($ar_goods_nomenclatures);
@@ -43,11 +44,16 @@ class goods_nomenclature
 					break;
 				}
 			}
+			// Kludge to deal with the chapter level records, which have a "0" indent, the same as their children
+			if ($my_indent == 0) {
+				if (substr($this->goods_nomenclature_item_id, 2, 10) == "00000000") {
+					$my_indent = -1;
+				}
+			}
 			// Search UP the tree from my_index to find parent codes
 			$temp_indent = $my_indent;
 			for($i = $my_index; $i > 0; $i--) {
 				$t = $ar_goods_nomenclatures[$i];
-				#p($t->goods_nomenclature_item_id);
 				if (($t->number_indents < $temp_indent) || (($t->goods_nomenclature_item_id == $this->goods_nomenclature_item_id) &&
 				($t->productline_suffix == $this->productline_suffix))) {
 					array_push($ar_hierarchies, $t);
@@ -75,6 +81,14 @@ class goods_nomenclature
 				}
 			}
 			$this->ar_hierarchies = $ar_hierarchies;
+		}
+	}
+	
+	private function deal_with_double_zeroes() {
+		if ($this->number_indents == 0) {
+			if (substr($this->goods_nomenclature_item_id, 2, 10) == "00000000") {
+				$this->number_indents = -1;
+			}
 		}
 	}
 }

@@ -13,16 +13,11 @@
             </li>
         </ol>
     </div>
-    <main id="content" lang="en">
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="gem-c-title gem-c-title--margin-bottom-5">
-                    <h1 class="gem-c-title__text">Nomenclature sections</h1>
-                </div>
-            </div>
-        </div>
-        <div class="clearer"><!-- &nbsp; //--></div>
-        <table cellspacing="0" class="noborder tbl">
+    <div class="app-content__header">
+        <h1 class="govuk-heading-xl">Nomenclature sections</h1>
+    </div>
+
+        <table cellspacing="0" class="govuk-table">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header" style="width:15%">Section</th>
                 <th class="govuk-table__header" style="width:85%">Description</th>

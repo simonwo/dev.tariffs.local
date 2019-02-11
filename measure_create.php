@@ -2,6 +2,9 @@
 	require ("includes/db.php");
 	$application = new application;
 	$application->get_measure_types();
+	$application->get_geographical_areas();
+	$application->get_geographical_members("1011");
+	$application->get_countries_and_regions();
 	$error_handler = new error_handler;
 	$error_handler->get_errors("create_measure_phase1");
 	require ("includes/header.php");
@@ -184,13 +187,29 @@ You may optionally leave this field blank if you will be providing a Meursing co
 					<h1 class="govuk-fieldset__heading" style="max-width:100%">Which origins will the measure(s) apply to?</h1>
 				</legend>
 				<span id="changed-name-hint" class="govuk-hint">You can specify a single country or territory, or a pre-defined group of countries, or select
-'Erga Omnes' to apply the quota to all origins. If the group you need is not in the list, you
-can add it from here.</span>
+'Erga Omnes' to apply the quota to all origins. If the group you need is not in the list, you can add it from here.</span>
+				<div class="clearer"><!--&nbsp;//--></div>
+<!-- Begin Erga Omnes block //-->
 				<div class="govuk-radios govuk-radios--inline">
 					<div class="govuk-radios__item break">
 						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_all" value="1011" />
 						<label class="govuk-label govuk-radios__label" for="geographical_area_id_all">Erga Omnes</label>
 					</div>
+					<div class="hidden govuk-inset-text indented" style="clear:both" id="geographical_area_id_erga_omnes_content">
+						<div class="govuk-form-group">
+							<label for="measure_type">Select an exclusion</label><br />
+							<select class="govuk-select" id="measure_type" name="sort">
+								<option value="0">- Select a group of countries - </option>
+<?php
+	foreach ($application->members as $obj) {
+		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>\n");
+	}
+?>
+							</select>
+						</div>
+					</div>
+<!-- End Erga Omnes block //-->
+
 					<div class="govuk-radios__item break">
 						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_group" value="0" />
 						<label class="govuk-label govuk-radios__label" for="geographical_area_id_group">Select a group of countries</label>
@@ -200,12 +219,18 @@ can add it from here.</span>
 							<label for="measure_type">Select a group of countries</label><br />
 							<select class="govuk-select" id="measure_type" name="sort">
 								<option value="0">- Select a group of countries - </option>
+<?php
+	foreach ($application->geographical_areas as $obj) {
+		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>\n");
+	}
+?>
 							</select>
-						</div>					
+						</div>
+
 						<div class="govuk-form-group">
 							<label for="measure_type">If you want to exclude countries, enter them here:</label><br />
 							<select class="govuk-select" id="measure_type" name="sort">
-								<option value="0">- Select a group of countries - </option>
+								<option value="0">- Select an exclusion - </option>
 							</select>
 						</div>
 					</div>
@@ -213,11 +238,16 @@ can add it from here.</span>
 						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_country" value="0" />
 						<label class="govuk-label govuk-radios__label" for="geographical_area_id_country">Select a country or territory</label>
 					</div>
-					<div class="hidden govuk-inset-text" style="clear:both" id="geographical_area_id_country_content">
+					<div class="hidden govuk-inset-text indented" style="clear:both" id="geographical_area_id_country_content">
 					<div class="govuk-form-group">
 							<label for="measure_type">Select a country or territory</label><br />
 							<select class="govuk-select" id="measure_type" name="sort">
 								<option value="0">- Select a country or territory - </option>
+<?php
+	foreach ($application->countries_and_regions as $obj) {
+		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>");
+	}
+?>
 							</select>
 						</div>					
 					</div>

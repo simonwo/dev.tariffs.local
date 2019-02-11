@@ -24,7 +24,7 @@
 	</div>
 
 		<!-- MENU //-->
-		<p class="b">Page content</p>
+		<h2>Page content</h2>
 		<ul class="tariff_menu">
 			<li><a href="#details">Quota details</a></li>
 			<li><a href="#origins">Quota origins</a></li>
@@ -42,7 +42,7 @@
 ?>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header c">SID</th>
+				<th class="govuk-table__header">SID</th>
 				<th class="govuk-table__header">Quota order number ID</th>
 				<th class="govuk-table__header">Start date</th>
 				<th class="govuk-table__header">End date</th>
@@ -55,7 +55,7 @@
 			$validity_end_date      = string_to_date($row["validity_end_date"]);
 ?>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell c"><?=$quota_order_number_sid?></td>
+				<td class="govuk-table__cell"><?=$quota_order_number_sid?></td>
 				<td class="govuk-table__cell"><?=$quota_order_number_id?></td>
 				<td class="govuk-table__cell"><?=$validity_start_date?></td>
 				<td class="govuk-table__cell"><?=$validity_end_date?></td>
@@ -75,9 +75,10 @@
 	$origin_count = count($quota_order_number->origins);
 	if ($origin_count > 0) {
 ?>
+		<p>There are <?=$origin_count?> origins associated with this quota.</p>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header c">Origin SID</th>
+				<th class="govuk-table__header">Origin SID</th>
 				<th class="govuk-table__header">Origin</th>
 				<th class="govuk-table__header">Exclusion</th>
 			</tr>
@@ -91,7 +92,7 @@
 			$exclusion_text			= $origin->exclusion_text;
 	?>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell c"><?=$origin_sid?></td>
+				<td class="govuk-table__cell"><?=$origin_sid?></td>
 				<td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
 				<td class="govuk-table__cell"><?=$exclusion_text?></td>
 			</tr>
@@ -113,6 +114,7 @@
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
+		<p>There are <strong><?=pg_num_rows($result)?></strong> definition periods associated with this quota.</p>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header">Definition SID</th>
@@ -186,6 +188,7 @@
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
+			<p>There are <strong><?=pg_num_rows($result)?></strong> measures associated with this quota.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header">SID</th>

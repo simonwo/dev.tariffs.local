@@ -149,8 +149,8 @@
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">Child ID</th>
-                    <th class="govuk-table__header" style="width:10%">Description</th>
                     <th class="govuk-table__header" style="width:10%">Child SID</th>
+                    <th class="govuk-table__header" style="width:60%">Description</th>
                     <th class="govuk-table__header" style="width:10%">Validity start date</th>
                     <th class="govuk-table__header" style="width:10%">Validity end date</th>
                 </tr>
@@ -169,9 +169,9 @@
 ?>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$child_id?>"><?=$child_id?></a></td>
-                    <td class="govuk-table__cell"><?=$child_description?></td>
                     <td class="govuk-table__cell"><?=$child_sid?></td>
-                    <td class="govuk-table__cell"<?=$validity_start_date?></td>
+                    <td class="govuk-table__cell"><?=$child_description?></td>
+                    <td class="govuk-table__cell"><?=$validity_start_date?></td>
                     <td class="govuk-table__cell"><?=$validity_end_date?></td>
                 </tr>
 
