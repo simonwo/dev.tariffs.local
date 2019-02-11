@@ -1,8 +1,3 @@
-xbody {
-    font-family: "nta",Arial,sans-serif;
-    -webkit-font-smoothing: antialiased;
-
-}
 ul.main-menu {
     margin-left:0px;
     list-style-image: none;
@@ -75,6 +70,8 @@ h2.small {
     color: green !important;
 }
 .back_to_top {
+    font-family: "nta",Arial,sans-serif !important;
+    -webkit-font-smoothing: antialiased;
     margin-top:0.5em;
     display:block;
 }
@@ -92,10 +89,20 @@ h2.small {
 .indent11 {padding-left:16.5em !important;}
 .indent12 {padding-left:18em !important;}
 
+p.b, h2 {
+    font-family: "nta",Arial,sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+}
 ul.tariff_menu {
     display:block;
     padding-left:1em !important;
     margin-bottom:1em;
+    font-family: "nta",Arial,sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+}
+ul.tariff_menu li {
+    font-family: "nta",Arial,sans-serif !important;
+    -webkit-font-smoothing: antialiased;
 }
 .options {
     text-align: right;
@@ -130,9 +137,13 @@ main .gem-c-title {
     font-family: "nta",Arial,sans-serif;
     font-size:10pt;
 }
-.govuk-table__header, .govuk-table__cell {
+.govuk-table__cell {
     vertical-align: top !important;
-    font-size:13pt !important;
+    font-size:12pt !important;
+}
+.govuk-table__header {
+    vertical-align: bottom !important;
+    font-size:12pt !important;
 }
 .hidden {
     display: none;

@@ -12,7 +12,23 @@
 
 <form class="tariff" method="post" action="/actions/measure_actions.php">
 <input type="hidden" name="phase" value="1" />
-
+<!-- Start error handler //-->
+<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+  <h2 class="govuk-error-summary__title" id="error-summary-title">
+    There is a problem
+  </h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      <li>
+        <a href="#passport-issued-error">The date your passport was issued must be in the past</a>
+      </li>
+      <li>
+        <a href="#postcode-error">Enter a postcode, like AA1 1AA</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- End error handler //-->
 <!-- Begin base regulation fields //-->
 <div class="govuk-form-group <?=$error_handler->get_error("base_regulation");?>">
 	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">

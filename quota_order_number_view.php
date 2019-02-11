@@ -16,19 +16,13 @@
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a>
 		</li>
-		<li class="govuk-breadcrumbs__list-item">
-			Quota
-		</li>
+		<li class="govuk-breadcrumbs__list-item">Quota</li>
 	</ol>
 	</div>
-	<main id="content" lang="en">
-		<div class="grid-row">
-			<div class="column-two-thirds" style="width:100%">
-				<div class="gem-c-title gem-c-title--margin-bottom-5">
-					<h1 class="gem-c-title__text">View quota order number <?=$quota_order_number_id?></h1>
-				</div>
-			</div>
-		</div>
+	<div class="app-content__header">
+    	<h1 class="govuk-heading-xl">View quota order number <?=$quota_order_number_id?></h1>
+	</div>
+
 		<!-- MENU //-->
 		<p class="b">Page content</p>
 		<ul class="tariff_menu">
@@ -36,6 +30,7 @@
 			<li><a href="#origins">Quota origins</a></li>
 			<li><a href="#definitions">Quota definitions</a></li>
 			<li><a href="#measures">Quota measures</a></li>
+			<li><a target="_blank" href="http://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-14&Code=<?=$quota_order_number_id?>">View on EU Taric quota consultation site</a></li>
 		</ul>
 
 		<h2 id="details">Quota details</h2>
@@ -47,10 +42,10 @@
 ?>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="c">SID</th>
-				<th>Quota order number ID</th>
-				<th>Start date</th>
-				<th>End date</th>
+				<th class="govuk-table__header c">SID</th>
+				<th class="govuk-table__header">Quota order number ID</th>
+				<th class="govuk-table__header">Start date</th>
+				<th class="govuk-table__header">End date</th>
 			</tr>
 <?php            
 		while ($row = pg_fetch_array($result)) {
@@ -60,10 +55,10 @@
 			$validity_end_date      = string_to_date($row["validity_end_date"]);
 ?>
 			<tr class="govuk-table__row">
-				<td class="c"><?=$quota_order_number_sid?></td>
-				<td><?=$quota_order_number_id?></td>
-				<td><?=$validity_start_date?></td>
-				<td><?=$validity_end_date?></td>
+				<td class="govuk-table__cell c"><?=$quota_order_number_sid?></td>
+				<td class="govuk-table__cell"><?=$quota_order_number_id?></td>
+				<td class="govuk-table__cell"><?=$validity_start_date?></td>
+				<td class="govuk-table__cell"><?=$validity_end_date?></td>
 			</tr>
 <?php
 		}
@@ -82,9 +77,9 @@
 ?>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="c">Origin SID</th>
-				<th>Origin</th>
-				<th>Exclusion</th>
+				<th class="govuk-table__header c">Origin SID</th>
+				<th class="govuk-table__header">Origin</th>
+				<th class="govuk-table__header">Exclusion</th>
 			</tr>
 <?php
 		for($i = 0; $i < $origin_count; $i++) {
@@ -96,9 +91,9 @@
 			$exclusion_text			= $origin->exclusion_text;
 	?>
 			<tr class="govuk-table__row">
-				<td class="c"><?=$origin_sid?></td>
-				<td><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
-				<td><?=$exclusion_text?></td>
+				<td class="govuk-table__cell c"><?=$origin_sid?></td>
+				<td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
+				<td class="govuk-table__cell"><?=$exclusion_text?></td>
 			</tr>
 <?php
 		}
@@ -124,11 +119,11 @@
 				<th class="govuk-table__header">Start date</th>
 				<th class="govuk-table__header">End date</th>
 				<th class="govuk-table__header">Vol</th>
-				<th class="govuk-table__header C">Unit</th>
-				<th class="govuk-table__header C">Precision</th>
-				<th class="govuk-table__header C">Critical state</th>
-				<th class="govuk-table__header C">Critical threshold</th>
-				<th class="govuk-table__header C">Monetary unit</th>
+				<th class="govuk-table__header c">Unit</th>
+				<th class="govuk-table__header c">Precision</th>
+				<th class="govuk-table__header c">Critical state</th>
+				<th class="govuk-table__header c">Critical threshold</th>
+				<th class="govuk-table__header c">Monetary unit</th>
 				<th class="govuk-table__header">Description</th>
 			</tr>
 <?php            
@@ -151,11 +146,11 @@
 				<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 				<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
 				<td class="govuk-table__cell"><?=$initial_volume?></td>
-				<td class="govuk-table__cell C"><?=$measurement_unit_code?>&nbsp;<?=$measurement_unit_qualifier_code?></td>
-				<td class="govuk-table__cell C"><?=$maximum_precision?></td>
-				<td class="govuk-table__cell C"><?=$critical_state?></td>
-				<td class="govuk-table__cell C"><?=$critical_threshold?></td>
-				<td class="govuk-table__cell C"><?=$monetary_unit_code?></td>
+				<td class="govuk-table__cell c"><?=$measurement_unit_code?>&nbsp;<?=$measurement_unit_qualifier_code?></td>
+				<td class="govuk-table__cell c"><?=$maximum_precision?></td>
+				<td class="govuk-table__cell c"><?=$critical_state?></td>
+				<td class="govuk-table__cell c"><?=$critical_threshold?></td>
+				<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
 				<td class="govuk-table__cell vsmall"><?=$description?></td>
 			</tr>
 <?php

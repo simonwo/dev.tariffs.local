@@ -16,13 +16,10 @@
 	</ol>
 	</div>
 	<!-- End breadcrumbs //-->
-	<main id="content" lang="en">
-		<div class="grid-row">
-			<div class="column-two-thirds">
-				<div class="gem-c-title gem-c-title--margin-bottom-5">
-					<h1 class="gem-c-title__text">Quota order numbers</h1></div>
-				</div>
-			</div>
+
+	<div class="app-content__header">
+		<h1 class="govuk-heading-xl">Quota order numbers</h1>
+	</div>
 
 <?php
 	# Get all the quota order number exclusions
@@ -126,7 +123,7 @@
 			for($j = 0; $j < $qono_count; $j++) {
 				$origin = $t->origins[$j];
 				$url = "geographical_area_view.php?geographical_area_id=" . $origin->geographical_area_id;
-				$origins .= "<p><a href='" . $url . "'>" . $origin->description . "</a></p>";
+				$origins .= "<div><a href='" . $url . "'>" . $origin->description . "</a></div>";
 				$qonoe_count = count($origin->exclusions);
 				$exclusions = "";
 				if ($qonoe_count > 0) {

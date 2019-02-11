@@ -11,15 +11,15 @@
             <a class="govuk-breadcrumbs__link" href="/">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/regulations_list.php">Geographical areas</a>
+            <a class="govuk-breadcrumbs__link" href="/geographical_areas.php">Geographical areas</a>
         </li>
     </ol>
-    </div>
-    <div class="app-content__header">
-        <h1 class="govuk-heading-xl">View geographical area <?=$geographical_area_id?></h1>
-    </div>
+</div>
+<div class="app-content__header">
+    <h1 class="govuk-heading-xl">View geographical area <?=$geographical_area_id?></h1>
+</div>
             <!-- MENU //-->
-            <p class="b">Page content</p>
+            <h2>Page content</h2>
             <ul class="tariff_menu">
                 <li><a href="#details">Area details</a></li>
                 <li><a href="#measures">Measures</a></li>
@@ -88,19 +88,20 @@
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">SID</th>
                     <th class="govuk-table__header" style="width:10%">Commodity code</th>
-                    <th class="govuk-table__header" style="width:12%">Start date</th>
-                    <th class="govuk-table__header" style="width:12%">End date</th>
+                    <th class="govuk-table__header" style="width:11%">Start date</th>
+                    <th class="govuk-table__header" style="width:11%">End date</th>
                     <th class="govuk-table__header" style="width:20%">Geographical area</th>
-                    <th class="govuk-table__header" style="width:26%">Type</th>
+                    <th class="govuk-table__header" style="width:22%">Type</th>
                     <th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
+                    <th class="govuk-table__header" style="width:8%">Order number</th>
                 </tr>
 <?php
 	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
-    m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description, mtd.description as measure_type_description
-    FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
+    m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description, mtd.description as measure_type_description,
+    m.ordernumber FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
     WHERE m.geographical_area_id = g.geographical_area_id
     AND mtd.measure_type_id = m.measure_type_id
-    AND m.geographical_area_id = '" . $geographical_area_id . "'";
+    AND m.geographical_area_id = '" . $geographical_area_id . "' ORDER BY validity_start_date DESC";
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
@@ -116,6 +117,7 @@
                 $validity_end_date = "";
             }
 
+            $ordernumber                    = $row['ordernumber'];
             $measure_type_id                = $row['measure_type_id'];
             $geographical_area_id           = $row['geographical_area_id'];
             $regulation_id_full             = $row['regulation_id_full'];
@@ -124,13 +126,14 @@
             $commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
                 <tr class="govuk-table__row">
-                    <td><?=$measure_sid?></td>
-                    <td><a href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
-                    <td nowrap><?=$validity_start_date?></td>
-                    <td nowrap><?=$validity_end_date?></td>
-                    <td><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>
-                    <td><?=$measure_type_id?> - <?=$measure_type_description?></td>
-                    <td><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+                    <td class="govuk-table__cell"><?=$measure_sid?></td>
+                    <td class="govuk-table__cell"><a href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
+                    <td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
+                    <td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
+                    <td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>
+                    <td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
+                    <td class="govuk-table__cell"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+                    <td class="govuk-table__cell"><a href="quota_order_number_view.php?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
                 </tr>
 
 <?php
@@ -165,7 +168,7 @@
 
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="geographical_area?geographical_area_id=<?=$geographical_area_id?>"><?=$child_id?></a></td>
+                    <td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$child_id?>"><?=$child_id?></a></td>
                     <td class="govuk-table__cell"><?=$child_description?></td>
                     <td class="govuk-table__cell"><?=$child_sid?></td>
                     <td class="govuk-table__cell"<?=$validity_start_date?></td>
@@ -205,7 +208,7 @@
 
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="geographical_area?geographical_area_id=<?=$geographical_area_id?>"><?=$parent_id?></a></td>
+                    <td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$parent_id?>"><?=$parent_id?></a></td>
                     <td class="govuk-table__cell"><?=$parent_description?></td>
                     <td class="govuk-table__cell"><?=$parent_sid?></td>
                     <td class="govuk-table__cell"><?=$validity_start_date?></td>
