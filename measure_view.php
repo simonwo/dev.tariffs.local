@@ -20,6 +20,25 @@
         <h1 class="govuk-heading-xl">Measure <?=$measure_sid?></h1>
     </div>
 
+<!-- MENU //-->
+<?php
+    $sql = "SELECT goods_nomenclature_item_id FROM measures m WHERE measure_sid = " . $measure_sid;
+    $result = pg_query($conn, $sql);
+	if ($result) {
+        $row = pg_fetch_row($result);
+        $goods_nomenclature_item_id = $row[0];
+    }
+?>
+
+    <h2>Page content</h2>
+    <ul class="tariff_menu">
+        <li><a href="#measure_details">Measure details</a></li>
+        <li><a href="#measure_components">Measure components</a></li>
+        <li><a href="#measure_conditions">Measure conditions</a></li>
+        <li><a href="#measure_excluded_geographical_areas">Excluded geographical areas</a></li>
+        <li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a></li>
+    </ul>
+
     <h2 id="measure_details">Measure details</h2>
     <table cellspacing="0" class="govuk-table">
         <tr class="govuk-table__row">
@@ -62,8 +81,12 @@
             $justification_role_type_description    = $row['justification_role_type_description'];
 ?>
         <tr class="govuk-table__row">
+            <td class="govuk-table__cell">Goods nomenclature item ID</td>
+            <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+        </tr>
+        <tr class="govuk-table__row">
             <td class="govuk-table__cell">Measure type ID</td>
-            <td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
+            <td class="govuk-table__cell"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></td>
         </tr>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Geographical area ID</td>
@@ -106,6 +129,62 @@
     }
 ?>
         </table>
+
+        <h2 id="measure_components">Measure components</h2>
+<?php
+    $sql = "SELECT mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
+    ded.description as duty_expression_description, mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
+    FROM duty_expression_descriptions ded, measurement_unit_qualifier_descriptions muqd RIGHT OUTER JOIN 
+    measure_components mc ON mc.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code
+    LEFT OUTER JOIN measurement_unit_descriptions mud ON mc.measurement_unit_code = mud.measurement_unit_code
+    WHERE measure_sid = " . $measure_sid . " AND ded.duty_expression_id = mc.duty_expression_id ORDER BY duty_expression_id";
+    #print ($sql);
+    $result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+    <table cellspacing="0" class="govuk-table">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" style="width:15%">Duty expression</th>
+            <th class="govuk-table__header" style="width:15%">Duty amount</th>
+            <th class="govuk-table__header" style="width:15%">Monetary unit code</th>
+            <th class="govuk-table__header" style="width:55%">Measurement unit code / qualifier code</th>
+        </tr>
+
+<?php        
+        while ($row = pg_fetch_array($result)) {
+            $duty_expression_id                     = $row['duty_expression_id'];
+            $duty_amount                            = $row['duty_amount'];
+            $monetary_unit_code                     = $row['monetary_unit_code'];
+            $measurement_unit_code                  = $row['measurement_unit_code'];
+            $measurement_unit_qualifier_code        = $row['measurement_unit_qualifier_code'];
+            $measurement_unit_description           = $row['measurement_unit_description'];
+            $measurement_unit_qualifier_description = $row['measurement_unit_qualifier_description'];
+            $measurement_unit_show = $measurement_unit_code;
+            if ($measurement_unit_description != ""){
+                $measurement_unit_show .= " - " . $measurement_unit_description;
+            }
+            $measurement_unit_qualifier_show = $measurement_unit_qualifier_code;
+            if ($measurement_unit_qualifier_description != ""){
+                $measurement_unit_qualifier_show .= " - " . $measurement_unit_qualifier_description;
+            }
+?>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell"><?=$duty_expression_id?></td>
+            <td class="govuk-table__cell"><?=$duty_amount?></td>
+            <td class="govuk-table__cell"><?=$monetary_unit_code?></td>
+            <td class="govuk-table__cell"><?=$measurement_unit_show?> <?=$measurement_unit_qualifier_show?></td>
+        </tr>
+
+<?php
+        }
+?>
+    </table>
+<?php
+    }
+?>
+        <h2 id="measure_conditions">Measure conditions</h2>
+        <h2 id="measure_excluded_geographical_areas">Excluded geographical areas</h2>
+
 </div>
 
 <?php
