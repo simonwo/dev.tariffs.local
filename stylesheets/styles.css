@@ -15,6 +15,8 @@ h2 {
     clear: both;
     margin-top:2em;
     margin-bottom:0.5em;
+    xwidth:100px;
+    xmax-width:100px;
 }
 h2.small {
     font-size:1.2em;

@@ -25,6 +25,10 @@
                         <li><a href="/regulation_create.php">Create regulation</a></li>
                     </ul>
 
+                    <h2 class="small">Geographical areas</h2>
+                    <ul class="main-menu">
+                        <li><a href="/geographical_areas.php">Geographical areas</a></li>
+                    </ul>
                 </div>
 
 
@@ -39,16 +43,19 @@
                     <ul class="main-menu">
                         <li><a href="/measure_type_series.php">Measure type series</a></li>
                     </ul>
-                    <h2 class="small">Geographical areas</h2>
-                    <ul class="main-menu">
-                        <li><a href="/geographical_areas.php">Geographical areas</a></li>
-                    </ul>
 
                     <h2 class="small">Footnotes</h2>
                     <ul class="main-menu">
                         <li><a href="/footnotes.php">Footnotes</a></li>
                         <li><a href="/footnote_types.php">Footnote types</a></li>
                     </ul>
+
+                    <h2 class="small">Certificates</h2>
+                    <ul class="main-menu">
+                        <li><a href="/certificates.php">Certificates</a></li>
+                        <li><a href="/certificate_types.php">Certificate types</a></li>
+                    </ul>
+
 
 
                 </div>
@@ -66,15 +73,15 @@
                         <li><a href="/additional_code_types.php">Additional code types</a></li>
                     </ul>
 
-                    <h2 class="small">Certificates</h2>
-                    <ul class="main-menu">
-                        <li><a href="/certificates.php">Certificates</a></li>
-                        <li><a href="/certificate_types.php">Certificate types</a></li>
-                    </ul>
-
                     <h2 class="small">Load history</h2>
                     <ul class="main-menu">
                         <li><a href="/load_history.php">Load history</a></li>
+                    </ul>
+
+                    <h2 class="small">Monetary exchange rates</h2>
+                    <ul class="main-menu">
+                    <li><a href="/monetary_exchange_rates.php">Monetary exchange rates</a></li>
+                    <li><a href="/monetary_exchange_rate_create.php">Create new monetary exchange rate</a></li>
                     </ul>
 
 

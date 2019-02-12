@@ -184,6 +184,7 @@
             <form action="/actions/goods_nomenclature_actions.php" method="get" class="inline_form">
             <h3>Filter results</h3>
             <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+            <input type="hidden" name="phase" value="goods_nomenclature_item_view_filter" />
             <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
             <div class="column-one-third" style="width:280px">
                 <div class="govuk-form-group">

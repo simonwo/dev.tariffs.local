@@ -14,14 +14,9 @@
             </li>
         </ol>
     </div>
-    <main id="content" lang="en">
-        <div class="grid-row">
-            <div class="column-two-thirds">
-                <div class="gem-c-title gem-c-title--margin-bottom-5">
-                    <h1 class="gem-c-title__text">View measure type <?=$measure_type_id?></h1>
-                </div>
-            </div>
-        </div>
+    <div class="app-content__header">
+        <h1 class="govuk-heading-xl">View measure type <?=$measure_type_id?></h1>
+    </div>
 
         <h2 class="nomargin">Measure type details</h2>
         <table class="govuk-table" cellspacing="0">
@@ -56,7 +51,7 @@
 ?>
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">Description</td>
-                <td class="govuk-table__cell B"><?=$description?></td>
+                <td class="govuk-table__cell b"><?=$description?></td>
             </tr>
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">Measure type ID</td>
@@ -111,17 +106,17 @@
     $result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
-        <h2 class="small">Measures of type <?=$description?></h2>
+        <h2 class="nomargin">Measures of type <?=$description?></h2>
         <table class="govuk-table" cellspacing="0">
             <tr class="govuk-table__row">
-                <th style="width:10%">SID</th>
-                <th style="width:10%">Commodity</th>
-                <th class="c" style="width:10%">Additional code</th>
-                <th class="c" style="width:10%">Geographical area</th>
-                <th style="width:10%">Start date</th>
-                <th style="width:10%">End date</th>
-                <th style="width:10%">Regulation</th>
-                <th style="width:10%">Order number</th>
+                <th class="govuk-table__header" style="width:10%">Measure SID</th>
+                <th class="govuk-table__header" style="width:10%">Commodity</th>
+                <th class="govuk-table__header c" style="width:10%">Additional code</th>
+                <th class="govuk-table__header c" style="width:10%">Geographical area</th>
+                <th class="govuk-table__header" style="width:10%">Start date</th>
+                <th class="govuk-table__header" style="width:10%">End date</th>
+                <th class="govuk-table__header" style="width:10%">Regulation</th>
+                <th class="govuk-table__header" style="width:10%">Order number</th>
             </tr>
 <?php        
         while ($row = pg_fetch_array($result)) {
@@ -142,14 +137,14 @@
             }
 ?>            
             <tr class="govuk-table__row">
-                <td><?=$measure_sid?></td>
-                <td><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
-                <td class="c"><?=$additional_code_show?></td>
-                <td class="c"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
-                <td><?=$validity_start_date?></td>
-                <td><?=$validity_end_date?></td>
-                <td><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
-                <td><?=$ordernumber?></td>
+                <td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+                <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+                <td class="govuk-table__cell c"><?=$additional_code_show?></td>
+                <td class="govuk-table__cell c"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
+                <td class="govuk-table__cell"><?=$validity_start_date?></td>
+                <td class="govuk-table__cell"><?=$validity_end_date?></td>
+                <td class="govuk-table__cell"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+                <td class="govuk-table__cell"><?=$ordernumber?></td>
             </tr>
 <?php
         }

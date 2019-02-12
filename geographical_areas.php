@@ -32,31 +32,31 @@
     </div>
 
     <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
-            <h3>Filter results</h3>
-            <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
-            <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
-            <div class="column-one-third" style="width:320px">
-                <div class="govuk-form-group">
-                    <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-                        <span id="base_regulation_hint" class="govuk-hint">Search geographical area IDs - enter free text</span>
-                        <div class="govuk-date-input" id="measure_start">
-                            <div class="govuk-date-input__item">
-                                <div class="govuk-form-group" style="padding:0px;margin:0px">
-                                    <input value="<?=$geographical_area_text?>" class="govuk-input govuk-date-input__input govuk-input--width-16" id="geographical_area_text" maxlength="100" style="width:300px" name="geographical_area_text" type="text">
-                                </div>
+        <h3>Filter results</h3>
+        <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+        <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
+        <div class="column-one-third" style="width:320px">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+                    <span id="base_regulation_hint" class="govuk-hint">Search geographical area IDs - enter free text</span>
+                    <div class="govuk-date-input" id="measure_start">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group" style="padding:0px;margin:0px">
+                                <input value="<?=$geographical_area_text?>" class="govuk-input govuk-date-input__input govuk-input--width-16" id="geographical_area_text" maxlength="100" style="width:300px" name="geographical_area_text" type="text">
                             </div>
                         </div>
-                    </fieldset>
-                </div>
+                    </div>
+                </fieldset>
             </div>
-            
-            <div class="column-one-third">
-                <div class="govuk-form-group" style="padding:0px;margin:0px">
-                    <button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
-                </div>
+        </div>
+        
+        <div class="column-one-third">
+            <div class="govuk-form-group" style="padding:0px;margin:0px">
+                <button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
             </div>
-            <div class="clearer"><!--&nbsp;//--></div>
-            </form>
+        </div>
+        <div class="clearer"><!--&nbsp;//--></div>
+    </form>
 <?php
     $clause = "";
     $offset         = intval($pagesize) * ($page - 1);

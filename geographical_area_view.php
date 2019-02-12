@@ -1,7 +1,8 @@
     <?php
     require ("includes/db.php");
     require ("includes/header.php");
-    $geographical_area_id = get_querystring("geographical_area_id");
+    $geographical_area_id   = get_querystring("geographical_area_id");
+    $measure_scope          = get_querystring("measure_scope");
 ?>
 
 <div id="wrapper" class="direction-ltr">
@@ -84,6 +85,61 @@
             <p class="back_to_top"><a href="#top">Back to top</a></p>
             
             <h2 id="measures">Measure details</h2>
+
+
+            <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
+            <h3>Filter results</h3>
+            <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+            <input type="hidden" name="phase" value="measure_filter_geographical_area_view" />
+
+            <div class="column-one-third" style="width:320px">
+
+
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item break">
+                    <input type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_all" value="all" />
+                    <label class="govuk-label govuk-radios__label" for="measure_scope_all">Show all measures</label>
+                </div>
+            </div><br/>
+            <div class="govuk-radios govuk-radios--inline">
+                <div class="govuk-radios__item break">
+                    <input type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_duty" value="duty" />
+                    <label class="govuk-label govuk-radios__label" for="measure_scope_duty">Only show duty measures</label>
+                </div>
+            </div>
+
+
+            </div>
+            
+            <div class="column-one-third">
+                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                    <button type="submit" class="govuk-button" style="margin-top:54px">Search</button>
+                </div>
+            </div>
+            <div class="clearer"><!--&nbsp;//--></div>
+            </form>
+
+
+
+<?php
+    if ($measure_scope == "all") {
+        $measure_scope_clause = "";
+    } else {
+        $measure_scope_clause = " AND m.measure_type_id IN ('142', '143', '145', '146') ";
+    }
+
+	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
+    m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description, mtd.description as measure_type_description,
+    m.ordernumber FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
+    WHERE m.geographical_area_id = g.geographical_area_id
+    AND mtd.measure_type_id = m.measure_type_id
+    AND m.geographical_area_id = '" . $geographical_area_id . "' " . $measure_scope_clause . "ORDER BY validity_start_date DESC,
+    validity_end_date DESC, goods_nomenclature_item_id";
+    // echo ($sql);
+    $result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+            <p>There are <strong><?=pg_num_rows($result)?></strong> matching measures.</p>
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">SID</th>
@@ -95,27 +151,14 @@
                     <th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
                     <th class="govuk-table__header" style="width:8%">Order number</th>
                 </tr>
+
 <?php
-	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
-    m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description, mtd.description as measure_type_description,
-    m.ordernumber FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
-    WHERE m.geographical_area_id = g.geographical_area_id
-    AND mtd.measure_type_id = m.measure_type_id
-    AND m.geographical_area_id = '" . $geographical_area_id . "' ORDER BY validity_start_date DESC";
-    $result = pg_query($conn, $sql);
-	if  ($result) {
         while ($row = pg_fetch_array($result)) {
             $measure_sid                = $row['measure_sid'];
             $goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-            $validity_start_date        = trim($row['validity_start_date'] . "");
-            $validity_end_date          = trim($row['validity_end_date'] . "");
-
-            $validity_start_date        = DateTime::createFromFormat('Y-m-d H:i:s', $validity_start_date)->format('Y-m-d');
-            if ($validity_end_date != "") {
-                $validity_end_date      = DateTime::createFromFormat('Y-m-d H:i:s', $validity_end_date)->format('Y-m-d');
-            } else {
-                $validity_end_date = "";
-            }
+            $validity_start_date        = string_to_date($row['validity_start_date']);
+            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 
             $ordernumber                    = $row['ordernumber'];
             $measure_type_id                = $row['measure_type_id'];
@@ -125,7 +168,7 @@
             $measure_type_description       = $row['measure_type_description'];
             $commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-                <tr class="govuk-table__row">
+                <tr class="govuk-table__row <?=$rowclass?>">
                     <td class="govuk-table__cell"><?=$measure_sid?></td>
                     <td class="govuk-table__cell"><a href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
                     <td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>

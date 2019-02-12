@@ -1,6 +1,7 @@
 <?php
     require ("includes/db.php");
     require ("includes/header.php");
+    $phase = "goods_nomenclature_item_view";
     ?>
 <div id="wrapper" class="direction-ltr">
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
@@ -16,7 +17,9 @@
     <div class="app-content__header">
         <h1 class="govuk-heading-xl">Nomenclature sections</h1>
     </div>
-
+<?php
+    require ("includes/nomenclature_search.php");
+?>
         <table cellspacing="0" class="govuk-table">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header" style="width:15%">Section</th>
