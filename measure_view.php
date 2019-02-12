@@ -129,6 +129,7 @@
     }
 ?>
         </table>
+        <p class="back_to_top"><a href="#top">Back to top</a></p>
 
         <h2 id="measure_components">Measure components</h2>
 <?php
@@ -179,10 +180,75 @@
         }
 ?>
     </table>
+    <p class="back_to_top"><a href="#top">Back to top</a></p>
 <?php
     }
 ?>
         <h2 id="measure_conditions">Measure conditions</h2>
+<?php
+    $sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
+    mc.condition_monetary_unit_code, mc.condition_measurement_unit_code, mc.condition_measurement_unit_qualifier_code,
+    mc.action_code, mc.certificate_type_code, mc.certificate_code, mccd.description as condition_code_description, mad.description as action_code_description
+    FROM measure_condition_code_descriptions mccd, measure_conditions mc
+    LEFT OUTER JOIN measure_action_descriptions mad
+    ON mc.action_code = mad.action_code WHERE measure_sid = " . $measure_sid . "
+    AND mc.condition_code = mccd.condition_code ORDER BY component_sequence_number";
+    $result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+    <table cellspacing="0" class="govuk-table">
+        <tr class="govuk-table__row">
+            <th class="govuk-table__header" style="width:8%">SID</th>
+            <th class="govuk-table__header" style="width:12%">Condition code</th>
+            <th class="govuk-table__header" style="width:10%">Duty amount</th>
+            <th class="govuk-table__header" style="width:10%">Monetary unit code</th>
+            <th class="govuk-table__header" style="width:20%">Measurement unit code / qualifier code</th>
+            <th class="govuk-table__header" style="width:20%">Action code</th>
+            <th class="govuk-table__header" style="width:20%">Certificate code</th>
+        </tr>
+
+<?php        
+        while ($row = pg_fetch_array($result)) {
+            $measure_condition_sid              = $row['measure_condition_sid'];
+            $condition_code                     = $row['condition_code'];
+            $component_sequence_number          = $row['component_sequence_number'];
+            $duty_amount                        = $row['condition_duty_amount'];
+            $monetary_unit_code                 = $row['condition_monetary_unit_code'];
+            $measurement_unit_code              = $row['condition_measurement_unit_code'];
+            $measurement_unit_qualifier_code    = $row['condition_measurement_unit_qualifier_code'];
+            $action_code                        = $row['action_code'];
+            $certificate_type_code              = $row['certificate_type_code'];
+            $certificate_code                   = $row['certificate_code'];
+            $condition_code_description         = $row['condition_code_description'];
+            $action_code_description            = $row['action_code_description'];
+
+            $action_code_show = $action_code;
+            if ($action_code_description != ""){
+                $action_code_show .= " - " . $action_code_description;
+            }
+            $condition_code_show = $condition_code;
+            if ($condition_code_description != ""){
+                $condition_code_show .= " - " . $condition_code_description;
+            }
+?>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell"><?=$measure_condition_sid?></td>
+            <td class="govuk-table__cell"><?=$condition_code_show?></td>
+            <td class="govuk-table__cell"><?=$duty_amount?></td>
+            <td class="govuk-table__cell"><?=$monetary_unit_code?></td>
+            <td class="govuk-table__cell"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
+            <td class="govuk-table__cell"><?=$action_code_show?></td>
+            <td class="govuk-table__cell"><?=$certificate_type_code?><?=$certificate_code?></td>
+        </tr>
+
+<?php
+        }
+?>
+    </table>
+    <p class="back_to_top"><a href="#top">Back to top</a></p>
+<?php
+    }
+?>
         <h2 id="measure_excluded_geographical_areas">Excluded geographical areas</h2>
 
 </div>

@@ -203,4 +203,8 @@ function string_to_filtered_list($s) {
 	$s_exploded = array_filter($s_exploded);
 	return ($s_exploded);
 }
+
+function set($data) {
+	return array_map("unserialize", array_unique(array_map("serialize", $data)));
+}
 ?>
