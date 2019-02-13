@@ -1,7 +1,8 @@
 <?php
     require ("includes/db.php");
     require ("includes/header.php");
-    $measure_sid = get_querystring("measure_sid");
+    $measure_sid    = get_querystring("measure_sid");
+    $measure        = get_measure($measure_sid);
 ?>
 <div id="wrapper" class="direction-ltr">
     <!-- Start breadcrumbs //-->
@@ -10,9 +11,7 @@
             <li class="govuk-breadcrumbs__list-item">
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>
             </li>
-            <li class="govuk-breadcrumbs__list-item">
-                Measures
-            </li>
+            <li class="govuk-breadcrumbs__list-item">Measures</li>
         </ol>
     </div>
     <!-- End breadcrumbs //-->
@@ -22,11 +21,17 @@
 
 <!-- MENU //-->
 <?php
-    $sql = "SELECT goods_nomenclature_item_id FROM measures m WHERE measure_sid = " . $measure_sid;
+    $sql = "SELECT goods_nomenclature_item_id, geographical_area_id FROM measures m WHERE measure_sid = " . $measure_sid;
     $result = pg_query($conn, $sql);
 	if ($result) {
         $row = pg_fetch_row($result);
         $goods_nomenclature_item_id = $row[0];
+        $geographical_area_id       = $row[1];
+        $url = "https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/" . $goods_nomenclature_item_id;
+        if ($geographical_area_id != "1011") {
+            $url .= "?country=" . $geographical_area_id;
+        }
+        $url .= "#import";
     }
 ?>
 
@@ -36,7 +41,7 @@
         <li><a href="#measure_components">Measure components</a></li>
         <li><a href="#measure_conditions">Measure conditions</a></li>
         <li><a href="#measure_excluded_geographical_areas">Excluded geographical areas</a></li>
-        <li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a></li>
+        <li><a title="Opens in new window" href="<?=$url?>" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a></li>
     </ul>
 
     <h2 id="measure_details">Measure details</h2>
@@ -48,16 +53,17 @@
 
 <?php
     $sql = "SELECT m.measure_type_id, m.geographical_area_id, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date,
-    measure_generating_regulation_role, measure_generating_regulation_id, justification_regulation_role, justification_regulation_id,
-    stopped_flag, ordernumber, additional_code_type_id, additional_code_id, reduction_indicator, mtd.description as measure_type_description,
-    ga.description as geographical_area_description, rrtd.description as regulation_role_type_description,
-    rrtd2.description as justification_role_type_description
-    FROM measures m, ml.ml_geographical_areas ga, measure_type_descriptions mtd,
-    regulation_role_type_descriptions as rrtd, regulation_role_type_descriptions as rrtd2
-    WHERE measure_sid = " . $measure_sid . " AND m.measure_type_id = mtd.measure_type_id
+    measure_generating_regulation_role, measure_generating_regulation_id, justification_regulation_role,
+    justification_regulation_id, stopped_flag, ordernumber, additional_code_type_id, additional_code_id,
+    reduction_indicator, mtd.description as measure_type_description, ga.description as geographical_area_description,
+    rrtd.description as regulation_role_type_description, rrtd2.description as justification_role_type_description
+    FROM ml.ml_geographical_areas ga, measure_type_descriptions mtd, regulation_role_type_descriptions as rrtd, measures m
+    LEFT JOIN regulation_role_type_descriptions as rrtd2 ON CAST(rrtd2.regulation_role_type_id as INTEGER) = CAST(m.justification_regulation_role as INTEGER)
+    WHERE measure_sid = " . $measure_sid . "
+    AND m.measure_type_id = mtd.measure_type_id
     AND m.geographical_area_id = ga.geographical_area_id
-    AND CAST(rrtd.regulation_role_type_id as INTEGER) = CAST(m.measure_generating_regulation_role as INTEGER)
-    AND CAST(rrtd2.regulation_role_type_id as INTEGER) = CAST(m.justification_regulation_role as INTEGER)";
+    AND CAST(rrtd.regulation_role_type_id as INTEGER) = CAST(m.measure_generating_regulation_role as INTEGER)";
+    #echo ($sql);
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
@@ -79,6 +85,14 @@
             $geographical_area_description          = $row['geographical_area_description'];
             $regulation_role_type_description       = $row['regulation_role_type_description'];
             $justification_role_type_description    = $row['justification_role_type_description'];
+
+            if ($justification_regulation_id == "") {
+                $justification_regulation_show = "";
+            } else{
+                $justification_regulation_show = '<a href="regulation_view.php?regulation_id=' . $justification_regulation_id .'">' .
+                $justification_regulation_id . '</a> - Role type (' . $justification_regulation_role . ' - ' . $justification_role_type_description .')';
+            }
+
 ?>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Goods nomenclature item ID</td>
@@ -87,6 +101,10 @@
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Measure type ID</td>
             <td class="govuk-table__cell"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></td>
+        </tr>
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">Duty</td>
+            <td class="govuk-table__cell"><?=$measure->combined_duty?></td>
         </tr>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Geographical area ID</td>
@@ -106,7 +124,7 @@
         </tr>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Justification regulation</td>
-            <td class="govuk-table__cell"><a href="regulation_view.php?regulation_id=<?=$justification_regulation_id?>"><?=$justification_regulation_id?></a> - Role type (<?=$justification_regulation_role?> - <?=$justification_role_type_description?>)</td>
+            <td class="govuk-table__cell"><?=$justification_regulation_show?></td>
         </tr>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell">Quota order number ID</td>

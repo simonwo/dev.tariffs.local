@@ -8,8 +8,8 @@ class duty
 	$quota_order_number_id, $geographical_area_id, $validity_start_date, $validity_end_date) {
 
 		$this->commodity_code					= $commodity_code;
-		$this->additional_code_type_id					= $additional_code_type_id;
-		$this->additional_code_id					= $additional_code_id;
+		$this->additional_code_type_id			= $additional_code_type_id;
+		$this->additional_code_id				= $additional_code_id;
 		$this->measure_type_id				    = $measure_type_id;
 		$this->duty_expression_id				= $duty_expression_id;
 		$this->duty_amount                      = $duty_amount;
@@ -23,6 +23,8 @@ class duty
         $this->validity_end_date				= $validity_end_date;
         
         $this->getDutyString();
+        #echo ("setting duty properties");
+        #echo ("Duty string " . $this->duty_string);
 	}
 
 	public function getDutyString() {
@@ -59,9 +61,9 @@ class duty
             case "20":
                 // Do stuff
 			    if ($this->monetary_unit_code == "") {
-                    $this->duty_string .= "+" . $duty_amount . "%";
+                    $this->duty_string .= " + " . $duty_amount . "%";
                 } else {
-                    $this->duty_string .= "+" . $duty_amount . " " . $this->monetary_unit_code;
+                    $this->duty_string .= " + " . $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
                         if ($this->measurement_unit_qualifier_code != "") {
@@ -89,6 +91,7 @@ class duty
                 break;
 
             case "17":
+            case "35":
                 // Do stuff
                 if ($this->monetary_unit_code == "") {
                     $this->duty_string .= "MAX " . $duty_amount . "%";

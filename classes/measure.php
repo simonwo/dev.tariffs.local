@@ -1,15 +1,8 @@
 <?php
 class measure
 {
-	// Class properties and methods go here
-
-    public function set_properties($measure_sid, $commodity_code, $quota_order_number_id, $validity_start_date, $validity_end_date, $geographical_area_id) {
-		$this->measure_sid				= $measure_sid;
-		$this->commodity_code			= $commodity_code;
-		$this->quota_order_number_id    = $quota_order_number_id;
-		$this->validity_start_date		= $validity_start_date;
-		$this->validity_end_date		= $validity_end_date;
-		$this->geographical_area_id		= $geographical_area_id;
+    // Class properties and methods go here
+    public function __construct() {
 		$this->assigned                 = False;
 		$this->combined_duty          	= "";
 		$this->duty_list              	= array();
@@ -18,6 +11,21 @@ class measure
 		$this->significant_children   	= False;
 		$this->measure_count          	= 0;
 		$this->measure_type_count     	= 0;
+    }
+
+    public function set_properties($measure_sid, $commodity_code, $quota_order_number_id, $validity_start_date,
+    $validity_end_date, $geographical_area_id, $measure_type_id, $additional_code_type_id,
+    $additional_code_id, $regulation_id_full) {
+		$this->measure_sid				= $measure_sid;
+		$this->commodity_code			= $commodity_code;
+		$this->quota_order_number_id    = $quota_order_number_id;
+		$this->validity_start_date		= $validity_start_date;
+		$this->validity_end_date		= $validity_end_date;
+		$this->geographical_area_id		= $geographical_area_id;
+		$this->measure_type_id  		= $measure_type_id;
+		$this->additional_code_type_id  = $additional_code_type_id;
+		$this->additional_code_id		= $additional_code_id;
+		$this->regulation_id_full		= $regulation_id_full;
     }
 
 	public function combine_duties(){

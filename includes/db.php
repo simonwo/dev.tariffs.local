@@ -2,6 +2,8 @@
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
 require (dirname(__FILE__) . "../../classes/measure_type.php");
+require (dirname(__FILE__) . "../../classes/measure.php");
+require (dirname(__FILE__) . "../../classes/duty.php");
 require (dirname(__FILE__) . "../../classes/geographical_area.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
@@ -206,5 +208,50 @@ function string_to_filtered_list($s) {
 
 function set($data) {
 	return array_map("unserialize", array_unique(array_map("serialize", $data)));
+}
+
+function get_measure($measure_sid) {
+	global $conn;
+	$measure = new measure;
+	$measure->set_properties($measure_sid, "", "", "", "", "", "", "", "", "");
+
+	$sql = "SELECT mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
+    ded.description as duty_expression_description, mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
+    FROM duty_expression_descriptions ded, measurement_unit_qualifier_descriptions muqd RIGHT OUTER JOIN 
+    measure_components mc ON mc.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code
+    LEFT OUTER JOIN measurement_unit_descriptions mud ON mc.measurement_unit_code = mud.measurement_unit_code
+    WHERE measure_sid = " . $measure_sid . " AND ded.duty_expression_id = mc.duty_expression_id ORDER BY duty_expression_id";
+	$result = pg_query($conn, $sql);
+	if  ($result) {
+        while ($row = pg_fetch_array($result)) {
+            $duty_expression_id                     = $row['duty_expression_id'];
+            $duty_amount                            = $row['duty_amount'];
+            $monetary_unit_code                     = $row['monetary_unit_code'];
+            $measurement_unit_code                  = $row['measurement_unit_code'];
+            $measurement_unit_qualifier_code        = $row['measurement_unit_qualifier_code'];
+            $measurement_unit_description           = $row['measurement_unit_description'];
+			$measurement_unit_qualifier_description = $row['measurement_unit_qualifier_description'];
+
+			// These may need to be populated later
+			$commodity_code = "";
+			$additional_code_type_id = "";
+			$additional_code_id = "";
+			$measure_type_id = "";
+			$quota_order_number_id = "";
+			$geographical_area_id = "";
+			$validity_start_date = "";
+			$validity_end_date = "";
+			
+			$d = new duty;
+			$d->set_properties($commodity_code, $additional_code_type_id, $additional_code_id, $measure_type_id,
+			$duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code, $measure_sid,
+			$quota_order_number_id, $geographical_area_id, $validity_start_date, $validity_end_date);
+
+			array_push($measure->duty_list, $d);
+        }
+	}
+	$measure->combine_duties();
+	#echo ("Combined duty: " . $measure->combined_duty);
+	return ($measure);
 }
 ?>

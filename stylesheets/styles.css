@@ -15,8 +15,8 @@ h2 {
     clear: both;
     margin-top:2em;
     margin-bottom:0.5em;
-    xwidth:100px;
-    xmax-width:100px;
+    width:100% !important;
+    max-width:100% !important;
 }
 h2.small {
     font-size:1.2em;
@@ -28,6 +28,9 @@ h2.small {
 }
 .c {
     text-align:center !important;
+}
+.r {
+    text-align:right !important;
 }
 .b {
     font-weight:bold !important;
@@ -150,11 +153,13 @@ main .gem-c-title {
     vertical-align: top !important;
     font-size:12pt !important;
     padding-left: 8px;
+    padding-right: 8px !important;
 }
 .govuk-table__header {
     vertical-align: bottom !important;
     font-size:12pt !important;
     padding-left: 8px ;
+    padding-right: 8px !important;
 }
 .hidden {
     display: none;
