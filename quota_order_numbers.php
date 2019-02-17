@@ -7,19 +7,28 @@
 <div id="wrapper" class="direction-ltr">
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
-		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/">Home</a>
-		</li>
-		<li class="govuk-breadcrumbs__list-item">
-			Quota order numbers
-		</li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
+		<li class="govuk-breadcrumbs__list-item">Quota order numbers</li>
 	</ol>
-	</div>
-	<!-- End breadcrumbs //-->
+</div>
+<!-- End breadcrumbs //-->
 
-	<div class="app-content__header">
-		<h1 class="govuk-heading-xl">Quota order numbers</h1>
-	</div>
+<div class="app-content__header">
+	<h1 class="govuk-heading-xl">Quota order numbers</h1>
+</div>
+
+<form action="/quota_order_number_create_edit.php" method="get" class="inline_form">
+    <input type="hidden" name="phase" value="<?=$phase?>" />
+    <h3>New quota order number</h3>
+    <div class="column-one-third" style="width:320px">
+	<div class="govuk-form-group" style="padding:0px;margin:0px">
+            <button type="submit" class="govuk-button">Create new quota order number</button>
+        </div>
+    </div>
+    <div class="clearer"><!--&nbsp;//--></div>
+</form>
+
+
 
 <?php
 	# Get all the quota order number exclusions

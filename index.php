@@ -1,6 +1,7 @@
 <?php
+    require ("includes/db.php");
     require ("includes/header.php");
-?>
+    ?>
             <div class="app-content__header">
                 <h1 class="govuk-heading-xl">Main menu</h1>
             </div>
@@ -15,14 +16,14 @@
                     <h2 class="small">Quotas</h2>
                     <ul class="main-menu">
                         <li><a href="/quota_order_numbers.php">Quota order numbers</a></li>
-                        <!--<li><a href="/quota_order_numbers.php">Create quota</a></li>//-->
+                        <li><a href="/quota_order_number_create.php">Create quota</a></li>
                     </ul>
 
                     <h2 class="small">Regulations</h2>
                     <ul class="main-menu">
                         <li><a href="/regulations.php">Regulations</a></li>
                         <li><a href="/regulation_groups.php">Regulation groups</a></li>
-                        <li><a href="/regulation_create.php">Create regulation</a></li>
+                        <li><a href="/regulation_create_edit.php">Create regulation</a></li>
                     </ul>
 
                     <h2 class="small">Geographical areas</h2>
@@ -80,8 +81,13 @@
 
                     <h2 class="small">Monetary exchange rates</h2>
                     <ul class="main-menu">
-                    <li><a href="/monetary_exchange_rates.php">Monetary exchange rates</a></li>
-                    <li><a href="/monetary_exchange_rate_create.php">Create new monetary exchange rate</a></li>
+                        <li><a href="/monetary_exchange_rates.php">Monetary exchange rates</a></li>
+                        <li><a href="/monetary_exchange_rate_create.php">Create new monetary exchange rate</a></li>
+                    </ul>
+
+                    <h2 class="small">Data extract</h2>
+                    <ul class="main-menu">
+                        <li><a href="/data_extract.php">Extract latest data set</a></li>
                     </ul>
 
 

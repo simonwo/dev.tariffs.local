@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" elementFormDefault="qualified" xmlns="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="transmission">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="record" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="transaction.id" maxOccurs="unbounded" type="xs:int"/>
+							<xs:element name="record.code" maxOccurs="unbounded" type="xs:short"/>
+							<xs:element name="subrecord.code" maxOccurs="unbounded" type="xs:byte"/>
+							<xs:element name="record.sequence.number" maxOccurs="unbounded" type="xs:short"/>
+							<xs:element name="update.type" maxOccurs="unbounded" type="xs:byte"/>
+							<xs:choice>
+								<xs:element name="base.regulation" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="base.regulation.role" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="base.regulation.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="published.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:sequence minOccurs="0">
+												<xs:element name="officialjournal.number" maxOccurs="unbounded" type="xs:string"/>
+												<xs:element name="officialjournal.page" maxOccurs="unbounded" type="xs:byte"/>
+											</xs:sequence>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="community.code" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="regulation.group.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="replacement.indicator" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="stopped.flag" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="information.text" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="approved.flag" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="footnote.association.goods.nomenclature" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="footnote.type" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="footnote.id" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="validity.end.date" minOccurs="0" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="footnote.association.measure" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="measure.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="footnote.type.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="footnote.id" maxOccurs="unbounded" type="xs:short"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="footnote.type" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="footnote.type.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="application.code" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="footnote.type.description" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="footnote.type.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="language.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="description" maxOccurs="unbounded" type="xs:string"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="producline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="validity.end.date" minOccurs="0" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="statistical.indicator" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature.description" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.description.period.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="language.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="description" maxOccurs="unbounded" type="xs:string"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature.description.period" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.description.period.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature.indents" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.indent.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="number.indents" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature.origin" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="derived.goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="derived.productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="goods.nomenclature.successor" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="absorbed.goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="absorbed.productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="productline.suffix" maxOccurs="unbounded" type="xs:byte"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="measure" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="measure.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="measure.type" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="geographical.area" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="goods.nomenclature.item.id" maxOccurs="unbounded" type="xs:long"/>
+											<xs:element name="ordernumber" minOccurs="0" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="measure.generating.regulation.role" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="measure.generating.regulation.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="validity.end.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="justification.regulation.role" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="justification.regulation.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="stopped.flag" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="geographical.area.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="goods.nomenclature.sid" maxOccurs="unbounded" type="xs:int"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="measure.component" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="measure.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="duty.expression.id" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="duty.amount" maxOccurs="unbounded" type="xs:decimal"/>
+											<xs:sequence minOccurs="0">
+												<xs:element name="monetary.unit.code" maxOccurs="unbounded" type="xs:string"/>
+												<xs:element name="measurement.unit.code" maxOccurs="unbounded" type="xs:string"/>
+											</xs:sequence>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="measure.condition" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="measure.condition.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="measure.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="condition.code" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="component.sequence.number" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="action.code" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:sequence minOccurs="0">
+												<xs:element name="certificate.type.code" maxOccurs="unbounded" type="xs:string"/>
+												<xs:element name="certificate.code" maxOccurs="unbounded" type="xs:byte"/>
+											</xs:sequence>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="measure.excluded.geographical.area" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="measure.sid" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="excluded.geographical.area" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="geographical.area.sid" maxOccurs="unbounded" type="xs:short"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="quota.balance.event" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="quota.definition.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="occurrence.timestamp" maxOccurs="unbounded" type="xs:dateTime"/>
+											<xs:element name="old.balance" maxOccurs="unbounded" type="xs:decimal"/>
+											<xs:element name="new.balance" maxOccurs="unbounded" type="xs:decimal"/>
+											<xs:element name="imported.amount" maxOccurs="unbounded" type="xs:decimal"/>
+											<xs:element name="last.import.date.in.allocation" minOccurs="0" maxOccurs="unbounded" type="xs:date"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="quota.definition" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="quota.definition.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="quota.order.number.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="validity.end.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="quota.order.number.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="volume" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="initial.volume" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="measurement.unit.code" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="maximum.precision" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="critical.state" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="critical.threshold" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="description" maxOccurs="unbounded" type="xs:string"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="quota.exhaustion.event" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="quota.definition.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="occurrence.timestamp" maxOccurs="unbounded" type="xs:dateTime"/>
+											<xs:element name="exhaustion.date" maxOccurs="unbounded" type="xs:date"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="quota.order.number" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="quota.order.number.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="quota.order.number.id" maxOccurs="unbounded" type="xs:int"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="quota.order.number.origin" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="quota.order.number.origin.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="quota.order.number.sid" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="geographical.area.id" maxOccurs="unbounded" type="xs:short"/>
+											<xs:element name="validity.start.date" maxOccurs="unbounded" type="xs:date"/>
+											<xs:element name="geographical.area.sid" maxOccurs="unbounded" type="xs:short"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="regulation.replacement" maxOccurs="unbounded">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="replacing.regulation.role" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="replacing.regulation.id" maxOccurs="unbounded" type="xs:string"/>
+											<xs:element name="replaced.regulation.role" maxOccurs="unbounded" type="xs:byte"/>
+											<xs:element name="replaced.regulation.id" maxOccurs="unbounded" type="xs:string"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+							</xs:choice>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,8 +1,10 @@
-    <?php
+<?php
     require ("includes/db.php");
-    require ("includes/header.php");
     $geographical_area_id   = get_querystring("geographical_area_id");
     $measure_scope          = get_querystring("measure_scope");
+    $geographical_area = new geographical_area;
+    $geographical_area->clear_cookies();
+    require ("includes/header.php");
 ?>
 
 <div id="wrapper" class="direction-ltr">
@@ -23,6 +25,7 @@
             <h2>Page content</h2>
             <ul class="tariff_menu">
                 <li><a href="#details">Area details</a></li>
+                <li><a href="#history">Geographical area description history</a></li>
                 <li><a href="#measures">Measures</a></li>
                 <li><a href="#members1">Members of this country group</a></li>
                 <li><a href="#members2">Groups to which this country belongs</a></li>
@@ -84,7 +87,87 @@
             </table>
             <p class="back_to_top"><a href="#top">Back to top</a></p>
             
-            <h2 id="measures">Measure details</h2>
+<h2 id="history">Geographical area description history</h2>
+<form action="/geographical_area_add_description.php" method="get" class="inline_form">
+    <input type="hidden" name="phase" value="geographical_area_add_description" />
+    <input type="hidden" name="action" value="new" />
+    <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+    <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
+    <h3>Create new geographical area description</h3>
+    <div class="column-one-third" style="width:320px">
+	<div class="govuk-form-group" style="padding:0px;margin:0px">
+            <button type="submit" class="govuk-button">New description</button>
+        </div>
+    </div>
+    <div class="clearer"><!--&nbsp;//--></div>
+</form>
+<?php
+    $sql = "SELECT gad.geographical_area_description_period_sid, gad.description,
+    gadp.validity_start_date, gadp.validity_end_date
+    FROM geographical_area_description_periods gadp, geographical_area_descriptions gad
+    WHERE gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
+    AND gad.geographical_area_id = '" . $geographical_area_id ."'
+    ORDER BY gadp.validity_start_date DESC";
+    $result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+        <p>The table below lists the historic and current descriptions for this geographical area. You can only edit or delete descriptions
+        that have not yet begun.</p>
+        <table class="govuk-table" cellspacing="0">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header" style="width:10%">SID</th>
+                <th class="govuk-table__header" style="width:69%">Name</th>
+                <th class="govuk-table__header" style="width:15%">Validity start date</th>
+                <th class="govuk-table__header c" style="width:6%">Actions</th>
+            </tr>
+<?php
+        while ($row = pg_fetch_array($result)) {
+            $geographical_area_description_period_sid   = $row["geographical_area_description_period_sid"];
+            $description                                = $row["description"];
+            $validity_start_date                        = string_to_date($row["validity_start_date"]);
+            $validity_end_date                          = string_to_date($row["validity_end_date"]);
+?>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell"><?=$geographical_area_description_period_sid?></td>
+                    <td class="govuk-table__cell"><?=$description?></td>
+                    <td class="govuk-table__cell"><?=$validity_start_date?></td>
+                    <td class="govuk-table__cell c">
+<?php
+    $today = date("Y-m-d");
+    if ($validity_start_date > $today) {
+?>
+                        <form action="geographical_area_add_description.php" method="get">
+                            <input type="hidden" name="action" value="edit" />
+                            <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+                            <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
+                            <input type="hidden" name="geographical_area_description_period_sid" value="<?=$geographical_area_description_period_sid?>" />
+                            <button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+                        </form>
+                        <form action="actions/geographical_area_actions.php" method="get">
+                            <input type="hidden" name="action" value="edit" />
+                            <input type="hidden" name="phase" value="geographical_area_description_delete" />
+                            <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+                            <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
+                            <input type="hidden" name="geographical_area_description_period_sid" value="<?=$geographical_area_description_period_sid?>" />
+                            <button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+                        </form>
+<?php
+    }
+?>                        
+				    </td>
+                </tr>
+<?php
+        }
+?>
+        </table>
+        <?php
+    }
+?>
+    
+
+
+
+<h2 id="measures">Measure details</h2>
 
 
             <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
@@ -169,7 +252,7 @@
             $commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
                 <tr class="govuk-table__row <?=$rowclass?>">
-                    <td class="govuk-table__cell"><?=$measure_sid?></td>
+                    <td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
                     <td class="govuk-table__cell"><a href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
                     <td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
                     <td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>

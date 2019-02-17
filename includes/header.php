@@ -47,7 +47,7 @@
 			<div class="app-phase-banner__wrapper">
 				<div class="govuk-phase-banner app-phase-banner govuk-width-container">
 					<p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">beta</strong>
-						<span class="govuk-phase-banner__text">This is a new service – your <a class="govuk-link" href="/get-in-touch">feedback</a> will help us to improve it.</span>
+						<span class="govuk-phase-banner__text">This is a new service – your <a class="govuk-link" href="/get-in-touch">feedback</a> will help us to improve it.<?=$dbase?></span>
 					</p>
 				</div>
 			</div>

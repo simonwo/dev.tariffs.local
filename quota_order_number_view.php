@@ -1,10 +1,13 @@
 <?php
 	require ("includes/db.php");
-	require ("includes/header.php");
 	$quota_order_number_id        = get_querystring("quota_order_number_id");
 	$quota_order_number = new quota_order_number;
 	$quota_order_number->set_properties($quota_order_number_id, "", "");
 	$quota_order_number->get_origins();
+
+	$quota_definition = new quota_definition;
+	$quota_definition->clear_cookies();
+	require ("includes/header.php");
 ?>
 
 <div id="wrapper" class="direction-ltr">
@@ -16,7 +19,7 @@
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a>
 		</li>
-		<li class="govuk-breadcrumbs__list-item">Quota</li>
+		<li class="govuk-breadcrumbs__list-item">Quota <?=$quota_order_number_id?></li>
 	</ol>
 	</div>
 	<div class="app-content__header">
@@ -27,8 +30,8 @@
 		<h2>Page content</h2>
 		<ul class="tariff_menu">
 			<li><a href="#details">Quota details</a></li>
-			<li><a href="#origins">Quota origins</a></li>
 			<li><a href="#definitions">Quota definitions</a></li>
+			<li><a href="#origins">Quota origins</a></li>
 			<li><a href="#measures">Quota measures</a></li>
 			<li><a target="_blank" href="http://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-14&Code=<?=$quota_order_number_id?>">View on EU Taric quota consultation site</a></li>
 		</ul>
@@ -70,7 +73,118 @@
 
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 			
-		<h2 id="origins">Quota origins</h2>
+		<h2 id="definitions">Quota definitions</h2>
+		<form action="/quota_definition_create_edit.php" method="get" class="inline_form">
+		<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+		<input type="hidden" name="action" value="new" />
+		<h3>New definition</h3>
+		<div class="column-one-third" style="width:320px">
+		<div class="govuk-form-group" style="padding:0px;margin:0px">
+				<button type="submit" class="govuk-button">Create new quota definition</button>
+			</div>
+		</div>
+		<div class="clearer"><!--&nbsp;//--></div>
+		</form>
+
+<?php
+	$sql = "SELECT quota_definition_sid, quota_order_number_id, validity_start_date, validity_end_date, quota_order_number_sid,
+	initial_volume, measurement_unit_code, maximum_precision, critical_state, critical_threshold, monetary_unit_code,
+	measurement_unit_qualifier_code, description
+	FROM quota_definitions WHERE quota_order_number_id = '" . $quota_order_number_id . "' ORDER BY validity_start_date DESC";
+	$result = pg_query($conn, $sql);
+	if  (($result) && (pg_num_rows($result) > 0)){
+?>
+		<p>There are <strong><?=pg_num_rows($result)?></strong> definition periods associated with this quota.</p>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header">Definition SID</th>
+				<th class="govuk-table__header">Start date</th>
+				<th class="govuk-table__header">End date</th>
+				<th class="govuk-table__header">Vol</th>
+				<th class="govuk-table__header c">Unit</th>
+				<th class="govuk-table__header c">Precision</th>
+				<th class="govuk-table__header c">Critical state</th>
+				<th class="govuk-table__header c">Critical threshold</th>
+				<th class="govuk-table__header c">Monetary unit</th>
+				<th class="govuk-table__header">Description</th>
+				<th class="govuk-table__header">Actions</th>
+			</tr>
+<?php            
+		while ($row = pg_fetch_array($result)) {
+			$quota_definition_sid 				= $row["quota_definition_sid"];
+			$quota_order_number_id  			= $row["quota_order_number_id"];
+			$validity_start_date                = string_to_date($row["validity_start_date"]);
+			$validity_end_date                  = string_to_date($row["validity_end_date"]);
+			$initial_volume                     = number_format($row["initial_volume"], 2);
+			$measurement_unit_code              = $row["measurement_unit_code"];
+			$maximum_precision                  = $row["maximum_precision"];
+			$critical_state                     = $row["critical_state"];
+			$critical_threshold                 = $row["critical_threshold"];
+			$monetary_unit_code                 = $row["monetary_unit_code"];
+			$measurement_unit_qualifier_code    = $row["measurement_unit_qualifier_code"];
+			$description                        = $row["description"];
+?>
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell"><?=$quota_definition_sid?></td>
+				<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
+				<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
+				<td class="govuk-table__cell"><?=$initial_volume?></td>
+				<td class="govuk-table__cell c"><?=$measurement_unit_code?>&nbsp;<?=$measurement_unit_qualifier_code?></td>
+				<td class="govuk-table__cell c"><?=$maximum_precision?></td>
+				<td class="govuk-table__cell c"><?=$critical_state?></td>
+				<td class="govuk-table__cell c"><?=$critical_threshold?></td>
+				<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
+				<td class="govuk-table__cell vsmall"><?=$description?></td>
+				<td class="govuk-table__cell">
+					<form action="quota_definition_create_edit.php" method="get">
+						<input type="hidden" name="action" value="edit" />
+						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
+						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+						<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+					</form>
+					<form action="quota_definition_create_edit.php" method="get">
+						<input type="hidden" name="action" value="duplicate" />
+						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
+						<button type="submit" class="govuk-button btn_nomargin")>Duplicate</button>
+					</form>
+					<form action="actions/quota_definition_actions.php" method="get">
+						<input type="hidden" name="action" value="delete" />
+						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
+						<button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+					</form>
+				</td>
+			</tr>
+<?php
+		}
+?>
+		</table>
+<?php        
+	}
+?>
+
+			<p class="back_to_top"><a href="#top">Back to top</a></p>
+
+
+
+
+
+
+
+			<h2 id="origins">Quota origins</h2>
+			<form action="/quota_order_number_add_origin.php" method="get" class="inline_form">
+			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+			<input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number_sid?>" />
+		<input type="hidden" name="action" value="new" />
+		<h3>New origin</h3>
+		<div class="column-one-third" style="width:320px">
+		<div class="govuk-form-group" style="padding:0px;margin:0px">
+				<button type="submit" class="govuk-button">Add origin</button>
+			</div>
+		</div>
+		<div class="clearer"><!--&nbsp;//--></div>
+		</form>
 <?php
 	$origin_count = count($quota_order_number->origins);
 	if ($origin_count > 0) {
@@ -105,72 +219,6 @@
 ?>
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 		
-		<h2 id="definitions">Quota definitions</h2>
-<?php
-	$sql = "SELECT quota_definition_sid, quota_order_number_id, validity_start_date, validity_end_date, quota_order_number_sid,
-	initial_volume, measurement_unit_code, maximum_precision, critical_state, critical_threshold, monetary_unit_code,
-	measurement_unit_qualifier_code, description
-	FROM quota_definitions WHERE quota_order_number_id = '" . $quota_order_number_id . "' ORDER BY validity_start_date DESC";
-	$result = pg_query($conn, $sql);
-	if  (($result) && (pg_num_rows($result) > 0)){
-?>
-		<p>There are <strong><?=pg_num_rows($result)?></strong> definition periods associated with this quota.</p>
-		<table class="govuk-table" cellspacing="0">
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header">Definition SID</th>
-				<th class="govuk-table__header">Start date</th>
-				<th class="govuk-table__header">End date</th>
-				<th class="govuk-table__header">Vol</th>
-				<th class="govuk-table__header c">Unit</th>
-				<th class="govuk-table__header c">Precision</th>
-				<th class="govuk-table__header c">Critical state</th>
-				<th class="govuk-table__header c">Critical threshold</th>
-				<th class="govuk-table__header c">Monetary unit</th>
-				<th class="govuk-table__header">Description</th>
-			</tr>
-<?php            
-		while ($row = pg_fetch_array($result)) {
-			$quota_definition_sid 				= $row["quota_definition_sid"];
-			$quota_order_number_id  			= $row["quota_order_number_id"];
-			$validity_start_date                = string_to_date($row["validity_start_date"]);
-			$validity_end_date                  = string_to_date($row["validity_end_date"]);
-			$initial_volume                     = number_format($row["initial_volume"], 2);
-			$measurement_unit_code              = $row["measurement_unit_code"];
-			$maximum_precision                  = $row["maximum_precision"];
-			$critical_state                     = $row["critical_state"];
-			$critical_threshold                 = $row["critical_threshold"];
-			$monetary_unit_code                 = $row["monetary_unit_code"];
-			$measurement_unit_qualifier_code    = $row["measurement_unit_qualifier_code"];
-			$description                        = $row["description"];
-?>
-			<tr class="govuk-table__row">
-				<td class="govuk-table__cell"><?=$quota_definition_sid?></td>
-				<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
-				<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
-				<td class="govuk-table__cell"><?=$initial_volume?></td>
-				<td class="govuk-table__cell c"><?=$measurement_unit_code?>&nbsp;<?=$measurement_unit_qualifier_code?></td>
-				<td class="govuk-table__cell c"><?=$maximum_precision?></td>
-				<td class="govuk-table__cell c"><?=$critical_state?></td>
-				<td class="govuk-table__cell c"><?=$critical_threshold?></td>
-				<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
-				<td class="govuk-table__cell vsmall"><?=$description?></td>
-			</tr>
-<?php
-		}
-?>
-		</table>
-<?php        
-	}
-?>
-
-			<p class="back_to_top"><a href="#top">Back to top</a></p>
-
-
-
-
-
-
-
 
 
 

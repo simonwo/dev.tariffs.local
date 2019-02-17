@@ -1,13 +1,20 @@
 <?php
+require (dirname(__FILE__) . "../../classes/extract.php");
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
 require (dirname(__FILE__) . "../../classes/measure_type.php");
+require (dirname(__FILE__) . "../../classes/measurement_unit.php");
+require (dirname(__FILE__) . "../../classes/measurement_unit_qualifier.php");
 require (dirname(__FILE__) . "../../classes/measure.php");
 require (dirname(__FILE__) . "../../classes/duty.php");
+require (dirname(__FILE__) . "../../classes/siv_component.php");
 require (dirname(__FILE__) . "../../classes/geographical_area.php");
+require (dirname(__FILE__) . "../../classes/quota_definition.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.php");
+require (dirname(__FILE__) . "../../classes/base_regulation.php");
+require (dirname(__FILE__) . "../../classes/regulation_group.php");
 
 if(isset($_COOKIE["showing"])) {
 	$scope = $_COOKIE["showing"];
@@ -19,6 +26,7 @@ if ($scope == "Brexit") {
 } else {
 	$dbase = "tariff_eu";
 }
+$dbase = "tariff_dev";
 $msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
 $pagesize	= 50;
@@ -29,27 +37,48 @@ if ($page == 0) {$page = 1;}
 function string_to_date($var) {
 	if ($var != "") {
 		$var2 = DateTime::createFromFormat('Y-m-d H:i:s', $var)->format('Y-m-d');
-		#$ar = explode(" ", $var2);
-		#$var2 = $ar[0];
 	} else {
 		$var2 = "";
 	}
-	#echo ("<p>" . $var2 . "</p>");
 	return ($var2);
+}
+
+function get_checked($key, $value) {
+	if ($key == $value) {
+		return (" checked");
+	} else {
+		return ("");
+	}
+
 }
 
 function get_cookie($key) {
 	if(isset($_COOKIE[$key])) {
-		return ($_COOKIE[$key]);
+		$s = $_COOKIE[$key];
+		if ($s == "0") {
+			return ("");
+		} else {
+			return ($_COOKIE[$key]);
+		}
 	} else {
 		return ("");
 	}
 }
 
-function get_formvar($key) {
+function get_formvar($key, $prefix = "", $store_cookie = False) {
+	$s = "";
 	if( isset($_REQUEST[$key])){
-		return (trim($_REQUEST[$key]));
+		$s = trim($_REQUEST[$key]);
 	}
+	if ($s == "") {
+		$s = Null;
+	}
+
+	if ($store_cookie) {
+		setcookie($prefix . $key, $s, time() + (86400 * 30), "/");
+	}
+
+	return ($s);
 }
 
 function get_querystring($key) {
@@ -162,6 +191,8 @@ function rowclass($validity_start_date, $validity_end_date) {
 	$rowclass = "";
 	if (($validity_start_date == "2019-03-30") || ($validity_start_date == "2019-03-29")) {
 		$rowclass = "uk";
+	} elseif (($validity_start_date == "2019-01-01") && ($validity_end_date = NULL)) {
+		$rowclass = "starts2019";
 	} elseif ($validity_end_date != "") {
 		$today	= date("Y-m-d");
 		$d_today = strtotime($today);
@@ -187,9 +218,6 @@ function title_case($s) {
 	$s = str_replace(" Or ", " or ", $s);
 	$s = str_replace(" Not ", " not ", $s);
 	return ($s);
-}
-function p($s) {
-	echo ("<p>" . $s . "</p>");
 }
 
 function string_to_filtered_list($s) {
@@ -253,5 +281,76 @@ function get_measure($measure_sid) {
 	$measure->combine_duties();
 	#echo ("Combined duty: " . $measure->combined_duty);
 	return ($measure);
+
+}
+function update_type($i) {
+	switch ($i) {
+		case "1":
+			return ("1 Update");
+			break;
+		case "2":
+			return ("2 Delete");
+			break;
+		case "3":
+			return ("3 Insert");
+			break;
+	}
+}
+
+function xml_item($item, $value) {
+	print ('<tr class="govuk-table__row"><td class="govuk-table__cell">' . $item . '</td><td class="govuk-table__cell b">' . $value . '</td></tr>');
+}
+
+function xml_head($type, $i) {
+    print ("<h3>$type record $i</h3>");
+	print ('<table class="govuk-table" cellspacing="0">');
+	print ('<tr class="govuk-table__row"><th class="govuk-table__header" style="width:15%">Property</th><th class="govuk-table__header" style="width:85%">Value</th></tr>');
+}
+
+function xml_foot() {
+	print ("</table>");
+	print ('<p class="back_to_top"><a href="#top">Back to top</a></p>');
+}
+
+function xml_count($id, $display, $xpath, $xml) {
+	$nodes = $xml->xpath($xpath);
+	$cnt = count($nodes);
+	if ($cnt > 0) {
+    	print ('<li><a href="#' . $id . '">' . $display . ' (' . $cnt . ' instances)</a></li>');
+	}
+}
+function pre($data) {
+	print '<pre>' . print_r($data, true) . '</pre>';
+}
+
+function prex($data) {
+	$data = str_replace('&', '&amp;', $data);
+	$data = str_replace('<', '&lt;', $data);
+	$data = str_replace('>', '&gt;', $data);
+	print '<pre>' . print_r($data, true) . '</pre>';
+}
+
+function to_date($day, $month, $year) {
+	$day = str_pad($day, 2, '0', STR_PAD_LEFT);
+	$month = str_pad($month, 2, '0', STR_PAD_LEFT);
+	$date = $year . "-" . $month . "-" . $day;
+	$d = DateTime::createFromFormat('Y-m-d', $date);
+	#echo ($d);
+	return ($d);
+}
+
+function to_date_string($day, $month, $year) {
+	$day = str_pad($day, 2, '0', STR_PAD_LEFT);
+	$month = str_pad($month, 2, '0', STR_PAD_LEFT);
+	$date = $year . "-" . $month . "-" . $day;
+	return ($date);
+}
+
+function p($s) {
+	echo ("<p>" . $s . "</p>");
+}
+
+function h1($s) {
+	echo ("<h1>" . $s . "</h1>");
 }
 ?>

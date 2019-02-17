@@ -11,4 +11,5 @@ class quota_order_number_origin_exclusion
 		$this->excluded_geographical_area_sid   = $excluded_geographical_area_sid;
 		$this->description				        = $description;
 	}
+
 } 

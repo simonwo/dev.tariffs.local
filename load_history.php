@@ -22,6 +22,7 @@
     <table cellspacing="0" class="govuk-table">
         <tr class="govuk-table__row">
             <th class="govuk-table__header">File</th>
+            <th class="govuk-table__header">Size</th>
         </tr>
 
 <?php
@@ -30,9 +31,22 @@
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
             $import_file = $row['import_file'];
+            $path = "xml/";
+            $file = $path . $import_file;
+            if (file_exists($file)) {
+                try {
+                    $file_size = filesize($file);
+                }
+                catch (customException $e){
+                    $file_size = 0;
+                }
+            } else {
+                $file_size = 0;
+            }
 ?>
         <tr class="govuk-table__row">
-            <td class="govuk-table__cell"><?=$import_file?></td>
+            <td class="govuk-table__cell"><a href="xml_load.php?file=<?=$import_file?>"><?=$import_file?></a></td>
+            <td class="govuk-table__cell"><?=number_format($file_size)?> kb</a></td>
         </tr>
 <?php
         }

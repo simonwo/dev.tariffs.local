@@ -13,12 +13,13 @@ class measure_type
 	public $measure_explosion_level             = "";
 	public $measure_type_series_id              = "";
 	public $description                         = "";
+	public $is_quota							= False;
 	
 	public $measure_types = array ();
 
 	public function set_properties($measure_type_id, $validity_start_date, $validity_end_date, $trade_movement_code,
 	$priority_code, $measure_component_applicable_code, $origin_dest_code, $order_number_capture_code, $measure_explosion_level,
-	$measure_type_series_id, $description) {
+	$measure_type_series_id, $description, $is_quota) {
 		$this->measure_type_id						= $measure_type_id;
 		$this->validity_start_date				    = $validity_start_date;
 		$this->validity_end_date				    = $validity_end_date;
@@ -31,5 +32,6 @@ class measure_type
 		$this->measure_type_series_id				= $measure_type_series_id;
 		$this->description				        	= $description;
 		$this->description_truncated        	    = substr($description, 0, 75);
+		$this->is_quota				        		= $is_quota;
 	}
 } 

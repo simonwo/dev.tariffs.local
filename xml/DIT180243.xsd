@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="urn:publicid:-:DGTAXUD:GENERAL:ENVELOPE:1.0" elementFormDefault="qualified" xmlns="urn:publicid:-:DGTAXUD:GENERAL:ENVELOPE:1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:oub="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0">
+	<xs:import namespace="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" schemaLocation="DIT1802431.xsd"/>
+	<xs:element name="envelope">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="transaction" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="app.message" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="oub:transmission" maxOccurs="unbounded"/>
+									</xs:sequence>
+									<xs:attribute name="id" use="required" type="xs:short"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="id" use="required" type="xs:int"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="id" use="required" type="xs:int"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

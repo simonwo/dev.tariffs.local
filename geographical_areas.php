@@ -3,6 +3,10 @@
     require ("includes/header.php");
     $regulation_group_id    = get_querystring("regulation_group_id");
     $geographical_area_text = get_querystring("geographical_area_text");
+    $geography_scope = get_querystring("geography_scope");
+    if ($geography_scope == "") {
+        $geography_scope = "all";
+    }
 ?>
 
 <!-- Start breadcrumbs //-->
@@ -33,8 +37,7 @@
 
     <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
         <h3>Filter results</h3>
-        <input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
-        <input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
+        <input type="hidden" name="phase" id="phase" value="filter_geography" />
         <div class="column-one-third" style="width:320px">
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
@@ -48,11 +51,25 @@
                     </div>
                 </fieldset>
             </div>
+
         </div>
         
         <div class="column-one-third">
             <div class="govuk-form-group" style="padding:0px;margin:0px">
                 <button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
+            </div>
+        </div>
+        <div class="clearer"><!--&nbsp;//--></div>
+        <div class="govuk-radios govuk-radios--inline">
+            <div class="govuk-radios__item break">
+                <input <?=get_checked($geography_scope, "all")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_all" value="all" />
+                <label class="govuk-label govuk-radios__label" for="geography_scope_all">Show all geographical areas</label>
+            </div>
+        </div><br/>
+        <div class="govuk-radios govuk-radios--inline" style="margin-bottom:1em">
+            <div class="govuk-radios__item break">
+                <input <?=get_checked($geography_scope, "current")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_current" value="current" />
+                <label class="govuk-label govuk-radios__label" for="geography_scope_current">Only show current geographical areas</label>
             </div>
         </div>
         <div class="clearer"><!--&nbsp;//--></div>
@@ -81,10 +98,20 @@
         $page_count = ceil($result_count / $pagesize);
     }
 
+    $where_added = False;
     $sql = "SELECT geographical_area_sid, geographical_area_id, description, geographical_code,
     validity_start_date, validity_end_date FROM ml.ml_geographical_areas ";
     if ($geo_clause != "") {
         $sql .= " WHERE " . $geo_clause;
+        $where_added = True;
+    }
+    if ($geography_scope == "current") {
+        if ($where_added == True) {
+            $sql .= " AND ";
+        } else {
+            $sql .= " WHERE ";
+        }
+        $sql .= " validity_end_date IS NULL ";
     }
     $sql .= " ORDER BY 2";
     $sql .= $limit_clause;

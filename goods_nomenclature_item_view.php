@@ -124,7 +124,7 @@
 					<td class="govuk-table__cell"><a href="<?=$url?>"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id?></a></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix?></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->number_indents + 1?></td>
-					<td class="govuk-table__cell <?=$class?>"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->description?></td>
+					<td class="govuk-table__cell <?=$class?>"><?=str_replace("|", " ", $obj_goods_nomenclature_item->ar_hierarchies[$i]->description)?></td>
 				</tr>
 
 <?php        
@@ -155,7 +155,7 @@
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 		while ($row = pg_fetch_array($result)) {
-			$description                = $row['description'];
+			$description                = str_replace("|", " ", $row['description']);
 			$validity_start_date        = string_to_date($row['validity_start_date']);
 ?>
 				<tr class="govuk-table__row">
@@ -242,12 +242,14 @@
 					<th class="govuk-table__header c">Regulation</th>
 					<th class="govuk-table__header r">Start date</th>
 					<th class="govuk-table__header r">End date</th>
+					<th class="govuk-table__header r">Order number</th>
 					<th class="govuk-table__header r">Duty</th>
 				</tr>
 <?php
 	// Firstly, get all the duties to put in the duty column
 		$sql = "SELECT m.additional_code_type_id, m.additional_code_id, m.measure_type_id,
-		mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code FROM measures m, measure_components mc WHERE m.measure_sid = mc.measure_sid
+		mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
+		FROM measures m, measure_components mc WHERE m.measure_sid = mc.measure_sid
 		AND m.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'";
 		if ($geographical_area_id != "") {
 			$sql .= " AND m.geographical_area_id = '" . $geographical_area_id . "' ";
@@ -285,6 +287,17 @@
 		$sql .= " AND m.geographical_area_id = '" . $geographical_area_id . "' ";
 	}
 	$sql .= "ORDER BY m.measure_sid, component_sequence_number";
+	$result = pg_query($conn, $sql);
+	$siv_component_list = array();
+	if  (($result) && (pg_num_rows($result) > 0)) {
+		while ($row = pg_fetch_array($result)) {
+			$measure_sid    = $row['measure_sid'];
+			$duty_amount	= $row['duty_amount'];
+			$siv_component = new siv_component;
+			$siv_component->set_properties($measure_sid, $duty_amount);
+			array_push($siv_component_list, $siv_component);
+		}
+	}
 
 
 	// Thirdly, get the measures
@@ -318,13 +331,27 @@
 				$measure->set_properties($measure_sid, $goods_nomenclature_item_id, $quota_order_number_id, $validity_start_date,
 				$validity_end_date, $geographical_area_id, $measure_type_id, $additional_code_type_id,
 				$additional_code_id, $regulation_id_full);
+
+				// Assign the relevant duties to the measures
 				if (count($duty_list) > 0) {
 					foreach ($duty_list as $d){
 						if ($d->measure_sid == $measure_sid) {
 							array_push($measure->duty_list, $d);
 						}
 					}
-					$measure->combine_duties();
+				}
+				$measure->combine_duties();
+
+				if ($measure->combined_duty == "") {
+					// Assign the relevant SIV components to the measures
+					if (count($siv_component_list) > 0) {
+						foreach ($siv_component_list as $s){
+							if ($s->measure_sid == $measure_sid) {
+								array_push($measure->siv_component_list, $s);
+							}
+						}
+					}
+					$measure->get_siv_specific();
 				}
 				array_push($measure_list, $measure);
 			}
@@ -340,6 +367,7 @@
 					<td class="govuk-table__cell c"><a href="regulation_view.php?regulation_id=<?=$m->regulation_id_full?>"><?=$m->regulation_id_full?></a></td>
 					<td nowrap class="govuk-table__cell r"><?=$m->validity_start_date?></td>
 					<td nowrap class="govuk-table__cell r"><?=$m->validity_end_date?></td>
+					<td nowrap class="govuk-table__cell r"><?=$m->quota_order_number_id?></td>
 					<td class="govuk-table__cell r"><?=$m->combined_duty?></td>
 				</tr>
 <?php
@@ -361,14 +389,15 @@
 ?>        
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header c">Commodity</th>
 					<th class="govuk-table__header c">Measure SID</th>
+					<th class="govuk-table__header c">Commodity</th>
 					<th class="govuk-table__header c">Measure type ID</th>
 					<th class="govuk-table__header c">Geographical area ID</th>
 					<th class="govuk-table__header c">Additional code</th>
 					<th class="govuk-table__header c">Regulation</th>
 					<th class="govuk-table__header c">Start date</th>
 					<th class="govuk-table__header c">End date</th>
+					<th class="govuk-table__header c">Order number</th>
 					<th class="govuk-table__header c">Duty</th>
 				</tr>
 <?php
@@ -390,6 +419,7 @@
 				$additional_code_type_id    = $row['additional_code_type_id'];
 				$additional_code_id         = $row['additional_code_id'];
 				$regulation_id_full         = $row['measure_generating_regulation_id'];
+				$quota_order_number_id      = $row['ordernumber'];
 				$validity_start_date        = string_to_date($row['validity_start_date']);
 				$validity_end_date          = string_to_date($row['validity_end_date']);
 				$rowclass                   = rowclass($validity_start_date, $validity_end_date);
@@ -397,14 +427,15 @@
 				if ($goods_nomenclature_item_ix != $goods_nomenclature_item_id) {
 ?>
 				<tr class="<?=$rowclass?>">
-					<td class="govuk-table__cell c"><a href="<?=$url?>"><?=$goods_nomenclature_item_ix?></a></td>
 					<td class="govuk-table__cell c"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell c"><a href="<?=$url?>"><?=$goods_nomenclature_item_ix?></a></td>
 					<td class="govuk-table__cell c"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
 					<td class="govuk-table__cell c"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
 					<td class="govuk-table__cell c"><?=$additional_code_type_id?><?=$additional_code_id?></td>
 					<td class="govuk-table__cell c"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 					<td class="govuk-table__cell c"><?=$validity_start_date?></td>
 					<td class="govuk-table__cell c"><?=$validity_end_date?></td>
+					<td class="govuk-table__cell c"><?=$quota_order_number_id?></td>
 					<td class="govuk-table__cell c">Duty</td>
 				</tr>
 <?php

@@ -6,6 +6,7 @@ class measure
 		$this->assigned                 = False;
 		$this->combined_duty          	= "";
 		$this->duty_list              	= array();
+		$this->siv_component_list       = array();
 		$this->suppress					= False;
 		$this->marked					= False;
 		$this->significant_children   	= False;
@@ -26,6 +27,14 @@ class measure
 		$this->additional_code_type_id  = $additional_code_type_id;
 		$this->additional_code_id		= $additional_code_id;
 		$this->regulation_id_full		= $regulation_id_full;
+    }
+
+    public function get_siv_specific(){
+        $s = 0;
+        if (count($this->siv_component_list) > 0) {
+            $s = floatval($this->siv_component_list[0]->duty_amount);
+        }
+        $this->combined_duty = "<span class='entry_price'>Entry Price</span> " . number_format($s, 2) . "%";
     }
 
 	public function combine_duties(){
@@ -90,7 +99,7 @@ class measure
 
 		if (($ad) || ($sd) || ($fd)) {
 			$this->combined_duty = "CAD - " . $this->combined_duty . ") 100%";
-			$this->combined_duty = $this->combined_duty.replace(" + ", " + (", 1);
+            $this->combined_duty = preg_replace("/ \+ /", " + (", $this->combined_duty, 1);
         }
     }
 }

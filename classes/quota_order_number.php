@@ -3,6 +3,7 @@ class quota_order_number
 {
 	// Class properties and methods go here
 	public $quota_order_number_id           = "";
+	public $quota_order_number_sid          = 0;
 	public $validity_start_date             = "";
 	public $validity_end_date               = "";
 	public $origins = array ();
@@ -13,6 +14,64 @@ class quota_order_number
 		$this->quota_order_number_id    = $quota_order_number_id;
 		$this->validity_start_date		= $validity_start_date;
 		$this->validity_end_date		= $validity_end_date;
+	}
+
+    function insert($quota_order_number_id, $validity_start_date) {
+        global $conn;
+        $application = new application;
+        $operation = "C";
+        $quota_order_number_sid  = $application->get_next_quota_order_number();
+        $operation_date = $application->get_operation_date();
+
+        $this->quota_order_number_id = $quota_order_number_id;
+        $this->validity_start_date = $validity_start_date;
+
+        $errors = $this->conflict_check();
+        #h1 (count($errors));
+        #exit();
+        if (count($errors) > 0) {
+			/*
+			foreach ($errors as $error) {
+                h1 ($error);
+            }
+            exit();*/
+            return ($errors);
+        } else {
+            $sql = "INSERT INTO quota_order_numbers_oplog
+            (quota_order_number_sid, quota_order_number_id, validity_start_date, operation, operation_date)
+            VALUES ($1, $2, $3, $4, $5)";
+            pg_prepare($conn, "quota_order_number_insert", $sql);
+            pg_execute($conn, "quota_order_number_insert", array($quota_order_number_sid, $quota_order_number_id, $validity_start_date, $operation, $operation_date));
+			return (True);
+        }
+    }
+
+    function conflict_check() {
+        global $conn;
+        $errors = array();
+        # First, check for items that exist already and have not been end-dated
+        $sql = "SELECT * FROM quota_order_numbers WHERE quota_order_number_id = $1 AND validity_end_date IS NOT NULL";
+        pg_prepare($conn, "quota_order_number_conflict_check", $sql);
+        $result = pg_execute($conn, "quota_order_number_conflict_check", array($this->quota_order_number_id));      
+        if ($result) {
+            if (pg_num_rows($result) > 0){
+                array_push($errors, "Error scenario 1");
+            }
+        }
+        return ($errors);
+    }
+
+
+	public function get_quota_order_number_sid() {
+		global $conn;
+		$sql = "SELECT quota_order_number_sid FROM quota_order_numbers
+		WHERE quota_order_number_id = '" . $this->quota_order_number_id . "' ORDER BY validity_start_date DESC LIMIT 1";
+		$result = pg_query($conn, $sql);
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->quota_order_number_sid = $row['quota_order_number_sid'];
+			}
+		}
 	}
 
 	public function get_origins() {

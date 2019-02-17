@@ -111,6 +111,15 @@ class duty
             case "27":
     			$this->duty_string .= " + FD";
                 break;
+            case "25":
+    			$this->duty_string .= " + SD (reduced)";
+                break;
+            case "29":
+    			$this->duty_string .= " + FD (reduced)";
+                break;
+            case "14":
+    			$this->duty_string .= " + AC (reduced)";
+                break;
         }
     }
 

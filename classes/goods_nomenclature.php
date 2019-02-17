@@ -36,6 +36,7 @@ class goods_nomenclature
 				array_push($ar_goods_nomenclatures, $gn);
 			}
 			$record_count = sizeof($ar_goods_nomenclatures);
+			$my_indent = 999;
 			for($i = 0; $i < $record_count; $i++) {
 				if (($ar_goods_nomenclatures[$i]->goods_nomenclature_item_id == $this->goods_nomenclature_item_id) &&
 				($ar_goods_nomenclatures[$i]->productline_suffix == $this->productline_suffix)) {
@@ -43,6 +44,10 @@ class goods_nomenclature
 					$my_indent	= $ar_goods_nomenclatures[$i]->number_indents;
 					break;
 				}
+			}
+			if ($my_indent == 999) {
+				print ("Error, commodity not found<br />");
+				return;
 			}
 			// Kludge to deal with the chapter level records, which have a "0" indent, the same as their children
 			if ($my_indent == 0) {
@@ -77,6 +82,7 @@ class goods_nomenclature
 				if ($t->number_indents <= $my_indent) {
 					break;
 				} else {
+					#echo ($t->goods_nomenclature_item_id . "|" . $t->productline_suffix . "<br />");
 					array_push($ar_hierarchies, $t);
 				}
 			}

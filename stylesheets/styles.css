@@ -48,8 +48,11 @@ h2.small {
 .uk {
     background-color:#f0f0ff;
 }
+.starts2019 {
+    background-color:#f0f0f0;
+}
 .dead {
-    background-color:#eee;
+    background-color:#ddd;
 }
 .paging {
     font-family: "nta",Arial,sans-serif !important;
@@ -58,7 +61,7 @@ h2.small {
     padding:4px 0x 0px 0px !important;
     margin-right:5px;
     margin-top:1em;
-    width:1.5em;
+    width:2em;
     text-align:center;
     display:block !important;
     float:left;
@@ -71,6 +74,9 @@ h2.small {
 }
 .paging a {
     text-decoration: none;
+    font-size:11pt !important;
+    display:block;
+    padding-top:2px;
 }
 .explanatory {
     font-size:0.8em !important;
@@ -196,5 +202,21 @@ p, h3 {
     width: 100% !important;   
 }
 .govuk-hint, .govuk-input {
+    font-size:12pt !important;
+}
+.entry_price {
+    font-variant: small-caps;
+    font-size:10pt;
+}
+.btn_nomargin {
+    margin:0px 0px 5px 0px !important;
+    font-size:10pt !important;
+    width:80px !important;
+    padding: 4px 0px 0px 2px !important;
+}
+textarea.govuk-textarea, select.govuk-select {
+    font-size:12pt !important;
+}
+.govuk-label, .govuk-radios__label {
     font-size:12pt !important;
 }
