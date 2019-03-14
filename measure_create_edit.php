@@ -1,6 +1,9 @@
 <?php
 	require ("includes/db.php");
 	$application = new application;
+	$application->get_duty_expressions();
+	$application->get_measurement_units();
+	$application->get_measurement_unit_qualifiers();
 	$application->get_measure_types();
 	$application->get_geographical_areas();
 	$application->get_geographical_members("1011");
@@ -14,23 +17,12 @@
 
 <form class="tariff" method="post" action="/actions/measure_actions.html">
 <input type="hidden" name="phase" value="1" />
+
 <!-- Start error handler //-->
-<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
-  <h2 class="govuk-error-summary__title" id="error-summary-title">
-    There is a problem
-  </h2>
-  <div class="govuk-error-summary__body">
-    <ul class="govuk-list govuk-error-summary__list">
-      <li>
-        <a href="#passport-issued-error">The date your passport was issued must be in the past</a>
-      </li>
-      <li>
-        <a href="#postcode-error">Enter a postcode, like AA1 1AA</a>
-      </li>
-    </ul>
-  </div>
-</div>
+<?=$error_handler->get_primary_error_block() ?>
 <!-- End error handler //-->
+
+
 <!-- Begin base regulation fields //-->
 <div class="govuk-form-group <?=$error_handler->get_error("base_regulation");?>">
 	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
@@ -39,8 +31,8 @@
 		</legend>
 		<span id="base_regulation_hint" class="govuk-hint">Start typing in the field to see available regulations. If the regulation is not in the list, you can <a href="regulation_create.html">add a regulation</a> from here. If you're not sure of the regulation name or ID, you can <a href="">search here</a>.</span>
 		<span id="base_regulation-error" class="govuk-error-message">
-      		Please enter a valid regulation identifier.
-    	</span>
+	  		Please enter a valid regulation identifier.
+		</span>
 		<div class="govuk-date-input" id="measure_start">
 			<div class="govuk-date-input__item">
 				<div class="govuk-form-group">
@@ -60,8 +52,8 @@
 		</legend>
 		<span id="measure_start_hint" class="govuk-hint">This is the start of the measures' validity period. This will be delayed for any measures that are not approved in time, or if the generating regulation has not come into force by the date specified here.</span>
 		<span id="base_regulation-error" class="govuk-error-message">
-      		Please enter a valid start date
-    	</span>
+	  		Please enter a valid start date
+		</span>
 		<div class="govuk-date-input" id="measure_start">
 			<div class="govuk-date-input__item">
 				<div class="govuk-form-group">
@@ -94,8 +86,8 @@
 		</legend>
 		<span id="measure_end_hint" class="govuk-hint">This is the end of the measures' validity period. By default, this will inherit from the generating regulation and may be open-ended.</span>
 		<span id="base_regulation-error" class="govuk-error-message">
-      		Please enter a valid end date
-    	</span>
+	  		Please enter a valid end date
+		</span>
 		<div class="govuk-date-input" id="measure_end">
 			<div class="govuk-date-input__item">
 				<div class="govuk-form-group">
@@ -126,8 +118,8 @@
 				<h1 class="govuk-fieldset__heading" style="max-width:100%;"><label for="measure_type">What type of measures do you want to create?</label></h1>
 			</legend>
 			<span id="measure_type-error" class="govuk-error-message">
-    	  		Please enter a valid measure type
-	    	</span>
+		  		Please enter a valid measure type
+			</span>
 			<select class="govuk-select" id="measure_type" name="measure_type">
 				<option value="0">- Select measure type - </option>
 <?php
@@ -140,15 +132,17 @@
 <!-- End measure type field //-->
 
 <!-- Begin workbasket field //-->
+<!--
 		<div class="govuk-form-group <?=$error_handler->get_error("workbasket");?>">
 			<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 				<h1 class="govuk-fieldset__heading" style="max-width:100%;"><label for="workbasket">What is the name of this workbasket?</label></h1>
 			</legend>
 			<span id="base_regulation-error" class="govuk-error-message">
-      			Please enter a valid workbasket name
-    		</span>
+	  			Please enter a valid workbasket name
+			</span>
 			<input class="govuk-input" id="workbasket" name="workbasket" type="text">
 		</div>
+//-->
 <!-- End workbasket field //-->
 
 <!-- Begin commodity field //-->
@@ -160,8 +154,8 @@
 If you don't know which code you need, you can find it via the  Trade Tariff tool.
 You may optionally leave this field blank if you will be providing a Meursing code in the additional code field below.</span>
 			<span id="base_regulation-error" class="govuk-error-message">
-      			Please enter valid 10-digit commodity codes only
-    		</span>
+	  			Please enter valid 10-digit commodity codes only
+			</span>
 			<textarea class="govuk-textarea" id="goods_nomenclatures" name="goods_nomenclatures" rows="5"></textarea>
 		</div>			
 <!-- End commodity field //-->
@@ -171,89 +165,128 @@ You may optionally leave this field blank if you will be providing a Meursing co
 			<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 				<h1 class="govuk-fieldset__heading" style="max-width:100%;"><label for="additional_codes">What additional code(s) will the measures apply to?</label></h1>
 			</legend>
-			<span id="more-detail-hint" class="govuk-hint">You can optionally specify one or more additional codes. If you do not provide a commodity code above, then you must provide at least one Meursing code here. Separate individual codes with comma.Separate measures will be created for every combination of commodity code and additional code.</span>
+			<span id="more-detail-hint" class="govuk-hint">You can optionally specify one or more additional codes. If you do not provide a commodity code above, then you must provide at least one Meursing code here.
+			Separate individual codes with comma. Separate measures will be created for every combination of commodity code and additional code.</span>
 			<span id="additional-code-error" class="govuk-error-message">
-      			Please enter valid 4-digit additional codes only
-    		</span>
+	  			Please enter valid 4-digit additional codes only
+			</span>
 			<textarea class="govuk-textarea" id="additional_codes" name="additional_codes" rows="5"></textarea>
 		</div>
 <!-- End additional code field //-->
 
-<!-- Begin origins field //-->
-		<div class="govuk-form-group" <?=$error_handler->get_error("origins");?>>
-			<fieldset class="govuk-fieldset">
-				<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-					<h1 class="govuk-fieldset__heading" style="max-width:100%">Which origins will the measure(s) apply to?</h1>
-				</legend>
-				<span id="changed-name-hint" class="govuk-hint">You can specify a single country or territory, or a pre-defined group of countries, or select
-'Erga Omnes' to apply the quota to all origins. If the group you need is not in the list, you can add it from here.</span>
-				<div class="clearer"><!--&nbsp;//--></div>
-<!-- Begin Erga Omnes block //-->
-				<div class="govuk-radios govuk-radios--inline">
-					<div class="govuk-radios__item break">
-						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_all" value="1011" />
-						<label class="govuk-label govuk-radios__label" for="geographical_area_id_all">Erga Omnes</label>
-					</div>
-					<div class="hidden govuk-inset-text indented" style="clear:both" id="geographical_area_id_erga_omnes_content">
-						<div class="govuk-form-group">
-							<label for="measure_type">Select an exclusion</label><br />
-							<select class="govuk-select" id="measure_type" name="sort">
-								<option value="0">- Select a group of countries - </option>
+<!-- Begin geographical area field new //-->
+<div class="govuk-form-group <?=$error_handler->get_error("geographical_area_id");?>">
+	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+			<h1 class="govuk-fieldset__heading" style="max-width:100%;">What geography does the measure apply to?</h1>
+		</legend>
+		<span class="govuk-hint">Just type in the geographical area ID</span>
+		<span id="base_regulation-error" class="govuk-error-message">
+	  		Please enter a valid regulation identifier.
+		</span>
+		<div class="govuk-date-input">
+			<div class="govuk-date-input__item">
+				<div class="govuk-form-group">
+					<input value="<?=$error_handler->get_value_on_error("geographical_area_id")?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="geographical_area_id" maxlength="8" name="geographical_area_id" type="text">
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- End geographical area field //-->
+
+<!-- Begin geographical area exclusion field new //-->
+<div class="govuk-form-group <?=$error_handler->get_error("geographical_area_id");?>">
+	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+			<h1 class="govuk-fieldset__heading" style="max-width:100%;">What geographies should be excluded?</h1>
+		</legend>
+		<span class="govuk-hint">Just type in the geographical area IDs, delimited by commas if there are multiple</span>
+		<span id="base_regulation-error" class="govuk-error-message">
+	  		Please enter a valid geographical area IDs.
+		</span>
+		<div class="govuk-date-input">
+			<div class="govuk-date-input__item">
+				<div class="govuk-form-group">
+					<input value="<?=$error_handler->get_value_on_error("excluded_geographical_area_id")?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="excluded_geographical_area_id" maxlength="8" name="excluded_geographical_area_id" type="text">
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</div>
+<!-- End geographical area field //-->
+
+<!-- Begin measure component fields //-->
+<div class="govuk-form-group <?=$error_handler->get_error("geographical_area_id");?>">
+	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+			<h1 class="govuk-fieldset__heading" style="max-width:100%;">Select measure components</h1>
+		</legend>
+		<div class="float_left">
+			<span class="govuk-hint">Component 1 - duty expression</span>
+			<span id="base_regulation-error" class="govuk-error-message">
+				Please enter a valid geographical area IDs.
+			</span>
+			<select class="govuk-select" id="measure_type" name="measure_type">
+				<option value="0">- Select duty expression - </option>
 <?php
-	foreach ($application->members as $obj) {
-		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>\n");
+	foreach ($application->duty_expressions as $obj) {
+		echo ("<option value='" . $obj->duty_expression_id . "'>" . $obj->duty_expression_id . " - " . $obj->description . "</option>");
 	}
 ?>
-							</select>
-						</div>
-					</div>
-<!-- End Erga Omnes block //-->
+			</select>
+		</div>
 
-					<div class="govuk-radios__item break">
-						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_group" value="0" />
-						<label class="govuk-label govuk-radios__label" for="geographical_area_id_group">Select a group of countries</label>
-					</div>
-					<div class="hidden govuk-inset-text indented" style="clear:both" id="geographical_area_id_group_content">
-						<div class="govuk-form-group">
-							<label for="measure_type">Select a group of countries</label><br />
-							<select class="govuk-select" id="measure_type" name="sort">
-								<option value="0">- Select a group of countries - </option>
-<?php
-	foreach ($application->geographical_areas as $obj) {
-		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>\n");
-	}
-?>
-							</select>
-						</div>
-
-						<div class="govuk-form-group">
-							<label for="measure_type">If you want to exclude countries, enter them here:</label><br />
-							<select class="govuk-select" id="measure_type" name="sort">
-								<option value="0">- Select an exclusion - </option>
-							</select>
-						</div>
-					</div>
-					<div class="govuk-radios__item break">
-						<input type="radio" class="govuk-radios__input" name="geographical_area_id" id="geographical_area_id_country" value="0" />
-						<label class="govuk-label govuk-radios__label" for="geographical_area_id_country">Select a country or territory</label>
-					</div>
-					<div class="hidden govuk-inset-text indented" style="clear:both" id="geographical_area_id_country_content">
+		<div class="float_left">
+			<span class="govuk-hint">Duty amount</span>
+			<span id="base_regulation-error" class="govuk-error-message">
+				Please enter a valid geographical area IDs.
+			</span>
+			<div class="govuk-date-input">
+				<div class="govuk-date-input__item">
 					<div class="govuk-form-group">
-							<label for="measure_type">Select a country or territory</label><br />
-							<select class="govuk-select" id="measure_type" name="sort">
-								<option value="0">- Select a country or territory - </option>
-<?php
-	foreach ($application->countries_and_regions as $obj) {
-		echo ("<option value='" . $obj->geographical_area_id . "'>" . $obj->geographical_area_id . " (" . $obj->description . ")</option>");
-	}
-?>
-							</select>
-						</div>					
+						<input value="<?=$error_handler->get_value_on_error("duty_amount")?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="duty_amount_1" maxlength="8" name="duty_amount_1" type="text">
 					</div>
 				</div>
-			</fieldset>
+			</div>
 		</div>
-<!-- End origins field //-->
+
+		<div class="float_left">
+			<span class="govuk-hint">Measurement unit</span>
+			<span id="base_regulation-error" class="govuk-error-message">
+				Please enter a valid unit.
+			</span>
+			<select class="govuk-select" id="measure_type" name="measure_type">
+				<option value="0">- Select unit - </option>
+<?php
+	foreach ($application->measurement_units as $obj) {
+		echo ("<option value='" . $obj->measurement_unit_code . "'>" . $obj->measurement_unit_code . " - " . $obj->description . "</option>");
+	}
+?>
+			</select>
+		</div>
+
+		<div class="float_left">
+			<span class="govuk-hint">Qualifier</span>
+			<span id="base_regulation-error" class="govuk-error-message">
+				Please enter a valid qualifier.
+			</span>
+			<select class="govuk-select" id="measure_type" name="measure_type">
+				<option value="0">- Select qualifier - </option>
+				<?php
+	foreach ($application->measurement_unit_qualifiers as $obj) {
+		echo ("<option value='" . $obj->measurement_unit_qualifier_code . "'>" . $obj->measurement_unit_qualifier_code . " - " . $obj->description . "</option>");
+	}
+?>
+			</select>
+		</div>
+
+
+	</fieldset>
+</div>
+<!-- End measure component fields //-->
+
+
 		<button type="submit" class="govuk-button">Continue</button>
 		<button type="submit" class="govuk-button">Save progress</button>
 	</form>

@@ -4,6 +4,7 @@ date_default_timezone_set("Europe/London");
 require (dirname(__FILE__) . "../../classes/extract.php");
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
+require (dirname(__FILE__) . "../../classes/duty_expression.php");
 require (dirname(__FILE__) . "../../classes/measure_type_series.php");
 require (dirname(__FILE__) . "../../classes/monetary_exchange_rate.php");
 require (dirname(__FILE__) . "../../classes/measure_type.php");

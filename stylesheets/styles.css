@@ -1,97 +1,97 @@
 ul.main-menu {
-    margin-left:0px;
-    list-style-image: none;
-    list-style: none;
-    padding:0px;
-    margin:0px;
+	margin-left:0px;
+	list-style-image: none;
+	list-style: none;
+	padding:0px;
+	margin:0px;
 }
 ul.main-menu li {
-    margin-bottom:0.25em;
-    font-size:12pt;
+	margin-bottom:0.25em;
+	font-size:12pt;
 }
 h2 {
-    font-size:1.6em;
-    font-weight:bold;
-    clear: both;
-    margin-top:2em;
-    margin-bottom:0.5em;
-    width:100% !important;
-    max-width:100% !important;
+	font-size:1.6em;
+	font-weight:bold;
+	clear: both;
+	margin-top:2em;
+	margin-bottom:0.5em;
+	width:100% !important;
+	max-width:100% !important;
 }
 h2.small {
-    font-size:1.2em;
-    padding-bottom:0px;
-    margin-bottom: 0.5em;
+	font-size:1.2em;
+	padding-bottom:0px;
+	margin-bottom: 0.5em;
 }
 .nomargin{
-    margin-top:0px !important;
+	margin-top:0px !important;
 }
 .c {
-    text-align:center !important;
+	text-align:center !important;
 }
 .r {
-    text-align:right !important;
+	text-align:right !important;
 }
 .b {
-    font-weight:bold !important;
+	font-weight:bold !important;
 }
 .column-one-third {
-    float:left;
-    width:33%;
+	float:left;
+	width:33%;
 }
 .clearer {
-    clear:both;
-    float:none;
-    height:1px;
-    line-height: 1px;
+	clear:both;
+	float:none;
+	height:1px;
+	line-height: 1px;
 }
 .uk {
-    background-color:#f0f0ff;
+	background-color:#f0f0ff;
 }
 .starts2019 {
-    background-color:#f0f0f0;
+	background-color:#f0f0f0;
 }
 .dead {
-    background-color:#ddd;
+	background-color:#ddd;
 }
 .paging {
-    font-family: "nta",Arial,sans-serif !important;
-    -webkit-font-smoothing: antialiased;
-    border:1px black solid;
-    padding:4px 0x 0px 0px !important;
-    margin-right:5px;
-    margin-top:1em;
-    width:2em;
-    text-align:center;
-    display:block !important;
-    float:left;
+	font-family: "nta",Arial,sans-serif !important;
+	-webkit-font-smoothing: antialiased;
+	border:1px black solid;
+	padding:4px 0x 0px 0px !important;
+	margin-right:5px;
+	margin-top:1em;
+	width:2em;
+	text-align:center;
+	display:block !important;
+	float:left;
 }
 .selected {
-    background-color: #f0f0ff;
+	background-color: #f0f0ff;
 }
 .selected a {
-    font-weight:bold !important;
+	font-weight:bold !important;
 }
 .paging a {
-    text-decoration: none;
-    font-size:11pt !important;
-    display:block;
-    padding-top:2px;
+	text-decoration: none;
+	font-size:11pt !important;
+	display:block;
+	padding-top:2px;
 }
 .explanatory {
-    font-size:0.8em !important;
-    line-height: 1em !important;
-    display: block;
-    color: green;
+	font-size:0.8em !important;
+	line-height: 1em !important;
+	display: block;
+	color: green;
 }
 .explanatory-inline {
-    color: green !important;
+	color: green !important;
 }
 .back_to_top {
-    font-family: "nta",Arial,sans-serif !important;
-    -webkit-font-smoothing: antialiased;
-    margin-top:0.5em;
-    display:block;
+	font-family: "nta",Arial,sans-serif !important;
+	-webkit-font-smoothing: antialiased;
+	margin-top:0.5em;
+	display:block;
 }
 .indent0 {padding-left:0px;font-weight:bold;}
 .indent1 {padding-left:1.5em !important;}
@@ -108,145 +108,149 @@ h2.small {
 .indent12 {padding-left:18em !important;}
 
 p.b, h2 {
-    font-family: "nta",Arial,sans-serif !important;
-    -webkit-font-smoothing: antialiased;
+	font-family: "nta",Arial,sans-serif !important;
+	-webkit-font-smoothing: antialiased;
 }
 ul.tariff_menu {
-    display:block;
-    padding-left:1em !important;
-    margin-bottom:1em;
-    font-family: "nta",Arial,sans-serif !important;
-    -webkit-font-smoothing: antialiased;
+	display:block;
+	padding-left:1em !important;
+	margin-bottom:1em;
+	font-family: "nta",Arial,sans-serif !important;
+	-webkit-font-smoothing: antialiased;
 }
 ul.tariff_menu li {
-    font-family: "nta",Arial,sans-serif !important;
-    -webkit-font-smoothing: antialiased;
+	font-family: "nta",Arial,sans-serif !important;
+	-webkit-font-smoothing: antialiased;
 }
 .options {
-    text-align: right;
-    float:right;
-    width:250px;
-    margin-top:6px;
-    margin-right:1em !important;
-    color:#fff;
+	text-align: right;
+	float:right;
+	width:250px;
+	margin-top:6px;
+	margin-right:1em !important;
+	color:#fff;
 }
 .options a {
-    color:#ffff00
+	color:#ffff00
 }
 main .gem-c-title {
-    margin-top:1.5em !important;
-    margin-bottom:2em !important;
+	margin-top:1.5em !important;
+	margin-bottom:2em !important;
 }
 .exclusions {
-    font-size:small;
+	font-size:small;
 }
 .vsmall {
-    font-size:9pt;   
+	font-size:9pt;   
 }
 .break {
-    clear:both !important;
+	clear:both !important;
 }
 .radio_text {
-    float:left;
-    margin-top:9px;
+	float:left;
+	margin-top:9px;
 }
 @media (min-width: 40.0625em) .app-pane__body .app-pane__content main#main-content {padding:0px !important}
 .options {
-    font-family: "nta",Arial,sans-serif;
-    font-size:10pt;
+	font-family: "nta",Arial,sans-serif;
+	font-size:10pt;
 }
 .govuk-table__cell {
-    vertical-align: top !important;
-    font-size:11pt !important;
-    padding-left: 8px;
-    padding-right: 8px !important;
-    padding-top: 6px !important;
-    padding-bottom: 4px !important;
+	vertical-align: top !important;
+	font-size:11pt !important;
+	padding-left: 8px;
+	padding-right: 8px !important;
+	padding-top: 6px !important;
+	padding-bottom: 4px !important;
 }
 .govuk-table__header {
-    vertical-align: bottom !important;
-    font-size:11pt !important;
-    padding-left: 8px ;
-    padding-right: 8px !important;
+	vertical-align: bottom !important;
+	font-size:11pt !important;
+	padding-left: 8px ;
+	padding-right: 8px !important;
 }
 .hidden {
-    display: none;
+	display: none;
 }
 .indented {
-    margin-left:56px;
+	margin-left:56px;
 }
 .govuk-form-group .govuk-error-message {
-    display:none !important;
+	display:none !important;
 }
 .govuk-form-group--error .govuk-error-message {
-    display:block !important;
+	display:block !important;
 }
 p, h3 {
-    font-family: "nta",Arial,sans-serif !important;
-    max-width:100% !important;
+	font-family: "nta",Arial,sans-serif !important;
+	max-width:100% !important;
 }
 .inline_form {
-    padding:0em 1em 0px 1em;
-    background-color:#f0f0f0;
-    border:1px solid #ccc;
-    margin-bottom:1em;
+	padding:0em 1em 0px 1em;
+	background-color:#f0f0f0;
+	border:1px solid #ccc;
+	margin-bottom:1em;
 }
 .govuk-heading-xl {
-    max-width: 100% !important;
-    width: 100% !important;
+	max-width: 100% !important;
+	width: 100% !important;
 }
 .app-content__header {
-    padding-bottom: 0px !important;
-    margin-bottom: 0px !important;
+	padding-bottom: 0px !important;
+	margin-bottom: 0px !important;
 }
 .govuk-breadcrumbs, .govuk-breadcrumbs__list {
-    max-width: 100% !important;
-    width: 100% !important;   
+	max-width: 100% !important;
+	width: 100% !important;   
 }
 .govuk-hint, .govuk-input {
-    font-size:12pt !important;
+	font-size:12pt !important;
 }
 .entry_price {
-    font-variant: small-caps;
-    font-size:10pt;
+	font-variant: small-caps;
+	font-size:10pt;
 }
 .btn_nomargin {
-    margin:0px 0px 5px 0px !important;
-    font-size:10pt !important;
-    width:80px !important;
-    padding: 4px 0px 0px 2px !important;
+	margin:0px 0px 5px 0px !important;
+	font-size:10pt !important;
+	width:80px !important;
+	padding: 4px 0px 0px 2px !important;
 }
 textarea.govuk-textarea, select.govuk-select {
-    font-size:12pt !important;
+	font-size:12pt !important;
 }
 .govuk-label, .govuk-radios__label {
-    font-size:12pt !important;
+	font-size:12pt !important;
 }
 .tight {
-    margin:0px !important;
+	margin:0px !important;
 }
 .filler {
-    color:#AAA !important;
+	color:#AAA !important;
 }
 .greyed_out {
-    color:#666 !important;
-    font-style: italic;
+	color:#666 !important;
+	font-style: italic;
 }
 td.tight p {
-    margin:0px !important
+	margin:0px !important
 }
 .rpad {
-    margin-right:4px !important;
-    xpadding:2px;
-    xdisplay:block;
+	margin-right:4px !important;
+	xpadding:2px;
+	xdisplay:block;
 }
 .xmauve {
-    background-color:mediumpurple
+	background-color:mediumpurple
 }
 
 a.nodecorate {
-    font-family:"Noto Sans", "Courier New", fixed, system;
-    font-size:12pt;
-    text-decoration: none !important;
-    color:#009;
+	font-family:"Noto Sans", "Courier New", fixed, system;
+	font-size:12pt;
+	text-decoration: none !important;
+	color:#009;
+}
+.float_left {
+	float:left;
+	margin-right:0.5em;
 }

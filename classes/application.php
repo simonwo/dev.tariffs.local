@@ -27,6 +27,28 @@ class application
 	public $min_monetary_exchange_periods = 10000;
 
 
+	public function get_duty_expressions() {
+		global $conn;
+		$sql = "SELECT de.duty_expression_id, description FROM duty_expressions de, duty_expression_descriptions ded
+		WHERE de.duty_expression_id = ded.duty_expression_id
+		AND validity_end_date IS NULL AND de.duty_expression_id NOT IN ('37')
+		ORDER BY 1;";
+
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$duty_expression_id  = $row['duty_expression_id'];
+				$description            = $row['description'];
+				
+				$duty_expression = new duty_expression;
+				$duty_expression->set_properties($duty_expression_id, $description);
+				array_push($temp, $duty_expression);
+			}
+			$this->duty_expressions = $temp;
+		}
+	}
+
 	public function get_regulation_groups() {
 		global $conn;
 		$sql = "SELECT rg.regulation_group_id, description FROM regulation_groups rg, regulation_group_descriptions rgd

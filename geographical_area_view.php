@@ -204,9 +204,9 @@
             <p>There are <strong><?=pg_num_rows($result)?></strong> matching quotas.</p>
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
-                    <th class="govuk-table__header" style="width:15%">Order number</th>
+                    <th class="govuk-table__header" style="width:10%">Order number</th>
                     <th class="govuk-table__header" style="width:75%">Type</th>
-                    <th class="govuk-table__header r" style="width:10%">Count</th>
+                    <th class="govuk-table__header c" style="width:15%">Measure count</th>
                 </tr>
 
 <?php
@@ -220,7 +220,7 @@
                 <tr class="govuk-table__row <?=$rowclass?>">
                     <td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
                     <td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
-                    <td class="govuk-table__cell r"><?=$count?></td>
+                    <td class="govuk-table__cell c"><?=$count?></td>
                 </tr>
 
 <?php
