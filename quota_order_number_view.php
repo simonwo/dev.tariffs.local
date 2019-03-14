@@ -17,7 +17,7 @@
 			<a class="govuk-breadcrumbs__link" href="/">Home</a>
 		</li>
 		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a>
+			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a>
 		</li>
 		<li class="govuk-breadcrumbs__list-item">Quota <?=$quota_order_number_id?></li>
 	</ol>
@@ -54,8 +54,8 @@
 		while ($row = pg_fetch_array($result)) {
 			$quota_order_number_sid = $row["quota_order_number_sid"];
 			$quota_order_number_id  = $row["quota_order_number_id"];
-			$validity_start_date    = string_to_date($row["validity_start_date"]);
-			$validity_end_date      = string_to_date($row["validity_end_date"]);
+			$validity_start_date    = short_date($row["validity_start_date"]);
+			$validity_end_date      = short_date($row["validity_end_date"]);
 ?>
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell"><?=$quota_order_number_sid?></td>
@@ -74,7 +74,7 @@
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 			
 		<h2 id="definitions">Quota definitions</h2>
-		<form action="/quota_definition_create_edit.php" method="get" class="inline_form">
+		<form action="/quota_definition_create_edit.html" method="get" class="inline_form">
 		<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 		<input type="hidden" name="action" value="new" />
 		<h3>New definition</h3>
@@ -113,8 +113,8 @@
 		while ($row = pg_fetch_array($result)) {
 			$quota_definition_sid 				= $row["quota_definition_sid"];
 			$quota_order_number_id  			= $row["quota_order_number_id"];
-			$validity_start_date                = string_to_date($row["validity_start_date"]);
-			$validity_end_date                  = string_to_date($row["validity_end_date"]);
+			$validity_start_date                = short_date($row["validity_start_date"]);
+			$validity_end_date                  = short_date($row["validity_end_date"]);
 			$initial_volume                     = number_format($row["initial_volume"], 2);
 			$measurement_unit_code              = $row["measurement_unit_code"];
 			$maximum_precision                  = $row["maximum_precision"];
@@ -136,19 +136,19 @@
 				<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
 				<td class="govuk-table__cell vsmall"><?=$description?></td>
 				<td class="govuk-table__cell">
-					<form action="quota_definition_create_edit.php" method="get">
+					<form action="quota_definition_create_edit.html" method="get">
 						<input type="hidden" name="action" value="edit" />
 						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
 						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 						<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
 					</form>
-					<form action="quota_definition_create_edit.php" method="get">
+					<form action="quota_definition_create_edit.html" method="get">
 						<input type="hidden" name="action" value="duplicate" />
 						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
 						<button type="submit" class="govuk-button btn_nomargin")>Duplicate</button>
 					</form>
-					<form action="actions/quota_definition_actions.php" method="get">
+					<form action="actions/quota_definition_actions.html" method="get">
 						<input type="hidden" name="action" value="delete" />
 						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
@@ -173,7 +173,7 @@
 
 
 			<h2 id="origins">Quota origins</h2>
-			<form action="/quota_order_number_add_origin.php" method="get" class="inline_form">
+			<form action="/quota_order_number_add_origin.html" method="get" class="inline_form">
 			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 			<input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number_sid?>" />
 		<input type="hidden" name="action" value="new" />
@@ -207,7 +207,7 @@
 	?>
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell"><?=$origin_sid?></td>
-				<td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
+				<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
 				<td class="govuk-table__cell"><?=$exclusion_text?></td>
 			</tr>
 <?php
@@ -221,6 +221,39 @@
 		
 
 
+		<h2 id="commodities">Commodities associated with this quota</h2>
+<?php
+	$sql = "SELECT DISTINCT(m.goods_nomenclature_item_id) FROM measures m WHERE m.ordernumber = '" . $quota_order_number_id . "'
+	AND m.validity_start_date >= '2017-01-01' ORDER BY 1";
+	
+	$result = pg_query($conn, $sql);
+	if  (($result) && (pg_num_rows($result) > 0)){
+?>
+			<p>There are <strong><?=pg_num_rows($result)?></strong> commodities associated with this quota.</p>
+			<table class="govuk-table" cellspacing="0">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header">Commodity</th>
+				</tr>
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
+			
+			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
+?>
+				<tr class="govuk-table__row <?=$rowclass?>">
+					<td class="govuk-table__cell"><a href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=$goods_nomenclature_item_id?></a></td>
+				</tr>
+
+<?php
+		}
+?>
+			</table>
+<?php
+	} else {
+		echo ("<p>There are no associations of this foonote with measures.");
+	}
+?>
+			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
 
 
@@ -254,20 +287,20 @@
 			$geographical_area_id       = $row['geographical_area_id'];
 			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
 			$regulation_id_full         = $row['measure_generating_regulation_id'];
-			$validity_start_date        = string_to_date($row['validity_start_date']);
-			$validity_end_date          = string_to_date($row['validity_end_date']);
+			$validity_start_date        = short_date($row['validity_start_date']);
+			$validity_end_date          = short_date($row['validity_end_date']);
             $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 			
-			$commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
+			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
-					<td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell C"><a href="measure_type_view.php?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
-					<td class="govuk-table__cell C"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
+					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell C"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
+					<td class="govuk-table__cell C"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
 					<td class="govuk-table__cell"><a href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=$goods_nomenclature_item_id?></a></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
-					<td class="govuk-table__cell C"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+					<td class="govuk-table__cell C"><a href="regulation_view.html?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 				</tr>
 
 <?php

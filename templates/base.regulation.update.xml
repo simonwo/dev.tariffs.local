@@ -6,7 +6,7 @@
 					<oub:record.code>285</oub:record.code>
 					<oub:subrecord.code>00</oub:subrecord.code>
 					<oub:record.sequence.number>[RECORD_SEQUENCE_NUMBER]</oub:record.sequence.number>
-					<oub:update.type>1</oub:update.type>
+					<oub:update.type>[OPERATION]</oub:update.type>
 					<oub:base.regulation>
 						<oub:base.regulation.role>[BASE_REGULATION_ROLE]</oub:base.regulation.role>
 						<oub:base.regulation.id>[BASE_REGULATION_ID]</oub:base.regulation.id>

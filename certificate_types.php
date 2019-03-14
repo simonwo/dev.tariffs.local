@@ -41,12 +41,12 @@
 		while ($row = pg_fetch_array($result)) {
             $certificate_type_code    = $row['certificate_type_code'];
             $description            = $row['description'];
-            $validity_start_date    = string_to_date($row['validity_start_date']);
-            $validity_end_date      = string_to_date($row['validity_end_date']);
+            $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
             $rowclass               = rowclass($validity_start_date, $validity_end_date);
 ?>
         <tr class="govuk-table__row <?=$rowclass?>">
-            <td class="govuk-table__cell c"><a href="certificates.php?certificate_type_code=<?=$certificate_type_code?>">Type <?=$certificate_type_code?></a></td>
+            <td class="govuk-table__cell c"><a href="certificates.html?certificate_type_code=<?=$certificate_type_code?>">Type <?=$certificate_type_code?></a></td>
             <td class="govuk-table__cell"><?=$description?></td>
             <td class="govuk-table__cell"><?=$validity_start_date?></td>
             <td class="govuk-table__cell"><?=$validity_end_date?></td>

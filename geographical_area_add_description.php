@@ -40,8 +40,8 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/geographical_areas.php">Geographical areas</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>">Geographical area <?=$geographical_area_id?></a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/geographical_areas.html">Geographical areas</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>">Geographical area <?=$geographical_area_id?></a></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
@@ -50,7 +50,7 @@
 	<h1 class="govuk-heading-xl">Update description for geographical area <?=$geographical_area_id?></h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/geographical_area_actions.php">
+<form class="tariff" method="post" action="/actions/geographical_area_actions.html">
 <input type="hidden" name="phase" value="geographical_area_update_description" />
 <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area->geographical_area_sid?>" />
 <input type="hidden" name="geographical_area_id" value="<?=$geographical_area->geographical_area_id?>" />

@@ -31,7 +31,7 @@ class quota_order_number_origin
 		$this->exclusion_text = "";
 		if ($qonoe_count > 0) {
 			for($k = 0; $k < $qonoe_count; $k++) {
-				$this->exclusion_text .= "<p>" . $this->exclusions[$k]->description . "</p>";
+				$this->exclusion_text .= "<p class='tight'>" . $this->exclusions[$k]->description . "</p>";
 			}
 		}
 	}

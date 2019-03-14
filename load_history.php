@@ -45,7 +45,7 @@
             }
 ?>
         <tr class="govuk-table__row">
-            <td class="govuk-table__cell"><a href="xml_load.php?file=<?=$import_file?>"><?=$import_file?></a></td>
+            <td class="govuk-table__cell"><a href="xml_load.html?file=<?=$import_file?>"><?=$import_file?></a></td>
             <td class="govuk-table__cell"><?=number_format($file_size)?> kb</a></td>
         </tr>
 <?php

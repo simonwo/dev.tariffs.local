@@ -1,7 +1,9 @@
 <?php
     require ("includes/db.php");
-    require ("includes/header.php");
     $section_id = get_querystring("section_id");
+    $monetary_exchange_rate = new monetary_exchange_rate;
+    $monetary_exchange_rate->clear_cookies();
+    require ("includes/header.php");
 ?>
 <div id="wrapper" class="direction-ltr">
     <!-- Start breadcrumbs //-->
@@ -21,7 +23,7 @@
     </div>
 
 
-    <form action="/monetary_exchange_rate_create.php" method="get" class="inline_form">
+    <form action="/monetary_exchange_rate_create_edit.html" method="get" class="inline_form">
         <h3>Actions monetary exchange rate</h3>
         <button type="submit" class="govuk-button">Create new monetary exchange rate</button>
         <div class="clearer"><!--&nbsp;//--></div>
@@ -39,7 +41,8 @@
         </tr>
 
 <?php
-    $sql = "SELECT mep.validity_start_date, mep.validity_end_date, * FROM monetary_exchange_rates mer, monetary_exchange_periods mep
+    $sql = "SELECT mep.monetary_exchange_period_sid, mep.validity_start_date, mep.validity_end_date, mer.exchange_rate
+    FROM monetary_exchange_rates mer, monetary_exchange_periods mep
     WHERE mer.monetary_exchange_period_sid = mep.monetary_exchange_period_sid 
     AND child_monetary_unit_code = 'GBP'
     AND mep.validity_start_date >= '2016-01-01'
@@ -47,15 +50,16 @@
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
-            $validity_start_date    = string_to_date($row['validity_start_date']);
-            $validity_end_date      = string_to_date($row['validity_end_date']);
+            $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
             $exchange_rate          = $row['exchange_rate'];
+            $monetary_exchange_period_sid = $row["monetary_exchange_period_sid"];
 ?>
         <tr class="govuk-table__row">
             <td class="govuk-table__cell"><?=$validity_start_date?></td>
             <td class="govuk-table__cell"><?=$validity_end_date?></td>
             <td class="govuk-table__cell"><?=$exchange_rate?></td>
-            <td class="govuk-table__cell"><a href="">Edit</a></td>
+            <td class="govuk-table__cell"><a href="/monetary_exchange_rate_create_edit.html?phase=edit&monetary_exchange_period_sid=<?=$monetary_exchange_period_sid?>">Edit</a></td>
         </tr>
 <?php
         }

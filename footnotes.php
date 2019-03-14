@@ -1,7 +1,9 @@
 <?php
     require ("includes/db.php");
-    require ("includes/header.php");
     $footnote_type_id = get_querystring("footnote_type_id");
+    $footnote = new footnote;
+    $footnote->clear_cookies();
+    require ("includes/header.php");
 ?>
 
 <!-- Start breadcrumbs //-->
@@ -12,7 +14,7 @@
             <a class="govuk-breadcrumbs__link" href="/">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/footnote_types.php">Footnote types</a>
+            <a class="govuk-breadcrumbs__link" href="/footnote_types.html">Footnote types</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             Footnotes
@@ -24,13 +26,13 @@
     $clause = "";
     if ($footnote_type_id != "") {
         $clause = " WHERE footnote_type_id = '" . $footnote_type_id . "' ";
-        $heading = "Footnotes for type " . $footnote_type_id;
+        $heading = "footnotes for type " . $footnote_type_id;
     } else {
-        $heading = "Footnotes";
+        $heading = "footnotes";
     }
 ?>    
     <div class="app-content__header">
-        <h1 class="govuk-heading-xl">View footnote <?=$heading?></h1>
+        <h1 class="govuk-heading-xl">View <?=$heading?></h1>
     </div>
 
 <?php
@@ -42,8 +44,8 @@
 
 <table class="govuk-table" cellspacing="0">
     <tr class="govuk-table__row">
-        <th class="govuk-table__header c" style="width:15%">Footnote type</th>
-        <th class="govuk-table__header c" style="width:15%">Footnote ID</th>
+        <th class="govuk-table__header" style="width:15%">Footnote ID</th>
+        <th class="govuk-table__header" style="width:15%">Footnote type</th>
         <th class="govuk-table__header" style="width:36%">Description</th>
         <th class="govuk-table__header c" style="width:16%">Start date</th>
         <th class="govuk-table__header c" style="width:16%">End date</th>
@@ -53,14 +55,14 @@
             $footnote_type_id    = $row['footnote_type_id'];
             $footnote_id         = $row['footnote_id'];
             $description         = $row['description'];
-            $validity_start_date = string_to_date($row['validity_start_date']);
-            $validity_end_date   = string_to_date($row['validity_end_date']);
+            $validity_start_date = short_date($row['validity_start_date']);
+            $validity_end_date   = short_date($row['validity_end_date']);
             $rowclass            = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="<?=$rowclass?>">
-        <td class="govuk-table__cell c b"><?=$footnote_type_id?></td>
-        <td class="govuk-table__cell c"><a href="footnote_view.php?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
-        <td class="govuk-table__cell"><?=$description?></td>
+        <td class="govuk-table__cell"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
+        <td class="govuk-table__cell"><?=$footnote_type_id?></td>
+        <td class="govuk-table__cell tight"><?=$description?></td>
         <td class="govuk-table__cell c"><?=$validity_start_date?></td>
         <td class="govuk-table__cell c"><?=$validity_end_date?></td>
     </tr>

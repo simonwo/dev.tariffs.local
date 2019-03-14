@@ -3,7 +3,6 @@
 	$application = new application;
 	$application->get_measure_types();
 	$error_handler = new error_handler;
-	$error_handler->get_errors("create_measure_phase1");
 	require ("includes/header.php");
 ?>
 <!-- Start breadcrumbs //-->
@@ -13,7 +12,7 @@
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/">Home</a>
 		</li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
@@ -22,7 +21,7 @@
 	<h1 class="govuk-heading-xl">Create quota</h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/quota_order_number_actions.php">
+<form class="tariff" method="post" action="/actions/quota_order_number_actions.html">
 <input type="hidden" name="phase" value="quota_order_number_create_edit" />
 
 <!-- Start error handler //-->

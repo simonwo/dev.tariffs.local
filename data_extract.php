@@ -17,7 +17,7 @@
     </div>
 
 
-<form action="/actions/extract_actions.php" method="get" class="inline_form">
+<form action="/actions/extract_actions.html" method="get" class="inline_form">
     <input type="hidden" name="phase" value="extract_data" />
     <h3>Extract latest changes</h3>
     <div class="column-one-third" style="width:320px">

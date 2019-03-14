@@ -11,7 +11,6 @@
 
 	# Initialise the error handler
 	$error_handler = new error_handler;
-	$error_handler->get_errors("quota_definition_create_edit");
 
 	# Initialise the quota order number object
 	$action					= get_querystring("action");
@@ -40,8 +39,8 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_number_view.php?quota_order_number_id=<?=$quota_definition->quota_order_number_id?>">Quota <?=$quota_definition->quota_order_number_id?></a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_number_view.html?quota_order_number_id=<?=$quota_definition->quota_order_number_id?>">Quota <?=$quota_definition->quota_order_number_id?></a></li>
 		<li class="govuk-breadcrumbs__list-item">Quota definition</li>
 	</ol>
 </div>
@@ -51,7 +50,7 @@
 	<h1 class="govuk-heading-xl">Create quota definition</h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/quota_definition_actions.php">
+<form class="tariff" method="post" action="/actions/quota_definition_actions.html">
 <input type="hidden" name="phase" value="quota_definition_create_edit" />
 <input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number->quota_order_number_sid?>" />
 <input type="hidden" name="quota_order_number_id" value="<?=$quota_definition->quota_order_number_id?>" />

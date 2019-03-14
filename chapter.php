@@ -10,7 +10,7 @@
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/sections.php">Nomenclature sections</a>
+                <a class="govuk-breadcrumbs__link" href="/sections.html">Nomenclature sections</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 Nomenclature chapters
@@ -40,7 +40,7 @@
             $description                = title_case($row['description']);
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="subheading.php?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+                    <td class="govuk-table__cell"><a href="subheading.html?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
                     <td class="govuk-table__cell"><?=$description?></td>
                 </tr>
 <?php

@@ -94,9 +94,9 @@
             #h1 ($error_string);
             #exit();
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-          $url = "/quota_definition_create_edit.php?action=new&err=1&quota_order_number_id=" . $quota_order_number_id;
+          $url = "/quota_definition_create_edit.html?action=new&err=1&quota_order_number_id=" . $quota_order_number_id;
         } else {
-            $url = "/quota_order_number_view.php?quota_order_number_id=" . $quota_order_number_id . "#definitions";
+            $url = "/quota_order_number_view.html?quota_order_number_id=" . $quota_order_number_id . "#definitions";
         }
         header("Location: " . $url);
     }

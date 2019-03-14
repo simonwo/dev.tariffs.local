@@ -12,12 +12,13 @@
 	<link rel="apple-touch-icon" sizes="167x167" href="/assets/images/govuk-apple-touch-icon-167x167.png">
 	<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
 	<link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
-    <link href="/stylesheets/main-9fc2b6373f3fed690333ff1e95b23718.css" rel="stylesheet" media="all" />
+	<link href="/stylesheets/main-9fc2b6373f3fed690333ff1e95b23718.css" rel="stylesheet" media="all" />
 	<link href="/stylesheets/styles.css" rel="stylesheet" />
 	<script src="/javascripts/vendor/modernizr.js"></script>
 	<script src="/javascripts/vendor/jquery-latest.js"></script>
 	<script src="/javascripts/vendor/jquery.cookie.js" type="text/javascript"></script>
 	<script src="/javascripts/tariffs.js" type="text/javascript"></script>
+	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
 </head>
 <body class="govuk-template__body ">
 	<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
@@ -39,15 +40,20 @@
 						</span>
 						<span class="app-header__title">Tariff Management</span>
 					</a>
+					<!--
 					<div class="options">
 						<span id="showing">Showing Now</span>&nbsp;&nbsp;&nbsp;<a id="context_switcher" href="#"><span id="show_instead">Show Brexit instead</span></a>
+					</div>
+					//-->
+					<div class="options">
+						<span id="showing">Connected to database <?=$dbase?></span>
 					</div>
 				</div>
 			</header>
 			<div class="app-phase-banner__wrapper">
 				<div class="govuk-phase-banner app-phase-banner govuk-width-container">
 					<p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">beta</strong>
-						<span class="govuk-phase-banner__text">This is a new service – your <a class="govuk-link" href="/get-in-touch">feedback</a> will help us to improve it.<?=$dbase?></span>
+						<span class="govuk-phase-banner__text">This is a new service – your <a class="govuk-link" href="/get-in-touch">feedback</a> will help us to improve it.</span>
 					</p>
 				</div>
 			</div>

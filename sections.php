@@ -36,7 +36,7 @@
             $title      = $row['title'];
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="chapter.php?section_id=<?=$section_id?>">Section <?=$numeral?></a></td>
+                    <td class="govuk-table__cell"><a href="chapter.html?section_id=<?=$section_id?>">Section <?=$numeral?></a></td>
                     <td class="govuk-table__cell"><?=$title?></td>
                 </tr>
 <?php

@@ -1,8 +1,18 @@
 <?php
+$http_host = strtolower($_SERVER["HTTP_HOST"]);
+date_default_timezone_set("Europe/London");
 require (dirname(__FILE__) . "../../classes/extract.php");
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
+require (dirname(__FILE__) . "../../classes/measure_type_series.php");
+require (dirname(__FILE__) . "../../classes/monetary_exchange_rate.php");
 require (dirname(__FILE__) . "../../classes/measure_type.php");
+require (dirname(__FILE__) . "../../classes/footnote_type.php");
+require (dirname(__FILE__) . "../../classes/footnote.php");
+require (dirname(__FILE__) . "../../classes/certificate_type.php");
+require (dirname(__FILE__) . "../../classes/certificate.php");
+require (dirname(__FILE__) . "../../classes/goods_nomenclature.php");
+require (dirname(__FILE__) . "../../classes/measurement.php");
 require (dirname(__FILE__) . "../../classes/measurement_unit.php");
 require (dirname(__FILE__) . "../../classes/measurement_unit_qualifier.php");
 require (dirname(__FILE__) . "../../classes/measure.php");
@@ -15,6 +25,7 @@ require (dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.php");
 require (dirname(__FILE__) . "../../classes/base_regulation.php");
 require (dirname(__FILE__) . "../../classes/regulation_group.php");
+
 
 if(isset($_COOKIE["showing"])) {
 	$scope = $_COOKIE["showing"];
@@ -29,10 +40,19 @@ if ($scope == "Brexit") {
 $dbase = "tariff_dev";
 $msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
-$pagesize	= 50;
+$pagesize	= 100;
 $conn		= pg_connect("host=127.0.0.1 port=5432 dbname=" . $dbase . " user=postgres password=zanzibar");
 $page       = intval(get_querystring("page"));
 if ($page == 0) {$page = 1;}
+
+function db_to_date($var) {
+	if ($var != "") {
+		$var2 = DateTime::createFromFormat('Y-m-d', $var);
+	} else {
+		$var2 = "";
+	}
+	return ($var2);
+}
 
 function string_to_date($var) {
 	if ($var != "") {
@@ -55,11 +75,14 @@ function get_checked($key, $value) {
 function get_cookie($key) {
 	if(isset($_COOKIE[$key])) {
 		$s = $_COOKIE[$key];
+		return ($_COOKIE[$key]);
+		/*
 		if ($s == "0") {
 			return ("");
 		} else {
 			return ($_COOKIE[$key]);
 		}
+		*/
 	} else {
 		return ("");
 	}
@@ -187,25 +210,61 @@ function footnote_type_application_code($id){
 
 }
 
+function standardise($var) {
+	$pos = strpos($var, "-");
+	if ($pos == false) {
+		return ($var);
+	} else {
+		$d2 = date("d/m/Y", strtotime($var));
+		#h1 ($pos);
+		return ($d2);
+	}
+
+}
+
 function rowclass($validity_start_date, $validity_end_date) {
+	#h1 ($validity_end_date);
+	$validity_start_date	= standardise($validity_start_date);
+	$validity_end_date		= standardise($validity_end_date);
+
 	$rowclass = "";
-	if (($validity_start_date == "2019-03-30") || ($validity_start_date == "2019-03-29")) {
+	if (($validity_start_date == "30/03/2019") || ($validity_start_date == "29/03/2019")) {
 		$rowclass = "uk";
-	} elseif (($validity_start_date == "2019-01-01") && ($validity_end_date = NULL)) {
+	} elseif (($validity_start_date == "01/01/2019") && ($validity_end_date == NULL)) {
 		$rowclass = "starts2019";
-	} elseif ($validity_end_date != "") {
-		$today	= date("Y-m-d");
+	} elseif ($validity_end_date != "-") {
+		/*
+		$d2 = date("Y-m-d", strtotime($validity_end_date));
+		if (is_in_future($validity_end_date)) {
+			$rowclass = "";
+		} else {
+			$rowclass = "dead";
+		}
+		*/
+		$today	= date("d/m/Y");
 		$d_today = strtotime($today);
 		$d_ved	 = strtotime($validity_end_date);
 		$diff	 = $d_ved - $d_today;
 		if ($diff < 0) {
-			$rowclass = "dead";
+			#$rowclass = "dead";
 		}
-	} else {
-		$rowclass = "";
 	}
+	
 	return ($rowclass);
 }
+
+function is_in_future($var){
+	#q ($var);
+	$var2 = DateTime::createFromFormat('d/m/Y', $var);
+	$diff = time() - strtotime($var);
+
+	if ($diff > 0) {
+		return (false);
+	} else {
+		return (true);
+	}
+}
+
 
 function title_case($s) {
 	$s = ucwords(strtolower($s));
@@ -342,6 +401,13 @@ function to_date($day, $month, $year) {
 function to_date_string($day, $month, $year) {
 	$day = str_pad($day, 2, '0', STR_PAD_LEFT);
 	$month = str_pad($month, 2, '0', STR_PAD_LEFT);
+	if (strlen($year) == 2) {
+		if (intval($year) > 70) {
+			$year = "19" . $year;
+		} else {
+			$year = "20" . $year;
+		}
+	}
 	$date = $year . "-" . $month . "-" . $day;
 	return ($date);
 }
@@ -352,5 +418,41 @@ function p($s) {
 
 function h1($s) {
 	echo ("<h1>" . $s . "</h1>");
+}
+
+function q($s) {
+	echo ("<h1>" . $s . "</h1>");
+	exit();
+}
+
+function short_date($s) {
+	if ($s == "") {
+		$s2 = "-";
+	} else {
+		$s2 = date("d/m/Y", strtotime($s));
+	}
+	return ($s2);
+}
+
+function format_commodity_code_old($s) {
+	if (strlen($s) == 10) {
+		$s2 = substr($s, 0, 4) . " " . substr($s, 4, 2) . " " . substr($s, 6, 2) . " " . substr($s, 8, 2);
+	}
+	return ($s2);
+}
+
+function format_commodity_code($s) {
+	if (strlen($s) == 10) {
+		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad green'>" . substr($s, 6, 2) . "</span><span>" . substr($s, 8, 2) . "</span>";
+	}
+	return ($s2);
+}
+
+function bool_to_int($var) {
+	if (($var == "t") || ($var == true)) {
+		return (1);
+	} else {
+		return (0);
+	}
 }
 ?>

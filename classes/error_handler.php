@@ -30,14 +30,6 @@ class error_handler
         return ($value);
     }
 
-    public function get_errors($scope) {
-        if (count($this->error_list) > 0) {
-            switch ($scope) {
-            case "create_measure_phase1":
-                break;
-            }
-        }
-    }
     public function get_error($scope) {
         $scope_array = explode("|", $scope);
         $found = False;

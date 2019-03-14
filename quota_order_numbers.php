@@ -17,7 +17,7 @@
 	<h1 class="govuk-heading-xl">Quota order numbers</h1>
 </div>
 
-<form action="/quota_order_number_create_edit.php" method="get" class="inline_form">
+<form action="/quota_order_number_create_edit.html" method="get" class="inline_form">
     <input type="hidden" name="phase" value="<?=$phase?>" />
     <h3>New quota order number</h3>
     <div class="column-one-third" style="width:320px">
@@ -126,15 +126,15 @@
 		for($i = 0; $i < $qon_count; $i++) {
 			$t                      = $quota_order_numbers[$i];
 			$quota_order_number_id  = $t->quota_order_number_id;
-			$validity_start_date    = string_to_date($t->validity_start_date);
-			$validity_end_date      = string_to_date($t->validity_end_date);
+			$validity_start_date    = short_date($t->validity_start_date);
+			$validity_end_date      = short_date($t->validity_end_date);
 			$rowclass               = rowclass($validity_start_date, $validity_end_date);
 			$origins    = "";
 			$exclusions = "";
 			$qono_count = count($t->origins);
 			for($j = 0; $j < $qono_count; $j++) {
 				$origin = $t->origins[$j];
-				$url = "geographical_area_view.php?geographical_area_id=" . $origin->geographical_area_id;
+				$url = "geographical_area_view.html?geographical_area_id=" . $origin->geographical_area_id;
 				$origins .= "<div><a href='" . $url . "'>" . $origin->description . "</a></div>";
 				$qonoe_count = count($origin->exclusions);
 				$exclusions = "";
@@ -158,7 +158,7 @@
 ?>
 	<tr class="<?=$rowclass?>">
 		<td class="govuk-table__cell">
-			<a href="quota_order_number_view.php?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>
+			<a href="quota_order_number_view.html?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>
 		</td>
 		<td class="govuk-table__cell c"><a target="_blank" href="<?=$url?>">EU</a></td>
 		<td class="govuk-table__cell"><?=$origins?></td>

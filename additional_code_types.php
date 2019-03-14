@@ -40,8 +40,8 @@
 		while ($row = pg_fetch_array($result)) {
             $additional_code_type_id    = $row['additional_code_type_id'];
             $description                = $row['description'];
-            $validity_start_date        = string_to_date($row['validity_start_date']);
-            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $validity_start_date        = short_date($row['validity_start_date']);
+            $validity_end_date          = short_date($row['validity_end_date']);
             $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="govuk-table__row <?=$rowclass?>">

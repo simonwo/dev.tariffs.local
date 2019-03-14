@@ -6,14 +6,13 @@
 	$application->get_geographical_members("1011");
 	$application->get_countries_and_regions();
 	$error_handler = new error_handler;
-	$error_handler->get_errors("create_measure_phase1");
 	require ("includes/header.php");
 ?>
 <div class="app-content__header">
 	<h1 class="govuk-heading-xl">Create measures</h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/measure_actions.php">
+<form class="tariff" method="post" action="/actions/measure_actions.html">
 <input type="hidden" name="phase" value="1" />
 <!-- Start error handler //-->
 <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
@@ -38,7 +37,7 @@
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 			<h1 class="govuk-fieldset__heading" style="max-width:100%;">Which regulation gives legal force to these measures?</h1>
 		</legend>
-		<span id="base_regulation_hint" class="govuk-hint">Start typing in the field to see available regulations. If the regulation is not in the list, you can <a href="regulation_create.php">add a regulation</a> from here. If you're not sure of the regulation name or ID, you can <a href="">search here</a>.</span>
+		<span id="base_regulation_hint" class="govuk-hint">Start typing in the field to see available regulations. If the regulation is not in the list, you can <a href="regulation_create.html">add a regulation</a> from here. If you're not sure of the regulation name or ID, you can <a href="">search here</a>.</span>
 		<span id="base_regulation-error" class="govuk-error-message">
       		Please enter a valid regulation identifier.
     	</span>

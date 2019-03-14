@@ -2,6 +2,22 @@
     require ("includes/db.php");
     $geographical_area_id   = get_querystring("geographical_area_id");
     $measure_scope          = get_querystring("measure_scope");
+    if ($measure_scope == "") {
+        $measure_scope = "all";
+    }
+    $sort = get_querystring("sort");
+    if ($sort == "") {
+        $sort = "date";
+    }
+    $currency = get_querystring("currency");
+    if ($currency == "") {
+        $currency = "all";
+    }
+    $member_currency = get_querystring("member_currency");
+    if ($member_currency == "") {
+        $member_currency = "current";
+    }
+
     $geographical_area = new geographical_area;
     $geographical_area->clear_cookies();
     require ("includes/header.php");
@@ -14,7 +30,7 @@
             <a class="govuk-breadcrumbs__link" href="/">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/geographical_areas.php">Geographical areas</a>
+            <a class="govuk-breadcrumbs__link" href="/geographical_areas.html">Geographical areas</a>
         </li>
     </ol>
 </div>
@@ -26,6 +42,7 @@
             <ul class="tariff_menu">
                 <li><a href="#details">Area details</a></li>
                 <li><a href="#history">Geographical area description history</a></li>
+                <li><a href="#quotas">Quotas</a></li>
                 <li><a href="#measures">Measures</a></li>
                 <li><a href="#members1">Members of this country group</a></li>
                 <li><a href="#members2">Groups to which this country belongs</a></li>
@@ -74,21 +91,26 @@
                 </tr>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">Start date</td>
-                    <td class="govuk-table__cell"><?=string_to_date($validity_start_date)?></td>
+                    <td class="govuk-table__cell"><?=short_date($validity_start_date)?></td>
                 </tr>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">End date</td>
-                    <td class="govuk-table__cell"><?=string_to_date($validity_end_date)?></td>
+                    <td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
                 </tr>
 <?php
     }
 ?>
 
             </table>
+
+            
+            <button type="submit" class="govuk-button" style="margin:0px">Edit geographical area</button>
+            <p>Click on the button above to modify the start and end dates of this geographical area.</p>
+
             <p class="back_to_top"><a href="#top">Back to top</a></p>
             
 <h2 id="history">Geographical area description history</h2>
-<form action="/geographical_area_add_description.php" method="get" class="inline_form">
+<form action="/geographical_area_add_description.html" method="get" class="inline_form">
     <input type="hidden" name="phase" value="geographical_area_add_description" />
     <input type="hidden" name="action" value="new" />
     <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
@@ -124,8 +146,8 @@
         while ($row = pg_fetch_array($result)) {
             $geographical_area_description_period_sid   = $row["geographical_area_description_period_sid"];
             $description                                = $row["description"];
-            $validity_start_date                        = string_to_date($row["validity_start_date"]);
-            $validity_end_date                          = string_to_date($row["validity_end_date"]);
+            $validity_start_date                        = short_date($row["validity_start_date"]);
+            $validity_end_date                          = short_date($row["validity_end_date"]);
 ?>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell"><?=$geographical_area_description_period_sid?></td>
@@ -136,14 +158,14 @@
     $today = date("Y-m-d");
     if ($validity_start_date > $today) {
 ?>
-                        <form action="geographical_area_add_description.php" method="get">
+                        <form action="geographical_area_add_description.html" method="get">
                             <input type="hidden" name="action" value="edit" />
                             <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
                             <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
                             <input type="hidden" name="geographical_area_description_period_sid" value="<?=$geographical_area_description_period_sid?>" />
                             <button type="submit" class="govuk-button btn_nomargin")>Edit</button>
                         </form>
-                        <form action="actions/geographical_area_actions.php" method="get">
+                        <form action="actions/geographical_area_actions.html" method="get">
                             <input type="hidden" name="action" value="edit" />
                             <input type="hidden" name="phase" value="geographical_area_description_delete" />
                             <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
@@ -164,39 +186,112 @@
     }
 ?>
     
+<h2 id="quotas">Quotas related to <?=$description?></h2>
+<?php
+	$sql = "SELECT DISTINCT m.ordernumber, m.measure_type_id, mtd.description as measure_type_description,
+    COUNT(m.measure_sid)
+    FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
+    WHERE m.geographical_area_id = g.geographical_area_id
+    AND mtd.measure_type_id = m.measure_type_id
+    AND ordernumber IS NOT NULL
+    AND m.geographical_area_id = '" . $geographical_area_id . "'
+    GROUP BY m.ordernumber, m.measure_type_id, mtd.description
+    ORDER BY 1, 2";
+    // echo ($sql);
+    $result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+            <p>There are <strong><?=pg_num_rows($result)?></strong> matching quotas.</p>
+            <table class="govuk-table" cellspacing="0">
+                <tr class="govuk-table__row">
+                    <th class="govuk-table__header" style="width:15%">Order number</th>
+                    <th class="govuk-table__header" style="width:75%">Type</th>
+                    <th class="govuk-table__header r" style="width:10%">Count</th>
+                </tr>
+
+<?php
+        while ($row = pg_fetch_array($result)) {
+
+            $ordernumber                = $row['ordernumber'];
+            $measure_type_id            = $row['measure_type_id'];
+            $measure_type_description   = $row['measure_type_description'];
+            $count                      = $row['count'];
+?>
+                <tr class="govuk-table__row <?=$rowclass?>">
+                    <td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
+                    <td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
+                    <td class="govuk-table__cell r"><?=$count?></td>
+                </tr>
+
+<?php
+        }
+    }
+?>
+            </table>
+            <p class="back_to_top"><a href="#top">Back to top</a></p>
 
 
 
 <h2 id="measures">Measure details</h2>
 
 
-            <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
+            <form action="/actions/geographical_area_actions.html#measures" method="get" class="inline_form">
             <h3>Filter results</h3>
             <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+            <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
             <input type="hidden" name="phase" value="measure_filter_geographical_area_view" />
 
-            <div class="column-one-third" style="width:320px">
-
-
-            <div class="govuk-radios govuk-radios--inline">
-                <div class="govuk-radios__item break">
-                    <input type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_all" value="all" />
-                    <label class="govuk-label govuk-radios__label" for="measure_scope_all">Show all measures</label>
+            <!-- Scope //-->
+            <div class="column-one-third" style="width:300px;padding-bottom:1.5em;">
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($measure_scope, "all") ?> type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_all" value="all" />
+                        <label class="govuk-label govuk-radios__label" for="measure_scope_all">Show all measures</label>
+                    </div>
+                </div><br/>
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($measure_scope, "duty") ?> type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_duty" value="duty" />
+                        <label class="govuk-label govuk-radios__label" for="measure_scope_duty">Only show duty measures</label>
+                    </div>
                 </div>
-            </div><br/>
-            <div class="govuk-radios govuk-radios--inline">
-                <div class="govuk-radios__item break">
-                    <input type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_duty" value="duty" />
-                    <label class="govuk-label govuk-radios__label" for="measure_scope_duty">Only show duty measures</label>
-                </div>
-            </div>
-
-
             </div>
             
-            <div class="column-one-third">
+            <!-- Currency //-->
+            <div class="column-one-third" style="width:230px">
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($currency, "all") ?> type="radio" class="govuk-radios__input" name="currency" id="currency_all" value="all" />
+                        <label class="govuk-label govuk-radios__label" for="currency_all">Show all</label>
+                    </div>
+                </div><br/>
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($currency, "current") ?> type="radio" class="govuk-radios__input" name="currency" id="currency_current" value="current" />
+                        <label class="govuk-label govuk-radios__label" for="currency_current">Show only current</label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sort order //-->
+            <div class="column-one-third" style="width:230px">
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($sort, "date") ?> type="radio" class="govuk-radios__input" name="sort" id="sort_date" value="date" />
+                        <label class="govuk-label govuk-radios__label" for="sort_date">Sort by date</label>
+                    </div>
+                </div><br/>
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($sort, "commodity") ?> type="radio" class="govuk-radios__input" name="sort" id="sort_commodity" value="commodity" />
+                        <label class="govuk-label govuk-radios__label" for="sort_commodity">Sort by commodity</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="column-one-third" style="width:130px">
                 <div class="govuk-form-group" style="padding:0px;margin:0px">
-                    <button type="submit" class="govuk-button" style="margin-top:54px">Search</button>
+                    <button type="submit" class="govuk-button" style="xmargin-top:54px">Search</button>
                 </div>
             </div>
             <div class="clearer"><!--&nbsp;//--></div>
@@ -210,14 +305,22 @@
     } else {
         $measure_scope_clause = " AND m.measure_type_id IN ('142', '143', '145', '146') ";
     }
-
+    if ($sort == "commodity") {
+        $sort_clause = "ORDER BY goods_nomenclature_item_id, validity_start_date DESC, validity_end_date DESC";
+    } else {
+        $sort_clause = "ORDER BY validity_start_date DESC, validity_end_date DESC, goods_nomenclature_item_id";
+    }
+    if ($currency == "current") {
+        $currency_clause = " AND (m.validity_end_date IS NULL OR m.validity_end_date > CURRENT_DATE) ";
+    } else {
+        $currency_clause = "";
+    }
 	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
     m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description, mtd.description as measure_type_description,
     m.ordernumber FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
     WHERE m.geographical_area_id = g.geographical_area_id
-    AND mtd.measure_type_id = m.measure_type_id
-    AND m.geographical_area_id = '" . $geographical_area_id . "' " . $measure_scope_clause . "ORDER BY validity_start_date DESC,
-    validity_end_date DESC, goods_nomenclature_item_id";
+    AND mtd.measure_type_id = m.measure_type_id " . $currency_clause . "
+    AND m.geographical_area_id = '" . $geographical_area_id . "' " . $measure_scope_clause . $sort_clause;
     // echo ($sql);
     $result = pg_query($conn, $sql);
 	if  ($result) {
@@ -239,8 +342,8 @@
         while ($row = pg_fetch_array($result)) {
             $measure_sid                = $row['measure_sid'];
             $goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-            $validity_start_date        = string_to_date($row['validity_start_date']);
-            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $validity_start_date        = short_date($row['validity_start_date']);
+            $validity_end_date          = short_date($row['validity_end_date']);
             $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 
             $ordernumber                    = $row['ordernumber'];
@@ -249,17 +352,17 @@
             $regulation_id_full             = $row['regulation_id_full'];
             $geographical_area_description  = $row['geographical_area_description'];
             $measure_type_description       = $row['measure_type_description'];
-            $commodity_url                  = "/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
+            $commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
                 <tr class="govuk-table__row <?=$rowclass?>">
-                    <td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+                    <td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
                     <td class="govuk-table__cell"><a href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
                     <td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
                     <td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
                     <td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>
                     <td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
-                    <td class="govuk-table__cell"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
-                    <td class="govuk-table__cell"><a href="quota_order_number_view.php?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
+                    <td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+                    <td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
                 </tr>
 
 <?php
@@ -272,40 +375,120 @@
     if ($geographical_code == "1") {
 ?>            
             <h2 id="members1">Members of this country group</h2>
+
+
+
+            <form action="/actions/geographical_area_actions.html#measures" method="get" class="inline_form">
+            <h3>Filter results</h3>
+            <input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
+            <input type="hidden" name="geographical_area_sid" value="<?=$geographical_area_sid?>" />
+            <input type="hidden" name="phase" value="measure_filter_geographical_area_members" />
+
+            
+            <!-- Currency //-->
+            <div class="column-one-third" style="width:230px;margin-bottom:1em;">
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($member_currency, "all") ?> type="radio" class="govuk-radios__input" name="member_currency" id="member_currency_all" value="all" />
+                        <label class="govuk-label govuk-radios__label" for="member_currency_all">Show all</label>
+                    </div>
+                </div><br/>
+                <div class="govuk-radios govuk-radios--inline">
+                    <div class="govuk-radios__item break">
+                        <input <?=checked($member_currency, "current") ?> type="radio" class="govuk-radios__input" name="member_currency" id="member_currency_current" value="current" />
+                        <label class="govuk-label govuk-radios__label" for="member_currency_current">Show only current</label>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="column-one-third" style="width:130px">
+                <div class="govuk-form-group" style="padding:0px;margin:0px">
+                    <button type="submit" class="govuk-button" style="xmargin-top:54px">Update</button>
+                </div>
+            </div>
+            <div class="clearer"><!--&nbsp;//--></div>
+            </form>
+
+
+            <p>The table below lists the countries that are / have been members of this area group.
+            You are able to terminate existing memberships if that membership has already started
+            or you can delete memberships entirely if they are yet to begin.</p>
+
+
             <table class="govuk-table" cellspacing="0">
                 <tr class="govuk-table__row">
                     <th class="govuk-table__header" style="width:10%">Child ID</th>
                     <th class="govuk-table__header" style="width:10%">Child SID</th>
-                    <th class="govuk-table__header" style="width:60%">Description</th>
+                    <th class="govuk-table__header" style="width:50%">Description</th>
                     <th class="govuk-table__header" style="width:10%">Validity start date</th>
                     <th class="govuk-table__header" style="width:10%">Validity end date</th>
+                    <th class="govuk-table__header" style="width:10%">Actions</th>
                 </tr>
                 <?php
 	$sql = "SELECT child_sid, child_id, child_description, validity_start_date, validity_end_date
-    FROM ml.ml_geo_memberships WHERE parent_id = '" . $geographical_area_id . "' ORDER BY 3";
+    FROM ml.ml_geo_memberships WHERE parent_id = '" . $geographical_area_id . "'";
+    if ($member_currency == "current") {
+        $sql .= " AND (validity_end_date > CURRENT_DATE OR validity_end_date IS NULL) ";
+    }
+    $sql .= " ORDER BY 3";
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
             $child_id               = $row['child_id'];
             $child_sid              = $row['child_sid'];
             $child_description      = $row['child_description'];
-            $validity_start_date    = string_to_date($row['validity_start_date']);
-            $validity_end_date      = string_to_date($row['validity_end_date']);
+            $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
+            $validity_start_date2   = string_to_date($row['validity_start_date']);
 
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$child_id?>"><?=$child_id?></a></td>
+                    <td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$child_id?>"><?=$child_id?></a></td>
                     <td class="govuk-table__cell"><?=$child_sid?></td>
                     <td class="govuk-table__cell"><?=$child_description?></td>
                     <td class="govuk-table__cell"><?=$validity_start_date?></td>
                     <td class="govuk-table__cell"><?=$validity_end_date?></td>
+                    <td class="govuk-table__cell">
+<?php
+    if ($validity_end_date == "-") {
+?>        
+                        <form action="/actions/geographicaL_area_actions.html" method="get">
+                            <input type="hidden" name="geographical_area_group_sid" value="<?=$geographical_area_sid?>" />
+                            <input type="hidden" name="geographical_area_group_id" value="<?=$geographical_area_id?>" />
+                            <input type="hidden" name="geographical_area_sid" value="<?=$child_sid?>" />
+                            <input type="hidden" name="geographical_area_id" value="<?=$child_id?>" />
+<?php
+        if (is_in_future($validity_start_date2) == true) {
+?>
+                            <input type="hidden" name="phase" value="delete_membership" />
+                            <button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+<?php
+        } else {
+?>
+                            <input type="hidden" name="phase" value="terminate_membership" />
+                            <button type="submit" class="govuk-button btn_nomargin")>Terminate</button>
+<?php            
+        }
+?>
+                        </form>
+<?php
+    }
+?>    
+                    </td>
                 </tr>
-
 <?php
         }
     }
 ?>
             </table>
+            <form action="/actions/geographical_area_actions.html" method="get">
+                <input type="hidden" name="geographical_area_id" id="geographical_area_id" value="<?=$geographical_area_id?>" />
+                <input type="hidden" name="geographical_area_sid" id="geographical_area_sid" value="<?=$geographical_area_sid?>" />
+                <input type="hidden" name="phase" id="phase" value="add_member" />
+                <button type="submit" class="govuk-button" style="margin:0px">Add member to this geographical area</button>
+                <!--<p>sfsdf</p>//-->
+            </form>
             <p class="back_to_top"><a href="#top">Back to top</a></p>
 
 <?php
@@ -329,12 +512,12 @@
             $parent_id               = $row['parent_id'];
             $parent_sid              = $row['parent_sid'];
             $parent_description      = $row['parent_description'];
-            $validity_start_date    = string_to_date($row['validity_start_date']);
-            $validity_end_date      = string_to_date($row['validity_end_date']);
+            $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
 
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="geographical_area_view.php?geographical_area_id=<?=$parent_id?>"><?=$parent_id?></a></td>
+                    <td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$parent_id?>"><?=$parent_id?></a></td>
                     <td class="govuk-table__cell"><?=$parent_description?></td>
                     <td class="govuk-table__cell"><?=$parent_sid?></td>
                     <td class="govuk-table__cell"><?=$validity_start_date?></td>
@@ -351,5 +534,13 @@
 </div>
 
 <?php
-    require ("includes/footer.php")
+    require ("includes/footer.php");
+
+    function checked($a, $b) {
+        if ($a == $b) {
+            return (" checked");
+        } else {
+            return ("");
+        }
+    }
 ?>

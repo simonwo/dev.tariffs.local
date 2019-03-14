@@ -17,7 +17,7 @@
             <a class="govuk-breadcrumbs__link" href="/">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/regulations.php">Geographical areas</a>
+            <a class="govuk-breadcrumbs__link" href="/regulations.html">Geographical areas</a>
         </li>
 <?php
     if ($regulation_group_id != "") {
@@ -35,7 +35,7 @@
         <h1 class="govuk-heading-xl">Geographical areas</h1>
     </div>
 
-    <form action="/actions/geographical_area_actions.php" method="get" class="inline_form">
+    <form action="/actions/geographical_area_actions.html" method="get" class="inline_form">
         <h3>Filter results</h3>
         <input type="hidden" name="phase" id="phase" value="filter_geography" />
         <div class="column-one-third" style="width:320px">
@@ -135,12 +135,12 @@
             $geographical_area_sid      = $row['geographical_area_sid'];
             $description                = $row['description'];
             $geographical_code          = $row['geographical_code'];
-            $validity_start_date        = string_to_date($row['validity_start_date']);
-            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $validity_start_date        = short_date($row['validity_start_date']);
+            $validity_end_date          = short_date($row['validity_end_date']);
             $rowclass                    = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="<?=$rowclass?>">
-        <td class="govuk-table__cell"><a href="/geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
+        <td class="govuk-table__cell"><a href="/geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
         <td class="govuk-table__cell c"><?=$geographical_area_sid?></td>
         <td class="govuk-table__cell"><?=$description?></td>
         <td class="govuk-table__cell c"><?=$geographical_code?><br /><span class="explanatory"><?=geographical_code($geographical_code)?></span></td>

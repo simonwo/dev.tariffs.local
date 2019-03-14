@@ -2,12 +2,14 @@
 class geographical_area
 {
 	// Class properties and methods go here
-	public $geographical_area_sid   = 0;
-	public $geographical_area_id    = "";
-	public $description             = "";
-	public $geographical_code       = "";
-	public $validity_start_date     = "";
-	public $validity_end_date       = "";
+	public $geographical_area_sid   	= 0;
+	public $geographical_area_id    	= "";
+	public $geographical_area_group_sid	= 0;
+	public $geographical_area_group_id  = "";
+	public $description             	= "";
+	public $geographical_code       	= "";
+	public $validity_start_date     	= "";
+	public $validity_end_date       	= "";
 
 	
 	public function set_properties($geographical_area_sid, $geographical_area_id, $description, $geographical_code, $validity_start_date, $validity_end_date) {
@@ -18,6 +20,92 @@ class geographical_area
 		$this->validity_start_date		= $validity_start_date;
 		$this->validity_end_date		= $validity_end_date;
 	}
+	
+	public function delete_member() {
+		global $conn;
+		$application = new application;
+
+		# Need to get the valid start date
+		$sql = "SELECT validity_start_date, validity_end_date FROM geographical_area_memberships WHERE geographical_area_group_sid = $2
+		AND geographical_area_sid = $1 ORDER BY 1 DESC LIMIT 1";
+		pg_prepare($conn, "get_start_date", $sql);
+		$result = pg_execute($conn, "get_start_date", array($this->geographical_area_sid, $this->geographical_area_group_sid));
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->validity_start_date  	= $row['validity_start_date'];
+				$this->validity_end_date  	= $row['validity_end_date'];
+			}
+		}
+
+		# Now insert the new record (with an update type)
+		$sql = "INSERT INTO geographical_area_memberships_oplog (geographical_area_sid, geographical_area_group_sid,
+		validity_start_date, validity_end_date, operation, operation_date) VALUES ($1, $2, $3, $4, $5, $6)";
+		pg_prepare($conn, "delete_member", $sql);
+		$this->operation = "D";
+		$this->operation_date = $application->get_operation_date();
+		$result = pg_execute($conn, "delete_member", array($this->geographical_area_sid, $this->geographical_area_group_sid,
+		$this->validity_start_date, $this->validity_end_date,
+		$this->operation, $this->operation_date));
+	}
+
+
+	public function terminate_member() {
+		global $conn;
+		$application = new application;
+
+		# Need to get the valid start date
+		$sql = "SELECT validity_start_date FROM geographical_area_memberships WHERE geographical_area_group_sid = $2
+		AND geographical_area_sid = $1 ORDER BY 1 DESC LIMIT 1";
+		pg_prepare($conn, "get_start_date", $sql);
+		$result = pg_execute($conn, "get_start_date", array($this->geographical_area_sid, $this->geographical_area_group_sid));
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->validity_start_date  	= $row['validity_start_date'];
+				h1 ($this->validity_start_date);
+			}
+		}
+
+		# Now insert the new record (with an update type)
+		$sql = "INSERT INTO geographical_area_memberships_oplog (geographical_area_sid, geographical_area_group_sid,
+		validity_start_date, validity_end_date, operation, operation_date) VALUES ($1, $2, $3, $4, $5, $6)";
+		pg_prepare($conn, "terminate_member", $sql);
+		$this->operation = "U";
+		$this->operation_date = $application->get_operation_date();
+		$result = pg_execute($conn, "terminate_member", array($this->geographical_area_sid, $this->geographical_area_group_sid,
+		$this->validity_start_date, $this->validity_end_date,
+		$this->operation, $this->operation_date));
+	}
+
+
+	public function get_non_members() {
+		global $conn;
+		$sql = "SELECT geographical_area_sid, geographical_area_id, description FROM ml.ml_geographical_areas WHERE geographical_code = '0'
+		AND geographical_area_sid NOT IN
+		(
+			SELECT geographical_area_sid FROM geographical_area_memberships gam
+			WHERE gam.validity_end_date IS NULL
+			AND gam.geographical_area_group_sid = (SELECT geographical_area_sid
+			FROM geographical_areas WHERE geographical_area_id = '" . $this->geographical_area_id . "')
+		)
+		ORDER BY 2";
+		#p ($sql);
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$geographical_area       = new geographical_area;
+				$geographical_area->geographical_area_id  	= $row['geographical_area_id'];
+				$geographical_area->geographical_area_sid  	= $row['geographical_area_sid'];
+				$geographical_area->description      		= $row['description'];
+				array_push($temp, $geographical_area);
+			}
+			$this->non_members = $temp;
+		}
+	}
+
+
 
 	public function delete_description() {
 		global $conn;
@@ -65,6 +153,31 @@ class geographical_area
 		pg_execute($conn, "geographical_area_description_update", array($description, $geographical_area_description_period_sid));
 	}
 
+
+
+	function add_member($geographical_area_group_sid, $geographical_area_id, $geographical_area_sid, $validity_start_date) {
+
+		global $conn;
+        $application = new application;
+		$this->operation = "C";
+		$this->operation_date = $application->get_operation_date();
+
+		$sql = "INSERT INTO geographical_area_memberships_oplog (geographical_area_group_sid, geographical_area_sid, 
+		validity_start_date, operation, operation_date) VALUES ($1, $2, $3, $4, $5);";
+		#h1 ($geographical_area_group_sid);
+		#h1 ($geographical_area_id);
+		#h1 ($geographical_area_sid);
+		#h1 ($validity_start_date);
+		#h1 ($sql);
+		#exit();
+
+		pg_prepare($conn, "geographical_area_add_member", $sql);
+		pg_execute($conn, "geographical_area_add_member", array($geographical_area_group_sid, $geographical_area_sid,
+		$validity_start_date, $this->operation, $this->operation_date));
+	}
+
+
+
 	function insert_description($geographical_area_id, $geographical_area_sid, $validity_start_date, $description) {
         global $conn;
         $application = new application;
@@ -109,21 +222,40 @@ class geographical_area
 
 	}
 
-	function conflict_check() {
+	function get_description() {
         global $conn;
         $errors = array();
-        # First, check for items that start at the exact same start date, which is the real fail
-        #h1 ($this->validity_start_date . $this->validity_end_date);
-        $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 AND validity_start_date = $2";
-        pg_prepare($conn, "quota_definition_conflict_check", $sql);
-        $result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date));      
+        $sql = "SELECT description FROM geographical_area_descriptions gad, geographical_area_description_periods gadp
+		WHERE gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
+		AND gad.geographical_area_sid = $1 ORDER BY validity_start_date DESC LIMIT 1";
+
+		$stmt = "get_geo_desc" . $this->geographical_area_sid;
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->geographical_area_sid));
         if ($result) {
             if (pg_num_rows($result) > 0){
-                array_push($errors, "Error scenario 1");
+				while ($row = pg_fetch_array($result)) {
+					$this->description   = $row["description"];
+				}
             }
         }
+	}
 
-        # Second, check all definitions on this order number
+	function conflict_check() {
+		global $conn;
+		$errors = array();
+		# First, check for items that start at the exact same start date, which is the real fail
+		#h1 ($this->validity_start_date . $this->validity_end_date);
+		$sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 AND validity_start_date = $2";
+		pg_prepare($conn, "quota_definition_conflict_check", $sql);
+		$result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date));      
+		if ($result) {
+			if (pg_num_rows($result) > 0){
+				array_push($errors, "Error scenario 1");
+			}
+		}
+
+			# Second, check all definitions on this order number
         $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 ORDER BY validity_start_date DESC";
         pg_prepare($conn, "quota_definition_conflict_check2", $sql);
         $result = pg_execute($conn, "quota_definition_conflict_check2", array($this->quota_order_number_id));      

@@ -13,10 +13,10 @@
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/sections.php">Nomenclature sections</a>
+                <a class="govuk-breadcrumbs__link" href="/sections.html">Nomenclature sections</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/chapter.php?section_id=<?=$section_id?>">Nomenclature chapters</a>
+                <a class="govuk-breadcrumbs__link" href="/chapter.html?section_id=<?=$section_id?>">Nomenclature chapters</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 Nomenclature subheadings
@@ -34,7 +34,7 @@
 
 <?php
     $sql = "SELECT goods_nomenclature_item_id, producline_suffix, validity_start_date, validity_end_date, description, number_indents
-    FROM ml.goods_nomenclature_export_2019('" . $chapter_id . "%') ORDER BY 1, 2";
+    FROM ml.goods_nomenclature_export_brexit('" . $chapter_id . "%') ORDER BY 1, 2";
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
@@ -43,11 +43,11 @@
             $validity_start_date        = $row['validity_start_date'];
             $validity_end_date          = $row['validity_end_date'];
             $number_indents             = $row['number_indents'];
-            $description                = title_case($row['description']);
+            $description                = $row['description'];
             $class = "indent" . $number_indents;
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=$goods_nomenclature_item_id?> (<?=$productline_suffix?>)</a></td>
+                    <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=$goods_nomenclature_item_id?> (<?=$productline_suffix?>)</a></td>
                     <td class="govuk-table__cell <?=$class?>"><?=$description?></td>
                 </tr>
 <?php

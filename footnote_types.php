@@ -42,12 +42,12 @@
             $footnote_type_id    = $row['footnote_type_id'];
             $application_code    = $row['application_code'];
             $description         = $row['description'];
-            $validity_start_date = string_to_date($row['validity_start_date']);
-            $validity_end_date   = string_to_date($row['validity_end_date']);
+            $validity_start_date = short_date($row['validity_start_date']);
+            $validity_end_date   = short_date($row['validity_end_date']);
             $rowclass            = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="govuk-table__row <?=$rowclass?>">
-        <td class="govuk-table__cell c b"><a href="footnotes.php?footnote_type_id=<?=$footnote_type_id?>"><?=$footnote_type_id?></a></td>
+        <td class="govuk-table__cell c b"><a href="footnotes.html?footnote_type_id=<?=$footnote_type_id?>"><?=$footnote_type_id?></a></td>
         <td class="govuk-table__cell c"><?=footnote_type_application_code($application_code)?> (<?=$application_code?>)</td>
         <td class="govuk-table__cell"><?=$description?></td>
         <td class="govuk-table__cell c"><?=$validity_start_date?></td>

@@ -12,7 +12,7 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 		<ol class="govuk-breadcrumbs__list">
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="/load_history.php">Load history</a>
+				<a class="govuk-breadcrumbs__link" href="/load_history.html">Load history</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">File <?=$file?></li>
 		</ol>
@@ -57,11 +57,11 @@ foreach ($nodes as $node) {
     $id             = $content->{'goods.nomenclature'}->{'goods.nomenclature.item.id'};
     $suffix         = $content->{'goods.nomenclature'}->{'producline.suffix'};
     $start_date     = $content->{'goods.nomenclature'}->{'validity.start.date'};
-    $url            = '<a href="/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $id . '&productline_suffix=' . $suffix . '">' . $id . '</a>';
+    $url            = '<a href="/goods_nomenclature_item_view.html?goods_nomenclature_item_id=' . $id . '&productline_suffix=' . $suffix . '">' . $id . '</a>';
 
     xml_item ('Update type',    $update_type);
     xml_item ('SID',            $sid);
-    xml_item ('ID',             '<a href="/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $content->{'goods.nomenclature'}->{'goods.nomenclature.item.id'} . '">' . $content->{'goods.nomenclature'}->{'goods.nomenclature.item.id'} . '</a>');
+    xml_item ('ID',             '<a href="/goods_nomenclature_item_view.html?goods_nomenclature_item_id=' . $content->{'goods.nomenclature'}->{'goods.nomenclature.item.id'} . '">' . $content->{'goods.nomenclature'}->{'goods.nomenclature.item.id'} . '</a>');
     xml_item ('Suffix',         $suffix);
     xml_item ('Start date',     $start_date);
     xml_foot();
@@ -86,10 +86,10 @@ foreach ($nodes as $node) {
     $start_date             = $content->{'measure'}->{'validity.start.date'};
     $end_date               = $content->{'measure'}->{'validity.end.date'};
     $regulation             = $content->{'measure'}->{'measure.generating.regulation.id'};
-    $url_measure            = '<a href="/measure_view.php?measure_sid=' . $sid . '">' . $sid . '</a>';
-    $url_measure_type       = '<a href="/measure_type_view.php?measure_type_id=' . $measure_type . '">' . $measure_type . '</a>';
-    $url_geo                = '<a href="/geographical_area_view.php?geographical_area_id=' . $geographical_area . '">' . $geographical_area . '</a>';
-    $url_regulation         = '<a href="/regulation_view.php?regulation_id=' . $regulation . '">' . $regulation . '</a>';
+    $url_measure            = '<a href="/measure_view.html?measure_sid=' . $sid . '">' . $sid . '</a>';
+    $url_measure_type       = '<a href="/measure_type_view.html?measure_type_id=' . $measure_type . '">' . $measure_type . '</a>';
+    $url_geo                = '<a href="/geographical_area_view.html?geographical_area_id=' . $geographical_area . '">' . $geographical_area . '</a>';
+    $url_regulation         = '<a href="/regulation_view.html?regulation_id=' . $regulation . '">' . $regulation . '</a>';
 
     xml_item ('Update type',    $update_type);
     xml_item ('SID',            $url_measure);
@@ -118,8 +118,8 @@ foreach ($nodes as $node) {
     $start_date             = $content->{'base.regulation'}->{'validity.start.date'};
     $end_date               = $content->{'base.regulation'}->{'validity.end.date'};
     $info_text              = $content->{'base.regulation'}->{'information.text'};
-    $url_regulation         = '<a href="/regulation_view.php?regulation_sid=' . $id . '">' . $id . '</a>';
-    $url_group              = '<a href="/regulation_group_view.php?regulation_group_id=' . $group_id . '">' . $group_id . '</a>';
+    $url_regulation         = '<a href="/regulation_view.html?regulation_sid=' . $id . '">' . $id . '</a>';
+    $url_group              = '<a href="/regulation_group_view.html?regulation_group_id=' . $group_id . '">' . $group_id . '</a>';
     $info_split             = explode("|", $info_text);
 
     xml_item ('Update type',        $update_type);

@@ -3,7 +3,6 @@
 	$application = new application;
 	$application->get_regulation_groups();
 	$error_handler = new error_handler;
-	$error_handler->get_errors("create_measure_phase1");
 
     # Initialise the quota order number object
 	$action				= get_querystring("action");
@@ -12,17 +11,19 @@
 	$base_regulation->set_properties($base_regulation_id);
 
 	# Initialise the quota order number origin object
+
+	$disabled = "";
 	switch ($action) {
         case "new":
             $base_regulation->populate_from_cookies();
+			$disabled = "";
+            $phase = "regulation_create";
 			break;
 		case "edit":
-			$geographical_area->geographical_area_id						= get_querystring("geographical_area_id");
-			$geographical_area->geographical_area_sid						= get_querystring("geographical_area_sid");
-			$geographical_area->geographical_area_description_period_sid	= get_querystring("geographical_area_description_period_sid");
-			$geographical_area->populate_from_db();
-			#h1 ("Here" . $geographical_area->description);
-			$disabled = " disabled";
+			$base_regulation->base_regulation_id    = get_querystring("base_regulation_id");
+			$base_regulation->populate_from_db();
+            $disabled = " disabled";
+            $phase = "regulation_edit";
 			break;
 	}
 
@@ -33,19 +34,25 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/regulations.php">Regulations</a></li>
-		<li class="govuk-breadcrumbs__list-item">New regulation</li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/regulations.html">Regulations</a></li>
+		<li class="govuk-breadcrumbs__list-item">Create / edit regulation</li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
 
 <div class="app-content__header">
-	<h1 class="govuk-heading-xl">Create regulation</h1>
+	<h1 class="govuk-heading-xl">Create / edit regulation</h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/regulation_actions.php">
-<input type="hidden" name="phase" value="regulation_create_edit" />
-
+<form class="tariff" method="post" action="/actions/regulation_actions.html">
+<input type="hidden" name="phase" value="<?=$phase?>" />
+<?php
+    if ($phase == "regulation_edit") {
+?>
+<input type="hidden" name="base_regulation_id" value="<?=$base_regulation->base_regulation_id?>" />
+<?php        
+    }
+?>
 <!-- Start error handler //-->
 <?=$error_handler->get_primary_error_block() ?>
 <!-- End error handler //-->
@@ -68,7 +75,7 @@
 
     </span>
 	<?=$error_handler->display_error_message("base_regulation_id");?>
-	<input value="<?=$base_regulation->base_regulation_id?>" class="govuk-input" style="width:20%" id="base_regulation_id" name="base_regulation_id" type="text" maxlength="8" size="8">
+	<input <?=$disabled?> value="<?=$base_regulation->base_regulation_id?>" class="govuk-input" style="width:20%" id="base_regulation_id" name="base_regulation_id" type="text" maxlength="8" size="8">
 </div>
 <!-- End regulation ID field //-->
 

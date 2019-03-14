@@ -6,14 +6,13 @@
 	$application->get_geographical_members("1011");
 	$application->get_countries_and_regions();
 	$error_handler = new error_handler;
-	$error_handler->get_errors("create_measure_phase1");
 	require ("includes/header.php");
 ?>
 <div class="app-content__header">
 	<h1 class="govuk-heading-xl">Create monetary exchange rate</h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/monetary_exchange_rate_actions.php">
+<form class="tariff" method="post" action="/actions/monetary_exchange_rate_actions.html">
 <input type="hidden" name="phase" value="1" />
 <!-- Start error handler //-->
 <div class="govuk-error-summary hidden" role="alert" tabindex="-1">
@@ -73,7 +72,7 @@
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 			<h1 class="govuk-fieldset__heading" style="max-width:100%;">When will the exchange rate expire?</h1>
 		</legend>
-		<span id="measure_end_hint" class="govuk-hint">Please leave these fields blank, and they will be populated the next time a new record is created</span>
+		<span id="measure_end_hint" class="govuk-hint">Please leave these fields blank, unless yoou expressly need to populate, and they will be populated the next time a new record is created</span>
 		<span id="base_regulation-error" class="govuk-error-message">
       		Please enter a valid end date
     	</span>

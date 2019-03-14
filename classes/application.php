@@ -24,6 +24,7 @@ class application
 	public $min_quota_order_number_origins = 10000;
 	public $min_quota_order_numbers = 10000;
 	public $min_quota_suspension_periods = 1000;
+	public $min_monetary_exchange_periods = 10000;
 
 
 	public function get_regulation_groups() {
@@ -62,8 +63,8 @@ class application
 				$geographical_area_id   = $row['geographical_area_id'];
 				$description            = $row['description'];
 				$geographical_code      = $row['geographical_code'];
-				$validity_start_date    = string_to_date($row['validity_start_date']);
-				$validity_end_date      = string_to_date($row['validity_end_date']);
+				$validity_start_date    = short_date($row['validity_start_date']);
+				$validity_end_date      = short_date($row['validity_end_date']);
 				
 				$geographical_area      = new geographical_area;
 				$geographical_area->set_properties($geographical_area_sid, $geographical_area_id, $description,
@@ -114,8 +115,8 @@ class application
 				$geographical_area_id   = $row['geographical_area_id'];
 				$description            = $row['description'];
 				$geographical_code      = $row['geographical_code'];
-				$validity_start_date    = string_to_date($row['validity_start_date']);
-				$validity_end_date      = string_to_date($row['validity_end_date']);
+				$validity_start_date    = short_date($row['validity_start_date']);
+				$validity_end_date      = short_date($row['validity_end_date']);
 				
 				$geographical_area      = new geographical_area;
 				$geographical_area->set_properties($geographical_area_sid, $geographical_area_id, $description,
@@ -141,8 +142,8 @@ class application
 		if ($result) {
 			while ($row = pg_fetch_array($result)) {
 				$measure_type_id      				= $row['measure_type_id'];
-				$validity_start_date     			= string_to_date($row['validity_start_date']);
-				$validity_end_date     				= string_to_date($row['validity_end_date']);
+				$validity_start_date     			= short_date($row['validity_start_date']);
+				$validity_end_date     				= short_date($row['validity_end_date']);
 				$trade_movement_code      			= $row['trade_movement_code'];
 				$priority_code      				= $row['priority_code'];
 				$measure_component_applicable_code  = $row['measure_component_applicable_code'];
@@ -262,6 +263,46 @@ class application
 		$s = $this->get_single_value("SELECT MAX(geographical_area_description_period_sid) FROM geographical_area_description_periods");
 		if ($s < $this->min_geographical_area_description_periods) {
 			$s = $this->min_geographical_area_description_periods;
+		}
+		$s += 1;
+		return ($s);
+	}
+
+	function get_next_footnote_description_period() {
+		global $conn;
+		$s = $this->get_single_value("SELECT MAX(footnote_description_period_sid) FROM footnote_description_periods");
+		if ($s < $this->min_footnote_description_periods) {
+			$s = $this->min_footnote_description_periods;
+		}
+		$s += 1;
+		return ($s);
+	}
+
+	function get_next_certificate_description_period() {
+		global $conn;
+		$s = $this->get_single_value("SELECT MAX(certificate_description_period_sid) FROM certificate_description_periods");
+		if ($s < $this->min_certificate_description_periods) {
+			$s = $this->min_certificate_description_periods;
+		}
+		$s += 1;
+		return ($s);
+	}
+
+	function get_next_goods_nomenclature_description_period() {
+		global $conn;
+		$s = $this->get_single_value("SELECT MAX(goods_nomenclature_description_period_sid) FROM goods_nomenclature_description_periods");
+		if ($s < $this->min_goods_nomenclature_description_periods) {
+			$s = $this->min_goods_nomenclature_description_periods;
+		}
+		$s += 1;
+		return ($s);
+	}
+
+	function get_next_monetary_exchange_period() {
+		global $conn;
+		$s = $this->get_single_value("SELECT MAX(monetary_exchange_period_sid) FROM monetary_exchange_periods");
+		if ($s < $this->min_monetary_exchange_periods) {
+			$s = $this->min_monetary_exchange_periods;
 		}
 		$s += 1;
 		return ($s);

@@ -1,7 +1,9 @@
 <?php
     require ("includes/db.php");
-    require ("includes/header.php");
     $measure_type_id = get_querystring("measure_type_id");
+    $measure_type = new measure_type;
+    $measure_type->clear_cookies();
+    require ("includes/header.php");
 ?>
 <div id="wrapper" class="direction-ltr">
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
@@ -10,7 +12,7 @@
                 <a class="govuk-breadcrumbs__link" href="/">Home</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/measure_types.php">Measure types</a>
+                <a class="govuk-breadcrumbs__link" href="/measure_types.html">Measure types</a>
             </li>
         </ol>
     </div>
@@ -37,8 +39,8 @@
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {
             $measure_type_id                    = $row['measure_type_id'];
-            $validity_start_date                = string_to_date($row['validity_start_date']);
-            $validity_end_date                  = string_to_date($row['validity_end_date']);
+            $validity_start_date                = short_date($row['validity_start_date']);
+            $validity_end_date                  = short_date($row['validity_end_date']);
             $trade_movement_code                = $row['trade_movement_code'];
             $priority_code                      = $row['priority_code'];
             $measure_component_applicable_code  = $row['measure_component_applicable_code'];
@@ -99,14 +101,49 @@
 ?>
 
         </table>
+        <form action="/actions/measure_type_actions.html" method="get" class="inline_form">
+    <input type="hidden" name="phase" value="show_edit_measure_type_form" />
+    <input type="hidden" name="measure_type_id" value="<?=$measure_type_id?>" />
+    <h3>Edit this measure type</h3>
+    <p>Click on this button to edit this measure type.</p>
+    <div class="column-one-third" style="width:320px">
+	    <div class="govuk-form-group" style="padding:0px;margin:0px">
+        <button type="submit" class="govuk-button">Edit measure type</button>
+        </div>
+    </div>
+    <div class="clearer"><!--&nbsp;//--></div>
+</form>
+
+<form action="/actions/measure_type_actions.html" method="get" class="inline_form">
+    <input type="hidden" name="phase" value="terminate_measures" />
+    <input type="hidden" name="measure_type_id" value="<?=$measure_type_id?>" />
+    <h3>Terminate measures</h3>
+    <p>Click on this button to terminate all current and future measures of this type. Warning - this cannot be undone.</p>
+    <div class="column-one-third" style="width:320px">
+	    <div class="govuk-form-group" style="padding:0px;margin:0px">
+        <button type="submit" class="govuk-button">Terminate measures of this type</button>
+        </div>
+    </div>
+    <div class="clearer"><!--&nbsp;//--></div>
+</form>
+
+
 <?php
     $sql = "SELECT measure_sid, goods_nomenclature_item_id, regulation_id_full, additional_code_type_id, additional_code_id, measure_type_id,
     geographical_area_id, validity_start_date, validity_end_date, ordernumber
-    FROM ml.v5_brexit_day WHERE measure_type_id = '" . $measure_type_id . "'";
+    FROM ml.v5_brexit_day WHERE measure_type_id = '" . $measure_type_id . "' ORDER BY validity_start_date DESC, goods_nomenclature_item_id";
     $result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
-        <h2 class="nomargin">Measures of type <?=$description?></h2>
+
+<h2 class="nomargin">Measures of type <?=$description?></h2>
+<?php
+    if (pg_num_rows($result) == 0){
+?>
+<p>There are no measures of this type.</p>
+<?php
+    } else {
+?>
         <table class="govuk-table" cellspacing="0">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header" style="width:10%">Measure SID</th>
@@ -128,8 +165,8 @@
             $measure_type_id            = $row['measure_type_id'];
             $geographical_area_id       = $row['geographical_area_id'];
             $ordernumber                = $row['ordernumber'];
-            $validity_start_date        = string_to_date($row['validity_start_date']);
-            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $validity_start_date        = short_date($row['validity_start_date']);
+            $validity_end_date          = short_date($row['validity_end_date']);
             if ($additional_code_type_id != "") {
                 $additional_code_show = $additional_code_type_id . " / " . $additional_code_id;
             } else {
@@ -137,13 +174,13 @@
             }
 ?>            
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell"><a href="measure_view.php?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-                <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+                <td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+                <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
                 <td class="govuk-table__cell c"><?=$additional_code_show?></td>
-                <td class="govuk-table__cell c"><a href="geographical_area_view.php?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
+                <td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
                 <td class="govuk-table__cell"><?=$validity_start_date?></td>
                 <td class="govuk-table__cell"><?=$validity_end_date?></td>
-                <td class="govuk-table__cell"><a href="regulation_view.php?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+                <td class="govuk-table__cell"><a href="regulation_view.html?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
                 <td class="govuk-table__cell"><?=$ordernumber?></td>
             </tr>
 <?php
@@ -151,8 +188,7 @@
 ?>
         </table>
 <?php
-    } else {
-        echo ("<p>No measures of this type");
+        }
     }
 ?>    
 </div>

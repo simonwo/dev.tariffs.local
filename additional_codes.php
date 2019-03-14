@@ -41,8 +41,8 @@
             $additional_code_type_id    = $row['additional_code_type_id'];
             $additional_code            = $row['additional_code'];
             $description                = $row['description'];
-            $validity_start_date        = string_to_date($row['validity_start_date']);
-            $validity_end_date          = string_to_date($row['validity_end_date']);
+            $validity_start_date        = short_date($row['validity_start_date']);
+            $validity_end_date          = short_date($row['validity_end_date']);
 ?>
     <tr class="govuk-table__row">
         <td class="govuk-table__cell c"><?=$additional_code_type_id?></td>

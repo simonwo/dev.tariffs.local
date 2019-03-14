@@ -26,7 +26,6 @@
 		case "new":
 			$quota_order_number_origin->quota_order_number_origin_sid = -1;
             $quota_order_number_origin->populate_from_cookies();
-            h1 ("here");
 			break;
 		case "edit":
 			$quota_definition_sid = get_querystring("quota_definition_sid");
@@ -42,7 +41,7 @@
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/">Home</a>
 		</li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.php">Quota order numbers</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
@@ -51,7 +50,7 @@
 	<h1 class="govuk-heading-xl">Add quota origin to quota <?=$quota_order_number->quota_order_number_id?></h1>
 </div>
 
-<form class="tariff" method="post" action="/actions/quota_order_number_actions.php">
+<form class="tariff" method="post" action="/actions/quota_order_number_actions.html">
 <input type="hidden" name="phase" value="quota_order_number_add_origin" />
 <input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number->quota_order_number_sid?>" />
 <input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number->quota_order_number_id?>" />

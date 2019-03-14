@@ -44,8 +44,8 @@
 		while ($row = pg_fetch_array($result)) {
             $regulation_group_id    = $row['regulation_group_id'];
             $description            = $row['description'];
-            $validity_start_date    = string_to_date($row['validity_start_date']);
-            $validity_end_date      = string_to_date($row['validity_end_date']);
+            $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
 ?>
     <tr class="govuk-table__row">
         <td class="govuk-table__cell"><?=$regulation_group_id?></td>
@@ -53,7 +53,7 @@
         <td class="govuk-table__cell"><?=$validity_start_date?></td>
         <td class="govuk-table__cell"><?=$validity_end_date?></td>
         <td class="govuk-table__cell">
-            <a href="regulations.php?regulation_group_id=<?=$regulation_group_id?>">View regulations</a><br />
+            <a href="regulations.html?regulation_group_id=<?=$regulation_group_id?>">View regulations</a><br />
         </td>
     </tr>
 <?php            

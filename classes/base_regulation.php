@@ -2,12 +2,12 @@
 class base_regulation
 {
 	// Class properties and methods go here
-	public $base_regulation_id       = "";
-	public $validity_start_date       = "";
-	public $regulation_group_id       = "";
+	public $base_regulation_id       	= "";
+	public $validity_start_date       	= "";
+	public $regulation_group_id       	= "";
 	public $information_text_name       = "";
-	public $information_text_primary       = "";
-	public $information_text_url       = "";
+	public $information_text_primary	= "";
+	public $information_text_url       	= "";
 
 	
 	public function set_properties($base_regulation_id) {
@@ -54,6 +54,35 @@ class base_regulation
 
             return (True);
         }
+
+	}
+
+	function update() {
+        global $conn;
+        $application = new application;
+        $operation = "U";
+        $operation_date = $application->get_operation_date();
+
+		$this->published_date = '2019-03-30';
+
+		#h1 ("Update" . $this->base_regulation_id);
+		#exit();
+		$sql = "INSERT INTO base_regulations_oplog
+		(base_regulation_role, base_regulation_id, validity_start_date, validity_end_date, community_code, regulation_group_id, replacement_indicator,
+		stopped_flag, information_text, approved_flag, published_date, officialjournal_number, officialjournal_page, effective_end_date,
+		antidumping_regulation_role, related_antidumping_regulation_id, complete_abrogation_regulation_role, complete_abrogation_regulation_id,
+		explicit_abrogation_regulation_role, explicit_abrogation_regulation_id, operation, operation_date)
+		VALUES (
+		1, $1, $3, Null, 1, $4, 0,
+		False, $2, True, $7, '1', '1', Null,
+		Null, Null, Null, Null,
+		Null, Null, $5, $6)";
+
+		pg_prepare($conn, "base_regulation_insert", $sql);
+		pg_execute($conn, "base_regulation_insert", array($this->base_regulation_id, $this->information_text,
+		$this->validity_start_date, $this->regulation_group_id, $operation, $operation_date, $this->published_date));
+
+		return (True);
 
 	}
 
@@ -106,23 +135,28 @@ class base_regulation
 	
 	function populate_from_db() {
 		global $conn;
-		$sql = "SELECT gad.description, gadp.validity_start_date, gad.geographical_area_description_period_sid,
-		gad.geographical_area_sid, gad.geographical_area_id
-		FROM geographical_area_descriptions gad, geographical_area_description_periods gadp
-		WHERE gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
-		AND gad.geographical_area_description_period_sid = $1";
+		$sql = "SELECT validity_start_date, regulation_group_id, information_text FROM base_regulations WHERE base_regulation_id = $1";
 		pg_prepare($conn, "get_specific_description", $sql);
-		$result = pg_execute($conn, "get_specific_description", array($this->geographical_area_description_period_sid));
-		#p ($sql);
-		#p ($this->geographical_area_description_period_sid);
+		$result = pg_execute($conn, "get_specific_description", array($this->base_regulation_id));
         if ($result) {
-            $row = pg_fetch_row($result);
-        	$this->description  		= $row[0];
-			$this->validity_start_date	= $row[1];
+			$row = pg_fetch_row($result);
+			$this->validity_start_date	= $row[0];
+        	$this->regulation_group_id	= $row[1];
+			$this->information_text  	= $row[2];
 			$this->validity_start_day   = date('d', strtotime($this->validity_start_date));
 			$this->validity_start_month = date('m', strtotime($this->validity_start_date));
 			$this->validity_start_year  = date('Y', strtotime($this->validity_start_date));
+			$this->split_information_text();
         }
+	}
+
+	function split_information_text() {
+		$split = explode("|", $this->information_text);
+		if (count($split) == 3) {
+			$this->information_text_name	= $split[0];
+			$this->information_text_url		= $split[1];
+			$this->information_text_primary = $split[2];
+		}
 	}
 
 

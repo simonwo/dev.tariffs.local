@@ -1,10 +1,14 @@
 <?php
     require (dirname(__FILE__) . "../../includes/db.php");
+    #pre($_REQUEST);
+    #exit();
     $phase = get_formvar("phase");
     if ($phase == "1") {
         get_formvars_phase1();
     }
-    phpInfo();
+    elseif ($phase == "measure_search") {
+        get_formvars_measure_search();
+    }
 
     function get_formvars_phase1() {
         $error_list             = array();
@@ -62,8 +66,26 @@
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             #echo ($error_string);
             #exit();
-            header('Location: /measure_create.php?err=1');
+            header('Location: /measure_create.html?err=1');
         }
 
     }
+
+
+    function get_formvars_measure_search() {
+        $goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
+        $goods_nomenclature_item_id = str_replace(" ", "", $goods_nomenclature_item_id);
+        if (strlen($goods_nomenclature_item_id) < 10) {
+            $goods_nomenclature_item_id .= str_repeat("0", 10 - strlen($goods_nomenclature_item_id));
+        }
+
+        $url  = "/goods_nomenclature_item_view.html";
+        $url .= "?goods_nomenclature_item_id=" . $goods_nomenclature_item_id . "#assigned";
+        #echo ($url);
+        #exit();
+        header("Location: " . $url);
+
+    }
+
+
 ?>

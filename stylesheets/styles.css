@@ -157,13 +157,15 @@ main .gem-c-title {
 }
 .govuk-table__cell {
     vertical-align: top !important;
-    font-size:12pt !important;
+    font-size:11pt !important;
     padding-left: 8px;
     padding-right: 8px !important;
+    padding-top: 6px !important;
+    padding-bottom: 4px !important;
 }
 .govuk-table__header {
     vertical-align: bottom !important;
-    font-size:12pt !important;
+    font-size:11pt !important;
     padding-left: 8px ;
     padding-right: 8px !important;
 }
@@ -219,4 +221,32 @@ textarea.govuk-textarea, select.govuk-select {
 }
 .govuk-label, .govuk-radios__label {
     font-size:12pt !important;
+}
+.tight {
+    margin:0px !important;
+}
+.filler {
+    color:#AAA !important;
+}
+.greyed_out {
+    color:#666 !important;
+    font-style: italic;
+}
+td.tight p {
+    margin:0px !important
+}
+.rpad {
+    margin-right:4px !important;
+    xpadding:2px;
+    xdisplay:block;
+}
+.xmauve {
+    background-color:mediumpurple
+}
+
+a.nodecorate {
+    font-family:"Noto Sans", "Courier New", fixed, system;
+    font-size:12pt;
+    text-decoration: none !important;
+    color:#009;
 }
