@@ -89,7 +89,7 @@
 			if ($justification_regulation_id == "") {
 				$justification_regulation_show = "";
 			} else{
-				$justification_regulation_show = '<a href="regulation_view.html?regulation_id=' . $justification_regulation_id .'">' .
+				$justification_regulation_show = '<a href="regulation_view.html?base_regulation_id=' . $justification_regulation_id .'">' .
 				$justification_regulation_id . '</a> - Role type (' . $justification_regulation_role . ' - ' . $justification_role_type_description .')';
 			}
 
@@ -120,7 +120,7 @@
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Measure generating regulation</td>
-			<td class="govuk-table__cell"><a href="regulation_view.html?regulation_id=<?=$measure_generating_regulation_id?>"><?=$measure_generating_regulation_id?></a> - Role type (<?=$measure_generating_regulation_role?> - <?=$regulation_role_type_description?>)</td>
+			<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$measure_generating_regulation_id?>"><?=$measure_generating_regulation_id?></a> - Role type (<?=$measure_generating_regulation_role?> - <?=$regulation_role_type_description?>)</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Justification regulation</td>

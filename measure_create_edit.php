@@ -8,15 +8,45 @@
 	$application->get_geographical_areas();
 	$application->get_geographical_members("1011");
 	$application->get_countries_and_regions();
+
+	$measure_sid	= get_querystring("measure_sid");
+	$phase			= get_querystring("phase");
+	$measure = new measure;
+	if ($phase == "edit") {
+		$measure->measure_sid = $measure_sid;
+		$measure->populate_from_db();
+		h1 ("Getting from DB " . $measure_type->measure_type_id);
+		$phase = "measure_edit";
+	} else {
+		$measure->populate_from_cookies();
+		h1 ("Getting from cookies");
+		$phase = "measure_create";
+	}
+
 	$error_handler = new error_handler;
 	require ("includes/header.php");
 ?>
+<!-- Start breadcrumbs //-->
+<div id="wrapper" class="direction-ltr">
+	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
+	<ol class="govuk-breadcrumbs__list">
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/measures.html">Measures</a></li>
+		<li class="govuk-breadcrumbs__list-item"><?=$measure_type->measure_type_heading?></li>
+	</ol>
+</div>
+<!-- End breadcrumbs //-->
 <div class="app-content__header">
 	<h1 class="govuk-heading-xl">Create measures</h1>
 </div>
 
 <form class="tariff" method="post" action="/actions/measure_actions.html">
-<input type="hidden" name="phase" value="1" />
+<input type="hidden" name="phase" value="<?=$phase?>" />
+<?php
+	if ($phase == "measure_type_edit") {
+		echo ('<input type="hidden" name="measure_sid" value="' . $measure->measure_sid . '" />');
+	}
+?>
 
 <!-- Start error handler //-->
 <?=$error_handler->get_primary_error_block() ?>
@@ -217,17 +247,15 @@ You may optionally leave this field blank if you will be providing a Meursing co
 <!-- End geographical area field //-->
 
 <!-- Begin measure component fields //-->
-<div class="govuk-form-group <?=$error_handler->get_error("geographical_area_id");?>">
-	<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
+<div class="govuk-form-group <?=$error_handler->get_error("measure_component1");?>">
+	<fieldset class="govuk-fieldset" role="group">
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-			<h1 class="govuk-fieldset__heading" style="max-width:100%;">Select measure components</h1>
+			<h1 class="govuk-fieldset__heading" style="max-width:100%;">Enter measure components</h1>
 		</legend>
 		<div class="float_left">
 			<span class="govuk-hint">Component 1 - duty expression</span>
-			<span id="base_regulation-error" class="govuk-error-message">
-				Please enter a valid geographical area IDs.
-			</span>
-			<select class="govuk-select" id="measure_type" name="measure_type">
+			<?=$error_handler->display_error_message("measure_component1");?>
+			<select class="govuk-select" id="duty_expression1" name="duty_expression1">
 				<option value="0">- Select duty expression - </option>
 <?php
 	foreach ($application->duty_expressions as $obj) {
@@ -256,11 +284,11 @@ You may optionally leave this field blank if you will be providing a Meursing co
 			<span id="base_regulation-error" class="govuk-error-message">
 				Please enter a valid unit.
 			</span>
-			<select class="govuk-select" id="measure_type" name="measure_type">
+			<select class="govuk-select" id="measurement_unit1" name="measurement_unit1">
 				<option value="0">- Select unit - </option>
 <?php
 	foreach ($application->measurement_units as $obj) {
-		echo ("<option value='" . $obj->measurement_unit_code . "'>" . $obj->measurement_unit_code . " - " . $obj->description . "</option>");
+		echo ("<option value='" . $obj->measurement_unit_code . "'>" . $obj->measurement_unit_code . " - " . substr($obj->description, 0, 20) . "</option>");
 	}
 ?>
 			</select>
@@ -271,11 +299,11 @@ You may optionally leave this field blank if you will be providing a Meursing co
 			<span id="base_regulation-error" class="govuk-error-message">
 				Please enter a valid qualifier.
 			</span>
-			<select class="govuk-select" id="measure_type" name="measure_type">
+			<select class="govuk-select" id="measurement_unit_qualifier1" name="measurement_unit_qualifier1">
 				<option value="0">- Select qualifier - </option>
 				<?php
 	foreach ($application->measurement_unit_qualifiers as $obj) {
-		echo ("<option value='" . $obj->measurement_unit_qualifier_code . "'>" . $obj->measurement_unit_qualifier_code . " - " . $obj->description . "</option>");
+		echo ("<option value='" . $obj->measurement_unit_qualifier_code . "'>" . $obj->measurement_unit_qualifier_code . " - " . substr($obj->description, 0, 20) . "</option>");
 	}
 ?>
 			</select>
@@ -287,8 +315,7 @@ You may optionally leave this field blank if you will be providing a Meursing co
 <!-- End measure component fields //-->
 
 
-		<button type="submit" class="govuk-button">Continue</button>
-		<button type="submit" class="govuk-button">Save progress</button>
+		<button type="submit" class="govuk-button">Save measure(s)</button>
 	</form>
 </div>
 

@@ -23,7 +23,7 @@ class measure_type
 	
 	public $measure_types = array ();
 
-    public function __construct() {
+	public function __construct() {
 		$this->trade_movement_codes = array();
 		array_push($this->trade_movement_codes, array("0", "Import measure type"));
 		array_push($this->trade_movement_codes, array("1", "Export measure type"));
@@ -90,21 +90,21 @@ class measure_type
 		$this->is_quota				        		= $is_quota;
 	}
 
-    function populate_from_cookies() {
-        $this->measure_type_id						= get_cookie("measure_type_id");
-        $this->validity_start_day					= get_cookie("measure_type_validity_start_day");
-        $this->validity_start_month					= get_cookie("measure_type_validity_start_month");
-        $this->validity_start_year					= get_cookie("measure_type_validity_start_year");
-        $this->validity_end_day						= get_cookie("measure_type_validity_end_day");
-        $this->validity_end_month					= get_cookie("measure_type_validity_end_month");
-        $this->validity_end_year					= get_cookie("measure_type_validity_end_year");
-        $this->description							= get_cookie("measure_type_description");
-        $this->trade_movement_code					= get_cookie("measure_type_trade_movement_code");
-        $this->priority_code						= get_cookie("measure_type_priority_code");
+	function populate_from_cookies() {
+		$this->measure_type_id						= get_cookie("measure_type_id");
+		$this->validity_start_day					= get_cookie("measure_type_validity_start_day");
+		$this->validity_start_month					= get_cookie("measure_type_validity_start_month");
+		$this->validity_start_year					= get_cookie("measure_type_validity_start_year");
+		$this->validity_end_day						= get_cookie("measure_type_validity_end_day");
+		$this->validity_end_month					= get_cookie("measure_type_validity_end_month");
+		$this->validity_end_year					= get_cookie("measure_type_validity_end_year");
+		$this->description							= get_cookie("measure_type_description");
+		$this->trade_movement_code					= get_cookie("measure_type_trade_movement_code");
+		$this->priority_code						= get_cookie("measure_type_priority_code");
 		$this->origin_dest_code						= get_cookie("measure_type_origin_dest_code");
-        $this->measure_component_applicable_code	= get_cookie("measure_type_measure_component_applicable_code");
-        $this->order_number_capture_code			= get_cookie("measure_type_order_number_capture_code");
-        $this->measure_type_series_id				= get_cookie("measure_type_measure_type_series_id");
+		$this->measure_component_applicable_code	= get_cookie("measure_type_measure_component_applicable_code");
+		$this->order_number_capture_code			= get_cookie("measure_type_order_number_capture_code");
+		$this->measure_type_series_id				= get_cookie("measure_type_measure_type_series_id");
 		$this->measure_type_heading					= "Create new measure type";
 		$this->disable_measure_type_id_field		= "";
 	}
@@ -116,7 +116,7 @@ class measure_type
 		pg_prepare($conn, "measure_type_exists", $sql);
 		$result = pg_execute($conn, "measure_type_exists", array($this->measure_type_id));
 		if ($result) {
-            if (pg_num_rows($result) > 0) {
+			if (pg_num_rows($result) > 0) {
 				$exists = true;
 			}
 		}
@@ -142,9 +142,9 @@ class measure_type
 
 	function create() {
 		global $conn;
-        $application = new application;
-        $operation = "C";
-        $operation_date = $application->get_operation_date();
+		$application = new application;
+		$operation = "C";
+		$operation_date = $application->get_operation_date();
 		if ($this->validity_start_date == "") {
 			$this->validity_start_date = Null;
 		}
@@ -180,9 +180,9 @@ class measure_type
 
 	function update() {
 		global $conn;
-        $application = new application;
-        $operation = "U";
-        $operation_date = $application->get_operation_date();
+		$application = new application;
+		$operation = "U";
+		$operation_date = $application->get_operation_date();
 		if ($this->validity_start_date == "") {
 			$this->validity_start_date = Null;
 		}
@@ -228,8 +228,8 @@ class measure_type
 		$result = pg_execute($conn, "get_measure_type", array($this->measure_type_id));
 
 		if ($result) {
-            $row = pg_fetch_row($result);
-        	$this->description  						= $row[0];
+			$row = pg_fetch_row($result);
+			$this->description  						= $row[0];
 			$this->validity_start_date					= $row[1];
 			$this->validity_start_day   				= date('d', strtotime($this->validity_start_date));
 			$this->validity_start_month 				= date('m', strtotime($this->validity_start_date));
@@ -258,21 +258,21 @@ class measure_type
 		}
 	}
 
-    public function clear_cookies() {
-        setcookie("measure_type_id", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_start_day", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_start_month", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_start_year", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_description", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_end_day", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_end_month", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_validity_end_year", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_trade_movement_code", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_priority_code", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_origin_dest_code", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_measure_component_applicable_code", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_order_number_capture_code", "", time() + (86400 * 30), "/");
-        setcookie("measure_type_measure_type_series_id", "", time() + (86400 * 30), "/");
+	public function clear_cookies() {
+		setcookie("measure_type_id", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_start_day", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_start_month", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_start_year", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_description", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_end_day", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_end_month", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_validity_end_year", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_trade_movement_code", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_priority_code", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_origin_dest_code", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_measure_component_applicable_code", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_order_number_capture_code", "", time() + (86400 * 30), "/");
+		setcookie("measure_type_measure_type_series_id", "", time() + (86400 * 30), "/");
 	}
 
 	public function business_rule_mt3() {
@@ -308,7 +308,7 @@ class measure_type
 		pg_prepare($conn, "business_rule_mt3", $sql);
 		$result = pg_execute($conn, "business_rule_mt3", array($this->measure_type_id, $this->validity_end_date));
 		if ($result) {
-            if (pg_num_rows($result) > 0) {
+			if (pg_num_rows($result) > 0) {
 				$succeeds = false;
 			}
 		}

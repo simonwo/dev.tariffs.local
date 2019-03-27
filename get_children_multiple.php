@@ -17,8 +17,8 @@
 <?php
 	$csv = array_map('str_getcsv', file('csv/commodities.csv'));
 	$lookup_list = [];
-    foreach ($csv as $commodity) {
-        $c = $commodity[0];
+	foreach ($csv as $commodity) {
+		$c = $commodity[0];
 		$goods_nomenclature_item_id		= $commodity[0];
 		$productline_suffix         	= "80";
 		$obj_goods_nomenclature_item	= new goods_nomenclature;
@@ -58,7 +58,7 @@
 	} else {
 ?>
 			<td class="govuk-table__cell"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id?></td>
-<?php		
+<?php
 	}
 
 ?>
@@ -69,14 +69,14 @@
 			<td class="govuk-table__cell c">
 <?php
 	if ($obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix == "80") {
-?>	
+?>
 				<span id="commodity_<?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id?>"></span>
 <?php
 	}
-?>				
+?>
 			</td>
 		</tr>
-<?php        
+<?php
 	}
 	$parent_count = count($parents);
 	$parent_string = "";
@@ -115,7 +115,7 @@
 			$monetary_unit_code	= $row["monetary_unit_code"];
 			$measurement_unit_code	= $row["measurement_unit_code"];
 			$measurement_unit_qualifier_code	= $row["measurement_unit_qualifier_code"];
-			
+
 			$duty = new duty;
 			$duty->set_properties($goods_nomenclature_item_id, "", "", "", $duty_expression_id, $duty_amount,
 			$monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code, $measure_sid, "", "", "", "");
@@ -137,7 +137,7 @@
 		while ($row = pg_fetch_array($result)) {
 			$measure_sid				= $row["measure_sid"];
 			$goods_nomenclature_item_id	= $row["goods_nomenclature_item_id"];
-			
+
 			$measure = new measure;
 			$measure->set_properties($measure_sid, $goods_nomenclature_item_id, "", "", "", "", "", "", "", "", "");
 
@@ -171,7 +171,7 @@ $( document ).ready(function() {
 	}
 ?>
 });
-</script>		
+</script>
 <?php
 	require ("includes/footer_empty.php")
 ?>

@@ -1,4 +1,5 @@
 <?php
+require ("p.php");
 $http_host = strtolower($_SERVER["HTTP_HOST"]);
 date_default_timezone_set("Europe/London");
 require (dirname(__FILE__) . "../../classes/extract.php");
@@ -33,16 +34,17 @@ if(isset($_COOKIE["showing"])) {
 } else {
 	$scope = "Now";
 }
+/*
 if ($scope == "Brexit") {
 	$dbase = "tariff_staging";
 } else {
 	$dbase = "tariff_eu";
 }
-$dbase = "tariff_dev";
+*/
 $msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
 $pagesize	= 100;
-$conn		= pg_connect("host=127.0.0.1 port=5432 dbname=" . $dbase . " user=postgres password=zanzibar");
+$conn		= pg_connect("host=127.0.0.1 port=5432 dbname=" . $dbase . " user=postgres password=" . $pwd);
 $page       = intval(get_querystring("page"));
 if ($page == 0) {$page = 1;}
 
@@ -431,6 +433,24 @@ function short_date($s) {
 		$s2 = "-";
 	} else {
 		$s2 = date("d/m/Y", strtotime($s));
+	}
+	return ($s2);
+}
+
+function dm($s) {
+	if ($s == "") {
+		$s2 = "-";
+	} else {
+		$s2 = date("d/m", strtotime($s));
+	}
+	return ($s2);
+}
+
+function vshort_date($s) {
+	if ($s == "") {
+		$s2 = "-";
+	} else {
+		$s2 = date("d/m/y", strtotime($s));
 	}
 	return ($s2);
 }

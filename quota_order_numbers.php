@@ -18,14 +18,14 @@
 </div>
 
 <form action="/quota_order_number_create_edit.html" method="get" class="inline_form">
-    <input type="hidden" name="phase" value="<?=$phase?>" />
-    <h3>New quota order number</h3>
-    <div class="column-one-third" style="width:320px">
+	<input type="hidden" name="phase" value="<?=$phase?>" />
+	<h3>New quota order number</h3>
+	<div class="column-one-third" style="width:320px">
 	<div class="govuk-form-group" style="padding:0px;margin:0px">
-            <button type="submit" class="govuk-button">Create new quota order number</button>
-        </div>
-    </div>
-    <div class="clearer"><!--&nbsp;//--></div>
+			<button type="submit" class="govuk-button">Create new quota order number</button>
+		</div>
+	</div>
+	<div class="clearer"><!--&nbsp;//--></div>
 </form>
 
 
@@ -79,6 +79,25 @@
 		}
 	}
 
+	# Get the complete list of quota definitions
+	$sql = "SELECT validity_start_date, validity_end_date, quota_order_number_id FROM quota_definitions
+	WHERE validity_start_date >= '2018-01-01' ORDER BY 3, 1 DESC";
+
+	$result = pg_query($conn, $sql);
+	$quota_definitions = array();
+	if ($result) {
+		while ($row = pg_fetch_array($result)) {
+			$quota_order_number_id	= $row['quota_order_number_id'];
+			$validity_start_date	= $row['validity_start_date'];
+			$validity_end_date		= $row['validity_end_date'];
+			$qd = new quota_definition;
+			$qd->quota_order_number_id	= $quota_order_number_id;
+			$qd->validity_start_date	= $validity_start_date;
+			$qd->validity_end_date		= $validity_end_date;
+			array_push($quota_definitions, $qd);
+		}
+	}
+
 	# Get the complete list of quota order numbers
 	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date
 	FROM quota_order_numbers WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
@@ -106,7 +125,7 @@
 			# Add the quota to the main list
 			array_push($quota_order_numbers, $qon);
 		}
-	
+
 ?>
 <p>The table below is a list of all of the First-Come-First-Served (FCFS) quotas in place. Licensed quotas
 	are not managed via this quota order mechanism.
@@ -114,14 +133,15 @@
 <table class="govuk-table" cellspacing="0">
 <thead class="govuk-table__head">
 	<tr class="govuk-table__row">
-		<th class="govuk-table__header" scope="col" style="width:15%">Order number</th>
+		<th class="govuk-table__header" scope="col" style="width:10%">Order number</th>
 		<th class="govuk-table__header c" scope="col" style="width:10%">EU Link</th>
-		<th class="govuk-table__header" scope="col" style="width:51%">Origins</th>
-		<th class="govuk-table__header c" scope="col" style="width:12%">Start date</th>
-		<th class="govuk-table__header c" scope="col" style="width:12%">End date</th>
+		<th class="govuk-table__header" scope="col" style="width:31%">Origins</th>
+		<th class="govuk-table__header" scope="col" style="width:12%">Start date</th>
+		<th class="govuk-table__header" scope="col" style="width:12%">End date</th>
+		<th class="govuk-table__header" scope="col" style="width:26%">Definition periods</th>
 	</tr>
 	</thead>
-<?php    
+<?php
 		$qon_count = count($quota_order_numbers);
 		for($i = 0; $i < $qon_count; $i++) {
 			$t                      = $quota_order_numbers[$i];
@@ -154,7 +174,19 @@
 				$origins = "No origins";
 				$rowclass = "dead";
 			}
-			$url = "http://ec.europa.eu/taxation_customs/dds2/taric/quota_consultation.jsp?Lang=en&Origin=&Code=" . $quota_order_number_id . "&Year=2019&Critical=&Status=&Expand=true"
+			$url = "http://ec.europa.eu/taxation_customs/dds2/taric/quota_consultation.jsp?Lang=en&Origin=&Code=" . $quota_order_number_id . "&Year=2019&Critical=&Status=&Expand=true";
+
+			# Get definition periods
+			$definitions = "";
+			foreach ($quota_definitions as $qd) {
+				if ($qd->quota_order_number_id == $t->quota_order_number_id) {
+					$s		= dm($qd->validity_start_date) . " to " . dm($qd->validity_end_date);
+					$pos	= strpos($definitions, $s);
+					if ($pos == "") {
+						$definitions .= $s . "<br />";
+					}
+				}
+			}
 ?>
 	<tr class="<?=$rowclass?>">
 		<td class="govuk-table__cell">
@@ -162,15 +194,23 @@
 		</td>
 		<td class="govuk-table__cell c"><a target="_blank" href="<?=$url?>">EU</a></td>
 		<td class="govuk-table__cell"><?=$origins?></td>
-		<td class="govuk-table__cell c"><?=$validity_start_date?></td>
-		<td class="govuk-table__cell c"><?=$validity_end_date?></td>
+		<td class="govuk-table__cell"><?=$validity_start_date?></td>
+		<td class="govuk-table__cell"><?=$validity_end_date?></td>
+		<td class="govuk-table__cell"><?=$definitions?></td>
 	</tr>
-<?php            
+<?php
 		}
 	}
 ?>
 </table>
 </div>
 <?php
+	$a = "hello";
+	$b = "x";
+	$c = strpos($a, $b);
+	echo ("x" . $c . "x");
+	if ($c == "") {
+		echo ("sejsfoije");
+	}
 	require ("includes/footer.php")
 ?>

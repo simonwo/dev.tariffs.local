@@ -16,7 +16,7 @@
 	}
 	#if (1 > 0) {
 	if ($productline_suffix == "80") {
-?>        
+?>
 
 <form action="/actions/goods_nomenclature_actions.html" method="get" class="inline_form">
 			<h3>Filter results</h3>
@@ -113,7 +113,7 @@
 				$monetary_unit_code                 = $row['monetary_unit_code'];
 				$measurement_unit_code              = $row['measurement_unit_code'];
 				$measurement_unit_qualifier_code    = $row['measurement_unit_qualifier_code'];
-				
+
 				$duty = new duty;
 				$duty->set_properties($goods_nomenclature_item_id, $additional_code_type_id, $additional_code_id, $measure_type_ix,
 				$duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code,
@@ -223,7 +223,7 @@
 				}
 				array_push($measure_list, $measure);
 			}
-			
+
 
 			// Only show the duty for duty measures
 			$duty_array = array("142", "143", "144", "146");
@@ -245,7 +245,7 @@
 	} else {
 ?>
 					<td class="govuk-table__cell"><?=$goods_nomenclature_item_id?></td>
-<?php        
+<?php
 	}
 ?>
 <!-- End show nomenclature cell //-->
@@ -258,17 +258,17 @@
 
 <!-- Start show geographical area cell //-->
 <?php
-    if ($current_file_name != "geographical_area_view.html") {
+	if ($current_file_name != "geographical_area_view.html") {
 ?>
 					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$m->geographical_area_id?>"><?=$m->geographical_area_id?></td>
 					<td class="govuk-table__cell"><?=$m->geographical_area_description?></a></td>
-<?php        
-    } else {
+<?php
+	} else {
 ?>
 					<td class="govuk-table__cell"><?=$m->geographical_area_id?></td>
 					<td class="govuk-table__cell"><?=$m->geographical_area_description?></td>
-<?php        
-    }
+<?php
+	}
 ?>
 <!-- End show geographical area cell //-->
 
