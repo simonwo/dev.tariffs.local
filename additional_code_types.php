@@ -31,7 +31,7 @@
 
 <table class="govuk-table" cellspacing="0">
     <tr class="govuk-table__row">
-        <th class="govuk-table__header c" style="width:15%">Additional code type</th>
+        <th class="govuk-table__header" style="width:15%">Additional code type</th>
         <th class="govuk-table__header" style="width:61%">Description</th>
         <th class="govuk-table__header" style="width:12%">Start date</th>
         <th class="govuk-table__header" style="width:12%">End date</th>
@@ -45,7 +45,7 @@
             $rowclass                   = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="govuk-table__row <?=$rowclass?>">
-        <td class="govuk-table__cell c"><a href="additional_codes?additional_code_type_id=<?=$additional_code_type_id?>">Type <?=$additional_code_type_id?></a></td>
+        <td class="govuk-table__cell"><a href="additional_codes.html?additional_code_type_id=<?=$additional_code_type_id?>">Type <?=$additional_code_type_id?></a></td>
         <td class="govuk-table__cell"><?=$description?></td>
         <td class="govuk-table__cell"><?=$validity_start_date?></td>
         <td class="govuk-table__cell"><?=$validity_end_date?></td>

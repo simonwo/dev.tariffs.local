@@ -71,7 +71,7 @@
 ?>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Commodity code</td>
-					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> (<?=format_commodity_code($goods_nomenclature_item_id)?>)</td>
+					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> ( <?=format_commodity_code($goods_nomenclature_item_id)?> )</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">SID</td>
@@ -106,10 +106,10 @@
 			that use a product line suffix that is not "80". These are structural elements only and cannot be declared against.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th style="width:15%" class="govuk-table__header">Commodity</th>
-					<th style="width:10%" class="govuk-table__header c">Suffix</th>
-					<th style="width:10%" class="govuk-table__header c">Indents</th>
-					<th style="width:60%" class="govuk-table__header">Description</th>
+					<th style="width:10%" class="govuk-table__header">Commodity</th>
+					<th style="width:6%" class="govuk-table__header c">Suffix</th>
+					<th style="width:6%" class="govuk-table__header c">Indents</th>
+					<th style="width:73%" class="govuk-table__header">Description</th>
 					<th style="width:5%" class="govuk-table__header c">Leaf</th>
 				</tr>
 <?php

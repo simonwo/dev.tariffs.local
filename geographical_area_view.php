@@ -492,7 +492,17 @@
 			You are able to terminate existing memberships if that membership has already started
 			or you can delete memberships entirely if they are yet to begin.</p>
 
+<?php
+	$sql = "SELECT child_sid, child_id, child_description, validity_start_date, validity_end_date
+	FROM ml.ml_geo_memberships WHERE parent_id = '" . $geographical_area_id . "'";
+	if ($member_currency == "current") {
+		$sql .= " AND (validity_end_date > CURRENT_DATE OR validity_end_date IS NULL) ";
+	}
+	$sql .= " ORDER BY 3";
+	$result = pg_query($conn, $sql);
+	if  ($result) {
 
+?>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:10%">Child ID</th>
@@ -502,16 +512,9 @@
 					<th class="govuk-table__header" style="width:10%">Validity end date</th>
 					<th class="govuk-table__header" style="width:10%">Actions</th>
 				</tr>
-				<?php
-	$sql = "SELECT child_sid, child_id, child_description, validity_start_date, validity_end_date
-	FROM ml.ml_geo_memberships WHERE parent_id = '" . $geographical_area_id . "'";
-	if ($member_currency == "current") {
-		$sql .= " AND (validity_end_date > CURRENT_DATE OR validity_end_date IS NULL) ";
-	}
-	$sql .= " ORDER BY 3";
-	$result = pg_query($conn, $sql);
-	if  ($result) {
-		while ($row = pg_fetch_array($result)) {
+<p>There are <strong><?=pg_num_rows($result)?></strong> members of this geographical area group.</p>
+<?php
+			while ($row = pg_fetch_array($result)) {
 			$child_id               = $row['child_id'];
 			$child_sid              = $row['child_sid'];
 			$child_description      = $row['child_description'];

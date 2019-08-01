@@ -28,8 +28,10 @@
     </div>
     <table cellspacing="0" class="govuk-table tight">
         <tr class="govuk-table__row">
-            <th class="govuk-table__header" style="width:20%">Commodity / suffix</th>
-            <th class="govuk-table__header" style="width:80%">Description</th>
+            <th class="govuk-table__header" style="width:8%">Commodity</th>
+            <th class="govuk-table__header c" style="width:7%">Suffix</th>
+            <th class="govuk-table__header c" style="width:7%">Indents</th>
+            <th class="govuk-table__header" style="width:78%">Description</th>
         </tr>
 
 <?php
@@ -47,7 +49,11 @@
             $class = "indent" . $number_indents;
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=$goods_nomenclature_item_id?> (<?=$productline_suffix?>)</a></td>
+                    <td class="govuk-table__cell">
+                        <a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>
+                    </td>
+                    <td class="govuk-table__cell c"><?=$productline_suffix?></td>
+                    <td class="govuk-table__cell c"><?=$number_indents?></td>
                     <td class="govuk-table__cell <?=$class?>"><?=$description?></td>
                 </tr>
 <?php

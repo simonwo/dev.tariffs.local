@@ -231,7 +231,7 @@ function rowclass($validity_start_date, $validity_end_date) {
 	$validity_end_date		= standardise($validity_end_date);
 
 	$rowclass = "";
-	if (($validity_start_date == "30/03/2019") || ($validity_start_date == "29/03/2019")) {
+	if (($validity_start_date == "31/10/2019") || ($validity_start_date == "01/11/2019")) {
 		$rowclass = "uk";
 	} elseif (($validity_start_date == "01/01/2019") && ($validity_end_date == NULL)) {
 		$rowclass = "starts2019";
@@ -432,7 +432,7 @@ function short_date($s) {
 	if ($s == "") {
 		$s2 = "-";
 	} else {
-		$s2 = date("d/m/Y", strtotime($s));
+		$s2 = date("d-m-y", strtotime($s));
 	}
 	return ($s2);
 }
@@ -455,16 +455,9 @@ function vshort_date($s) {
 	return ($s2);
 }
 
-function format_commodity_code_old($s) {
-	if (strlen($s) == 10) {
-		$s2 = substr($s, 0, 4) . " " . substr($s, 4, 2) . " " . substr($s, 6, 2) . " " . substr($s, 8, 2);
-	}
-	return ($s2);
-}
-
 function format_commodity_code($s) {
 	if (strlen($s) == 10) {
-		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad green'>" . substr($s, 6, 2) . "</span><span>" . substr($s, 8, 2) . "</span>";
+		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad green'>" . substr($s, 6, 4) . "</span>";
 	}
 	return ($s2);
 }

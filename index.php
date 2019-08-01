@@ -119,10 +119,16 @@
 						<li><a href="/monetary_exchange_rate_create_edit.html">Create new monetary exchange rate</a></li>
 					</ul>
 
-				<h2 class="small">Reference data</h2>
+					<h2 class="small">Reference data</h2>
 					<ul class="main-menu">
 						<li><a href="/measurement_units.html">Measurement units</a></li>
 						<li><a href="/measurement_unit_qualifiers.html">Measurement unit qualifiers</a></li>
+					</ul>
+
+					<h2 class="small">Backup and restore</h2>
+					<ul class="main-menu">
+						<li><a href="/backup.html">Backup database</a></li>
+						<li><a href="#">Restore database</a></li>
 					</ul>
 
 				</div>

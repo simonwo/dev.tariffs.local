@@ -32,7 +32,7 @@
 
     <table class="govuk-table" cellspacing="0">
         <tr class="govuk-table__row">
-            <th class="govuk-table__header c" style="width:15%">Certificate type</th>
+            <th class="govuk-table__header" style="width:15%">Certificate type</th>
             <th class="govuk-table__header" style="width:55%">Description</th>
             <th class="govuk-table__header" style="width:15%">Start date</th>
             <th class="govuk-table__header" style="width:15%">End date</th>
@@ -46,7 +46,7 @@
             $rowclass               = rowclass($validity_start_date, $validity_end_date);
 ?>
         <tr class="govuk-table__row <?=$rowclass?>">
-            <td class="govuk-table__cell c"><a href="certificates.html?certificate_type_code=<?=$certificate_type_code?>">Type <?=$certificate_type_code?></a></td>
+            <td class="govuk-table__cell"><a href="certificates.html?certificate_type_code=<?=$certificate_type_code?>">Type <?=$certificate_type_code?></a></td>
             <td class="govuk-table__cell"><?=$description?></td>
             <td class="govuk-table__cell"><?=$validity_start_date?></td>
             <td class="govuk-table__cell"><?=$validity_end_date?></td>

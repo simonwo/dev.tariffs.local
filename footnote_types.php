@@ -31,11 +31,11 @@
 
 <table class="govuk-table" cellspacing="0">
     <tr class="govuk-table__row">
-        <th class="govuk-table__header c" style="width:15%">Footnote type</th>
-        <th class="govuk-table__header c" style="width:15%">Application code</th>
+        <th class="govuk-table__header" style="width:15%">Footnote type</th>
+        <th class="govuk-table__header" style="width:21%">Application code</th>
         <th class="govuk-table__header" style="width:36%">Description</th>
-        <th class="govuk-table__header c" style="width:16%">Start date</th>
-        <th class="govuk-table__header c" style="width:16%">End date</th>
+        <th class="govuk-table__header c" style="width:13%">Start date</th>
+        <th class="govuk-table__header c" style="width:13%">End date</th>
     </tr>
 <?php    
 		while ($row = pg_fetch_array($result)) {
@@ -47,8 +47,8 @@
             $rowclass            = rowclass($validity_start_date, $validity_end_date);
 ?>
     <tr class="govuk-table__row <?=$rowclass?>">
-        <td class="govuk-table__cell c b"><a href="footnotes.html?footnote_type_id=<?=$footnote_type_id?>"><?=$footnote_type_id?></a></td>
-        <td class="govuk-table__cell c"><?=footnote_type_application_code($application_code)?> (<?=$application_code?>)</td>
+        <td class="govuk-table__cell b"><a href="footnotes.html?footnote_type_id=<?=$footnote_type_id?>"><?=$footnote_type_id?></a></td>
+        <td class="govuk-table__cell"><?=footnote_type_application_code($application_code)?> (<?=$application_code?>)</td>
         <td class="govuk-table__cell"><?=$description?></td>
         <td class="govuk-table__cell c"><?=$validity_start_date?></td>
         <td class="govuk-table__cell c"><?=$validity_end_date?></td>

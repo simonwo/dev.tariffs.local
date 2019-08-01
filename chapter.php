@@ -40,7 +40,7 @@
             $description                = title_case($row['description']);
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a href="subheading.html?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+                    <td class="govuk-table__cell"><a class="nodecorate" href="subheading.html?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
                     <td class="govuk-table__cell"><?=$description?></td>
                 </tr>
 <?php

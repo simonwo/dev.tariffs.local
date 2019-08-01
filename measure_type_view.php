@@ -176,9 +176,10 @@
 
 
 
-	$sql = "SELECT measure_sid, goods_nomenclature_item_id, regulation_id_full, additional_code_type_id, additional_code_id, measure_type_id,
+	$sql = "SELECT measure_sid, goods_nomenclature_item_id, measure_generating_regulation_id,
+	additional_code_type_id, additional_code_id, measure_type_id,
 	geographical_area_id, validity_start_date, validity_end_date, ordernumber
-	FROM ml.v5_brexit_day WHERE measure_type_id = '" . $measure_type_id . "' ORDER BY validity_start_date DESC, goods_nomenclature_item_id";
+	FROM ml.measures_real_end_dates WHERE measure_type_id = '" . $measure_type_id . "' ORDER BY validity_start_date DESC, goods_nomenclature_item_id";
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
@@ -206,16 +207,16 @@
 <?php
 		$measure_list = [];
 		while ($row = pg_fetch_array($result)) {
-			$measure_sid                = $row['measure_sid'];
-			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-			$regulation_id_full         = $row['regulation_id_full'];
-			$additional_code_type_id    = $row['additional_code_type_id'];
-			$additional_code_id         = $row['additional_code_id'];
-			$measure_type_id            = $row['measure_type_id'];
-			$geographical_area_id       = $row['geographical_area_id'];
-			$ordernumber                = $row['ordernumber'];
-			$validity_start_date        = short_date($row['validity_start_date']);
-			$validity_end_date          = short_date($row['validity_end_date']);
+			$measure_sid                		= $row['measure_sid'];
+			$goods_nomenclature_item_id 		= $row['goods_nomenclature_item_id'];
+			$measure_generating_regulation_id	= $row['measure_generating_regulation_id'];
+			$additional_code_type_id    		= $row['additional_code_type_id'];
+			$additional_code_id         		= $row['additional_code_id'];
+			$measure_type_id            		= $row['measure_type_id'];
+			$geographical_area_id       		= $row['geographical_area_id'];
+			$ordernumber                		= $row['ordernumber'];
+			$validity_start_date        		= short_date($row['validity_start_date']);
+			$validity_end_date          		= short_date($row['validity_end_date']);
 			if ($additional_code_type_id != "") {
 				$additional_code_show = $additional_code_type_id . " / " . $additional_code_id;
 			} else {
@@ -248,15 +249,16 @@
 
 			}
 			array_push($measure_list, $measure);
+			$rowclass = rowclass($validity_start_date, $validity_end_date);
 ?>
-			<tr class="govuk-table__row">
+			<tr class="govuk-table__row <?=$rowclass?>">
 				<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
 				<td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
 				<td class="govuk-table__cell c"><?=$additional_code_show?></td>
 				<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
 				<td class="govuk-table__cell"><?=$validity_start_date?></td>
 				<td class="govuk-table__cell"><?=$validity_end_date?></td>
-				<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+				<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$measure_generating_regulation_id?>"><?=$measure_generating_regulation_id?></a></td>
 				<td class="govuk-table__cell"><?=$ordernumber?></td>
 				<td class="govuk-table__cell r"><span id="measure_<?=$measure_sid?>"></span></td>
 			</tr>

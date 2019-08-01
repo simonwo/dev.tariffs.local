@@ -46,8 +46,8 @@ h2.small {
 	line-height: 1px;
 }
 .uk {
-	background-color:#f0f0ff;
-}
+	background-color:#E9F0FF;
+} 
 .starts2019 {
 	background-color:#f0f0f0;
 }
@@ -236,21 +236,75 @@ td.tight p {
 	margin:0px !important
 }
 .rpad {
-	margin-right:4px !important;
-	xpadding:2px;
-	xdisplay:block;
+	margin-right:0px !important;
 }
-.xmauve {
-	background-color:mediumpurple
+.mauve {
+	background-color:#dbdceb;
+	padding:0px 3px 0px 3px;
+}
+.blue {
+	background-color:#cae2f0;
+	padding:0px 3px 0px 3px;
+}
+.green {
+	background-color:#c9e8e5;
+	padding:0px 3px 0px 3px;
 }
 
-a.nodecorate {
+a.nodecorate, td.nodecorate {
 	font-family:"Noto Sans", "Courier New", fixed, system;
-	font-size:12pt;
+	font-size:11pt;
 	text-decoration: none !important;
 	color:#009;
+}
+a.nodecorate:hover {
+	text-decoration: underline !important;
 }
 .float_left {
 	float:left;
 	margin-right:0.5em;
 }
+
+table {
+	table-layout: fixed;
+	border-spacing: 0px;
+  }
+  
+  td, th {
+	padding-left: 5px;
+	padding-right: 5px;
+  }
+  
+  .tr_shaded:nth-child(even) {
+	background: #e0e0e0;
+  }
+  
+  .tr_shaded:nth-child(odd) {
+	background: #ffffff;
+  }
+  
+  .scrolly_table {
+	white-space: nowrap;
+	overflow: auto;
+  }
+  
+  /* The frozen cells will each get two class names,
+	 making it easier for me to select all of them or
+	 only a subset.  All frozen cells will be "fixed",
+	 the corner will also be in class "freeze", and the
+	 row and column headers will be "horizontal" and
+	 "vertical" respectively. */
+  .fixed.freeze {
+	z-index: 10;
+	position: relative;
+  }
+  
+  .fixed.freeze_vertical {
+	z-index: 5;
+	position: relative;
+  }
+  
+  .fixed.freeze_horizontal {
+	z-index: 1;
+	position: relative;
+  }
