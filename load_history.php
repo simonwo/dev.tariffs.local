@@ -21,8 +21,11 @@
     </div>
     <table cellspacing="0" class="govuk-table">
         <tr class="govuk-table__row">
+            <th class="govuk-table__header" style="width:56%">File</th>
+            <!--
             <th class="govuk-table__header" style="width:48%">File</th>
             <th class="govuk-table__header" style="width:8%">Size</th>
+            //-->
             <th class="govuk-table__header" style="width:16%">Start time</th>
             <th class="govuk-table__header" style="width:16%">Completion time</th>
             <th class="govuk-table__header c" style="width:8%">Actions</th>
@@ -50,8 +53,11 @@
             }
 ?>
         <tr class="govuk-table__row">
+            <!--
             <td class="govuk-table__cell"><a href="xml_load.html?file=<?=$import_file?>"><?=$import_file?></a></td>
             <td class="govuk-table__cell"><?=$file_size?> kb</a></td>
+            //-->
+            <td class="govuk-table__cell"><?=$import_file?></td>
             <td class="govuk-table__cell"><?=$import_started?></a></td>
             <td class="govuk-table__cell"><?=$import_completed?></a></td>
             <td class="govuk-table__cell c">

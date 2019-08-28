@@ -13,6 +13,7 @@ class goods_nomenclature
 		$this->leaf							= $leaf;
 
 		if ($number_indents == "") {
+			//q("getting the hierarchy");
 			$this->get_hierarchy($direction);
 		}
 	}
@@ -21,7 +22,7 @@ class goods_nomenclature
 		global $conn;
 		$stem = substr($this->goods_nomenclature_item_id, 0, 2);
 		$sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents, description, leaf FROM ml.goods_nomenclature_export_brexit('" . $stem . "%') ORDER BY goods_nomenclature_item_id, producline_suffix";
-		#p ($sql);
+		//q ($sql);
 		$result = pg_query($conn, $sql);
 		if  ($result) {
 			$ar_goods_nomenclatures[]	= new goods_nomenclature;

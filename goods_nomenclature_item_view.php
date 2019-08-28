@@ -39,7 +39,7 @@
 				<li><a href="#assigned">Assigned measures</a></li>
 				<li><a href="#inherited">Inherited measures</a></li>
 				<li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in Trade Tariff Service</a></li>
-				<li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in EU Taric consultation</a></li>
+				<li><a title="Opens in new window" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20190827&Area=&MeasType=&StartPub=&EndPub=&MeasText=&GoodsText=&op=&Taric=<?=$goods_nomenclature_item_id?>&search_text=goods&textSearch=&LangDescr=en&OrderNum=&Regulation=&measStartDat=&measEndDat=" target="_blank" href="#usage_measures">View in EU Taric consultation</a></li>
 			</ul>
 
 		<h2 id="details">Commodity code details</h2>
@@ -51,14 +51,16 @@
 			</tr>
 <?php
 	$sql = "SELECT gn.goods_nomenclature_item_id, gn.producline_suffix as productline_suffix,
-	gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description
-	FROM goods_nomenclatures gn, goods_nomenclature_descriptions gnd1
+	gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description
+	FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
+	left outer join ml.commodity_friendly_names f on left(gn.goods_nomenclature_item_id, 8) = f.goods_nomenclature_item_id
 	WHERE gn.goods_nomenclature_item_id = gnd1.goods_nomenclature_item_id AND gn.producline_suffix = gnd1.productline_suffix
 	AND gn.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' AND gn.producline_suffix = '" . $productline_suffix . "'
 	AND  (gnd1.goods_nomenclature_description_period_sid IN ( SELECT max(gnd2.goods_nomenclature_description_period_sid) AS max
 	FROM goods_nomenclature_descriptions gnd2
 	WHERE gnd1.goods_nomenclature_item_id = gnd2.goods_nomenclature_item_id AND gnd1.productline_suffix = gnd2.productline_suffix))
 	ORDER BY validity_start_date DESC LIMIT 1";
+	//print ($sql);
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 		while ($row = pg_fetch_array($result)) {
@@ -66,6 +68,7 @@
 			$goods_nomenclature_sid		= $row['goods_nomenclature_sid'];
 			$productline_suffix         = $row['productline_suffix'];
 			$description                = $row['description'];
+			$friendly_description       = $row['friendly_description'];
 			$validity_start_date        = short_date($row['validity_start_date']);
 			$validity_end_date          = short_date($row['validity_end_date']);
 ?>
@@ -84,6 +87,10 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Description</td>
 					<td class="govuk-table__cell"><?=$description?></td>
+				</tr>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">Friendly description</td>
+					<td class="govuk-table__cell"><?=$friendly_description?></td>
 				</tr>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Validity start date</td>
@@ -115,6 +122,7 @@
 <?php
 	$array      = $obj_goods_nomenclature_item->ar_hierarchies;
 	$hier_count = sizeof($array);
+	print ("Hierarchy count " . $hier_count);
 	$parents    = array();
 	$my_concat  = $goods_nomenclature_item_id . $productline_suffix;
 	for($i = 0; $i < $hier_count; $i++) {
@@ -148,11 +156,12 @@
 	$parent_count = count($parents);
 	$parent_string = "";
 	for($i = 0; $i < $parent_count; $i++) {
-		$parent_string .= "'" . $parents[$i] . "'";
-		if ($i != $parent_count - 1) {
-			$parent_string .= ",";
+		if ($parents[$i] != $goods_nomenclature_item_id) {
+			$parent_string .= "'" . $parents[$i] . "',";
 		}
 	}
+	$parent_string = trim($parent_string);
+	$parent_string = trim($parent_string, ",");
 ?>
 			</table>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
@@ -173,7 +182,7 @@
 		<div class="clearer"><!--&nbsp;//--></div>
 	</form>
 
-			<p>The table below shows the description_periods descriptions for this commodity code.</p>
+			<p>The table below shows the historical descriptions for this commodity code (most recent first).</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:15%">Date</th>
@@ -246,16 +255,30 @@
 ?>
 
 			<h2 id="inherited">Inherited measures</h2>
-			<p>The measures below have been inherited down to this commodity code.</p>
 <?php
 	if (($productline_suffix == "80")  && ($parent_string != "")) {
-?>        
+		$sql = "SELECT m.*, g.description as geo_description
+		FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g
+		WHERE m.geographical_area_id = g.geographical_area_id
+		AND goods_nomenclature_item_id IN (" . $parent_string  . ") ";
+		if ($geographical_area_id != "") {
+			$sql .= " AND m.geographical_area_id = '" . $geographical_area_id . "'";
+		}
+		if ($measure_type_id != "") {
+			$sql .= " AND measure_type_id = '" . $measure_type_id . "'";
+		}
+		$sql .= " ORDER BY goods_nomenclature_item_id, m.validity_start_date DESC";
+
+		$result = pg_query($conn, $sql);
+		if  (($result) && (pg_num_rows($result) > 0)) {
+?>
+			<p>The measures below have been inherited down to this commodity code.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header c">Measure SID</th>
-					<th class="govuk-table__header c">Commodity</th>
+					<th class="govuk-table__header">Measure SID</th>
+					<th class="govuk-table__header">Commodity</th>
 					<th class="govuk-table__header c">Measure type ID</th>
-					<th class="govuk-table__header c">Geographical area ID</th>
+					<th class="govuk-table__header">Geographical area ID</th>
 					<th class="govuk-table__header c">Additional code</th>
 					<th class="govuk-table__header c">Regulation</th>
 					<th class="govuk-table__header c">Start date</th>
@@ -264,21 +287,12 @@
 					<th class="govuk-table__header c">Duty</th>
 				</tr>
 <?php
-		$sql = "SELECT * FROM measures WHERE goods_nomenclature_item_id IN (" . $parent_string  . ") ";
-		if ($geographical_area_id != "") {
-			$sql .= " AND geographical_area_id = '" . $geographical_area_id . "'";
-		}
-		if ($measure_type_id != "") {
-			$sql .= " AND measure_type_id = '" . $measure_type_id . "'";
-		}
-		$sql .= " ORDER BY goods_nomenclature_item_id, validity_start_date DESC";
-		$result = pg_query($conn, $sql);
-		if  (($result) && (pg_num_rows($result) > 0)){
 			while ($row = pg_fetch_array($result)) {
 				$measure_sid                = $row['measure_sid'];
 				$goods_nomenclature_item_ix = $row['goods_nomenclature_item_id'];
 				$measure_type_id            = $row['measure_type_id'];
-				$geographical_area_id       = $row['geographical_area_id'];
+				$geographical_area_ix       = $row['geographical_area_id'];
+				$geo_description	        = $row['geo_description'];
 				$additional_code_type_id    = $row['additional_code_type_id'];
 				$additional_code_id         = $row['additional_code_id'];
 				$regulation_id_full         = $row['measure_generating_regulation_id'];
@@ -290,23 +304,29 @@
 				if ($goods_nomenclature_item_ix != $goods_nomenclature_item_id) {
 ?>
 				<tr class="<?=$rowclass?>">
-					<td class="govuk-table__cell c"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell c"><a href="<?=$url?>"><?=$goods_nomenclature_item_ix?></a></td>
+					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($goods_nomenclature_item_ix)?></a></td>
 					<td class="govuk-table__cell c"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
-					<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
+					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_ix?>"><?=$geographical_area_ix?>&nbsp;<?=$geo_description?></a></td>
 					<td class="govuk-table__cell c"><?=$additional_code_type_id?><?=$additional_code_id?></td>
 					<td class="govuk-table__cell c"><a href="regulation_view.html?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 					<td class="govuk-table__cell c"><?=$validity_start_date?></td>
 					<td class="govuk-table__cell c"><?=$validity_end_date?></td>
 					<td class="govuk-table__cell c"><?=$quota_order_number_id?></td>
-					<td class="govuk-table__cell c">Duty</td>
+					<td class="govuk-table__cell c">&nbsp;</td>
 				</tr>
 <?php
+				}
 			}
-		}
-	}
 ?>
 			</table>
+<?php
+		} else {
+?>
+			<p>There are no measures inherited down to this commodity code.</p>
+<?php				
+		}
+?>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 <?php
 	} else {

@@ -200,17 +200,10 @@
 	</tr>
 <?php
 		}
-	}
+	} 
 ?>
 </table>
 </div>
 <?php
-	$a = "hello";
-	$b = "x";
-	$c = strpos($a, $b);
-	echo ("x" . $c . "x");
-	if ($c == "") {
-		echo ("sejsfoije");
-	}
 	require ("includes/footer.php")
 ?>

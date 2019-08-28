@@ -91,7 +91,7 @@
 		// Firstly, get all the duties to put in the duty column
 			$sql = "SELECT m.additional_code_type_id, m.additional_code_id, m.measure_type_id,
 			mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
-			FROM measures m, measure_components mc WHERE m.measure_sid = mc.measure_sid ";
+			FROM /* measures */ ml.measures_real_end_dates m, measure_components mc WHERE m.measure_sid = mc.measure_sid ";
 			if ($goods_nomenclature_item_id != "") {
 				$sql .= " AND m.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' ";
 			}
@@ -123,7 +123,8 @@
 			}
 
 		// Secondly, get the measure components explicitly related to SIVs
-		$sql = "SELECT mc.measure_sid, mcc.duty_amount FROM measure_conditions mc, measure_condition_components mcc, measures m
+		$sql = "SELECT mc.measure_sid, mcc.duty_amount FROM measure_conditions mc,
+		measure_condition_components mcc, /* measures */ ml.measures_real_end_dates m
 		WHERE mcc.measure_condition_sid = mc.measure_condition_sid
 		AND m.measure_sid = mc.measure_sid
 		AND mcc.duty_expression_id = '01'
@@ -148,7 +149,7 @@
 		// Thirdly, get the measures
 			#echo ($geographical_area_id);
 			$sql = "SELECT m.*, mtd.description as measure_type_description, g.description as geographical_area_description
-			FROM measures m, measure_type_descriptions mtd, ml.ml_geographical_areas g
+			FROM /* measures */ ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas g
 			WHERE m.measure_type_id = mtd.measure_type_id
 			AND m.geographical_area_sid = g.geographical_area_sid";
 			if ($goods_nomenclature_item_id != "") {
@@ -183,9 +184,9 @@
 				while ($row = pg_fetch_array($result)) {
 					$measure_sid                	= $row['measure_sid'];
 					$goods_nomenclature_item_ix 	= $row['goods_nomenclature_item_id'];
-					$measure_type_id            	= $row['measure_type_id'];
+					$measure_type_ix            	= $row['measure_type_id'];
 					$measure_type_description   	= $row['measure_type_description'];
-					$geographical_area_id       	= $row['geographical_area_id'];
+					$geographical_area_idx      	= $row['geographical_area_id'];
 					$geographical_area_description	= $row['geographical_area_description'];
 					$additional_code_type_id    	= $row['additional_code_type_id'];
 					$additional_code_id         	= $row['additional_code_id'];
@@ -196,7 +197,7 @@
 
 					$measure = new measure;
 					$measure->set_properties($measure_sid, $goods_nomenclature_item_id, $quota_order_number_id, $validity_start_date,
-					$validity_end_date, $geographical_area_id, $measure_type_id, $additional_code_type_id,
+					$validity_end_date, $geographical_area_idx, $measure_type_ix, $additional_code_type_id,
 					$additional_code_id, $regulation_id_full, $measure_type_description);
 					$measure->geographical_area_description = $geographical_area_description;
 
@@ -266,8 +267,7 @@
 		if ($current_file_name != "geographical_area_view.html") {
 	?>
 						<td class="govuk-table__cell">
-							<a href="geographical_area_view.html?geographical_area_id=<?=$m->geographical_area_id?>"><?=$m->geographical_area_id?>
-							<?=$m->geographical_area_description?></a>
+							<a href="geographical_area_view.html?geographical_area_id=<?=$m->geographical_area_id?>"><?=$m->geographical_area_id?>&nbsp;<?=$m->geographical_area_description?></a>
 						</td>
 	<?php
 		} else {

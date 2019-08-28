@@ -201,7 +201,8 @@
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
-			<p>There are <strong><?=pg_num_rows($result)?></strong> matching quotas.</p>
+			<p>There are <strong><?=pg_num_rows($result)?></strong> matching quotas. Please note - this list is derived
+		from the measures table, not the quotas tabe, so that licensed quotas are included.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:10%">Order number</th>
@@ -436,7 +437,7 @@
 					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
 					<td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>
-					<td class="govuk-table__cell"><?=$measure_type_id?> - <?=$measure_type_description?></td>
+					<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 					<td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
 					<td class="govuk-table__cell"><span id="measure_<?=$measure_sid?>"></span></td>

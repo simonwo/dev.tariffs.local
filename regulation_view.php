@@ -50,7 +50,7 @@
 <?php
 		while ($row = pg_fetch_array($result)) {
 			$regulation_type				= $row['regulation_type'];
-			$regulation_id					= $row['regulation_id'];
+			$regulation_idx					= $row['regulation_id'];
 			$information_text				= $row['information_text'];
 			$regulation_group_id			= $row['regulation_group_id'];
 			$regulation_group_description   = $row['regulation_group_description'];
@@ -59,7 +59,7 @@
 			$effective_end_date				= $row['effective_end_date'];
 ?>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell"><?=$regulation_id?></td>
+					<td class="govuk-table__cell"><?=$regulation_idx?></td>
 					<td class="govuk-table__cell"><?=$regulation_type?></td>
 					<td class="govuk-table__cell"><?=$information_text?></td>
 					<td class="govuk-table__cell"><?=$regulation_group_id?> - <?=$regulation_group_description?></td>
@@ -85,7 +85,7 @@
 	from ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas g
 	where m.measure_type_id = mtd.measure_type_id
 	and m.geographical_area_id = g.geographical_area_id
-	and measure_generating_regulation_id = '" . $regulation_id . "'
+	and measure_generating_regulation_id LIKE '" . $regulation_id . "%'
 	ORDER BY goods_nomenclature_item_id, additional_code_type_id, additional_code_id";
 	
 	$result = pg_query($conn, $sql);
@@ -141,7 +141,7 @@
 					<td class="govuk-table__cell c"><?=$my_add_code?></td>
 					<td class="govuk-table__cell"><?=$validity_start_date?></td>
 					<td class="govuk-table__cell"><?=$validity_end_date?></td>
-					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</a></td>
+					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?> - <?=$geographical_area_description?></a></td>
 					<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell"><?=$measure_generating_regulation_id?></td>
 				</tr>

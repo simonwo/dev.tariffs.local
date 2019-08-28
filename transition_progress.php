@@ -1,69 +1,80 @@
 <?php
-    require ("includes/db.php");
-    require ("includes/header.php");
-    $section_id = get_querystring("section_id");
+	require ("includes/db.php");
+	require ("includes/header.php");
+	$section_id = get_querystring("section_id");
 ?>
 <div id="wrapper" class="direction-ltr">
-    <!-- Start breadcrumbs //-->
-    <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
-        <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/">Home</a>
-            </li>
-            <li class="govuk-breadcrumbs__list-item">
-                Monetary exchange rates
-            </li>
-        </ol>
-    </div>
-    <!-- End breadcrumbs //-->
-    <div class="app-content__header">
-        <h1 class="govuk-heading-xl">Monetary exchange rates</h1>
-    </div>
+	<!-- Start breadcrumbs //-->
+	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">Home</a>
+			</li>
+			<li class="govuk-breadcrumbs__list-item">
+				Transition progress
+			</li>
+		</ol>
+	</div>
+	<!-- End breadcrumbs //-->
+	<div class="app-content__header">
+		<h1 class="govuk-heading-xl">Transition progress</h1>
+	</div>
 
 
-    <form action="/monetary_exchange_rate_create.html" method="get" class="inline_form">
-        <h3>Actions monetary exchange rate</h3>
-        <button type="submit" class="govuk-button">Create new monetary exchange rate</button>
-        <div class="clearer"><!--&nbsp;//--></div>
-    </form>
+	<p>This page lists progress on migrating measures. Listed below are all measues, by measure type and geographical area ID
+		that do not stop on or before the expected date of EU Exit and therefore still need to be either terminated or transitioned.</p>
+	<p><strong>Please note</strong> - this page is dealing with a complex query and will take up to 1 minute to load fully.</p>
+<?php
+ob_flush();
+flush();
+?>
 
-    <p>The table below lists the EUR / GBP monetary exchange rates since the start of 2016. Many more exist but
-    are suppressed to save space.</p>
-
-    <table cellspacing="0" class="govuk-table">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" style="width:15%">Start date</th>
-            <th class="govuk-table__header" style="width:15%">End date</th>
-            <th class="govuk-table__header" style="width:25%">Exchange rate</th>
-            <th class="govuk-table__header" style="width:55%">Actions</th>
-        </tr>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" style="width:45%">Measure type</th>
+			<th class="govuk-table__header" style="width:45%">Geographical area ID</th>
+			<th class="govuk-table__header r" style="width:10%">Count</th>
+		</tr>
 
 <?php
-    $sql = "SELECT mep.validity_start_date, mep.validity_end_date, * FROM monetary_exchange_rates mer, monetary_exchange_periods mep
-    WHERE mer.monetary_exchange_period_sid = mep.monetary_exchange_period_sid 
-    AND child_monetary_unit_code = 'GBP'
-    AND mep.validity_start_date >= '2016-01-01'
-    ORDER BY mep.validity_start_date DESC";
-    $result = pg_query($conn, $sql);
+	$sql = "select m.measure_type_id, m.geographical_area_id,
+	mtd.description as measure_type_description, ga.description as geo_description, count (*) as count
+	from ml.measures_real_end_dates m, ml.ml_geographical_areas ga, measure_type_descriptions mtd 
+	where mtd.measure_type_id = m.measure_type_id 
+	and m.geographical_area_id = ga.geographical_area_id
+	and m.validity_start_date < '2019-11-01'
+	and (m.validity_end_date is null
+	or m.validity_end_date > '2019-10-31')
+	group by m.measure_type_id, m.geographical_area_id, mtd.description, ga.description
+	order by m.measure_type_id, m.geographical_area_id";
+	$tally = 0;
+	$result = pg_query($conn, $sql);
 	if  ($result) {
-        while ($row = pg_fetch_array($result)) {
-            $validity_start_date    = short_date($row['validity_start_date']);
-            $validity_end_date      = short_date($row['validity_end_date']);
-            $exchange_rate          = $row['exchange_rate'];
+		while ($row = pg_fetch_array($result)) {
+			$measure_type_id            = $row['measure_type_id'];
+			$geographical_area_id       = $row['geographical_area_id'];
+			$measure_type_description   = $row['measure_type_description'];
+			$geo_description            = $row['geo_description'];
+			$count                      = $row['count'];
+			$tally += $count;
 ?>
-        <tr class="govuk-table__row">
-            <td class="govuk-table__cell"><?=$validity_start_date?></td>
-            <td class="govuk-table__cell"><?=$validity_end_date?></td>
-            <td class="govuk-table__cell"><?=$exchange_rate?></td>
-            <td class="govuk-table__cell"><a href="">Edit</a></td>
-        </tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>" target="_blank"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
+			<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>" target="_blank"><?=$geographical_area_id?> - <?=$geo_description?></a></td>
+			<td class="govuk-table__cell r"><?=$count?></td>
+		</tr>
 <?php
-        }
-    }
+		}
+	}
 ?>
-        </table>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell b">TOTAL</td>
+			<td class="govuk-table__cell">&nbsp;</td>
+			<td class="govuk-table__cell b r"><?=$tally?></td>
+		</tr>
+		</table>
 </div>
 
 <?php
-    require ("includes/footer.php")
+	require ("includes/footer.php")
 ?>

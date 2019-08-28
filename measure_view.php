@@ -40,6 +40,7 @@
 		<li><a href="#measure_details">Measure details</a></li>
 		<li><a href="#measure_components">Measure components</a></li>
 		<li><a href="#measure_conditions">Measure conditions</a></li>
+		<li><a href="#measure_footnotes">Measure footnotes</a></li>
 		<li><a href="#measure_excluded_geographical_areas">Excluded geographical areas</a></li>
 		<li><a title="Opens in new window" href="<?=$url?>" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a></li>
 	</ul>
@@ -120,7 +121,12 @@
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Measure generating regulation</td>
-			<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$measure_generating_regulation_id?>"><?=$measure_generating_regulation_id?></a> - Role type (<?=$measure_generating_regulation_role?> - <?=$regulation_role_type_description?>)</td>
+			<td class="govuk-table__cell">
+					<a href="regulation_view.html?base_regulation_id=<?=$measure_generating_regulation_id?>">
+						<?=$measure_generating_regulation_id?></a>
+					(Role type <?=$measure_generating_regulation_role?> - <?=$regulation_role_type_description?>)
+					
+				</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Justification regulation</td>
@@ -190,9 +196,9 @@
 ?>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell"><?=$duty_expression_id?></td>
-			<td class="govuk-table__cell"><?=$duty_amount?></td>
+			<td class="govuk-table__cell"><?=number_format($duty_amount, 2)?></td>
 			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
-			<td class="govuk-table__cell"><?=$measurement_unit_show?>  /  <?=$measurement_unit_qualifier_show?></td>
+			<td class="govuk-table__cell"><?=$measurement_unit_show?><?php if ($measurement_unit_show != "") { echo ("&nbsp;/&nbsp;"); } ?><?=$measurement_unit_qualifier_show?></td>
 			<td class="govuk-table__cell">
 				<form action="actions/measure_actions.html" method="get" style="display:inline">
 					<input type="hidden" name="action" value="edit_component" />
@@ -223,6 +229,8 @@
 <?php
 	}
 ?>
+
+<!-- Measure conditions //-->
 		<h2 id="measure_conditions">Measure conditions</h2>
 <?php
 	$sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
@@ -233,7 +241,8 @@
 	ON mc.action_code = mad.action_code WHERE measure_sid = " . $measure_sid . "
 	AND mc.condition_code = mccd.condition_code ORDER BY component_sequence_number";
 	$result = pg_query($conn, $sql);
-	if  ($result) {
+	$row_count = pg_num_rows($result);
+	if (($result) && ($row_count > 0)) {
 ?>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
@@ -273,7 +282,7 @@
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell"><?=$measure_condition_sid?></td>
 			<td class="govuk-table__cell"><?=$condition_code_show?></td>
-			<td class="govuk-table__cell"><?=$duty_amount?></td>
+			<td class="govuk-table__cell"><?=number_format($duty_amount, 2)?></td>
 			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
 			<td class="govuk-table__cell"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
 			<td class="govuk-table__cell"><?=$action_code_show?></td>
@@ -284,10 +293,61 @@
 		}
 ?>
 	</table>
-	<p class="back_to_top"><a href="#top">Back to top</a></p>
 <?php
+	} else {
+?>
+	<p>There are no conditions associated with this measure.</p>
+<?php		
 	}
 ?>
+	<p class="back_to_top"><a href="#top">Back to top</a></p>
+
+<!-- Footnotes //-->
+<h2 id="measure_footnotes">Footnotes</h2>
+
+
+<?php
+	$sql = "select f.footnote_type_id, f.footnote_id, description
+	from footnote_association_measures fam, ml.ml_footnotes f 
+	where fam.footnote_id = f.footnote_id and fam.footnote_type_id = f.footnote_type_id
+	and fam.measure_sid = " . $measure_sid . "
+	order by 1, 2";
+	$result = pg_query($conn, $sql);
+	if  (($result) and (pg_num_rows($result) > 0)) {
+?>
+	<p>The following footnotes are associated with this measure.</p>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header" style="width:10%">Footnote</th>
+			<th class="govuk-table__header" style="width:90%">Description</th>
+		</tr>
+
+<?php        
+		while ($row = pg_fetch_array($result)) {
+			$footnote_type_id	= $row['footnote_type_id'];
+			$footnote_id		= $row['footnote_id'];
+			$description        = $row['description'];
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
+			<td class="govuk-table__cell"><?=$description?></td>
+		</tr>
+
+<?php
+		}
+?>
+	</table>
+<?php
+	} else {
+?>
+<p>There are no foonotes associated with this measure.</p>
+<p class="back_to_top"><a href="#top">Back to top</a></p>
+<?php		
+	}
+?>
+
+<!-- Excluded geographical areas //-->
+
 		<h2 id="measure_excluded_geographical_areas">Excluded geographical areas</h2>
 <?php
 	$sql = "SELECT x.excluded_geographical_area, description
@@ -296,7 +356,8 @@
 	AND measure_sid = " . $measure_sid . "
 	ORDER BY excluded_geographical_area";
 	$result = pg_query($conn, $sql);
-	if  ($result) {
+	$row_count = pg_num_rows($result);
+	if (($result) && ($row_count > 0)) {
 ?>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
@@ -319,6 +380,10 @@
 ?>
 	</table>
 <?php
+	} else {
+?>
+<p>There are no excluded geographical areas associated to this measure.</p>
+<?php		
 	}
 ?>	
 	<p class="back_to_top"><a href="#top">Back to top</a></p>

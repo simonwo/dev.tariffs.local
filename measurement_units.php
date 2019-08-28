@@ -17,6 +17,7 @@
     <div class="app-content__header">
         <h1 class="govuk-heading-xl">Measurement units</h1>
     </div>
+    <p>The applicable qualifiers are defined in the measurements table.</p>
 
 <?php
     $sql = "SELECT m.measurement_unit_code, m.measurement_unit_qualifier_code, muqd.description

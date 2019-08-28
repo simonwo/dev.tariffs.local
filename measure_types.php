@@ -65,17 +65,21 @@
     }
 
     $sql .= " ORDER BY 1";
+
+    //echo ($sql);
+
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
 
 <table class="govuk-table" cellspacing="0">
     <tr class="govuk-table__row">
-        <th class="govuk-table__header" style="width:15%">Measure type ID</th>
-        <th class="govuk-table__header c" style="width:15%">Series ID</th>
-        <th class="govuk-table__header" style="width:36%">Description</th>
-        <th class="govuk-table__header c" style="width:12%">Start date</th>
-        <th class="govuk-table__header c" style="width:12%">End date</th>
+        <th class="govuk-table__header" style="width:7%">Measure type ID</th>
+        <th class="govuk-table__header c" style="width:10%">Series ID</th>
+        <th class="govuk-table__header" style="width:13%">Series Description</th>
+        <th class="govuk-table__header" style="width:35%">Description</th>
+        <th class="govuk-table__header c" style="width:10%">Start date</th>
+        <th class="govuk-table__header c" style="width:10%">End date</th>
         <th class="govuk-table__header c" style="width:10%">Actions</th>
     </tr>
 <?php    
@@ -90,7 +94,8 @@
 ?>
     <tr class="govuk-table__row <?=$rowclass?>">
         <td class="govuk-table__cell b"><a href="/measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
-        <td class="govuk-table__cell c"><?=$measure_type_series_id?><br /><span class="explanatory"><?=$measure_type_series_description?></a></td>
+        <td class="govuk-table__cell c"><?=$measure_type_series_id?></td>
+        <td class="govuk-table__cell"><?=$measure_type_series_description?></td>
         <td class="govuk-table__cell"><?=$measure_type_description?></td>
         <td class="govuk-table__cell c"><?=$validity_start_date?></td>
         <td class="govuk-table__cell c"><?=$validity_end_date?></td>

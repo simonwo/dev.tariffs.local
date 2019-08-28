@@ -128,12 +128,12 @@
     }
 
     $countsql = "SELECT base_regulation_id as regulation_id, information_text, regulation_group_id, validity_start_date, 'Base' as type, officialjournal_number
-    FROM base_regulations br WHERE validity_end_date IS NULL " . $clause1 . " UNION
+    FROM base_regulations br WHERE validity_start_date IS NULL " . $clause1 . " UNION
     SELECT modification_regulation_id as regulation_id, mr.information_text,
     br.regulation_group_id as regulation_group_id, mr.validity_start_date, 'Modification' as type, mr.officialjournal_number
     FROM modification_regulations mr, base_regulations br
     WHERE mr.base_regulation_id = br.base_regulation_id
-    AND mr.validity_end_date IS NULL " . $clause2 . "
+    AND mr.validity_start_date IS NULL " . $clause2 . "
     ORDER BY regulation_id";
 
     $result = pg_query($conn, $countsql);
@@ -144,13 +144,15 @@
         #p ($result_count);
     }
 
-    $sql = "SELECT base_regulation_id as regulation_id, information_text, regulation_group_id, validity_start_date, 'Base' as type, officialjournal_number
-    FROM base_regulations br WHERE validity_end_date IS NULL " . $clause1 . " UNION
+    $sql = "SELECT base_regulation_id as regulation_id, information_text, regulation_group_id, validity_start_date,
+    validity_end_date, 'Base' as type, officialjournal_number
+    FROM base_regulations br WHERE validity_start_date IS NULL " . $clause1 . " UNION
     SELECT modification_regulation_id as regulation_id, mr.information_text,
-    br.regulation_group_id as regulation_group_id, mr.validity_start_date, 'Modification' as type, mr.officialjournal_number
+    br.regulation_group_id as regulation_group_id, mr.validity_start_date, mr.validity_end_date,
+    'Modification' as type, mr.officialjournal_number
     FROM modification_regulations mr, base_regulations br
     WHERE mr.base_regulation_id = br.base_regulation_id
-    AND mr.validity_end_date IS NULL " . $clause2 . "
+    AND mr.validity_start_date IS NULL " . $clause2 . "
     ORDER BY regulation_id " . $limit_clause;
     #p ($sql);
     $result = pg_query($conn, $sql);
@@ -163,7 +165,7 @@
         <th class="govuk-table__header" style="width:15%">Regulation group</th>
         <th class="govuk-table__header" style="width:10%">Type</th>
         <th class="govuk-table__header" style="width:35%">Information text</th>
-        <th class="govuk-table__header" style="width:15%">Start date</th>
+        <th class="govuk-table__header" style="width:15%">Dates</th>
         <th class="govuk-table__header" style="width:10%">Actions</th>
     </tr>
 <?php    
@@ -173,13 +175,14 @@
             $type                   = $row['type'];
             $information_text       = $row['information_text'];
             $validity_start_date    = short_date($row['validity_start_date']);
+            $validity_end_date      = short_date($row['validity_end_date']);
 ?>
     <tr class="govuk-table__row">
         <td class="govuk-table__cell"><a href="/regulation_view.html?base_regulation_id=<?=$regulation_id?>"><?=$regulation_id?></a></td>
         <td class="govuk-table__cell"><?=$regulation_group_id2?></td>
         <td class="govuk-table__cell"><?=$type?></td>
         <td class="govuk-table__cell"><?=$information_text?></td>
-        <td class="govuk-table__cell"><?=$validity_start_date?></td>
+        <td class="govuk-table__cell"><?=$validity_start_date?> to <?=$validity_end_date?></td>
         <td class="govuk-table__cell">
             <form action="regulation_create_edit.html" method="get">
                 <input type="hidden" name="action" value="edit" />

@@ -140,8 +140,11 @@ main .gem-c-title {
 .exclusions {
 	font-size:small;
 }
+th.tiny, td.tiny {
+	font-size:8pt !important;   
+}
 .vsmall {
-	font-size:9pt;   
+	font-size:9pt !important;   
 }
 .break {
 	clear:both !important;
@@ -249,6 +252,9 @@ td.tight p {
 .green {
 	background-color:#c9e8e5;
 	padding:0px 3px 0px 3px;
+}
+.cell_grey {
+	background-color:#f0f0f0;
 }
 
 a.nodecorate, td.nodecorate {

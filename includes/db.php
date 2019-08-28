@@ -72,7 +72,6 @@ function get_checked($key, $value) {
 	} else {
 		return ("");
 	}
-
 }
 
 function get_cookie($key) {
@@ -153,7 +152,6 @@ function measure_component_applicable_code($id){
 			return ("Not permitted");
 			break;
 	}
-
 }
 
 function order_number_capture_code($id){
@@ -165,7 +163,6 @@ function order_number_capture_code($id){
 			return ("Not permitted");
 			break;
 	}
-
 }
 
 function origin_dest_code($id){
@@ -177,7 +174,6 @@ function origin_dest_code($id){
 			return ("Destination");
 			break;
 	}
-
 }
 
 function footnote_type_application_code($id){
@@ -267,7 +263,6 @@ function is_in_future($var){
 		return (true);
 	}
 }
-
 
 function title_case($s) {
 	$s = ucwords(strtolower($s));
