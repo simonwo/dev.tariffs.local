@@ -1,5 +1,6 @@
 <?php
-	require ("includes/db.php");
+    $title = "Backup";
+    require ("includes/db.php");
 	require ("includes/header.php");
 	?>
 			<div class="app-content__header">

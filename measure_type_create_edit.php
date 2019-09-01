@@ -1,4 +1,5 @@
 <?php
+    $title = "Create measure type";
 	require ("includes/db.php");
 	$application = new application;
 	$measure_type_id    = get_querystring("measure_type_id");

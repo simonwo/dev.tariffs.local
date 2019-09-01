@@ -1,4 +1,5 @@
 <?php
+    $title = "Create or edit footnote";
 	require ("includes/db.php");
     $application    = new application;
     $footnote_id    = get_querystring("footnote_id");

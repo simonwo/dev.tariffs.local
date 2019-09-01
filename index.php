@@ -1,4 +1,5 @@
 <?php
+    $title = "Main menu";
 	require ("includes/db.php");
 	require ("includes/header.php");
 	?>
@@ -32,10 +33,6 @@
 						<li><a href="/geographical_areas.html">Geographical areas</a></li>
 					</ul>
 
-					<h2 class="small">Transition</h2>
-					<ul class="main-menu">
-						<li><a href="/transition_progress.html">Transition progress</a></li>
-					</ul>
 				</div>
 
 
@@ -99,8 +96,11 @@
 				<h2 class="small">Load history</h2>
 					<ul class="main-menu">
 						<li><a href="/load_history.html">Load history</a></li>
+						<li><a href="/transition_progress.html">Transition progress</a></li>
+						<li><a href="/coverage.html">Coverage</a></li>
 					</ul>
 
+					
 <?php
 	if ((strpos($http_host, "staging") > -1) || (strpos($http_host, "dev") > -1)) {
 ?>

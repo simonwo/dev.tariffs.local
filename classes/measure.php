@@ -4,15 +4,16 @@ class measure
 	// Class properties and methods go here
 	public function __construct() {
 		$this->geographical_area_description    = "";
+		$this->geographical_area_id    = "";
 		$this->assigned                         = False;
 		$this->combined_duty          	        = "";
-		$this->duty_list              	= array();
-		$this->siv_component_list       = array();
-		$this->suppress					= False;
-		$this->marked					= False;
-		$this->significant_children   	= False;
-		$this->measure_count          	= 0;
-		$this->measure_type_count     	= 0;
+		$this->duty_list              			= array();
+		$this->siv_component_list       		= array();
+		$this->suppress							= False;
+		$this->marked							= False;
+		$this->significant_children   			= False;
+		$this->measure_count          			= 0;
+		$this->measure_type_count     			= 0;
 	}
 
 	public function set_properties($measure_sid, $commodity_code, $quota_order_number_id, $validity_start_date,
@@ -32,7 +33,7 @@ class measure
 	}
 
 	function populate_from_cookies() {
-		$this->measure_heading					= "Create new measure";
+		$this->measure_heading						= "Create new measure";
 		$this->measure_sid							= get_cookie("measure_sid");
 		/*
 		$this->validity_start_day					= get_cookie("measure_type_validity_start_day");
@@ -51,7 +52,6 @@ class measure
 		$this->disable_measure_type_id_field		= "";
 		*/
 	}
-
 
 	public function get_siv_specific(){
 		$s = 0;

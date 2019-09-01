@@ -1,4 +1,5 @@
 <?php
+    $title = "Regulation groups";
     require ("includes/db.php");
     require ("includes/header.php");
 ?>

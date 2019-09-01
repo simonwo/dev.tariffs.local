@@ -1,4 +1,5 @@
 <?php
+    $title = "View goods nomenclature";
 	require ("includes/db.php");
 
 	$goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
@@ -30,26 +31,8 @@
 	<div class="app-content__header">
 		<h1 class="govuk-heading-xl">View commodity <?=$goods_nomenclature_item_id?></h1>
 	</div>
-			<!-- MENU //-->
-			<h2>Page content</h2>
-			<ul class="tariff_menu">
-				<li><a href="#details">Commodity code details</a></li>
-				<li><a href="#hierarchy">Position in hierarchy</a></li>
-				<li><a href="#description_periods">Historical descriptions</a></li>
-				<li><a href="#assigned">Assigned measures</a></li>
-				<li><a href="#inherited">Inherited measures</a></li>
-				<li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in Trade Tariff Service</a></li>
-				<li><a title="Opens in new window" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20190827&Area=&MeasType=&StartPub=&EndPub=&MeasText=&GoodsText=&op=&Taric=<?=$goods_nomenclature_item_id?>&search_text=goods&textSearch=&LangDescr=en&OrderNum=&Regulation=&measStartDat=&measEndDat=" target="_blank" href="#usage_measures">View in EU Taric consultation</a></li>
-			</ul>
 
-		<h2 id="details">Commodity code details</h2>
-		<p>The table below shows the core details of this commodity code</p>
-		<table class="govuk-table" cellspacing="0">
-			<tr class="govuk-table__row">
-				<th class="govuk-table__header" style="width:30%">Item</th>
-				<th class="govuk-table__header" style="width:70%">Value</th>
-			</tr>
-<?php
+	<?php
 	$sql = "SELECT gn.goods_nomenclature_item_id, gn.producline_suffix as productline_suffix,
 	gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description
 	FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
@@ -70,8 +53,37 @@
 			$description                = $row['description'];
 			$friendly_description       = $row['friendly_description'];
 			$validity_start_date        = short_date($row['validity_start_date']);
-			$validity_end_date          = short_date($row['validity_end_date']);
-?>
+			$validity_end_date          = $row['validity_end_date'];
+			$validity_end_date2         = short_date($validity_end_date);
+		}
+	}
+
+	if ($validity_end_date != ""){
+		echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code has an end-date. Please be careful when assigning duties to this commodity.</p></div>");
+	}
+?>	
+			<!-- MENU //-->
+			<h2>Page content</h2>
+			<ul class="tariff_menu">
+				<li><a href="#details">Commodity code details</a></li>
+				<li><a href="#hierarchy">Position in hierarchy</a></li>
+				<li><a href="#description_periods">Historical descriptions</a></li>
+				<li><a href="#origins">Origins</a></li>
+				<!--<li><a href="#successors">Successors</a></li>//-->
+				<li><a href="#assigned">Assigned measures</a></li>
+				<li><a href="#inherited">Inherited measures</a></li>
+				<li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in Trade Tariff Service</a></li>
+				<li><a title="Opens in new window" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20190827&Area=&MeasType=&StartPub=&EndPub=&MeasText=&GoodsText=&op=&Taric=<?=$goods_nomenclature_item_id?>&search_text=goods&textSearch=&LangDescr=en&OrderNum=&Regulation=&measStartDat=&measEndDat=" target="_blank" href="#usage_measures">View in EU Taric consultation</a></li>
+			</ul>
+
+		<h2 id="details">Commodity code details</h2>
+		<p>The table below shows the core details of this commodity code</p>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" style="width:30%">Item</th>
+				<th class="govuk-table__header" style="width:70%">Value</th>
+			</tr>
+
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Commodity code</td>
 					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> ( <?=format_commodity_code($goods_nomenclature_item_id)?> )</td>
@@ -98,13 +110,8 @@
 				</tr>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Validity end date</td>
-					<td class="govuk-table__cell"><?=$validity_end_date?></td>
+					<td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
 				</tr>
-<?php
-		}
-	}
-?>
-
 			</table>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
@@ -120,9 +127,11 @@
 					<th style="width:5%" class="govuk-table__header c">Leaf</th>
 				</tr>
 <?php
-	$array      = $obj_goods_nomenclature_item->ar_hierarchies;
+	//if (is_array($obj_goods_nomenclature_item->ar_hierarchies)) {
+	$array = $obj_goods_nomenclature_item->ar_hierarchies;
+
 	$hier_count = sizeof($array);
-	print ("Hierarchy count " . $hier_count);
+
 	$parents    = array();
 	$my_concat  = $goods_nomenclature_item_id . $productline_suffix;
 	for($i = 0; $i < $hier_count; $i++) {
@@ -164,6 +173,9 @@
 	$parent_string = trim($parent_string, ",");
 ?>
 			</table>
+<?php
+	//}
+?>			
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
 	<h2 id="description_periods">Historical descriptions</h2>
@@ -247,6 +259,104 @@
 			</table>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
+			<h2 id="origins">Origins</h2>
+			<p>When a new goods nomenclature code is created, this record provides details of the goods
+nomenclature code from which the new code originated.</p>
+<?php
+	$sql = "select * from goods_nomenclature_successors where
+	goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' and productline_suffix = '" . $productline_suffix . "'";
+
+	$sql = "select distinct gns.absorbed_goods_nomenclature_item_id, gns.absorbed_productline_suffix, gnd.description
+	from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
+	where gns.productline_suffix = gnd.productline_suffix
+	and gns.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
+	and gns.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
+	and gns.productline_suffix = '" . $productline_suffix . "'
+	order by 1, 2";
+
+	$sql = "select gno.derived_goods_nomenclature_item_id, gno.derived_productline_suffix, description
+	from goods_nomenclature_origins gno, goods_nomenclature_descriptions gnd
+	where gno.productline_suffix = gnd.productline_suffix
+	and gno.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
+	and gno.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
+	and gno.productline_suffix = '" . $productline_suffix . "'
+	order by 1, 2";
+	$result = pg_query($conn, $sql);
+	if  (($result) && (pg_num_rows($result) > 0)) {
+?>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" style="width:15%">Commodity code</th>
+				<th class="govuk-table__header c" style="width:5%">Suffix</th>
+				<th class="govuk-table__header" style="width:80%">Description</th>
+			</tr>
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$derived_goods_nomenclature_item_id	= $row['derived_goods_nomenclature_item_id'];
+			$derived_productline_suffix 			= $row['derived_productline_suffix'];
+			$description       						= $row['description'];
+?>
+			<tr class="<?=$rowclass?>">
+				<td class="govuk-table__cell" class="nodecorate"><?=format_commodity_code($derived_goods_nomenclature_item_id)?></td>
+				<td class="govuk-table__cell c"><?=$derived_productline_suffix?></td>
+				<td class="govuk-table__cell"><?=$description?></td>
+			</tr>
+<?php
+		}
+?>
+		</table>
+<?php
+	} else {
+?>
+		<p>There are no origins for this commodity code.</p>
+<?php				
+	}
+?>			
+			<p class="back_to_top"><a href="#top">Back to top</a></p>
+
+			<h2 id="successors">Successors</h2>
+			<p>When a goods nomenclature code is closed, this record provides details of the goods
+nomenclature code which supersedes it.</p>
+<?php
+	$sql = "select distinct gns.absorbed_goods_nomenclature_item_id, gns.absorbed_productline_suffix, gnd.description
+	from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
+	where gns.productline_suffix = gnd.productline_suffix
+	and gns.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
+	and gns.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
+	and gns.productline_suffix = '" . $productline_suffix . "'
+	order by 1, 2";
+	$result = pg_query($conn, $sql);
+	if  (($result) && (pg_num_rows($result) > 0)) {
+?>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header" style="width:15%">Commodity code</th>
+				<th class="govuk-table__header c" style="width:5%">Suffix</th>
+				<th class="govuk-table__header" style="width:80%">Description</th>
+			</tr>
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$absorbed_goods_nomenclature_item_id	= $row['absorbed_goods_nomenclature_item_id'];
+			$absorbed_productline_suffix 			= $row['absorbed_productline_suffix'];
+			$description       						= $row['description'];
+?>
+			<tr class="<?=$rowclass?>">
+				<td class="govuk-table__cell"><?=$absorbed_goods_nomenclature_item_id?></td>
+				<td class="govuk-table__cell c"><?=$absorbed_productline_suffix?></td>
+				<td class="govuk-table__cell"><?=$description?></td>
+			</tr>
+<?php
+		}
+?>
+		</table>
+<?php
+	} else {
+?>
+		<p>There are no successors for this commodity code.</p>
+<?php				
+	}
+?>			
+			<p class="back_to_top"><a href="#top">Back to top</a></p>
 			<h2 id="assigned">Assigned measures</h2>
 			<p>The measures below have been directly assigned to this commodity code.</p>
 

@@ -1,4 +1,5 @@
 <?php
+    $title = "Get children";
 	require ("includes/db.php");
 	require ("includes/header_empty.php");
 	$link = get_querystring("link");

@@ -1,4 +1,5 @@
 <?php
+    $title = "Add geographical area description";
 	require ("includes/db.php");
 	$application = new application;
 

@@ -3,6 +3,13 @@ class duty
 {
 	// Class properties and methods go here
 
+	public function __construct() {
+		$this->measure_sid		        = 0;
+		$this->geographical_area_id	    = "";
+		$this->additional_code_id	    = "";
+		$this->additional_code_type_id  = "";
+	}
+
     public function set_properties($commodity_code, $additional_code_type_id, $additional_code_id, $measure_type_id,
     $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code, $measure_sid,
 	$quota_order_number_id, $geographical_area_id, $validity_start_date, $validity_end_date) {

@@ -4,7 +4,45 @@ class goods_nomenclature
 	// Class properties and methods go here
 	public $goods_nomenclature_item_id	= "";
 	public $productline_suffix			= "";
+	public $measure_type_desc			= "";
 
+	public function __construct() {
+		$this->measure_list		= array();
+		$this->measure_type_id	= "";
+		$this->combined_duty	= "";
+		$this->assigned			= false;
+		$this->ar_hierarchies = array();
+	}
+
+	public function get_measure_type_description() {
+		switch ($this->measure_type_id) {
+			case "142":
+				$this->measure_type_desc = " - Preference";
+				break;
+			case "143":
+				$this->measure_type_desc = " - AU Preference";
+				break;
+			case "145":
+				$this->measure_type_desc = " - Quota";
+				break;
+			case "146":
+				$this->measure_type_desc = " - AU Quota";
+				break;
+		}
+	}
+
+	public function combine_duties() {
+		if ($this->productline_suffix != "80") {
+			$this->combined_duty = "n/a";
+		} else {
+			$this->combined_duty = "";
+			foreach ($this->measure_list as $measure) {
+				$this->combined_duty .= $measure->combined_duty;
+			}
+		}
+	}
+
+	
 	public function set_properties($goods_nomenclature_item_id, $productline_suffix, $description, $number_indents, $leaf, $direction = "both") {
 		$this->goods_nomenclature_item_id	= $goods_nomenclature_item_id;
 		$this->productline_suffix			= $productline_suffix;

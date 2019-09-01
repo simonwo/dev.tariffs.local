@@ -1,4 +1,5 @@
 <?php
+    $title = "Measures";
     require ("includes/db.php");
     require ("includes/header.php");
     $phase = "measure_search";

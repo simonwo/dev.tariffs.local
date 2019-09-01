@@ -1,4 +1,5 @@
 <?php
+    $title = "Measure types series";
     require ("includes/db.php");
     require ("includes/header.php");
 ?>

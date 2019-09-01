@@ -453,6 +453,7 @@ function vshort_date($s) {
 function format_commodity_code($s) {
 	if (strlen($s) == 10) {
 		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad green'>" . substr($s, 6, 4) . "</span>";
+		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad blue'>" . substr($s, 6, 2) . "</span><span class='rpad green'>" . substr($s, 8, 2) . "</span>";
 	}
 	return ($s2);
 }

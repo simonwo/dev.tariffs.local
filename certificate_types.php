@@ -1,4 +1,5 @@
 <?php
+    $title = "Certificate types";
     require ("includes/db.php");
     require ("includes/header.php");
 ?>

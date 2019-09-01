@@ -1,4 +1,5 @@
 <?php
+    $title = "Footnotes";
     require ("includes/db.php");
     $footnote_type_id = get_querystring("footnote_type_id");
     $footnote = new footnote;

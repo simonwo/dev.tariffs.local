@@ -1,4 +1,5 @@
 <?php
+    $title = "XML load";
 	require ("includes/db.php");
     require ("includes/header.php");
     

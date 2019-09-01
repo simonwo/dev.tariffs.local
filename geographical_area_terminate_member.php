@@ -1,4 +1,5 @@
 <?php
+    $title = "Terminate geographical area membership";
 	require ("includes/db.php");
 	$application = new application;
 

@@ -1,4 +1,5 @@
 <?php
+    $title = "View measure type";
 	require ("includes/db.php");
 	$measure_type_id = get_querystring("measure_type_id");
 	$measure_type = new measure_type;

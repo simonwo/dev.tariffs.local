@@ -1,4 +1,5 @@
 <?php
+    $title = "Quota order numbers";
 	require ("includes/db.php");
 	require ("includes/header.php");
 ?>

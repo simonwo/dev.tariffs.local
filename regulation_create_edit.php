@@ -1,4 +1,5 @@
 <?php
+    $title = "Create or edit regulation";
 	require ("includes/db.php");
 	$application = new application;
 	$application->get_regulation_groups();

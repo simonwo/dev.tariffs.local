@@ -1,4 +1,5 @@
 <?php
+    $title = "Sections";
     require ("includes/db.php");
     require ("includes/header.php");
     $phase = "goods_nomenclature_item_view";

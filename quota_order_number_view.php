@@ -1,4 +1,5 @@
 <?php
+    $title = "View quota order number";
 	require ("includes/db.php");
 	$quota_order_number_id        = get_querystring("quota_order_number_id");
 	$quota_order_number = new quota_order_number;
@@ -339,8 +340,7 @@
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
 			<p>There are <strong><?=pg_num_rows($result)?></strong> commodities associated with this quota.</p>
-			<p>Please note: the 'friendly' descriptions
-		are derived from the website 'tariffnumber.com'.</p>
+			<p>Please note: the 'friendly' descriptions are derived from the website 'tariffnumber.com'.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:10%">Commodity</th>
@@ -356,7 +356,7 @@
 			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
-					<td class="govuk-table__cell"><a href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=$goods_nomenclature_item_id?></a></td>
+					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell"><?=$description?></td>
 					<td class="govuk-table__cell"><em><?=$friendly?></em></td>
 				</tr>
@@ -414,7 +414,7 @@
 					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
 					<td class="govuk-table__cell c"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
 					<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
-					<td class="govuk-table__cell"><a href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=$goods_nomenclature_item_id?></a></td>
+					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
 					<td class="govuk-table__cell c"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>

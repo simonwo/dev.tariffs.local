@@ -1,4 +1,5 @@
 <?php
+    $title = "View regulation";
 	require ("includes/db.php");
 	require ("includes/header.php");
 	$regulation_id = get_querystring("base_regulation_id");

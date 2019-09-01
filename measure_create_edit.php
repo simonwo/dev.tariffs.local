@@ -1,4 +1,5 @@
 <?php
+    $title = "Create measure";
 	require ("includes/db.php");
 	$application = new application;
 	$application->get_duty_expressions();

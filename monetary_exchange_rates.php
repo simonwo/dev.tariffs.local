@@ -1,4 +1,5 @@
 <?php
+    $title = "Monetary exchange rate";
     require ("includes/db.php");
     $section_id = get_querystring("section_id");
     $monetary_exchange_rate = new monetary_exchange_rate;

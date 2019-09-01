@@ -1,4 +1,5 @@
 <?php
+    $title = "View measure";
 	require ("includes/db.php");
 	require ("includes/header.php");
 	$measure_sid    = get_querystring("measure_sid");
@@ -53,18 +54,20 @@
 		</tr>
 
 <?php
-	$sql = "SELECT m.measure_type_id, m.geographical_area_id, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date,
+	$sql = "SELECT m.measure_type_id, m.geographical_area_id, m.goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date,
 	measure_generating_regulation_role, measure_generating_regulation_id, justification_regulation_role,
 	justification_regulation_id, stopped_flag, ordernumber, additional_code_type_id, additional_code_id,
 	reduction_indicator, mtd.description as measure_type_description, ga.description as geographical_area_description,
-	rrtd.description as regulation_role_type_description, rrtd2.description as justification_role_type_description
-	FROM ml.ml_geographical_areas ga, measure_type_descriptions mtd, regulation_role_type_descriptions as rrtd, measures m
+	rrtd.description as regulation_role_type_description, rrtd2.description as justification_role_type_description,
+	g.validity_start_date as commodity_start_date, g.validity_end_date as commodity_end_date
+	FROM ml.ml_geographical_areas ga, measure_type_descriptions mtd, regulation_role_type_descriptions as rrtd, goods_nomenclatures g, measures m
 	LEFT JOIN regulation_role_type_descriptions as rrtd2 ON CAST(rrtd2.regulation_role_type_id as INTEGER) = CAST(m.justification_regulation_role as INTEGER)
 	WHERE measure_sid = " . $measure_sid . "
 	AND m.measure_type_id = mtd.measure_type_id
 	AND m.geographical_area_id = ga.geographical_area_id
-	AND CAST(rrtd.regulation_role_type_id as INTEGER) = CAST(m.measure_generating_regulation_role as INTEGER)";
-	#echo ($sql);
+	AND CAST(rrtd.regulation_role_type_id as INTEGER) = CAST(m.measure_generating_regulation_role as INTEGER)
+	and g.goods_nomenclature_item_id = m.goods_nomenclature_item_id and g.producline_suffix = '80'";
+	//echo ($sql);
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 		while ($row = pg_fetch_array($result)) {
@@ -86,6 +89,8 @@
 			$geographical_area_description          = $row['geographical_area_description'];
 			$regulation_role_type_description       = $row['regulation_role_type_description'];
 			$justification_role_type_description    = $row['justification_role_type_description'];
+			$commodity_start_date                   = $row['commodity_start_date'];
+			$commodity_end_date                     = $row['commodity_end_date'];
 
 			if ($justification_regulation_id == "") {
 				$justification_regulation_show = "";
@@ -93,11 +98,15 @@
 				$justification_regulation_show = '<a href="regulation_view.html?base_regulation_id=' . $justification_regulation_id .'">' .
 				$justification_regulation_id . '</a> - Role type (' . $justification_regulation_role . ' - ' . $justification_role_type_description .')';
 			}
-
 ?>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Goods nomenclature item ID</td>
-			<td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+			<td class="govuk-table__cell">
+				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
+					<?=$goods_nomenclature_item_id?>
+				</a>
+				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)
+			</td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Measure type ID</td>

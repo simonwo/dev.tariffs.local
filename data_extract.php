@@ -1,4 +1,5 @@
 <?php
+    $title = "Data extract";
     require ("includes/db.php");
     require ("includes/header.php");
     $section_id = get_querystring("section_id");

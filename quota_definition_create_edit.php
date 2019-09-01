@@ -1,4 +1,5 @@
 <?php
+    $title = "Create or edit quota definition";
 	require ("includes/db.php");
 	$application = new application;
 

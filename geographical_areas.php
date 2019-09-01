@@ -1,4 +1,5 @@
 <?php
+    $title = "Geographical areas";
     require ("includes/db.php");
     require ("includes/header.php");
     $regulation_group_id    = get_querystring("regulation_group_id");

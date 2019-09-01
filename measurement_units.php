@@ -1,4 +1,5 @@
 <?php
+    $title = "Measurement units";
     require ("includes/db.php");
     require ("includes/header.php");
 ?>

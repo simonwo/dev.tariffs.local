@@ -1,4 +1,5 @@
 <?php
+    $title = "Create / edit monetary exchange rate";
 	require ("includes/db.php");
 	$application = new application;
 	$monetary_exchange_period_sid   = get_querystring("monetary_exchange_period_sid");

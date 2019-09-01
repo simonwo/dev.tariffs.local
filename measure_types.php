@@ -1,4 +1,5 @@
 <?php
+    $title = "Measure types";
     require ("includes/db.php");
     $measure_type = new measure_type;
     $measure_type->clear_cookies();

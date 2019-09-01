@@ -1,4 +1,5 @@
 <?php
+    $title = "Additional codes";
     require ("includes/db.php");
     require ("includes/header.php");
 ?>

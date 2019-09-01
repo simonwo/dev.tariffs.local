@@ -1,4 +1,5 @@
 <?php
+    $title = "View geographical area";
 	require ("includes/db.php");
 	$geographical_area_id   = get_querystring("geographical_area_id");
 	$measure_scope          = get_querystring("measure_scope");

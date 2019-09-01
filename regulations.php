@@ -1,4 +1,5 @@
 <?php
+    $title = "Regulations";
     require ("includes/db.php");
     require ("includes/header.php");
 	$application = new application;

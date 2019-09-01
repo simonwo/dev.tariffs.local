@@ -1,4 +1,5 @@
 <?php
+    $title = "Create or edit certificate";
 	require ("includes/db.php");
     $application    = new application;
     $certificate_code    = get_querystring("certificate_code");

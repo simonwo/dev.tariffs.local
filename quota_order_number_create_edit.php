@@ -1,4 +1,5 @@
 <?php
+    $title = "Create / edit quota order number";
 	require ("includes/db.php");
 	$application = new application;
 	$application->get_measure_types();

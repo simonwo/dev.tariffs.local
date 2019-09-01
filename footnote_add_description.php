@@ -1,4 +1,5 @@
 <?php
+    $title = "Add footnote description";
 	require ("includes/db.php");
 	$application = new application;
 

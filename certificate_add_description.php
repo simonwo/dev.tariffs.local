@@ -1,4 +1,5 @@
 <?php
+    $title = "Add / edit certificate description";
 	require ("includes/db.php");
 	$application = new application;
 

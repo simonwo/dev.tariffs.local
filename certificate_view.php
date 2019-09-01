@@ -1,4 +1,5 @@
 <?php
+    $title = "View certificate";
     require ("includes/db.php");
     $certificate_type_code   = get_querystring("certificate_type_code");
     $certificate_code        = get_querystring("certificate_code");

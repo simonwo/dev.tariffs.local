@@ -1,4 +1,5 @@
 <?php
+    $title = "Add goods nomenclature description";
 	require ("includes/db.php");
 	$application = new application;
 
