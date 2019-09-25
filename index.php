@@ -7,20 +7,7 @@
 				<h1 class="govuk-heading-xl">Main menu</h1>
 			</div>
 			<div class="app-prose-scope">
-				<div class="column-one-third" style="width:24%">
-					<h2 class="small">Measures</h2>
-					<ul class="main-menu">
-						<li><a href="/measures.html">Measures</a></li>
-						<li><a href="/measure_create.html">Create measure</a></li>
-						<li><a href="/measure_create_edit.html">Create measure</a></li>
-					</ul>
-
-					<h2 class="small">Quotas</h2>
-					<ul class="main-menu">
-						<li><a href="/quota_order_numbers.html">Quota order numbers</a></li>
-						<li><a href="/quota_order_number_create_edit.html">Create quota</a></li>
-					</ul>
-
+				<div class="column-one-third" style="width:23%;padding-right:1%">
 					<h2 class="small">Regulations</h2>
 					<ul class="main-menu">
 						<li><a href="/regulations.html">Regulations</a></li>
@@ -28,15 +15,31 @@
 						<li><a href="/regulation_create_edit.html?action=new&phase=regulation_create">Create regulation</a></li>
 					</ul>
 
+					<h2 class="small">Quotas</h2>
+					<ul class="main-menu">
+						<li><a href="/quota_order_numbers.html">Quota order numbers</a></li>
+						<li><a href="/quota_order_number_create_edit.html">Create quota</a></li>
+						<li><a href="/quota_associations.html">View quota associations</a></li>
+						<li><a href="/quota_association_create.html">Create quota association</a></li>
+					</ul>
+
+					<h2 class="small">Measures</h2>
+					<ul class="main-menu">
+						<li><a href="/measures.html">Measures</a></li>
+						<li><a href="/measure_create.html">Create measure</a></li>
+						<li><a href="/measure_create_edit.html">Create measure</a></li>
+					</ul>
+
+
+				</div>
+
+
+				<div class="column-one-third" style="width:23%;padding-right:1%">
 					<h2 class="small">Geographical areas</h2>
 					<ul class="main-menu">
 						<li><a href="/geographical_areas.html">Geographical areas</a></li>
 					</ul>
 
-				</div>
-
-
-				<div class="column-one-third" style="width:24%">
 					<h2 class="small">Measure types</h2>
 					<ul class="main-menu">
 						<li><a href="/measure_types.html">Measure types</a></li>
@@ -65,10 +68,10 @@
 				</div>
 
 
-				<div class="column-one-third" style="width:24%">
-					<h2 class="small">Nomenclature</h2>
+				<div class="column-one-third" style="width:23%;padding-right:1%">
+					<h2 class="small">Goods classification</h2>
 					<ul class="main-menu">
-						<li><a href="/sections.html">View sections</a></li>
+						<li><a href="/sections.html">Search or browse goods classification</a></li>
 					</ul>
 
 					<h2 class="small">Additional codes</h2>
@@ -92,7 +95,7 @@
 				</div>
 
 
-				<div class="column-one-third" style="width:24%">
+				<div class="column-one-third" style="width:23%;padding-right:1%">
 				<h2 class="small">Load history</h2>
 					<ul class="main-menu">
 						<li><a href="/load_history.html">Load history</a></li>

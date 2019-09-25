@@ -2,6 +2,8 @@
     $title = "Additional codes";
     require ("includes/db.php");
     require ("includes/header.php");
+	$additional_code_type_id   = get_querystring("additional_code_type_id");
+	$additional_code_id   = get_querystring("additional_code_id");
 ?>
 
 <!-- Start breadcrumbs //-->
@@ -9,7 +11,7 @@
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/">Home</a>
+            <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             Additional codes
@@ -23,7 +25,9 @@
     </div>
     
 <?php
-	$sql = "SELECT additional_code_type_id, additional_code, validity_start_date, validity_end_date, description FROM ml.ml_additional_codes";
+	$sql = "SELECT additional_code_type_id, additional_code, validity_start_date, validity_end_date, description
+    FROM ml.ml_additional_codes
+    where additional_code_type_id = '" . $additional_code_type_id . "'";
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
@@ -47,7 +51,9 @@
 ?>
     <tr class="govuk-table__row">
         <td class="govuk-table__cell c"><?=$additional_code_type_id?></td>
-        <td class="govuk-table__cell c"><?=$additional_code?></td>
+        <td class="govuk-table__cell c">
+            <a href="additional_code_view.html?additional_code_type_id=<?=$additional_code_type_id?>&additional_code_id=<?=$additional_code?>"><?=$additional_code?></a>
+        </td>
         <td class="govuk-table__cell"><?=$description?></td>
         <td class="govuk-table__cell"><?=$validity_start_date?></td>
         <td class="govuk-table__cell"><?=$validity_end_date?></td>

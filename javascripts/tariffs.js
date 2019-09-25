@@ -1,3 +1,4 @@
+
 function are_you_sure() {
 	var r = confirm("Are you sure?");
 	if (r == true) {
@@ -8,30 +9,23 @@ function are_you_sure() {
 }
 
 $(document).ready(function() {
-	/*
-	showing         = $("#showing");
-	show_instead    = $("#show_instead");
-	
-	if ($.cookie('showing') == "Brexit") {
-		showing.text("Showing Brexit");
-		show_instead.text("Show Now instead");
-	} else {
-		showing.text("Showing Now");
-		show_instead.text("Show Brexit instead");
-	}
+	my_url		= window.location.href;
+	common_url	= my_url.replace("dev.", "common.");
+	common_url	= common_url.replace("staging.", "common.");
+	common_url	= common_url.replace("eu.", "common.");
+	common_url	= common_url.replace("fta.", "common.");
 
-	$("#context_switcher").click(function() {
-		showing         = $("#showing");
-		show_instead    = $("#show_instead");
-		
-		if (showing.text() == "Showing Now") {
-			document.cookie = "showing=Brexit";
-		} else {
-			document.cookie = "showing=Now";
-		}
-		document.location.reload();
-	});
-	*/
+	dev_url		= common_url.replace("common.", "dev.");
+	staging_url = common_url.replace("common.", "staging.");
+	eu_url		= common_url.replace("common.", "eu.");
+	fta_url		= common_url.replace("common.", "fta.");
+
+	$("#context_switcher_dev").attr("href", dev_url);
+	$("#context_switcher_staging").attr("href", staging_url);
+	$("#context_switcher_eu").attr("href", eu_url);
+	$("#context_switcher_fta").attr("href", fta_url);
+
+
 
 // Scripts to handle the selection of the measure origin sections
 	$("#geographical_area_id_all").click(function() {
@@ -49,5 +43,47 @@ $(document).ready(function() {
 		$("#geographical_area_id_group_content").hide();
 		$("#geographical_area_id_country_content").show();
 	});
+	$("#relation_type_nm").click(function() {
+		$("#coefficient").val("1.00000");
+		/*
+		$("#geographical_area_id_erga_omnes_content").hide();
+		$("#geographical_area_id_group_content").hide();
+		$("#geographical_area_id_country_content").show();
+		*/
+	});
+
+	$("#main_definition_period").click(function() {
+		main_txt = $("#main_definition_period option:selected").text()
+		main_val = $("#main_definition_period option:selected").val()
+
+		$("#sub_definition_period > option").each(function() {
+			sub_val = $(this).val();
+			sub_txt = $(this).text();
+			if (main_txt == sub_txt) {
+				$("#sub_definition_period").val(sub_val);
+			}
+		});
+	});
+
+
+	$("#sub_definition_period").click(function() {
+		sub_txt = $("#sub_definition_period option:selected").text()
+		sub_val = $("#sub_definition_period option:selected").val()
+
+		$("#main_definition_period > option").each(function() {
+			main_val = $(this).val();
+			main_txt = $(this).text();
+			if (sub_txt == main_txt) {
+				$("#main_definition_period").val(main_val);
+			}
+		});
+	});
+
+	
+	$("#radioID2").click(function() {
+		$("div#cross-check-rejection-reason").css("display", "block !important");
+	});
+
+	
 
 });

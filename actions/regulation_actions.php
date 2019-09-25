@@ -12,7 +12,6 @@
 	}
 	
 	function get_formvars_filter_regulations() {
-		pre($_REQUEST);
 		$regulation_group_id	= get_querystring("regulation_group_id");
 		$regulation_scope		= get_querystring("regulation_scope");
 		$regulation_text		= get_querystring("regulation_text");
@@ -27,7 +26,6 @@
 		if ($regulation_text != "") {
 			$url .= "&regulation_text=" . $regulation_text;
 		}
-		#exit();
 		header("Location: " . $url);
 	}
 	

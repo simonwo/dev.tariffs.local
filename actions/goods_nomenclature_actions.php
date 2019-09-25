@@ -45,6 +45,7 @@
 
     function get_formvars_goods_nomenclature_item_view_filter() {
         $geographical_area_id = get_querystring("geographical_area_id");
+        $geographical_area_id = strtoupper($geographical_area_id);
         $measure_type_id = get_querystring("measure_type_id");
         $goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
         $goods_nomenclature_item_id = str_replace(" ", "", $goods_nomenclature_item_id);

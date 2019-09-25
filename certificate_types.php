@@ -9,7 +9,7 @@
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/">Home</a>
+                <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 Certificate types

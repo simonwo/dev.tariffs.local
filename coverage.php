@@ -24,7 +24,7 @@
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/">Home</a>
+                <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 Coverage
@@ -173,7 +173,7 @@
             $duty->monetary_unit_code               = $row['monetary_unit_code'];
             $duty->measurement_unit_code            = $row['measurement_unit_code'];
             $duty->measurement_unit_qualifier_code  = $row['measurement_unit_qualifier_code'];
-            $duty->getDutyString();
+            $duty->get_duty_string();
             array_push($duties, $duty);
         }
     }
@@ -209,10 +209,11 @@
 // Next - SQL to get the commodity codes
     $sql = "select goods_nomenclature_item_id, producline_suffix, number_indents,
     description, leaf, significant_digits, validity_start_date, validity_end_date
-    from ml.goods_nomenclature_export_brexit ('" . $commodity_range . "%')
-    where validity_start_date < '2019-11-01'
+    from ml.goods_nomenclature_export_new ('" . $commodity_range . "%', '" . $critical_date . "')
     order by goods_nomenclature_item_id, producline_suffix";
+
     //echo ($sql);
+
     $result = pg_query($conn, $sql);
     $commodities = array();
 	if ($result) {
@@ -335,7 +336,7 @@
             </td>
             <td class="govuk-table__cell c"><?=$commodity->productline_suffix?></a></td>
             <td class="govuk-table__cell c"><?=$number_indents_real?></a></td>
-            <td class="govuk-table__cell" style="<?=$padding_string?>"><?=$commodity->description?>
+            <td class="govuk-table__cell" style="<?=$padding_string?>"><?=$commodity->format_description()?>
 <?php
     if ($commodity->validity_end_date != "") {
         echo (" (ends " . short_date($commodity->validity_end_date) . ")");

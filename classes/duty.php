@@ -29,12 +29,12 @@ class duty
 		$this->validity_start_date				= $validity_start_date;
         $this->validity_end_date				= $validity_end_date;
         
-        $this->getDutyString();
+        $this->get_duty_string();
         #echo ("setting duty properties");
         #echo ("Duty string " . $this->duty_string);
 	}
 
-	public function getDutyString() {
+	public function get_duty_string() {
 		# This bit of code removes the Meursing data from the duty expressions
 		# This will be artifically re-inserted from an external data source,
 		# i.e. not from data that is stored in the database (check meursing_products.csv in /source folder)

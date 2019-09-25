@@ -23,7 +23,7 @@
 <div id="wrapper" class="direction-ltr">
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Home</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Main menu</a></li>
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/monetary_exchange_rates.html">Monetary exchange rates</a></li>
 		<li class="govuk-breadcrumbs__list-item">Monetary exchange rate</li>
 	</ol>

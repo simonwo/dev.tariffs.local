@@ -10,7 +10,7 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 		<ol class="govuk-breadcrumbs__list">
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="/">Home</a>
+				<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">Measures</li>
 		</ol>
@@ -54,20 +54,27 @@
 		</tr>
 
 <?php
-	$sql = "SELECT m.measure_type_id, m.geographical_area_id, m.goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date,
-	measure_generating_regulation_role, measure_generating_regulation_id, justification_regulation_role,
-	justification_regulation_id, stopped_flag, ordernumber, additional_code_type_id, additional_code_id,
-	reduction_indicator, mtd.description as measure_type_description, ga.description as geographical_area_description,
-	rrtd.description as regulation_role_type_description, rrtd2.description as justification_role_type_description,
-	g.validity_start_date as commodity_start_date, g.validity_end_date as commodity_end_date
-	FROM ml.ml_geographical_areas ga, measure_type_descriptions mtd, regulation_role_type_descriptions as rrtd, goods_nomenclatures g, measures m
-	LEFT JOIN regulation_role_type_descriptions as rrtd2 ON CAST(rrtd2.regulation_role_type_id as INTEGER) = CAST(m.justification_regulation_role as INTEGER)
+	$sql = "select distinct on (m.measure_type_id)
+	m.measure_type_id, m.geographical_area_id, m.goods_nomenclature_item_id, m.validity_start_date,
+	m.validity_end_date, measure_generating_regulation_role, measure_generating_regulation_id,
+	justification_regulation_role, justification_regulation_id, stopped_flag, ordernumber,
+	additional_code_type_id, additional_code_id, reduction_indicator, mtd.description as measure_type_description,
+	ga.description as geographical_area_description, rrtd.description as regulation_role_type_description,
+	rrtd2.description as justification_role_type_description, g.validity_start_date as commodity_start_date,
+	g.validity_end_date as commodity_end_date, gnd.description as goods_nomenclature_description
+	FROM goods_nomenclature_descriptions gnd, ml.ml_geographical_areas ga, measure_type_descriptions mtd,
+	regulation_role_type_descriptions as rrtd, goods_nomenclatures g, ml.measures_real_end_dates m
+	LEFT JOIN regulation_role_type_descriptions as rrtd2
+	ON CAST(rrtd2.regulation_role_type_id as INTEGER) = CAST(m.justification_regulation_role as INTEGER)
 	WHERE measure_sid = " . $measure_sid . "
-	AND m.measure_type_id = mtd.measure_type_id
-	AND m.geographical_area_id = ga.geographical_area_id
+	and g.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
+	and g.producline_suffix = gnd.productline_suffix
+	AND m.measure_type_id = mtd.measure_type_id AND m.geographical_area_id = ga.geographical_area_id
 	AND CAST(rrtd.regulation_role_type_id as INTEGER) = CAST(m.measure_generating_regulation_role as INTEGER)
-	and g.goods_nomenclature_item_id = m.goods_nomenclature_item_id and g.producline_suffix = '80'";
-	//echo ($sql);
+	and g.goods_nomenclature_item_id = m.goods_nomenclature_item_id and g.producline_suffix = '80'
+	order by m.measure_type_id, gnd.goods_nomenclature_description_period_sid desc
+	";
+
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 		while ($row = pg_fetch_array($result)) {
@@ -91,12 +98,13 @@
 			$justification_role_type_description    = $row['justification_role_type_description'];
 			$commodity_start_date                   = $row['commodity_start_date'];
 			$commodity_end_date                     = $row['commodity_end_date'];
+			$goods_nomenclature_description			= $row['goods_nomenclature_description'];
 
 			if ($justification_regulation_id == "") {
 				$justification_regulation_show = "";
 			} else{
 				$justification_regulation_show = '<a href="regulation_view.html?base_regulation_id=' . $justification_regulation_id .'">' .
-				$justification_regulation_id . '</a> - Role type (' . $justification_regulation_role . ' - ' . $justification_role_type_description .')';
+				$justification_regulation_id . '</a> (Role type ' . $justification_regulation_role . ' - ' . $justification_role_type_description .')';
 			}
 ?>
 		<tr class="govuk-table__row">
@@ -105,8 +113,15 @@
 				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
 					<?=$goods_nomenclature_item_id?>
 				</a>
-				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)
+				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>#hierarchy">
+					Show commodity code in hierarchy
+				</a>
 			</td>
+		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell">Goods nomenclature description</td>
+			<td class="govuk-table__cell"><?=$goods_nomenclature_description?></td>
 		</tr>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell">Measure type ID</td>

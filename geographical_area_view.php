@@ -28,7 +28,7 @@
 <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/">Home</a>
+			<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 		</li>
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/geographical_areas.html">Geographical areas</a>
@@ -65,14 +65,14 @@
 		$geographical_area_id               = $row[0];
 		$geographical_area_sid              = $row[1];
 		$parent_geographical_area_group_sid = $row[2];
-		$description                        = $row[3];
+		$latest_description                 = $row[3];
 		$geographical_code                  = $row[4];
 		$validity_start_date                = $row[5];
 		$validity_end_date                  = $row[6];
 ?>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Description</td>
-					<td class="govuk-table__cell b"><?=$description?></td>
+					<td class="govuk-table__cell b"><?=$latest_description?></td>
 				</tr>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell">Geographical area ID</td>
@@ -187,7 +187,7 @@
 	}
 ?>
 
-<h2 id="quotas">Quotas related to <?=$description?></h2>
+<h2 id="quotas">Quotas related to <?=$latest_description?></h2>
 <?php
 	$sql = "SELECT DISTINCT m.ordernumber, m.measure_type_id, mtd.description as measure_type_description,
 	COUNT(m.measure_sid)
@@ -203,7 +203,7 @@
 	if  ($result) {
 ?>
 			<p>There are <strong><?=pg_num_rows($result)?></strong> matching quotas. Please note - this list is derived
-		from the measures table, not the quotas tabe, so that licensed quotas are included.</p>
+		from the measures table, not the quotas table, so that licensed quotas are included.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:10%">Order number</th>
@@ -362,14 +362,14 @@
 		$currency_clause = "";
 	}
 	$sql = "SELECT m.measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
-	m.measure_type_id, m.regulation_id_full, g.description as geographical_area_description,
+	m.measure_type_id, m.measure_generating_regulation_id, g.description as geographical_area_description,
 	mtd.description as measure_type_description, m.ordernumber, measure_component_applicable_code
-	FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd, measure_types mt
+	FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g, measure_type_descriptions mtd, measure_types mt
 	WHERE m.geographical_area_id = g.geographical_area_id
 	AND m.measure_type_id = mt.measure_type_id
 	AND mtd.measure_type_id = m.measure_type_id " . $currency_clause . "
 	AND m.geographical_area_id = '" . $geographical_area_id . "' " . $measure_scope_clause . $sort_clause;
-	# echo ($sql);
+	//echo ($sql);
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
@@ -384,7 +384,7 @@
 					<th class="govuk-table__header" style="width:18%">Type</th>
 					<th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
 					<th class="govuk-table__header" style="width:8%">Order number</th>
-					<th class="govuk-table__header" style="width:12%">Duty</th>
+					<th class="govuk-table__header r" style="width:12%">Duty</th>
 				</tr>
 
 <?php
@@ -399,7 +399,7 @@
 			$ordernumber                    	= $row['ordernumber'];
 			$measure_type_id                	= $row['measure_type_id'];
 			$geographical_area_id           	= $row['geographical_area_id'];
-			$regulation_id_full             	= $row['regulation_id_full'];
+			$regulation_id_full             	= $row['measure_generating_regulation_id'];
 			$geographical_area_description  	= $row['geographical_area_description'];
 			$measure_type_description       	= $row['measure_type_description'];
 			$measure_component_applicable_code	= $row['measure_component_applicable_code'];
@@ -441,7 +441,7 @@
 					<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 					<td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
-					<td class="govuk-table__cell"><span id="measure_<?=$measure_sid?>"></span></td>
+					<td class="govuk-table__cell r"><span id="measure_<?=$measure_sid?>"></span></td>
 				</tr>
 
 <?php
@@ -498,9 +498,10 @@
 	$sql = "SELECT child_sid, child_id, child_description, validity_start_date, validity_end_date
 	FROM ml.ml_geo_memberships WHERE parent_id = '" . $geographical_area_id . "'";
 	if ($member_currency == "current") {
-		$sql .= " AND (validity_end_date > CURRENT_DATE OR validity_end_date IS NULL) ";
+		$sql .= " AND (validity_end_date::date > CURRENT_DATE OR validity_end_date IS NULL) ";
 	}
 	$sql .= " ORDER BY 3";
+	//print ($sql);
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 

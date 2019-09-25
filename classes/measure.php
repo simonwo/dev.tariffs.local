@@ -9,11 +9,15 @@ class measure
 		$this->combined_duty          	        = "";
 		$this->duty_list              			= array();
 		$this->siv_component_list       		= array();
+		$this->footnote_list              		= array();
+		$this->condition_list              		= array();
 		$this->suppress							= False;
 		$this->marked							= False;
 		$this->significant_children   			= False;
 		$this->measure_count          			= 0;
 		$this->measure_type_count     			= 0;
+		$this->additional_code_id				= "";
+		$this->additional_code_type_id			= "";
 	}
 
 	public function set_properties($measure_sid, $commodity_code, $quota_order_number_id, $validity_start_date,
@@ -32,6 +36,29 @@ class measure
 		$this->measure_type_description = $measure_type_description;
 	}
 
+	public function get_footnote_string() {
+		$s = "";
+		$footnote_count = count($this->footnote_list);
+		for ($j = 0; $j < $footnote_count; $j++ ) {
+			$f = $this->footnote_list[$j];
+			$s .= $f->footnote_type_id . $f->footnote_id . ", ";
+		}
+		$s = trim($s);
+		$s = trim($s, ",");
+		$this->footnote_string = $s;
+	}
+
+	public function get_condition_string() {
+		$s = "";
+		$condition_count = count($this->condition_list);
+		for ($j = 0; $j < $condition_count; $j++ ) {
+			$mc = $this->condition_list[$j];
+			$s .= $mc->condition_string . " " . $mc->action_string . ", ";
+		}
+		$s = trim($s);
+		$s = trim($s, ",");
+		$this->condition_string = $s;
+	}
 	function populate_from_cookies() {
 		$this->measure_heading						= "Create new measure";
 		$this->measure_sid							= get_cookie("measure_sid");

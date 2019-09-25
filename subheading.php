@@ -11,7 +11,7 @@
     <div class="gem-c-breadcrumbs govuk-breadcrumbs">
         <ol class="govuk-breadcrumbs__list">
             <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="/">Home</a>
+                <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
                 <a class="govuk-breadcrumbs__link" href="/sections.html">Nomenclature sections</a>
@@ -37,7 +37,7 @@
 
 <?php
     $sql = "SELECT goods_nomenclature_item_id, producline_suffix, validity_start_date, validity_end_date, description, number_indents
-    FROM ml.goods_nomenclature_export_brexit('" . $chapter_id . "%') ORDER BY 1, 2";
+    FROM ml.goods_nomenclature_export_generic('" . $chapter_id . "%', '" . $critical_date . "') ORDER BY 1, 2";
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {

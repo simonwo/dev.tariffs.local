@@ -12,6 +12,7 @@ class goods_nomenclature
 		$this->combined_duty	= "";
 		$this->assigned			= false;
 		$this->ar_hierarchies = array();
+		$this->exists = true;
 	}
 
 	public function get_measure_type_description() {
@@ -44,23 +45,38 @@ class goods_nomenclature
 
 	
 	public function set_properties($goods_nomenclature_item_id, $productline_suffix, $description, $number_indents, $leaf, $direction = "both") {
+		global $conn;
 		$this->goods_nomenclature_item_id	= $goods_nomenclature_item_id;
 		$this->productline_suffix			= $productline_suffix;
 		$this->number_indents				= $number_indents;
 		$this->description					= $description;
 		$this->leaf							= $leaf;
 
-		if ($number_indents == "") {
-			//q("getting the hierarchy");
-			$this->get_hierarchy($direction);
+		// Do an initial check that this exisst in the database
+		$sql = "select goods_nomenclature_sid from goods_nomenclatures
+		where goods_nomenclature_item_id = '" . $this->goods_nomenclature_item_id . "' and producline_suffix = '" . $this->productline_suffix . "'";
+		$result = pg_query($conn, $sql);
+		if  ($result) {
+			if (pg_num_rows($result) == 0) {
+				$this->exists = false;
+			}
+		}
+
+		if ($this->exists == true) {
+			if ($number_indents == "") {
+				//q("getting the hierarchy");
+				$this->get_hierarchy($direction);
+			}
 		}
 	}
 
 	public function get_hierarchy($direction = "both") {
-		global $conn;
+		global $conn, $critical_date;
 		$stem = substr($this->goods_nomenclature_item_id, 0, 2);
-		$sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents, description, leaf FROM ml.goods_nomenclature_export_brexit('" . $stem . "%') ORDER BY goods_nomenclature_item_id, producline_suffix";
-		//q ($sql);
+		$sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents,
+		description, leaf FROM ml.goods_nomenclature_export_generic('" . $stem . "%', '" . $critical_date . "')
+		ORDER BY goods_nomenclature_item_id, producline_suffix";
+
 		$result = pg_query($conn, $sql);
 		if  ($result) {
 			$ar_goods_nomenclatures[]	= new goods_nomenclature;
@@ -310,6 +326,21 @@ class goods_nomenclature
 		pg_execute($conn, "goods_nomenclature_description_insert", array($this->goods_nomenclature_description_period_sid, "EN",
 		$this->productline_suffix, $this->goods_nomenclature_item_id, $this->goods_nomenclature_sid, $this->description, $operation, $operation_date));
 		return (True);
+	}
+
+	function format_description() {
+		$s = $this->description;
+		// preg_replace($pattern, $replacement, $string);
+		$s = str_replace("\t", "", $s);
+		$s = preg_replace('/\s+/', ' ', $s);
+		$s = str_replace("<br>", "<br />", $s);
+		for ($i = 0; $i < 5; $i++ ) {
+			$s = str_replace("<br /> ", "<br />", $s);
+		}
+		for ($i = 0; $i < 5; $i++ ) {
+			$s = str_replace("<br /><br />", "<br />", $s);
+		}
+		return ($s);
 	}
 
 	function get_missing_details() {

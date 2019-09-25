@@ -18,7 +18,7 @@
     <div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/">Home</a>
+            <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" href="/regulations.html">Regulations</a>
@@ -105,8 +105,8 @@
             <button type="submit" class="govuk-button" style="margin-top:-12px">Search</button>
         </div>
     </div>
-    <div class="clearer"><!--&nbsp;//--></div>
 </form>
+<div class="clearer"><!--&nbsp;//--></div>
 
 <?php
     $clause1 = "";
@@ -147,13 +147,13 @@
 
     $sql = "SELECT base_regulation_id as regulation_id, information_text, regulation_group_id, validity_start_date,
     validity_end_date, 'Base' as type, officialjournal_number
-    FROM base_regulations br WHERE validity_start_date IS NULL " . $clause1 . " UNION
+    FROM base_regulations br WHERE 1 > 0 " . $clause1 . " UNION
     SELECT modification_regulation_id as regulation_id, mr.information_text,
     br.regulation_group_id as regulation_group_id, mr.validity_start_date, mr.validity_end_date,
     'Modification' as type, mr.officialjournal_number
     FROM modification_regulations mr, base_regulations br
     WHERE mr.base_regulation_id = br.base_regulation_id
-    AND mr.validity_start_date IS NULL " . $clause2 . "
+    AND 1 > 0 " . $clause2 . "
     ORDER BY regulation_id " . $limit_clause;
     #p ($sql);
     $result = pg_query($conn, $sql);
@@ -188,7 +188,7 @@
             <form action="regulation_create_edit.html" method="get">
                 <input type="hidden" name="action" value="edit" />
                 <input type="hidden" name="base_regulation_id" value="<?=$regulation_id?>" />
-                <button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+                <button type="submit" class="govuk-button btn_nomargin">Edit</button>
             </form>
         </td>
     </tr>

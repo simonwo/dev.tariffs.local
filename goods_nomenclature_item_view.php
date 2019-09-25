@@ -20,7 +20,7 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 		<ol class="govuk-breadcrumbs__list">
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="/">Home</a>
+				<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">
 				<a class="govuk-breadcrumbs__link" href="/sections.html">Goods nomenclature section</a>
@@ -33,34 +33,35 @@
 	</div>
 
 	<?php
-	$sql = "SELECT gn.goods_nomenclature_item_id, gn.producline_suffix as productline_suffix,
-	gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description
-	FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
-	left outer join ml.commodity_friendly_names f on left(gn.goods_nomenclature_item_id, 8) = f.goods_nomenclature_item_id
-	WHERE gn.goods_nomenclature_item_id = gnd1.goods_nomenclature_item_id AND gn.producline_suffix = gnd1.productline_suffix
-	AND gn.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' AND gn.producline_suffix = '" . $productline_suffix . "'
-	AND  (gnd1.goods_nomenclature_description_period_sid IN ( SELECT max(gnd2.goods_nomenclature_description_period_sid) AS max
-	FROM goods_nomenclature_descriptions gnd2
-	WHERE gnd1.goods_nomenclature_item_id = gnd2.goods_nomenclature_item_id AND gnd1.productline_suffix = gnd2.productline_suffix))
-	ORDER BY validity_start_date DESC LIMIT 1";
-	//print ($sql);
-	$result = pg_query($conn, $sql);
-	if  ($result) {
-		while ($row = pg_fetch_array($result)) {
-			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-			$goods_nomenclature_sid		= $row['goods_nomenclature_sid'];
-			$productline_suffix         = $row['productline_suffix'];
-			$description                = $row['description'];
-			$friendly_description       = $row['friendly_description'];
-			$validity_start_date        = short_date($row['validity_start_date']);
-			$validity_end_date          = $row['validity_end_date'];
-			$validity_end_date2         = short_date($validity_end_date);
-		}
-	}
+	if ($obj_goods_nomenclature_item->exists == true) {
+		$sql = "SELECT gn.goods_nomenclature_item_id, gn.producline_suffix as productline_suffix,
+		gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description
+		FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
+		left outer join ml.commodity_friendly_names f on left(gn.goods_nomenclature_item_id, 8) = f.goods_nomenclature_item_id
+		WHERE gn.goods_nomenclature_item_id = gnd1.goods_nomenclature_item_id AND gn.producline_suffix = gnd1.productline_suffix
+		AND gn.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' AND gn.producline_suffix = '" . $productline_suffix . "'
+		AND  (gnd1.goods_nomenclature_description_period_sid IN ( SELECT max(gnd2.goods_nomenclature_description_period_sid) AS max
+		FROM goods_nomenclature_descriptions gnd2
+		WHERE gnd1.goods_nomenclature_item_id = gnd2.goods_nomenclature_item_id AND gnd1.productline_suffix = gnd2.productline_suffix))
+		ORDER BY validity_start_date DESC LIMIT 1";
 
-	if ($validity_end_date != ""){
-		echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code has an end-date. Please be careful when assigning duties to this commodity.</p></div>");
-	}
+		$result = pg_query($conn, $sql);
+		if  ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
+				$goods_nomenclature_sid		= $row['goods_nomenclature_sid'];
+				$productline_suffix         = $row['productline_suffix'];
+				$description                = $row['description'];
+				$friendly_description       = $row['friendly_description'];
+				$validity_start_date        = short_date($row['validity_start_date']);
+				$validity_end_date          = $row['validity_end_date'];
+				$validity_end_date2         = short_date($validity_end_date);
+			}
+		}
+
+		if ($validity_end_date != ""){
+			echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code has an end-date. Please be careful when assigning duties to this commodity.</p></div>");
+		}
 ?>	
 			<!-- MENU //-->
 			<h2>Page content</h2>
@@ -69,7 +70,6 @@
 				<li><a href="#hierarchy">Position in hierarchy</a></li>
 				<li><a href="#description_periods">Historical descriptions</a></li>
 				<li><a href="#origins">Origins</a></li>
-				<!--<li><a href="#successors">Successors</a></li>//-->
 				<li><a href="#assigned">Assigned measures</a></li>
 				<li><a href="#inherited">Inherited measures</a></li>
 				<li><a title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?=$goods_nomenclature_item_id?>#import" target="_blank" href="#usage_measures">View in Trade Tariff Service</a></li>
@@ -263,17 +263,6 @@
 			<p>When a new goods nomenclature code is created, this record provides details of the goods
 nomenclature code from which the new code originated.</p>
 <?php
-	$sql = "select * from goods_nomenclature_successors where
-	goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' and productline_suffix = '" . $productline_suffix . "'";
-
-	$sql = "select distinct gns.absorbed_goods_nomenclature_item_id, gns.absorbed_productline_suffix, gnd.description
-	from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
-	where gns.productline_suffix = gnd.productline_suffix
-	and gns.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
-	and gns.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
-	and gns.productline_suffix = '" . $productline_suffix . "'
-	order by 1, 2";
-
 	$sql = "select gno.derived_goods_nomenclature_item_id, gno.derived_productline_suffix, description
 	from goods_nomenclature_origins gno, goods_nomenclature_descriptions gnd
 	where gno.productline_suffix = gnd.productline_suffix
@@ -442,6 +431,10 @@ nomenclature code which supersedes it.</p>
 	} else {
 		echo ("<p>No measures, as this does not have a product line suffix of '80'.</p>");
 	}
+} else {
+	echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code does not exist on this database.</p></div>");
+
+}
 ?>    
 
 </div>

@@ -26,7 +26,9 @@
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
 </head>
 <body class="govuk-template__body ">
-	<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+<?php
+	$my_url = strtolower($_SERVER['HTTP_HOST']);
+?>	<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
 	<div class="app-pane app-pane--enabled">
 		<div class="app-cookie-banner js-cookie-banner">
@@ -45,18 +47,44 @@
 						</span>
 						<span class="app-header__title">Tariff Management</span>
 					</a>
-					<!--
 					<div class="options">
-						<span id="showing">Showing Now</span>&nbsp;&nbsp;&nbsp;<a id="context_switcher" href="#"><span id="show_instead">Show Brexit instead</span></a>
+						<span id="showing">Switch to:</span>&nbsp;&nbsp;&nbsp;
+<?php
+	if (strpos($my_url, "dev.") === False) {
+?>						
+						<a id="context_switcher_dev" href="#"><span id="show_dev">dev</span></a>&nbsp;
+<?php
+	}
+?>						
+<?php
+	if (strpos($my_url, "staging.") === False) {
+?>						
+						<a id="context_switcher_staging" href="#"><span id="show_staging">staging</span></a>&nbsp;
+<?php
+	}
+?>
+<?php
+	if (strpos($my_url, "eu.") === False) {
+?>						
+						<a id="context_switcher_eu" href="#"><span id="show_eu">eu</span></a>&nbsp;
+<?php
+	}
+?>					
+<?php
+	if (strpos($my_url, "fta.") === False) {
+?>						
+						<a id="context_switcher_fta" href="#"><span id="show_fta">fta</span></a>&nbsp;
+<?php
+	}
+?>					
 					</div>
-					//-->
 					<div class="options">
 						<span id="showing">Connected to database <?=$dbase?></span>
 					</div>
 				</div>
 			</header>
 			<div class="app-phase-banner__wrapper">
-				<div class="govuk-phase-banner app-phase-banner govuk-width-container">
+				<div class="govuk-phase-banner app-phase-banner govuk-width-container" style="border-bottom:1px #bfc1c3 solid;">
 					<p class="govuk-phase-banner__content"><strong class="govuk-tag govuk-phase-banner__content__tag ">beta</strong>
 						<span class="govuk-phase-banner__text">This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.</span>
 					</p>
@@ -65,4 +93,4 @@
 		</div>
 		<div class="app-pane__body govuk-width-container">
 			<div class="app-pane__content">
-				<main id="main-content" class="app-content" role="main" style="padding:0px;margin-top:2em;">
+				<main id="main-content" class="app-content" role="main" style="padding:0px;margin-top:1em;">

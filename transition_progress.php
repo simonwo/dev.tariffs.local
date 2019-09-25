@@ -9,7 +9,7 @@
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 		<ol class="govuk-breadcrumbs__list">
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="/">Home</a>
+				<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">
 				Transition progress
@@ -22,7 +22,7 @@
 	</div>
 
 
-	<p>This page lists progress on migrating measures. Listed below are all measues, by measure type and geographical area ID
+	<p>This page lists progress on migrating measures. Listed below are all measures, by measure type and geographical area ID
 		that do not stop on or before the expected date of EU Exit and therefore still need to be either terminated or transitioned.</p>
 	<p><strong>Please note</strong> - this page is dealing with a complex query and will take up to 1 minute to load fully.</p>
 <?php
@@ -40,14 +40,18 @@ flush();
 <?php
 	$sql = "select m.measure_type_id, m.geographical_area_id,
 	mtd.description as measure_type_description, ga.description as geo_description, count (*) as count
-	from ml.measures_real_end_dates m, ml.ml_geographical_areas ga, measure_type_descriptions mtd 
+	from ml.measures_real_end_dates m, ml.ml_geographical_areas ga, measure_type_descriptions mtd, goods_nomenclatures g
 	where mtd.measure_type_id = m.measure_type_id 
 	and m.geographical_area_id = ga.geographical_area_id
+	and g.goods_nomenclature_item_id = m.goods_nomenclature_item_id
+	and g.producline_suffix = '80'
+	and g.validity_end_date is null
 	and m.validity_start_date < '2019-11-01'
 	and (m.validity_end_date is null
 	or m.validity_end_date > '2019-10-31')
 	group by m.measure_type_id, m.geographical_area_id, mtd.description, ga.description
 	order by m.measure_type_id, m.geographical_area_id";
+	//echo ($sql);
 	$tally = 0;
 	$result = pg_query($conn, $sql);
 	if  ($result) {
@@ -62,7 +66,7 @@ flush();
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>" target="_blank"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
 			<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>" target="_blank"><?=$geographical_area_id?> - <?=$geo_description?></a></td>
-			<td class="govuk-table__cell r"><?=$count?></td>
+			<td class="govuk-table__cell r"><?=number_format($count)?></td>
 		</tr>
 <?php
 		}
@@ -71,7 +75,7 @@ flush();
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell b">TOTAL</td>
 			<td class="govuk-table__cell">&nbsp;</td>
-			<td class="govuk-table__cell b r"><?=$tally?></td>
+			<td class="govuk-table__cell b r"><?=number_format($tally)?></td>
 		</tr>
 		</table>
 </div>

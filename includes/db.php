@@ -18,6 +18,7 @@ require (dirname(__FILE__) . "../../classes/measurement.php");
 require (dirname(__FILE__) . "../../classes/measurement_unit.php");
 require (dirname(__FILE__) . "../../classes/measurement_unit_qualifier.php");
 require (dirname(__FILE__) . "../../classes/measure.php");
+require (dirname(__FILE__) . "../../classes/measure_condition.php");
 require (dirname(__FILE__) . "../../classes/duty.php");
 require (dirname(__FILE__) . "../../classes/siv_component.php");
 require (dirname(__FILE__) . "../../classes/geographical_area.php");
@@ -27,6 +28,8 @@ require (dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
 require (dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.php");
 require (dirname(__FILE__) . "../../classes/base_regulation.php");
 require (dirname(__FILE__) . "../../classes/regulation_group.php");
+require (dirname(__FILE__) . "../../classes/quota_association.php");
+require (dirname(__FILE__) . "../../classes/additional_code.php");
 
 
 if(isset($_COOKIE["showing"])) {
@@ -34,13 +37,9 @@ if(isset($_COOKIE["showing"])) {
 } else {
 	$scope = "Now";
 }
-/*
-if ($scope == "Brexit") {
-	$dbase = "tariff_staging";
-} else {
-	$dbase = "tariff_eu";
-}
-*/
+
+$critical_date = "2019-11-01";
+
 $msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
 $pagesize	= 100;
