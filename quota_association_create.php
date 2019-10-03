@@ -52,6 +52,18 @@
 <!-- End error handler //-->
 
 
+<!-- Begin workbasket field //-->
+<div class="govuk-form-group <?=$error_handler->get_error("workbasket_name");?>">
+	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+        <h1 id="heading_workbasket_name" class="govuk-fieldset__heading" style="max-width:100%;"><label for="workbasket_name">Please enter the name of the workbasket</label></h1>
+	</legend>
+    <span class="govuk-hint">Lorem ipsum dolor sit amet ...</span>
+	<?=$error_handler->display_error_message("workbasket_name");?>
+	<input value="<?=$quota_association->workbasket_name?>" class="govuk-input" style="width:25%" id="workbasket_name" name="workbasket_name" type="text" maxlength="50" size="50">
+</div>
+<!-- End workbasket field //-->
+
+
 <!-- Begin main quota order number field //-->
 <div class="govuk-form-group <?=$error_handler->get_error("main_quota_order_number_id");?>">
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
@@ -62,6 +74,7 @@
 	<input value="<?=$quota_association->main_quota_order_number_id?>" class="govuk-input" style="width:10%" id="main_quota_order_number_id" name="main_quota_order_number_id" type="text" maxlength="6" size="6">
 </div>
 <!-- End main quota order number field //-->
+
 
 <!-- Begin sub quota order number field //-->
 <div class="govuk-form-group <?=$error_handler->get_error("sub_quota_order_number_id");?>">

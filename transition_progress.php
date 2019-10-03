@@ -18,12 +18,13 @@
 	</div>
 	<!-- End breadcrumbs //-->
 	<div class="app-content__header">
-		<h1 class="govuk-heading-xl">Transition progress</h1>
+		<h1 class="govuk-heading-xl">Transition progress - by country and measure type</h1>
 	</div>
 
 
 	<p>This page lists progress on migrating measures. Listed below are all measures, by measure type and geographical area ID
 		that do not stop on or before the expected date of EU Exit and therefore still need to be either terminated or transitioned.</p>
+	<p><a href="transition_progress_regulation.html">View transition progress by regulation</a></p>
 	<p><strong>Please note</strong> - this page is dealing with a complex query and will take up to 1 minute to load fully.</p>
 <?php
 ob_flush();

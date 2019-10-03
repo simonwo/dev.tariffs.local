@@ -110,7 +110,8 @@
 
 	$sql = "select measure_sid, goods_nomenclature_item_id, m.validity_start_date, m.validity_end_date, m.geographical_area_id,
 	m.measure_type_id, measure_generating_regulation_id, mtd.description as measure_type_description,
-	g.description as geographical_area_description, m.additional_code_type_id, m.additional_code_id
+	g.description as geographical_area_description, m.additional_code_type_id, m.additional_code_id, m.goods_nomenclature_sid,
+	m.ordernumber
 	from ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas g
 	where m.measure_type_id = mtd.measure_type_id
 	and m.geographical_area_id = g.geographical_area_id";
@@ -138,6 +139,8 @@
 			$measure->measure_generating_regulation_id = $row['measure_generating_regulation_id'];
 			$measure->geographical_area_description = $row['geographical_area_description'];
 			$measure->measure_type_description = $row['measure_type_description'];
+			$measure->goods_nomenclature_sid = $row['goods_nomenclature_sid'];
+			$measure->order_number = $row['ordernumber'];
 
 			array_push($measures, $measure);
 		}
@@ -157,19 +160,24 @@
 		if (count($measures) > 0) {
 ?>
 			<div>
-				<p>&gt; <a target="_blank" href="measure_export.php?base_regulation_id=<?=$regulation_id?>">Export these measures to CSV</a></p>
+				<ul class="tariff_menu">
+					<li><a target="_blank" href="measure_export.php?base_regulation_id=<?=$regulation_id?>">Export these measures to CSV</a></li>
+					<li><a target="_blank" href="definition_export.php?base_regulation_id=<?=$regulation_id?>">Export quota definitions to CSV</a></li>
+					<li><a target="_blank" href="definition_measure_export.php?base_regulation_id=<?=$regulation_id?>">Export quota definitions &amp; measures to CSV</a></li>
+				</ul>
 			</div>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" style="width:8%">SID</th>
-					<th class="govuk-table__header" style="width:10%">Commodity</th>
-					<th class="govuk-table__header c" style="width:8%">Add code</th>
-					<th class="govuk-table__header" style="width:8%">Start date</th>
-					<th class="govuk-table__header" style="width:8%">End date</th>
-					<th class="govuk-table__header" style="width:20%">Geographical area</th>
-					<th class="govuk-table__header" style="width:18%">Type</th>
+					<th class="govuk-table__header" style="width:6%">SID</th>
+					<th class="govuk-table__header" style="width:16%">Commodity (ID / SID)</th>
+					<th class="govuk-table__header c" style="width:7%">Add code</th>
+					<th class="govuk-table__header c" style="width:8%">Start date</th>
+					<th class="govuk-table__header c" style="width:7%">End date</th>
+					<th class="govuk-table__header" style="width:14%">Geographical area</th>
+					<th class="govuk-table__header" style="width:15%">Type</th>
 					<th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
-					<th class="govuk-table__header" style="width:10%">Duty</th>
+					<th class="govuk-table__header c" style="width:7%">Order number</th>
+					<th class="govuk-table__header r" style="width:10%">Duty</th>
 				</tr>
 
 <?php
@@ -198,15 +206,16 @@
 			$rowclass = rowclass($validity_start_date, $validity_end_date);
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
-					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
-					<td class="govuk-table__cell c"><?=$my_add_code?></td>
-					<td class="govuk-table__cell"><?=$validity_start_date?></td>
-					<td class="govuk-table__cell"><?=$validity_end_date?></td>
-					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?> - <?=$geographical_area_description?></a></td>
-					<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
-					<td class="govuk-table__cell"><?=$measure_generating_regulation_id?></td>
-					<td class="govuk-table__cell"><?=$measure->combined_duty?></td>
+					<td class="govuk-table__cell vsmall"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;&nbsp;&nbsp;&nbsp;[<?=$measure->goods_nomenclature_sid?>]</td>
+					<td class="govuk-table__cell c vsmall"><?=$my_add_code?></td>
+					<td class="govuk-table__cell vsmall c"><?=$validity_start_date?></td>
+					<td class="govuk-table__cell vsmall c"><?=$validity_end_date?></td>
+					<td class="govuk-table__cell vsmall"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?> - <?=$geographical_area_description?></a></td>
+					<td class="govuk-table__cell vsmall"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
+					<td class="govuk-table__cell vsmall"><?=$measure_generating_regulation_id?></td>
+					<td class="govuk-table__cell vsmall c"><a href="quota_order_number_view.html?quota_order_number_id=<?=$measure->order_number?>"><?=$measure->order_number?></a></td>
+					<td class="govuk-table__cell r vsmall"><?=$measure->combined_duty?></td>
 				</tr>
 <?php
 		}

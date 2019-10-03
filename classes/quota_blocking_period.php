@@ -1,14 +1,14 @@
 <?php
-class quota_association
+class quota_blocking_period
 {
 	// Class properties and methods go here
 	public $workbasket_name				= "";
-	public $main_quota_order_number_id  = "";
-	public $sub_quota_order_number_id   = "";
+	public $quota_order_number_id       = "";
+	public $description                 = "";
 	public $blocking_period_start_day	= "";
 	public $blocking_period_start_month	= "";
 	public $blocking_period_start_year	= "";
-	public $blocking_period_end_day	= "";
+	public $blocking_period_end_day     = "";
 	public $blocking_period_end_month	= "";
 	public $blocking_period_end_year	= "";
 
@@ -17,7 +17,7 @@ class quota_association
 	}
 
     function populate_from_cookies() {
-        $this->main_quota_order_number_id   = get_cookie("main_quota_order_number_id");
+        $this->quota_order_number_id   = get_cookie("quota_order_number_id");
         $this->sub_quota_order_number_id    = get_cookie("sub_quota_order_number_id");
 	}
 

@@ -18,11 +18,12 @@
     </div>
     <!-- End breadcrumbs //-->
     <div class="app-content__header">
-        <h1 class="govuk-heading-xl">Load history</h1>
+        <h1 style="margin-bottom:0px" class="govuk-heading-xl">Load history</h1>
     </div>
+    <p><a href="javascript:document.location.reload()">Refresh page</a></p>
     <table cellspacing="0" class="govuk-table">
         <tr class="govuk-table__row">
-            <th class="govuk-table__header" style="width:56%">File</th>
+            <th class="govuk-table__header nopad" style="width:56%">File</th>
             <!--
             <th class="govuk-table__header" style="width:48%">File</th>
             <th class="govuk-table__header" style="width:8%">Size</th>
@@ -58,7 +59,7 @@
             <td class="govuk-table__cell"><a href="xml_load.html?file=<?=$import_file?>"><?=$import_file?></a></td>
             <td class="govuk-table__cell"><?=$file_size?> kb</a></td>
             //-->
-            <td class="govuk-table__cell"><?=$import_file?></td>
+            <td class="govuk-table__cell nopad"><?=$import_file?></td>
             <td class="govuk-table__cell"><?=$import_started?></a></td>
             <td class="govuk-table__cell"><?=$import_completed?></a></td>
             <td class="govuk-table__cell c">

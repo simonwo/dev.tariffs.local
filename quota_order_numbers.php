@@ -15,10 +15,17 @@
 <!-- End breadcrumbs //-->
 
 <div class="app-content__header">
-	<h1 class="govuk-heading-xl">Quota order numbers</h1>
+	<h1 class="govuk-heading-xl nomargin">Quota order numbers</h1>
 </div>
+<!--
+<ul class="tariff_menu">
+	<li><a href="#fcfs">First come first served quotas</a></li>
+	<li><a href="#licensed">Licensed quotas</a></li>
+</ul>
+//-->
 
-<form action="/quota_order_number_create_edit.html" method="get" class="inline_form">
+
+<form action="/quota_order_number_create_edit.html" method="get" class="inline_form" style="display:none">
 	<input type="hidden" name="phase" value="<?=$phase?>" />
 	<h3>New quota order number</h3>
 	<div class="column-one-third" style="width:320px">
@@ -128,6 +135,7 @@
 		}
 
 ?>
+<h2 id="fcfs">FCFS quotas</h2>
 <p>The table below is a list of all of the First-Come-First-Served (FCFS) quotas in place. Licensed quotas
 	are not managed via this quota order mechanism.
 </p>
@@ -204,6 +212,53 @@
 	} 
 ?>
 </table>
+<p class="back_to_top"><a href="#top">Back to top</a></p>
+<!--
+<h2 id="licensed">Licensed quotas</h2>
+<?php
+	$sql = "select distinct ordernumber, m.measure_type_id, geographical_area_id, mtd.description as measure_type_description
+	from measures m, measure_type_descriptions mtd
+	where ordernumber like '094%'
+	and m.measure_type_id = mtd.measure_type_id
+	and (m.validity_end_date >= '2008-01-01' or validity_end_date is null)
+	order by ordernumber, m.measure_type_id, geographical_area_id
+	";
+	$result = pg_query($conn, $sql);
+	$quota_order_numbers = array();
+	if ($result) {
+?>
+<table class="govuk-table" cellspacing="0">
+	<thead class="govuk-table__head">
+	<tr class="govuk-table__row">
+		<th class="govuk-table__header" scope="col">Order number</th>
+		<th class="govuk-table__header" scope="col">Measure type</th>
+		<th class="govuk-table__header" scope="col">Geographical area</th>
+	</tr>
+	</thead>
+	<tbody>
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$ordernumber				= $row['ordernumber'];
+			$measure_type_id			= $row['measure_type_id'];
+			$measure_type_description	= $row['measure_type_description'];
+			$geographical_area_id		= $row['geographical_area_id'];
+?>
+	<tr class="govuk-table__row">
+		<td class="govuk-table__cell"><?=$ordernumber?></td>
+		<td class="govuk-table__cell"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></td>
+		<td class="govuk-table__cell"><?=$geographical_area_id?></td>
+	</tr>
+<?php
+		}
+	}
+?>
+	</tbody>
+</table>
+<?php		
+	
+?>
+<p class="back_to_top"><a href="#top">Back to top</a></p>
+//-->
 </div>
 <?php
 	require ("includes/footer.php")

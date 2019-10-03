@@ -29,7 +29,9 @@ require (dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.
 require (dirname(__FILE__) . "../../classes/base_regulation.php");
 require (dirname(__FILE__) . "../../classes/regulation_group.php");
 require (dirname(__FILE__) . "../../classes/quota_association.php");
+require (dirname(__FILE__) . "../../classes/quota_blocking_period.php");
 require (dirname(__FILE__) . "../../classes/additional_code.php");
+require (dirname(__FILE__) . "../../classes/measure_excluded_geographical_area.php");
 
 
 if(isset($_COOKIE["showing"])) {
@@ -206,6 +208,24 @@ function footnote_type_application_code($id){
 			break;
 	}
 
+}
+
+function yn($var) {
+	$var = intval($var);
+	if ($var == 0) {
+		return ("N");
+	} else {
+		return ("Y");
+	}
+}
+
+function yn2($var) {
+	$var = intval($var);
+	if ($var == 0) {
+		return ("");
+	} else {
+		return ("Y");
+	}
 }
 
 function standardise($var) {
@@ -462,6 +482,14 @@ function bool_to_int($var) {
 		return (1);
 	} else {
 		return (0);
+	}
+}
+
+function duty_format($var) {
+	if ($var == Null) {
+		return ("");
+	} else {
+		return (number_format($var, 2));
 	}
 }
 ?>

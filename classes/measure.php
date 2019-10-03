@@ -4,13 +4,14 @@ class measure
 	// Class properties and methods go here
 	public function __construct() {
 		$this->geographical_area_description    = "";
-		$this->geographical_area_id    = "";
+		$this->geographical_area_id    			= "";
 		$this->assigned                         = False;
 		$this->combined_duty          	        = "";
 		$this->duty_list              			= array();
 		$this->siv_component_list       		= array();
 		$this->footnote_list              		= array();
 		$this->condition_list              		= array();
+		$this->mega_list	              		= array();
 		$this->suppress							= False;
 		$this->marked							= False;
 		$this->significant_children   			= False;
@@ -59,6 +60,20 @@ class measure
 		$s = trim($s, ",");
 		$this->condition_string = $s;
 	}
+
+	public function get_mega_string() {
+		$s = "";
+		$mega_count = count($this->mega_list);
+		for ($j = 0; $j < $mega_count; $j++ ) {
+			$mega = $this->mega_list[$j];
+			$s .= $mega->excluded_geographical_area . ", ";
+		}
+		$s = trim($s);
+		$s = trim($s, ",");
+		$this->mega_string = $s;
+	}
+
+	
 	function populate_from_cookies() {
 		$this->measure_heading						= "Create new measure";
 		$this->measure_sid							= get_cookie("measure_sid");

@@ -49,7 +49,7 @@
 	<h2 id="measure_details">Measure details</h2>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header" style="width:25%">Item</th>
+			<th class="govuk-table__header nopad" style="width:25%">Item</th>
 			<th class="govuk-table__header" style="width:75%">Value</th>
 		</tr>
 
@@ -108,7 +108,7 @@
 			}
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Goods nomenclature item ID</td>
+			<td class="govuk-table__cell nopad">Goods nomenclature item ID</td>
 			<td class="govuk-table__cell">
 				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
 					<?=$goods_nomenclature_item_id?>
@@ -120,31 +120,31 @@
 			</td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Goods nomenclature description</td>
+			<td class="govuk-table__cell nopad">Goods nomenclature description</td>
 			<td class="govuk-table__cell"><?=$goods_nomenclature_description?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Measure type ID</td>
+			<td class="govuk-table__cell nopad">Measure type ID</td>
 			<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Duty</td>
+			<td class="govuk-table__cell nopad">Duty</td>
 			<td class="govuk-table__cell"><?=$measure->combined_duty?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Geographical area ID</td>
+			<td class="govuk-table__cell nopad">Geographical area ID</td>
 			<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?> - <?=$geographical_area_description?></a></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Validity start date</td>
+			<td class="govuk-table__cell nopad">Validity start date</td>
 			<td class="govuk-table__cell"><?=short_date($validity_start_date)?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Validity end date</td>
+			<td class="govuk-table__cell nopad">Validity end date</td>
 			<td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Measure generating regulation</td>
+			<td class="govuk-table__cell nopad">Measure generating regulation</td>
 			<td class="govuk-table__cell">
 					<a href="regulation_view.html?base_regulation_id=<?=$measure_generating_regulation_id?>">
 						<?=$measure_generating_regulation_id?></a>
@@ -153,23 +153,23 @@
 				</td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Justification regulation</td>
+			<td class="govuk-table__cell nopad">Justification regulation</td>
 			<td class="govuk-table__cell"><?=$justification_regulation_show?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Quota order number ID</td>
+			<td class="govuk-table__cell nopad">Quota order number ID</td>
 			<td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$quota_order_number_id?>"><?=$ordernumber?></a></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Additional code</td>
+			<td class="govuk-table__cell nopad">Additional code</td>
 			<td class="govuk-table__cell"><?=$additional_code_type_id?><?=$additional_code_id?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Stopped flag</td>
+			<td class="govuk-table__cell nopad">Stopped flag</td>
 			<td class="govuk-table__cell"><?=$stopped_flag?></td>
 		</tr>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell">Reduction indicator</td>
+			<td class="govuk-table__cell nopad">Reduction indicator</td>
 			<td class="govuk-table__cell"><?=$reduction_indicator?></td>
 		</tr>
 <?php
@@ -180,6 +180,7 @@
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 
 		<h2 id="measure_components">Measure components</h2>
+		<p>The following components are assigned to this measure.</p>
 <?php
 	$sql = "SELECT mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
 	ded.description as duty_expression_description, mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
@@ -193,7 +194,7 @@
 ?>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header" style="width:15%">Duty expression</th>
+			<th class="govuk-table__header nopad" style="width:15%">Duty expression</th>
 			<th class="govuk-table__header" style="width:15%">Duty amount</th>
 			<th class="govuk-table__header" style="width:15%">Monetary unit code</th>
 			<th class="govuk-table__header" style="width:38 %">Measurement unit code / qualifier code</th>
@@ -219,7 +220,7 @@
 			}
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell"><?=$duty_expression_id?></td>
+			<td class="govuk-table__cell nopad"><?=$duty_expression_id?></td>
 			<td class="govuk-table__cell"><?=number_format($duty_amount, 2)?></td>
 			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
 			<td class="govuk-table__cell"><?=$measurement_unit_show?><?php if ($measurement_unit_show != "") { echo ("&nbsp;/&nbsp;"); } ?><?=$measurement_unit_qualifier_show?></td>
@@ -256,6 +257,7 @@
 
 <!-- Measure conditions //-->
 		<h2 id="measure_conditions">Measure conditions</h2>
+		<p>The following conditions apply to this measure.</p>
 <?php
 	$sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
 	mc.condition_monetary_unit_code, mc.condition_measurement_unit_code, mc.condition_measurement_unit_qualifier_code,
@@ -263,18 +265,18 @@
 	FROM measure_condition_code_descriptions mccd, measure_conditions mc
 	LEFT OUTER JOIN measure_action_descriptions mad
 	ON mc.action_code = mad.action_code WHERE measure_sid = " . $measure_sid . "
-	AND mc.condition_code = mccd.condition_code ORDER BY component_sequence_number";
+	AND mc.condition_code = mccd.condition_code ORDER BY condition_code, component_sequence_number";
 	$result = pg_query($conn, $sql);
 	$row_count = pg_num_rows($result);
 	if (($result) && ($row_count > 0)) {
 ?>
 	<table cellspacing="0" class="govuk-table">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" style="width:8%">SID</th>
+		<tr class="govuk-table__row" valign="bottom">
+			<th class="govuk-table__header nopad" style="width:8%">SID</th>
 			<th class="govuk-table__header" style="width:12%">Condition code</th>
-			<th class="govuk-table__header" style="width:10%">Duty amount</th>
-			<th class="govuk-table__header" style="width:10%">Monetary unit code</th>
-			<th class="govuk-table__header" style="width:20%">Measurement unit code / qualifier code</th>
+			<th class="govuk-table__header c" style="width:10%">Duty amount</th>
+			<th class="govuk-table__header c" style="width:10%">Monetary unit code</th>
+			<th class="govuk-table__header c" style="width:20%">Measurement unit code / qualifier code</th>
 			<th class="govuk-table__header" style="width:20%">Action code</th>
 			<th class="govuk-table__header" style="width:20%">Certificate code</th>
 		</tr>
@@ -304,11 +306,11 @@
 			}
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell"><?=$measure_condition_sid?></td>
+			<td class="govuk-table__cell nopad"><?=$measure_condition_sid?></td>
 			<td class="govuk-table__cell"><?=$condition_code_show?></td>
-			<td class="govuk-table__cell"><?=number_format($duty_amount, 2)?></td>
-			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
-			<td class="govuk-table__cell"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
+			<td class="govuk-table__cell c"><?=duty_format($duty_amount)?></td>
+			<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
+			<td class="govuk-table__cell c"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
 			<td class="govuk-table__cell"><?=$action_code_show?></td>
 			<td class="govuk-table__cell"><?=$certificate_type_code?><?=$certificate_code?></td>
 		</tr>
@@ -342,7 +344,7 @@
 	<p>The following footnotes are associated with this measure.</p>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header" style="width:10%">Footnote</th>
+			<th class="govuk-table__header nopad" style="width:10%">Footnote</th>
 			<th class="govuk-table__header" style="width:90%">Description</th>
 		</tr>
 
@@ -353,7 +355,7 @@
 			$description        = $row['description'];
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
+			<td class="govuk-table__cell nopad"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
 			<td class="govuk-table__cell"><?=$description?></td>
 		</tr>
 

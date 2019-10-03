@@ -7,6 +7,13 @@
 	$quota_order_number 	= new quota_order_number;
 	$quota_order_number->set_properties($quota_order_number_id, "", "");
 	$quota_order_number->get_origins();
+	if (substr($quota_order_number->quota_order_number_id, 0, 3) == "094") {
+		$quota_order_number->licensed = true;
+		$type = "Licensed quota order number";
+	} else {
+		$quota_order_number->licensed = false;
+		$type = "FCFS quota order number";
+	}
 
 	$quota_definition = new quota_definition;
 	$quota_definition->clear_cookies();
@@ -19,28 +26,55 @@
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 		</li>
+<?php
+	if ($quota_order_number->licensed == true) {
+?>
+		<li class="govuk-breadcrumbs__list-item">
+			<a class="govuk-breadcrumbs__link" href="/licensed_quota_order_numbers.html">Licensed quota order numbers</a>
+		</li>
+<?php
+	} else {
+?>
 		<li class="govuk-breadcrumbs__list-item">
 			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a>
 		</li>
+<?php		
+	}
+?>		
 		<li class="govuk-breadcrumbs__list-item">Quota <?=$quota_order_number_id?></li>
 	</ol>
 	</div>
 	<div class="app-content__header">
-    	<h1 class="govuk-heading-xl">View quota order number <?=$quota_order_number_id?></h1>
+    	<h1 class="govuk-heading-xl"><?=$type?> <?=$quota_order_number_id?></h1>
 	</div>
 
 		<!-- MENU //-->
 		<h2>Page content</h2>
 		<ul class="tariff_menu">
+<?php
+	if ($quota_order_number->licensed == false) {
+?>			
 			<li><a href="#details">Quota details</a></li>
 			<li><a href="#origins">Quota origins</a></li>
 			<li><a href="#definitions">Quota definitions</a></li>
 			<li><a href="#associations">Quota associations</a></li>
+<?php
+	}
+?>
 			<li><a href="#commodities">Commodities</a></li>
 			<li><a href="#measures">Quota measures</a></li>
+<?php
+	if ($quota_order_number->licensed == false) {
+?>			
 			<li><a target="_blank" href="https://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-01&Code=<?=$quota_order_number_id?>">View on EU Taric quota consultation site</a></li>
+<?php
+	}
+?>
 		</ul>
 
+<?php
+	if ($quota_order_number->licensed == false) {
+?>			
 
 		<h2 id="details">Quota details</h2>
 <?php
@@ -78,8 +112,10 @@
 ?>
 
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
-
-
+<?php
+	}
+	if ($quota_order_number->licensed == false) {
+?>
 		<h2 id="origins">Quota origins</h2>
 			<form action="/quota_order_number_add_origin.html" method="get" class="inline_form">
 			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
@@ -131,6 +167,10 @@
 ?>
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 		
+<?php
+	}
+	if ($quota_order_number->licensed == false) {
+?>
 
 
 			
@@ -241,6 +281,10 @@
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
 
+<?php
+	}
+	if ($quota_order_number->licensed == false) {
+?>
 
 		<h2 id="associations">Quota associations</h2>
 
@@ -345,6 +389,9 @@
 
 
 
+<?php
+	}
+?>
 
 
 
@@ -360,7 +407,7 @@
 	and g.goods_nomenclature_item_id = gd.goods_nomenclature_item_id
 	and g.producline_suffix = gd.productline_suffix
 	and m.ordernumber = '" . $quota_order_number_id . "'
-	AND m.validity_start_date >= '2017-01-01'
+	and (m.validity_end_date > '2019-11-01' or m.validity_end_date is null)
 	ORDER BY 1, gd.goods_nomenclature_description_period_sid desc";
 	//print ($sql);
 
@@ -373,9 +420,9 @@
 			</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header" style="width:10%">Commodity</th>
-					<th class="govuk-table__header" style="width:45%">Description</th>
-					<th class="govuk-table__header" style="width:45%">Friendly description *</th>
+					<th class="govuk-table__header small" style="width:10%">Commodity</th>
+					<th class="govuk-table__header small" style="width:45%">Description</th>
+					<th class="govuk-table__header small" style="width:45%">Friendly description *</th>
 				</tr>
 <?php
 		while ($row = pg_fetch_array($result)) {
@@ -390,12 +437,12 @@
 				$description .= " (<strong>ends " . short_date($validity_end_date) . "</strong>)";
 			}
 			
-			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
+			$commodity_url = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-				<tr class="govuk-table__row <?=$rowclass?>">
-					<td class="govuk-table__cell <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
-					<td class="govuk-table__cell <?=$cellclass?>"><?=$description?></td>
-					<td class="govuk-table__cell <?=$cellclass?>"><?=$friendly?></td>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+					<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
+					<td class="govuk-table__cell small <?=$cellclass?>"><?=$friendly?></td>
 				</tr>
 
 <?php
@@ -405,7 +452,7 @@
 			<p>* Please note: the 'friendly descriptions' are derived from the website 'tariffnumber.com'.</p>
 <?php
 	} else {
-		echo ("<p>There are no commodities associated with quota order number" . $quota_order_number_id . ".");
+		echo ("<p>There are no commodities associated with quota order number " . $quota_order_number_id . ".");
 	}
 ?>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
@@ -417,9 +464,13 @@
 
 			<h2 id="measures">Measures associated with this quota</h2>
 <?php
-	$sql = "SELECT measure_sid, measure_type_id, geographical_area_id, goods_nomenclature_item_id, validity_start_date,
-	validity_end_date, measure_generating_regulation_id
-	FROM ml.measures_real_end_dates m WHERE ordernumber = '" . $quota_order_number_id . "'
+	$sql = "SELECT measure_sid, m.measure_type_id, m.geographical_area_id, goods_nomenclature_item_id, m.validity_start_date,
+	m.validity_end_date, measure_generating_regulation_id, mtd.description as measure_type_description,
+	m.goods_nomenclature_sid, ga.description as geographical_area_description
+	FROM ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas ga
+	WHERE ordernumber = '" . $quota_order_number_id . "'
+	and m.measure_type_id = mtd.measure_type_id
+	and m.geographical_area_id = ga.geographical_area_id
 	ORDER BY validity_start_date DESC, goods_nomenclature_item_id, m.geographical_area_id";
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
@@ -427,35 +478,37 @@
 			<p>There are <strong><?=pg_num_rows($result)?> measures</strong> associated with quota order number <?=$quota_order_number_id?>.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header">SID</th>
-					<th class="govuk-table__header c">Measure type</th>
-					<th class="govuk-table__header c">Geographical area</th>
-					<th class="govuk-table__header">Commodity</th>
-					<th class="govuk-table__header">Start date</th>
-					<th class="govuk-table__header">End date</th>
-					<th class="govuk-table__header c">Regulation</th>
+					<th class="govuk-table__header small nopad" style="width:8%">SID</th>
+					<th class="govuk-table__header small" style="width:24%">Measure type</th>
+					<th class="govuk-table__header small" style="width:22%">Geographical area</th>
+					<th class="govuk-table__header small" style="width:20%">Commodity</th>
+					<th class="govuk-table__header small" style="width:8%">Start date</th>
+					<th class="govuk-table__header small" style="width:8%">End date</th>
+					<th class="govuk-table__header small r" style="width:10%">Regulation</th>
 				</tr>
 <?php
 		while ($row = pg_fetch_array($result)) {
-			$measure_sid                = $row['measure_sid'];
-			$measure_type_id            = $row['measure_type_id'];
-			$geographical_area_id       = $row['geographical_area_id'];
-			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-			$regulation_id_full         = $row['measure_generating_regulation_id'];
-			$validity_start_date        = short_date($row['validity_start_date']);
-			$validity_end_date          = short_date($row['validity_end_date']);
-            $rowclass                   = rowclass($validity_start_date, $validity_end_date);
+			$measure_sid                	= $row['measure_sid'];
+			$measure_type_id            	= $row['measure_type_id'];
+			$measure_type_description		= $row['measure_type_description'];
+			$geographical_area_id       	= $row['geographical_area_id'];
+			$geographical_area_description	= $row['geographical_area_description'];
+			$goods_nomenclature_item_id 	= $row['goods_nomenclature_item_id'];
+			$goods_nomenclature_sid			= $row['goods_nomenclature_sid'];
+			$regulation_id_full         	= $row['measure_generating_regulation_id'];
+			$validity_start_date        	= short_date($row['validity_start_date']);
+			$validity_end_date          	= short_date($row['validity_end_date']);
 			
 			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-				<tr class="govuk-table__row <?=$rowclass?>">
-					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell c"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
-					<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
-					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
-					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
-					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
-					<td class="govuk-table__cell c"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell small nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell small" nowrap><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
+					<td class="govuk-table__cell small"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?>&nbsp;<?=$geographical_area_description?></a></td>
+					<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
+					<td class="govuk-table__cell small" nowrap><?=$validity_start_date?></td>
+					<td class="govuk-table__cell small" nowrap><?=$validity_end_date?></td>
+					<td class="govuk-table__cell small r"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
 				</tr>
 
 <?php
@@ -464,7 +517,7 @@
 			</table>
 <?php
 	} else {
-		echo ("<p>There are no associations of this foonote with measures.");
+		echo ("<p>There are no measures featuring this quota.");
 	}
 ?>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>

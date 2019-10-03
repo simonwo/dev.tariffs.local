@@ -74,6 +74,29 @@ class quota_order_number
 		}
 	}
 
+	public function get_quota_definitions() {
+		global $conn;
+		$sql = "select quota_definition_sid, validity_start_date, validity_end_date
+		from quota_definitions
+		where quota_order_number_id = '" . $this->quota_order_number_id . "'
+		and validity_end_date > current_date";
+		//echo ($sql);
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$quota_definition       = new quota_definition;
+				$quota_definition->quota_definition_sid	= $row['quota_definition_sid'];
+				$quota_definition->validity_start_date	= $row['validity_start_date'];
+				$quota_definition->validity_end_date	= $row['validity_end_date'];
+				array_push($temp, $quota_definition);
+			}
+			$this->quota_definitions = $temp;
+		}
+	}
+
+
+
 	public function get_origins() {
 		global $conn;
 		# Get all the quota order number exclusions

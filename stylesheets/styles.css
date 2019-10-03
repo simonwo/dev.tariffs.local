@@ -19,9 +19,9 @@ h2 {
 	max-width:100% !important;
 }
 h2.small {
-	font-size:1.2em;
-	padding-bottom:0px;
-	margin-bottom: 0.5em;
+	font-size:1.2em !important;
+	padding-bottom:0px !important;
+	margin-bottom: 0.5em !important;
 }
 .nomargin{
 	margin-top:0px !important;
@@ -143,8 +143,11 @@ main .gem-c-title {
 th.tiny, td.tiny {
 	font-size:8pt !important;   
 }
-.vsmall {
+.vsmall, th.vsmall, td.vsmall {
 	font-size:9pt !important;   
+}
+.small, th.small, td.small {
+	font-size:10pt !important;   
 }
 .break {
 	clear:both !important;
@@ -255,6 +258,10 @@ td.tight p {
 }
 .cell_grey {
 	background-color:#f0f0f0;
+}
+
+td.vsmall a.nodecorate {
+	font-size:9pt;
 }
 
 a.nodecorate, td.nodecorate {

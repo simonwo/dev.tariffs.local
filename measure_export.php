@@ -1,9 +1,11 @@
 <?php
     //$write_to_screen = true; // false;
     $write_to_screen = false;
+    require ("includes/db.php");
+	$base_regulation_id = get_querystring("base_regulation_id");
     if ($write_to_screen == false) {
         header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=file.csv");
+        header("Content-Disposition: attachment; filename=" . $base_regulation_id . ".csv");
         header("Pragma: no-cache");
         header("Expires: 0");
         $delimiter = "\n";
@@ -11,10 +13,8 @@
         $delimiter = "<br />";
     }
 
-    require ("includes/db.php");
-	$base_regulation_id = get_querystring("base_regulation_id");
 
-    echo "ID,Regulation,Type,Start date,End date,Commodity code,Additional code,Origin,Origin exclusions,Duties,Conditions,Footnotes";
+    echo "ID,Regulation,Type,Start date,End date,Commodity code,Additional code,Order number,Origin,Origin exclusions,Duties,Conditions,Footnotes";
     echo ($delimiter);
 
 
@@ -27,7 +27,7 @@
     /* Get the measures */
     $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, m.geographical_area_id, m.measure_generating_regulation_id, 
     m.validity_start_date, m.validity_end_date, m.additional_code_type_id, m.additional_code_id,
-    mtd.description as measure_type_description, g.description as geographical_area_description
+    mtd.description as measure_type_description, g.description as geographical_area_description, m.ordernumber
     from measures m, measure_type_descriptions mtd, ml.ml_geographical_areas g
     where m.measure_type_id = mtd.measure_type_id
     and m.geographical_area_id = g.geographical_area_id ";
@@ -51,6 +51,7 @@
             $measure->additional_code_id                = $row['additional_code_id'];
             $measure->measure_type_description          = $row['measure_type_description'];
             $measure->geographical_area_description     = $row['geographical_area_description'];
+            $measure->quota_order_number_id             = $row['ordernumber'];
             array_push($measures, $measure);
         }
     }
@@ -91,6 +92,7 @@
             }
         }
     }
+
     /* Get the footnotes */
     $sql = "select m.measure_sid, fam.footnote_type_id, fam.footnote_id
     from measures m, footnote_association_measures fam
@@ -121,6 +123,35 @@
         }
     }
 
+    /* Get the excluded geographical areas */
+    $sql = "select mega.measure_sid, mega.excluded_geographical_area, mega.geographical_area_sid
+    from measures m, measure_excluded_geographical_areas mega
+    where m.measure_sid = mega.measure_sid ";
+    $sql .= $reg_clause;
+    $sql .= " order by m.goods_nomenclature_item_id, mega.excluded_geographical_area";
+    $result = pg_query($conn, $sql);
+    $measure_excluded_geographical_areas = array();
+	if ($result) {
+        while ($row = pg_fetch_array($result)) {
+            $mega = new measure_excluded_geographical_area;
+            $mega->measure_sid                  = $row['measure_sid'];
+            $mega->excluded_geographical_area   = $row['excluded_geographical_area'];
+            $mega->geographical_area_sid        = $row['geographical_area_sid'];
+            array_push($measure_excluded_geographical_areas, $mega);
+        }
+    }
+    /* Assign megas to measures */
+    $mega_count = count($measure_excluded_geographical_areas);
+    for ($i = 0; $i < $mega_count; $i++ ) {
+        $mega = $measure_excluded_geographical_areas[$i];
+        for ($j = 0; $j < $measure_count; $j++ ) {
+            $measure = $measures[$j];
+            if ($measure->measure_sid == $mega->measure_sid) {
+                array_push($measure->mega_list, $mega);
+                break;
+            }
+        }
+    }
     /* Now get the conditions */
     $sql = "select m.measure_sid, (mc.condition_code || mc.component_sequence_number) as condition_string,
     (COALESCE(mc.certificate_type_code, ' - ') || COALESCE(mc.certificate_code, '') || ' ' || COALESCE(mc.action_code, '')) as action_string
@@ -158,6 +189,7 @@
         $measure->combine_duties();
         $measure->get_footnote_string();
         $measure->get_condition_string();
+        $measure->get_mega_string();
 
         echo ($measure->measure_sid . ',');
         echo ('"' . $measure->measure_generating_regulation_id . '",');
@@ -166,7 +198,9 @@
         echo ('"' . short_date($measure->validity_end_date) . '",');
         echo ('"' . $measure->goods_nomenclature_item_id . '",');
         echo ('"' . $measure->additional_code_type_id . $measure->additional_code_id . '",');
+        echo ('"' . $measure->quota_order_number_id . '",');
         echo ('"' . $measure->geographical_area_id . ' (' . $measure->geographical_area_description . ')",');
+        echo ('"' . $measure->mega_string . '",');
         echo ('"' . $measure->combined_duty . '",');
         echo ('"' . $measure->condition_string . '",');
         echo ('"' . $measure->footnote_string . '"');

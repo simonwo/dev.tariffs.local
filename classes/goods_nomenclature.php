@@ -7,13 +7,16 @@ class goods_nomenclature
 	public $measure_type_desc			= "";
 
 	public function __construct() {
-		$this->measure_list		= array();
-		$this->measure_type_id	= "";
-		$this->combined_duty	= "";
-		$this->assigned			= false;
-		$this->ar_hierarchies = array();
-		$this->exists = true;
+		$this->measure_list				= array();
+		$this->measure_type_id			= "";
+		$this->combined_duty			= "";
+		$this->assigned					= false;
+		$this->ar_hierarchies			= array();
+		$this->exists					= true;
+		$this->geographical_area_id		= "";
+		$this->mega_string				= "";
 	}
+
 
 	public function get_measure_type_description() {
 		switch ($this->measure_type_id) {
@@ -340,6 +343,29 @@ class goods_nomenclature
 		for ($i = 0; $i < 5; $i++ ) {
 			$s = str_replace("<br /><br />", "<br />", $s);
 		}
+		return ($s);
+	}
+
+	function format_description2() {
+		$s = $this->description;
+		$s = str_replace("\t", "", $s);
+		$s = preg_replace('/\s+/', ' ', $s);
+		$s = str_replace("<br>", "<br />", $s);
+		for ($i = 0; $i < 5; $i++ ) {
+			$s = str_replace("<br /> ", "<br />", $s);
+		}
+		for ($i = 0; $i < 5; $i++ ) {
+			$s = str_replace("<br /><br />", "<br />", $s);
+		}
+		$s = str_replace("<br />", " ", $s);
+		$s = str_replace("<p/>", " ", $s);
+		$s = str_replace("<p />", " ", $s);
+		$s = str_replace("<p>", " ", $s);
+		$s = str_replace("</p>", " ", $s);
+		$s = str_replace("\n", " ", $s);
+		$s = str_replace("\r", " ", $s);
+		$s = str_replace("  ", " ", $s);
+		$s = str_replace("'", "`", $s);
 		return ($s);
 	}
 

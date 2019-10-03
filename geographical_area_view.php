@@ -236,7 +236,6 @@
 
 <h2 id="measures">Measure details</h2>
 
-
 			<form action="/actions/geographical_area_actions.html#measures" method="get" class="inline_form">
 			<h3>Filter results</h3>
 			<input type="hidden" name="geographical_area_id" value="<?=$geographical_area_id?>" />
@@ -377,12 +376,12 @@
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:10%">SID</th>
-					<th class="govuk-table__header" style="width:10%">Commodity</th>
-					<th class="govuk-table__header" style="width:11%">Start date</th>
-					<th class="govuk-table__header" style="width:11%">End date</th>
-					<th class="govuk-table__header" style="width:12%">Geographical area</th>
+					<th class="govuk-table__header" style="width:14%">Commodity</th>
+					<th class="govuk-table__header" style="width:9%">Start date</th>
+					<th class="govuk-table__header" style="width:9%">End date</th>
+					<th class="govuk-table__header" style="width:14%">Geographical area</th>
 					<th class="govuk-table__header" style="width:18%">Type</th>
-					<th class="govuk-table__header" style="width:10%">Regulation&nbsp;ID</th>
+					<th class="govuk-table__header" style="width:8%">Regulation&nbsp;ID</th>
 					<th class="govuk-table__header" style="width:8%">Order number</th>
 					<th class="govuk-table__header r" style="width:12%">Duty</th>
 				</tr>
@@ -434,7 +433,7 @@
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
 					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell"><a class="nodecoratez" href="<?=$commodity_url?>"><?=$goods_nomenclature_item_id?></a></td>
+					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
 					<td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>

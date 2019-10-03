@@ -82,7 +82,7 @@
     $countries      = "CH,FO,LI,IS,NO,IL,PL,EC,CO,PE,1033,2200,CL,1034,1032,2005,2020,2027";
     $countries2     = "Switzerland,Faroe Islands,Liechtenstein,Iceland,Norway,Israel,Palestine,Ecuador,
     Peru,Colombia,Cariforum,Central America,Chile,East and Southern African States (ESA),
-    Transitional Protection Measure,GSP - LDC Framework,GSP - General Framework,GSP - Enhanced Framework";
+    Transitional Protection Measure (1032),GSP - LDC Framework (2005),GSP - General Framework (2020),GSP - Enhanced Framework (2027)";
     $arcountries    = explode(',', $countries);
     $arcountries2   = explode(',', $countries2);
 
@@ -124,7 +124,7 @@
 <!-- End suppress CN10 field //-->
     
     <div class="govuk-form-group" style="padding:0px;margin:0px">
-        <button type="submit" class="govuk-button" style="xmargin-top:1em">View coverage</button>
+        <button type="submit" class="govuk-button">View coverage</button>
     </div>
 
 
@@ -290,6 +290,7 @@
         not assigned, which must be corrected. Rows where the description text is greyed out are those rows where
         the commodity code is not declarable (either not a leaf or has a product line suffix that is not 80).
     </p>
+    <p>You can also <a target="_blank" href="coverage_extract.html?scope=<?=$scope?>">extract the entire data set to a single CSV</a> (Warning - this will take up to 10 minutes to generate).</p>
     <table cellspacing="0" class="govuk-table" id="table">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" style="width:15%">Commodity code</th>

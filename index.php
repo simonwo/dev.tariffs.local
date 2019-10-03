@@ -17,10 +17,13 @@
 
 					<h2 class="small">Quotas</h2>
 					<ul class="main-menu">
-						<li><a href="/quota_order_numbers.html">Quota order numbers</a></li>
+						<li><a href="/quota_order_numbers.html">FCFS quota order numbers</a></li>
+						<li><a href="/licensed_quota_order_numbers.html">Licensed quota order numbers</a></li>
 						<li><a href="/quota_order_number_create_edit.html">Create quota</a></li>
 						<li><a href="/quota_associations.html">View quota associations</a></li>
 						<li><a href="/quota_association_create.html">Create quota association</a></li>
+						<li><a href="/quota_blocking_periods.html">View quota blocking periods</a></li>
+						<li><a href="/quota_blocking_period_create.html">Create quota blocking period</a></li>
 					</ul>
 
 					<h2 class="small">Measures</h2>
@@ -115,12 +118,13 @@
 <?php        
 	}
 ?>    
-
+<!--
 					<h2 class="small">Monetary exchange rates</h2>
 					<ul class="main-menu">
 						<li><a href="/monetary_exchange_rates.html">Monetary exchange rates</a></li>
 						<li><a href="/monetary_exchange_rate_create_edit.html">Create new monetary exchange rate</a></li>
 					</ul>
+//-->					
 
 					<h2 class="small">Reference data</h2>
 					<ul class="main-menu">
