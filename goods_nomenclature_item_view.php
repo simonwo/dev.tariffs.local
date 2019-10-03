@@ -202,6 +202,7 @@
 					<th class="govuk-table__header" style="width:10%">Actions</th>
 				</tr>
 <?php
+// Get historical commodity code descriptions
 	$sql = "SELECT gndp.validity_start_date, gnd.description, gndp.goods_nomenclature_description_period_sid
 	FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
 	WHERE gndp.goods_nomenclature_description_period_sid = gnd.goods_nomenclature_description_period_sid
@@ -263,6 +264,7 @@
 			<p>When a new goods nomenclature code is created, this record provides details of the goods
 nomenclature code from which the new code originated.</p>
 <?php
+// Get origins
 	$sql = "select gno.derived_goods_nomenclature_item_id, gno.derived_productline_suffix, description
 	from goods_nomenclature_origins gno, goods_nomenclature_descriptions gnd
 	where gno.productline_suffix = gnd.productline_suffix
@@ -307,6 +309,7 @@ nomenclature code from which the new code originated.</p>
 			<p>When a goods nomenclature code is closed, this record provides details of the goods
 nomenclature code which supersedes it.</p>
 <?php
+// Get successors
 	$sql = "select distinct gns.absorbed_goods_nomenclature_item_id, gns.absorbed_productline_suffix, gnd.description
 	from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
 	where gns.productline_suffix = gnd.productline_suffix

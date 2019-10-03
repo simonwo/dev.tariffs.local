@@ -492,4 +492,19 @@ function duty_format($var) {
 		return (number_format($var, 2));
 	}
 }
+
+function reduce($var) {
+	if (substr($var, -8) == "00000000") {
+		return (substr($var, 0, 2));
+	} elseif (substr($var, -6) == "000000") {
+		return (substr($var, 0, 4));
+	} elseif (substr($var, -4) == "0000") {
+		return (substr($var, 0, 6));
+	} elseif (substr($var, -2) == "00") {
+		return (substr($var, 0, 8));
+	} else {
+		return ($var);
+	}
+}
+
 ?>

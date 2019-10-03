@@ -142,7 +142,7 @@
 <table class="govuk-table" cellspacing="0">
 <thead class="govuk-table__head">
 	<tr class="govuk-table__row">
-		<th class="govuk-table__header" scope="col" style="width:10%">Order number</th>
+		<th class="govuk-table__header nopad" scope="col" style="width:10%">Order number</th>
 		<th class="govuk-table__header c" scope="col" style="width:10%">EU Link</th>
 		<th class="govuk-table__header" scope="col" style="width:31%">Origins</th>
 		<th class="govuk-table__header" scope="col" style="width:12%">Start date</th>
@@ -198,7 +198,7 @@
 			}
 ?>
 	<tr class="<?=$rowclass?>">
-		<td class="govuk-table__cell">
+		<td class="govuk-table__cell nopad">
 			<a href="quota_order_number_view.html?quota_order_number_id=<?=$quota_order_number_id?>"><?=$quota_order_number_id?></a>
 		</td>
 		<td class="govuk-table__cell c"><a target="_blank" href="<?=$url?>">EU</a></td>

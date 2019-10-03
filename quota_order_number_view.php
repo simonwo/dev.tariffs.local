@@ -197,6 +197,8 @@
 	and qd.measurement_unit_code = mud.measurement_unit_code
 	ORDER BY validity_start_date DESC";
 
+	echo ($sql);
+
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
@@ -407,9 +409,9 @@
 	and g.goods_nomenclature_item_id = gd.goods_nomenclature_item_id
 	and g.producline_suffix = gd.productline_suffix
 	and m.ordernumber = '" . $quota_order_number_id . "'
-	and (m.validity_end_date > '2019-11-01' or m.validity_end_date is null)
+	--and (m.validity_end_date > '2019-11-01' or m.validity_end_date is null)
 	ORDER BY 1, gd.goods_nomenclature_description_period_sid desc";
-	//print ($sql);
+	print ($sql);
 
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
@@ -426,10 +428,11 @@
 				</tr>
 <?php
 		while ($row = pg_fetch_array($result)) {
-			$goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-			$description				= $row['description'];
-			$friendly					= $row['friendly'];
-			$validity_end_date			= $row['validity_end_date'] . "";
+			$goods_nomenclature_item_id 	= $row['goods_nomenclature_item_id'];
+			$goods_nomenclature_item_id2	= reduce($goods_nomenclature_item_id);
+			$description					= $row['description'];
+			$friendly						= $row['friendly'];
+			$validity_end_date				= $row['validity_end_date'] . "";
 
 			$cellclass = "";
 			if ($validity_end_date != "") {
@@ -442,14 +445,14 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
-					<td class="govuk-table__cell small <?=$cellclass?>"><?=$friendly?></td>
+					<td class="govuk-table__cell small <?=$cellclass?>"><?=$friendly?><br /><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
 				</tr>
 
 <?php
 		}
 ?>
 			</table>
-			<p>* Please note: the 'friendly descriptions' are derived from the website 'tariffnumber.com'.</p>
+			<p>* Please note: the 'friendly descriptions' are derived from the website '<a target="_blank" href="https://www.tariffnumber.com/2019/611530">tariffnumber.com</a>'.</p>
 <?php
 	} else {
 		echo ("<p>There are no commodities associated with quota order number " . $quota_order_number_id . ".");

@@ -227,7 +227,7 @@
 
 
 				// Only show the duty for duty measures
-				$duty_array = array("142", "143", "144", "146");
+				$duty_array = array("142", "143", "144", "146", "103", "105", "653", "654");
 
 				foreach ($measure_list as $m){
 					if (in_array($m->measure_type_id, $duty_array) == False) {
