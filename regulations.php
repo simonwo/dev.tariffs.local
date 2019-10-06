@@ -45,7 +45,7 @@
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
                 <span id="base_regulation_hint" class="govuk-hint">Search regulations - enter free text</span>
-                <div class="govuk-date-input" id="measure_start">
+                <div class="govuk-date-input">
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" style="padding:0px;margin:0px">
                             <input value="<?=$regulation_text?>" class="govuk-input govuk-date-input__input govuk-input--width-16" id="regulation_text" maxlength="100" style="width:300px" name="regulation_text" type="text">
@@ -58,9 +58,9 @@
     
     <div class="column-one-third" style="width:28%">
         <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-                <span id="base_regulation_hint" class="govuk-hint">Search regulations - enter free text</span>
-                <div class="govuk-date-input" id="measure_start">
+            <fieldset class="govuk-fieldset" aria-describedby="select_scope_hint" role="group">
+                <span id="select_scope_hint" class="govuk-hint">Select scope</span>
+                <div class="govuk-date-input">
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" style="padding:0px;margin:0px">
                             <div class="govuk-radios govuk-radios--inline">

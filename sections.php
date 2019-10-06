@@ -11,12 +11,12 @@
                 <a class="govuk-breadcrumbs__link" href="/">Main menu</a>
             </li>
             <li class="govuk-breadcrumbs__list-item">
-                Nomenclature sections
+                Search or browse goods classification
             </li>
         </ol>
     </div>
     <div class="app-content__header">
-        <h1 class="govuk-heading-xl">Nomenclature sections</h1>
+        <h1 class="govuk-heading-xl">Search or browse goods classification</h1>
     </div>
 <?php
     require ("includes/nomenclature_search.php");

@@ -197,7 +197,7 @@
 	and qd.measurement_unit_code = mud.measurement_unit_code
 	ORDER BY validity_start_date DESC";
 
-	echo ($sql);
+	//echo ($sql);
 
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
@@ -411,7 +411,7 @@
 	and m.ordernumber = '" . $quota_order_number_id . "'
 	--and (m.validity_end_date > '2019-11-01' or m.validity_end_date is null)
 	ORDER BY 1, gd.goods_nomenclature_description_period_sid desc";
-	print ($sql);
+	//print ($sql);
 
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
@@ -445,7 +445,7 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
-					<td class="govuk-table__cell small <?=$cellclass?>"><?=$friendly?><br /><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
+					<td class="govuk-table__cell small <?=$cellclass?>"><span style="padding-right:1em"><?=$friendly?></span><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
 				</tr>
 
 <?php
@@ -506,7 +506,7 @@
 ?>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell small nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell small" nowrap><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
+					<td class="govuk-table__cell small"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell small"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?>&nbsp;<?=$geographical_area_description?></a></td>
 					<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
 					<td class="govuk-table__cell small" nowrap><?=$validity_start_date?></td>

@@ -193,9 +193,10 @@ p, h3 {
 }
 .inline_form {
 	padding:0em 1em 0px 1em;
-	background-color:#f0f0f0;
-	border:1px solid #ccc;
+	xbackground-color:#f0f0f0;
+	xborder:1px solid #ccc;
 	margin-bottom:1em;
+	display:block;
 }
 .govuk-heading-xl {
 	max-width: 100% !important;

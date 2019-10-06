@@ -191,11 +191,12 @@
 <?php
 	$sql = "SELECT DISTINCT m.ordernumber, m.measure_type_id, mtd.description as measure_type_description,
 	COUNT(m.measure_sid)
-	FROM ml.v5_2019 m, ml.ml_geographical_areas g, measure_type_descriptions mtd
+	FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g, measure_type_descriptions mtd
 	WHERE m.geographical_area_id = g.geographical_area_id
 	AND mtd.measure_type_id = m.measure_type_id
 	AND ordernumber IS NOT NULL
 	AND m.geographical_area_id = '" . $geographical_area_id . "'
+	and (m.validity_end_date >= '2018-12-31' or m.validity_end_date is null)
 	GROUP BY m.ordernumber, m.measure_type_id, mtd.description
 	ORDER BY 1, 2";
 	// echo ($sql);
