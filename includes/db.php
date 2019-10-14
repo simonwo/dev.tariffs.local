@@ -438,7 +438,7 @@ function h1($s) {
 }
 
 function q($s) {
-	echo ("<h1>" . $s . "</h1>");
+	echo ("<p>" . $s . "</p>");
 	exit();
 }
 
@@ -489,7 +489,7 @@ function duty_format($var) {
 	if ($var == Null) {
 		return ("");
 	} else {
-		return (number_format($var, 2));
+		return (number_format($var, 3));
 	}
 }
 
@@ -505,6 +505,17 @@ function reduce($var) {
 	} else {
 		return ($var);
 	}
+}
+
+function explode_string($var) {
+	$array = explode(",", $var);
+	$s = "";
+	foreach ($array as $type) {
+		$s .= "'" . $type . "', ";
+	}
+	$s = trim($s);
+	$s = trim($s, ",");
+	return ($s);
 }
 
 ?>

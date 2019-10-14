@@ -46,7 +46,7 @@ class duty
 		#	return
 
         $this->duty_string = "";
-        $duty_amount = number_format($this->duty_amount, 2);
+        $duty_amount = number_format($this->duty_amount, 3);
         
         switch ($this->duty_expression_id) {
             case "01":

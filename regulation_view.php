@@ -18,9 +18,6 @@
 	<div class="app-content__header">
 		<h1 class="govuk-heading-xl">View regulation <?=$regulation_id?></h1>
 	</div>
-			<h2 class="nomargin">Regulation details</h2>
-			<p style="max-width:100%">The European Union often splits a regulation into multiple parts for ease of management. There may
-			be multiple regulation records here to represent just a single actual regulation.</p>
 <?php
 	$sql = "SELECT 'Base' as regulation_type, b.base_regulation_id as regulation_id, b.information_text, b.regulation_group_id,
 	rgd.description as regulation_group_description, b.validity_start_date, b.validity_end_date, b.effective_end_date
@@ -37,27 +34,38 @@
 	#echo ($sql);
 	$result = pg_query($conn, $sql);
 	if  ($result) {
+		if (pg_num_rows($result) != 0){
+			$found = True;
 ?>
+			<h2 class="nomargin">Regulation details</h2>
+			<p style="max-width:100%">The European Union often splits a regulation into multiple parts for ease of management. There may
+			be multiple regulation records here to represent just a single actual regulation.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:12%">Regulation&nbsp;ID</th>
-					<th class="govuk-table__header" style="width:10%">Type</th>
-					<th class="govuk-table__header" style="width:28%">Information text</th>
+					<th class="govuk-table__header" style="width:8%">Type</th>
+					<th class="govuk-table__header" style="width:36%">Information text</th>
 					<th class="govuk-table__header" style="width:20%">Regulation group</th>
-					<th class="govuk-table__header" style="width:10%">Start</th>
-					<th class="govuk-table__header" style="width:10%">End</th>
-					<th class="govuk-table__header" style="width:10%">Effective end</th>
+					<th class="govuk-table__header" style="width:8%">Start</th>
+					<th class="govuk-table__header" style="width:8%">End</th>
+					<th class="govuk-table__header" style="width:8%">Effective end</th>
 				</tr>
 <?php
-		while ($row = pg_fetch_array($result)) {
-			$regulation_type				= $row['regulation_type'];
-			$regulation_idx					= $row['regulation_id'];
-			$information_text				= $row['information_text'];
-			$regulation_group_id			= $row['regulation_group_id'];
-			$regulation_group_description   = $row['regulation_group_description'];
-			$validity_start_date			= $row['validity_start_date'];
-			$validity_end_date				= $row['validity_end_date'];
-			$effective_end_date				= $row['effective_end_date'];
+			while ($row = pg_fetch_array($result)) {
+				$regulation_type				= $row['regulation_type'];
+				$regulation_idx					= $row['regulation_id'];
+				$information_text				= $row['information_text'];
+				$array = explode("|", $information_text);
+				if (count($array) == 3) {
+					$information_text  = "<ul class='understated'><li>" . $array[0] . "</li>";
+					$information_text .= "<li><a href='" . $array[1]  . "' target='_blank'>" . $array[1] . "</a></li>";
+					$information_text .= "<li>" . $array[2] . "</li></ul>";
+				}
+				$regulation_group_id			= $row['regulation_group_id'];
+				$regulation_group_description   = $row['regulation_group_description'];
+				$validity_start_date			= $row['validity_start_date'];
+				$validity_end_date				= $row['validity_end_date'];
+				$effective_end_date				= $row['effective_end_date'];
 ?>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell"><?=$regulation_idx?></td>
@@ -69,12 +77,21 @@
 					<td class="govuk-table__cell"><?=short_date($effective_end_date)?></td>
 				</tr>
 <?php
+			}
+?>
+			</table>
+<?php			
+		} else {
+			$found = False;
+			echo ("<div class='warning'><p><strong>Warning</strong><br />This regulation cannot be found.</p></div>");
+
 		}
 	}
 ?>
 
-			</table>
-			
+<?php
+	if ($found == True) {
+?>				
 			<h2>Measure details</h2>
 			<p style="max-width:100%">The list below identifies any measures that have come into force as a result of this regulation.
 			Any measures that are shaded in grey are now in the past and closed. Any highlighted in blue
@@ -223,6 +240,7 @@
 ?>
 	</table>
 <?php			
+}
 }
 ?>
 </div>

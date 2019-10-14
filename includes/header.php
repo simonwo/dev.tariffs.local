@@ -77,9 +77,16 @@
 <?php
 	}
 ?>					
+<?php
+	if (strpos($my_url, "national.") === False) {
+?>						
+						<a id="context_switcher_national" href="#"><span id="show_national">national</span></a>&nbsp;
+<?php
+	}
+?>					
 					</div>
 					<div class="options">
-						<span id="showing">Connected to database <?=$dbase?></span>
+						<span id="current_db">Connected to database <?=$dbase?></span>
 					</div>
 				</div>
 			</header>

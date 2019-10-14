@@ -79,10 +79,10 @@
         echo ("<option value='mfn'>Most Favoured Nation duties (MFN)</option>");
     }
 
-    $countries      = "CH,FO,LI,IS,NO,IL,PL,EC,CO,PE,1033,2200,CL,1034,1032,2005,2020,2027";
-    $countries2     = "Switzerland,Faroe Islands,Liechtenstein,Iceland,Norway,Israel,Palestine,Ecuador,
-    Peru,Colombia,Cariforum,Central America,Chile,East and Southern African States (ESA),
-    Transitional Protection Measure (1032),GSP - LDC Framework (2005),GSP - General Framework (2020),GSP - Enhanced Framework (2027)";
+    $countries      = "1032,2005,2020,2027,CH,FO,LI,IS,NO,IL,PL,EC,CO,PE,1033,2200,CL,1034";
+    $countries2     = "Transitional Protection Measure (1032),GSP - LDC Framework (2005),GSP - General Framework (2020),GSP - Enhanced Framework (2027),
+    Switzerland,Faroe Islands,Liechtenstein,Iceland,Norway,Israel,Palestine,Ecuador,
+    Peru,Colombia,Cariforum,Central America,Chile,East and Southern African States (ESA)";
     $arcountries    = explode(',', $countries);
     $arcountries2   = explode(',', $countries2);
 

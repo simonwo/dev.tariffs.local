@@ -59,7 +59,6 @@
 
     function get_formvars_terminate_membership_form() {
         #exit();
-        h1 ("here");
         $errors = [];
         $geographical_area_group_sid    = get_formvar("geographical_area_group_sid");
         $geographical_area_group_id     = get_formvar("geographical_area_group_id");

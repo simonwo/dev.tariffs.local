@@ -142,6 +142,8 @@
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header">Origin SID</th>
 				<th class="govuk-table__header">Origin</th>
+				<th class="govuk-table__header">Start date</th>
+				<th class="govuk-table__header">End date</th>
 				<th class="govuk-table__header">Exclusion</th>
 			</tr>
 <?php
@@ -156,6 +158,8 @@
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell"><?=$origin_sid?></td>
 				<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a> (<?=$description?>)</td>
+				<td class="govuk-table__cell"><?=short_date($origin->validity_start_date)?></td>
+				<td class="govuk-table__cell"><?=short_date($origin->validity_end_date)?></td>
 				<td class="govuk-table__cell"><?=$exclusion_text?></td>
 			</tr>
 <?php

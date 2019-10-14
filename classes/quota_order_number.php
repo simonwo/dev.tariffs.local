@@ -6,7 +6,8 @@ class quota_order_number
 	public $quota_order_number_sid          = 0;
 	public $validity_start_date             = "";
 	public $validity_end_date               = "";
-	public $origins = array ();
+	public $origins							= array();
+	public $measure_types					= array();
 	
 	#$quota_order_number_origin    = new quota_order_number_origin;
 
@@ -44,7 +45,18 @@ class quota_order_number
             pg_execute($conn, "quota_order_number_insert", array($quota_order_number_sid, $quota_order_number_id, $validity_start_date, $operation, $operation_date));
 			return (True);
         }
-    }
+	}
+	
+
+	function get_measure_types() {
+		$out = "";
+		foreach ($this->measure_types as $m) {
+			$out .= $m . ", ";
+		}
+		$out  = trim($out);
+		$out  = trim($out, ",");
+		return ($out);
+	}
 
     function conflict_check() {
         global $conn;
@@ -121,7 +133,8 @@ class quota_order_number
 		}
 
 		# Get the complete list of quota order number origins
-		$sql = "SELECT qono.quota_order_number_origin_sid, qono.quota_order_number_sid, qono.geographical_area_id, ga.description, qon.quota_order_number_id
+		$sql = "SELECT qono.quota_order_number_origin_sid, qono.quota_order_number_sid, qono.geographical_area_id,
+		ga.description, qon.quota_order_number_id, qono.validity_start_date, qono.validity_end_date
 		FROM quota_order_number_origins qono, ml.ml_geographical_areas ga, quota_order_numbers qon
 		WHERE ga.geographical_area_id = qono.geographical_area_id
 		AND qon.quota_order_number_sid = qono.quota_order_number_sid
@@ -139,8 +152,12 @@ class quota_order_number
 				$quota_order_number_sid         = $row['quota_order_number_sid'];
 				$quota_order_number_id          = $row['quota_order_number_id'];
 				$description                    = $row['description'];
+				$validity_start_date            = $row['validity_start_date'];
+				$validity_end_date            	= $row['validity_end_date'];
 				$qono = new quota_order_number_origin;
 				$qono->set_properties($quota_order_number_origin_sid, $geographical_area_id, $quota_order_number_id, $quota_order_number_sid, $description);
+				$qono->validity_start_date	= $validity_start_date;
+				$qono->validity_end_date	= $validity_end_date;
 				$qonoe_count = count($quota_order_number_origin_exclusions);
 				for($i = 0; $i < $qonoe_count; $i++) {
 					$t = $quota_order_number_origin_exclusions[$i];

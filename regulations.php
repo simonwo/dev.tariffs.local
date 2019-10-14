@@ -81,9 +81,7 @@
             </fieldset>
         </div>
     </div>
-
     <div class="column-one-third">
-        <!-- Begin regulation group field //-->
         <div class="govuk-form-group">
 			<span id="validity_start_hint" class="govuk-hint">Please select the regulation group.</span>
 			<select class="govuk-select" id="regulation_group_id" name="regulation_group_id">
@@ -100,7 +98,6 @@
 ?>
 			</select>
 		</div>
-<!-- End regulation group field //-->
         <div class="govuk-form-group" style="padding:0px;margin:0px">
             <button type="submit" class="govuk-button" style="margin-top:-12px">Search</button>
         </div>
@@ -175,6 +172,12 @@
             $regulation_group_id2   = $row['regulation_group_id'];
             $type                   = $row['type'];
             $information_text       = $row['information_text'];
+            $array = explode("|", $information_text);
+            if (count($array) == 3) {
+                $information_text  = "<ul class='understated'><li>" . $array[0] . "</li>";
+                $information_text .= "<li><a href='" . $array[1]  . "' target='_blank'>" . $array[1] . "</a></li>";
+                $information_text .= "<li>" . $array[2] . "</li></ul>";
+            }
             $validity_start_date    = short_date($row['validity_start_date']);
             $validity_end_date      = short_date($row['validity_end_date']);
 ?>

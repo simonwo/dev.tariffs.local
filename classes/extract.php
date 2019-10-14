@@ -453,7 +453,6 @@ class extract
 				$this->last_exported_operation_date  = $row[0];
 				$this->last_transaction_id  = $row[1];
 			} else {
-				h1 ("here");
 				$sql = "INSERT INTO ml.config (last_exported_operation_date, last_transaction_id) VALUES ($1, $2)";
 				$operation_date = "2019-03-01";
 				$last_transaction_id = 500000;

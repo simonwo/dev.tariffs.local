@@ -77,7 +77,7 @@ class goods_nomenclature
 		global $conn, $critical_date;
 		$stem = substr($this->goods_nomenclature_item_id, 0, 2);
 		$sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents,
-		description, leaf FROM ml.goods_nomenclature_export_generic('" . $stem . "%', '" . $critical_date . "')
+		description, leaf FROM ml.goods_nomenclature_export_new('" . $stem . "%', '" . $critical_date . "')
 		ORDER BY goods_nomenclature_item_id, producline_suffix";
 
 		$result = pg_query($conn, $sql);

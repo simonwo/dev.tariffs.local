@@ -7,6 +7,8 @@ class quota_order_number_origin
 	public $quota_order_number_id           = "";
 	public $quota_order_number_sid          = 0;
 	public $description           			= "";
+	public $validity_start_date   			= "";
+	public $validity_end_date   			= "";
 	public $exclusion_text        			= "";
 	public $exclusions = array ();
 

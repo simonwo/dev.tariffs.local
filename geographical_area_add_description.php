@@ -29,7 +29,6 @@
 			$geographical_area->geographical_area_sid						= get_querystring("geographical_area_sid");
 			$geographical_area->geographical_area_description_period_sid	= get_querystring("geographical_area_description_period_sid");
 			$geographical_area->populate_from_db();
-			#h1 ("Here" . $geographical_area->description);
 			$disabled = " disabled";
 			break;
 	}

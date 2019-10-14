@@ -6,6 +6,8 @@
 	$geographical_area_id       = get_querystring("geographical_area_id");
 	$measure_type_id            = get_querystring("measure_type_id");
 	$productline_suffix         = get_querystring("productline_suffix");
+	$sort_order					= get_querystring("so");
+	$sort_direction				= get_querystring("sd");
 	if ($productline_suffix == "") {
 		$productline_suffix = "80";
 	}
@@ -23,7 +25,7 @@
 				<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
 			</li>
 			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="/sections.html">Goods nomenclature section</a>
+				<a class="govuk-breadcrumbs__link" href="/sections.html">Search or browse goods classification</a>
 			</li>
 		</ol>
 	</div>
@@ -127,7 +129,6 @@
 					<th style="width:5%" class="govuk-table__header c">Leaf</th>
 				</tr>
 <?php
-	//if (is_array($obj_goods_nomenclature_item->ar_hierarchies)) {
 	$array = $obj_goods_nomenclature_item->ar_hierarchies;
 
 	$hier_count = sizeof($array);
@@ -149,7 +150,9 @@
 			$suffix_class .= " selected";
 		}
 		if ($concat < $my_concat) {
-			array_push ($parents, $t->goods_nomenclature_item_id);
+			if ($t->productline_suffix == "80") {
+				array_push ($parents, $t->goods_nomenclature_item_id);
+			}
 		}
 ?>
 				<tr class="govuk-table__row <?=$suffix_class?>">
@@ -359,40 +362,119 @@ nomenclature code which supersedes it.</p>
 			<h2 id="inherited">Inherited measures</h2>
 <?php
 	if (($productline_suffix == "80")  && ($parent_string != "")) {
-		$sql = "SELECT m.*, g.description as geo_description
-		FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g
+		$sql = "SELECT m.*, g.description as geo_description, mtd.description as measure_type_description
+		FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g, measure_type_descriptions mtd
 		WHERE m.geographical_area_id = g.geographical_area_id
+		AND m.measure_type_id = mtd.measure_type_id
 		AND goods_nomenclature_item_id IN (" . $parent_string  . ") ";
 		if ($geographical_area_id != "") {
-			$sql .= " AND m.geographical_area_id = '" . $geographical_area_id . "'";
+			$sql .= " AND m.geographical_area_id in (" . $geographical_area_string . ")";
 		}
 		if ($measure_type_id != "") {
-			$sql .= " AND measure_type_id = '" . $measure_type_id . "'";
+			$type_array = explode(",", $measure_type_id);
+			$type_string = "";
+			foreach ($type_array as $type) {
+				$type_string .= "'" . $type . "', ";
+			}
+			$type_string = trim($type_string);
+			$type_string = trim($type_string, ",");
+
+			$sql .= " AND m.measure_type_id in (" . $type_string . ") ";
 		}
-		$sql .= " ORDER BY goods_nomenclature_item_id, m.validity_start_date DESC";
+		// Get sort order
+		switch ($sort_order) {
+			case "measure_sid":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.measure_sid";
+				} else {
+					$sql .= " ORDER BY m.measure_sid DESC";
+				}
+				break;
+			case "goods_nomenclature_item_id":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.goods_nomenclature_item_id, m.validity_start_date DESC";
+				} else {
+					$sql .= " ORDER BY m.goods_nomenclature_item_id DESC, m.validity_start_date DESC";
+				}
+				break;
+			case "measure_type_id":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.measure_type_id, m.validity_start_date DESC";
+				} else {
+					$sql .= " ORDER BY m.measure_type_id DESC, m.validity_start_date DESC";
+				}
+				break;
+			case "geographical_area_id":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.geographical_area_id, m.validity_start_date DESC";
+				} else {
+					$sql .= " ORDER BY m.geographical_area_id DESC, m.validity_start_date DESC";
+				}
+				break;
+			case "regulation":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.measure_generating_regulation_id, m.validity_start_date DESC";
+				} else {
+					$sql .= " ORDER BY m.measure_generating_regulation_id DESC, m.validity_start_date DESC";
+				}
+				break;
+			case "ordernumber":
+				if ($sort_direction == "asc") {
+					$sql .= " ORDER BY m.ordernumber, m.validity_start_date DESC";
+				} else {
+					$sql .= " ORDER BY m.ordernumber DESC, m.validity_start_date DESC";
+				}
+				break;
+			default:
+				$sql .= " ORDER BY m.validity_start_date DESC, goods_nomenclature_item_id";
+				break;
+			}
+
+		//print ($sql);
 
 		$result = pg_query($conn, $sql);
 		if  (($result) && (pg_num_rows($result) > 0)) {
+			# Get the base URL for the sorting
+			$base_url = str_replace("?" . $_SERVER['QUERY_STRING'], "", $_SERVER['REQUEST_URI']);
+
+			$qs = "";
+			if ($goods_nomenclature_item_id != "") {
+				$qs .= "goods_nomenclature_item_id=" . $goods_nomenclature_item_id;
+			}
+			if ($measure_type_id != "") {
+				if ($qs != "") { $qs .= "&"; }
+				$qs .= "measure_type_id=" . $measure_type_id;
+			}
+			if ($geographical_area_id != "") {
+				if ($qs != "") { $qs .= "&"; }
+				$qs .= "geographical_area_id=" . $geographical_area_id;
+			}
+			if ($qs != "") {
+				$qs = "?" . $qs;
+			}
+			$url = $base_url . $qs;
+
 ?>
-			<p>The measures below have been inherited down to this commodity code.</p>
+			<p>The matching measures below have been inherited down to this commodity code.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th class="govuk-table__header">Measure SID</th>
-					<th class="govuk-table__header">Commodity</th>
-					<th class="govuk-table__header c">Measure type ID</th>
-					<th class="govuk-table__header">Geographical area ID</th>
-					<th class="govuk-table__header c">Additional code</th>
-					<th class="govuk-table__header c">Regulation</th>
-					<th class="govuk-table__header c">Start date</th>
-					<th class="govuk-table__header c">End date</th>
-					<th class="govuk-table__header c">Order number</th>
-					<th class="govuk-table__header c">Duty</th>
+					<th nowrap class="govuk-table__header nopad vsmall">Measure&nbsp;SID&nbsp;<a href="<?=$url . "&so=measure_sid&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=measure_sid&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity&nbsp;<a href="<?=$url . "&so=goods_nomenclature_item_id&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=goods_nomenclature_item_id&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID&nbsp;<a href="<?=$url . "&so=measure_type_id&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=measure_type_id&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall" style="width:15%">Geographical area ID&nbsp;<a href="<?=$url . "&so=geographical_area_id&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=geographical_area_id&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall c">Add. code</th>
+					<th nowrap class="govuk-table__header vsmall">Regulation&nbsp;<a href="<?=$url . "&so=regulation&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=regulation&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall c">Start date</th>
+					<th nowrap class="govuk-table__header vsmall c">End date</th>
+					<th nowrap class="govuk-table__header vsmall c">Order number&nbsp;<a href="<?=$url . "&so=ordernumber&sd=asc#inherited"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=ordernumber&sd=desc#inherited"?>" class="table_arrow">&darr;</a></th>
+					<th nowrap class="govuk-table__header vsmall c">Duty</th>
 				</tr>
 <?php
 			while ($row = pg_fetch_array($result)) {
 				$measure_sid                = $row['measure_sid'];
 				$goods_nomenclature_item_ix = $row['goods_nomenclature_item_id'];
 				$measure_type_id            = $row['measure_type_id'];
+				$measure_type_description	= $row['measure_type_description'];
 				$geographical_area_ix       = $row['geographical_area_id'];
 				$geo_description	        = $row['geo_description'];
 				$additional_code_type_id    = $row['additional_code_type_id'];
@@ -406,16 +488,16 @@ nomenclature code which supersedes it.</p>
 				if ($goods_nomenclature_item_ix != $goods_nomenclature_item_id) {
 ?>
 				<tr class="<?=$rowclass?>">
-					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($goods_nomenclature_item_ix)?></a></td>
-					<td class="govuk-table__cell c"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?></a></td>
-					<td class="govuk-table__cell"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_ix?>"><?=$geographical_area_ix?>&nbsp;<?=$geo_description?></a></td>
-					<td class="govuk-table__cell c"><?=$additional_code_type_id?><?=$additional_code_id?></td>
-					<td class="govuk-table__cell c"><a href="regulation_view.html?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
-					<td class="govuk-table__cell c"><?=$validity_start_date?></td>
-					<td class="govuk-table__cell c"><?=$validity_end_date?></td>
-					<td class="govuk-table__cell c"><?=$quota_order_number_id?></td>
-					<td class="govuk-table__cell c">&nbsp;</td>
+					<td class="govuk-table__cell nopad vsmall"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($goods_nomenclature_item_ix)?></a></td>
+					<td class="govuk-table__cell vsmall"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> <?=$measure_type_description?></a></td>
+					<td class="govuk-table__cell vsmall"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_ix?>"><?=$geographical_area_ix?>&nbsp;<?=$geo_description?></a></td>
+					<td class="govuk-table__cell vsmall c"><?=$additional_code_type_id?><?=$additional_code_id?></td>
+					<td class="govuk-table__cell vsmall"><a href="regulation_view.html?regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+					<td class="govuk-table__cell vsmall c"><?=$validity_start_date?></td>
+					<td class="govuk-table__cell vsmall c"><?=$validity_end_date?></td>
+					<td class="govuk-table__cell vsmall c"><?=$quota_order_number_id?></td>
+					<td class="govuk-table__cell vsmall c">&nbsp;</td>
 				</tr>
 <?php
 				}

@@ -37,7 +37,7 @@
 
 <?php
     $sql = "SELECT goods_nomenclature_item_id, producline_suffix, validity_start_date, validity_end_date, description, number_indents
-    FROM ml.goods_nomenclature_export_generic('" . $chapter_id . "%', '" . $critical_date . "') ORDER BY 1, 2";
+    FROM ml.goods_nomenclature_export_new('" . $chapter_id . "%', '" . $critical_date . "') ORDER BY 1, 2";
     $result = pg_query($conn, $sql);
 	if  ($result) {
         while ($row = pg_fetch_array($result)) {

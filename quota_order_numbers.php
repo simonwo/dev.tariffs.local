@@ -108,7 +108,7 @@
 
 	# Get the complete list of quota order numbers
 	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date
-	FROM quota_order_numbers WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+	FROM quota_order_numbers /* WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE) */
 	ORDER BY quota_order_number_id";
 	$result = pg_query($conn, $sql);
 	$quota_order_numbers = array();
@@ -122,6 +122,7 @@
 
 			$qon = new quota_order_number;
 			$qon->set_properties($quota_order_number_id, $validity_start_date, $validity_end_date);
+			$qon->measure_types = array();
 			$qono_count = count($quota_order_number_origins);
 			for($i = 0; $i < $qono_count; $i++) {
 				$t = $quota_order_number_origins[$i];
@@ -134,6 +135,26 @@
 			array_push($quota_order_numbers, $qon);
 		}
 
+		$sql = "select distinct measure_type_id, ordernumber
+		from measures where ordernumber in (
+		SELECT quota_order_number_id
+		FROM quota_order_numbers WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+		)
+		order by 1, 2";
+		$result = pg_query($conn, $sql);
+
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				foreach ($quota_order_numbers as $quota_order_number) {
+					if ($row['ordernumber'] == $quota_order_number->quota_order_number_id) {
+						array_push($quota_order_number->measure_types, $row['measure_type_id']);
+						break;
+					}
+				}
+			}
+		}
+
+
 ?>
 <h2 id="fcfs">FCFS quotas</h2>
 <p>The table below is a list of all of the First-Come-First-Served (FCFS) quotas in place. Licensed quotas
@@ -144,7 +165,8 @@
 	<tr class="govuk-table__row">
 		<th class="govuk-table__header nopad" scope="col" style="width:10%">Order number</th>
 		<th class="govuk-table__header c" scope="col" style="width:10%">EU Link</th>
-		<th class="govuk-table__header" scope="col" style="width:31%">Origins</th>
+		<th class="govuk-table__header" scope="col" style="width:16%">Origins</th>
+		<th class="govuk-table__header" scope="col" style="width:15%">Measure type(s)</th>
 		<th class="govuk-table__header" scope="col" style="width:12%">Start date</th>
 		<th class="govuk-table__header" scope="col" style="width:12%">End date</th>
 		<th class="govuk-table__header" scope="col" style="width:26%">Definition periods</th>
@@ -158,6 +180,7 @@
 			$validity_start_date    = short_date($t->validity_start_date);
 			$validity_end_date      = short_date($t->validity_end_date);
 			$rowclass               = rowclass($validity_start_date, $validity_end_date);
+			$measure_types			= $t->get_measure_types();
 			$origins    = "";
 			$exclusions = "";
 			$qono_count = count($t->origins);
@@ -203,6 +226,7 @@
 		</td>
 		<td class="govuk-table__cell c"><a target="_blank" href="<?=$url?>">EU</a></td>
 		<td class="govuk-table__cell"><?=$origins?></td>
+		<td class="govuk-table__cell"><?=$measure_types?></td>
 		<td class="govuk-table__cell"><?=$validity_start_date?></td>
 		<td class="govuk-table__cell"><?=$validity_end_date?></td>
 		<td class="govuk-table__cell"><?=$definitions?></td>

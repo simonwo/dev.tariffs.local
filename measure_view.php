@@ -24,21 +24,30 @@
 <?php
 	$sql = "SELECT goods_nomenclature_item_id, geographical_area_id FROM measures m WHERE measure_sid = " . $measure_sid;
 	$result = pg_query($conn, $sql);
+	$valid = true;
 	if ($result) {
-		$row = pg_fetch_row($result);
-		$goods_nomenclature_item_id = $row[0];
-		$geographical_area_id       = $row[1];
-		$url = "https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/" . $goods_nomenclature_item_id;
-		if ($geographical_area_id != "1011") {
-			$url .= "?country=" . $geographical_area_id;
+		if (pg_num_rows($result) != 0){
+			$row = pg_fetch_row($result);
+			$goods_nomenclature_item_id = $row[0];
+			$geographical_area_id       = $row[1];
+			$url = "https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/" . $goods_nomenclature_item_id;
+			if ($geographical_area_id != "1011") {
+				$url .= "?country=" . $geographical_area_id;
+			}
+			$url .= "#import";
+		} else {
+			$valid = false;
+			echo ("<div class='warning'><p><strong>Warning</strong><br />This measure cannot be found.</p></div>");
 		}
-		$url .= "#import";
 	}
+
+	if ($valid == true) {
 ?>
 
 	<h2>Page content</h2>
 	<ul class="tariff_menu">
 		<li><a href="#measure_details">Measure details</a></li>
+		<li><a href="#oplog">Oplog entries</a></li>
 		<li><a href="#measure_components">Measure components</a></li>
 		<li><a href="#measure_conditions">Measure conditions</a></li>
 		<li><a href="#measure_footnotes">Measure footnotes</a></li>
@@ -179,6 +188,71 @@
 		</table>
 		<p class="back_to_top"><a href="#top">Back to top</a></p>
 
+		<h2 id="oplog">Oplog entries</h2>
+		<?php
+	$sql = "select measure_type_id, geographical_area_id, goods_nomenclature_item_id,
+	validity_start_date, validity_end_date, measure_generating_regulation_id,
+	justification_regulation_id, ordernumber, additional_code_type_id, additional_code_id,
+	operation, operation_date
+	from measures_oplog
+	where measure_sid = " . $measure_sid . "
+	order by operation_date desc";
+	$result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header nopad small">Measure type</th>
+			<th class="govuk-table__header small">Geography</th>
+			<th class="govuk-table__header small">Commodity</th>
+			<th class="govuk-table__header small">Start date</th>
+			<th class="govuk-table__header small">End date</th>
+			<th class="govuk-table__header small">Meas. reg</th>
+			<th class="govuk-table__header small">Just. reg</th>
+			<th class="govuk-table__header small">Order no.</th>
+			<th class="govuk-table__header small">Add. code</th>
+			<th class="govuk-table__header small">Operation</th>
+			<th class="govuk-table__header small">Op. date</th>
+		</tr>
+
+<?php        
+		while ($row = pg_fetch_array($result)) {
+			$measure_type_id					= $row['measure_type_id'];
+			$geographical_area_id				= $row['geographical_area_id'];
+			$goods_nomenclature_item_id			= $row['goods_nomenclature_item_id'];
+			$validity_start_date				= $row['validity_start_date'];
+			$validity_end_date					= $row['validity_end_date'];
+			$measure_generating_regulation_id	= $row['measure_generating_regulation_id'];
+			$justification_regulation_id		= $row['justification_regulation_id'];
+			$ordernumber						= $row['ordernumber'];
+			$additional_code_type_id			= $row['additional_code_type_id'];
+			$additional_code_id					= $row['additional_code_id'];
+			$operation							= $row['operation'];
+			$operation_date						= $row['operation_date'];
+?>
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell nopad small"><?=$measure_type_id?></td>
+				<td class="govuk-table__cell small"><?=$geographical_area_id?></td>
+				<td class="govuk-table__cell small"><?=$goods_nomenclature_item_id?></td>
+				<td class="govuk-table__cell small"><?=short_date($validity_start_date)?></td>
+				<td class="govuk-table__cell small"><?=short_date($validity_end_date)?></td>
+				<td class="govuk-table__cell small"><?=$measure_generating_regulation_id?></td>
+				<td class="govuk-table__cell small"><?=$justification_regulation_id?></td>
+				<td class="govuk-table__cell small"><?=$ordernumber?></td>
+				<td class="govuk-table__cell small"><?=$additional_code_type_id?><?=$additional_code_id?></td>
+				<td class="govuk-table__cell small"><?=$operation?></td>
+				<td class="govuk-table__cell small"><?=short_date($operation_date)?></td>
+			</tr>
+	
+	<?php
+			}
+	?>
+		</table>
+<?php
+	}
+?>
+		<p class="back_to_top"><a href="#top">Back to top</a></p>
+
 		<h2 id="measure_components">Measure components</h2>
 		<p>The following components are assigned to this measure.</p>
 <?php
@@ -221,7 +295,7 @@
 ?>
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell nopad"><?=$duty_expression_id?></td>
-			<td class="govuk-table__cell"><?=number_format($duty_amount, 2)?></td>
+			<td class="govuk-table__cell"><?=number_format($duty_amount, 3)?></td>
 			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
 			<td class="govuk-table__cell"><?=$measurement_unit_show?><?php if ($measurement_unit_show != "") { echo ("&nbsp;/&nbsp;"); } ?><?=$measurement_unit_qualifier_show?></td>
 			<td class="govuk-table__cell">
@@ -312,7 +386,17 @@
 			<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
 			<td class="govuk-table__cell c"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
 			<td class="govuk-table__cell"><?=$action_code_show?></td>
-			<td class="govuk-table__cell"><?=$certificate_type_code?><?=$certificate_code?></td>
+<?php
+	if ($certificate_type_code != "") {
+?>		
+			<td class="govuk-table__cell"><a href="certificate_view.html?certificate_type_code=<?=$certificate_type_code?>&certificate_code=<?=$certificate_code?>"><?=$certificate_type_code?><?=$certificate_code?></a></td>
+<?php
+	} else {
+?>		
+			<td class="govuk-table__cell">&nbsp;</td>
+<?php
+	}
+?>		
 		</tr>
 
 <?php
@@ -413,7 +497,9 @@
 	}
 ?>	
 	<p class="back_to_top"><a href="#top">Back to top</a></p>
-
+<?php
+}
+?>
 </div>
 
 <?php

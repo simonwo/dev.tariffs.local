@@ -253,8 +253,14 @@
 				</div><br/>
 				<div class="govuk-radios govuk-radios--inline">
 					<div class="govuk-radios__item break">
-						<input <?=checked($measure_scope, "duty") ?> type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_duty" value="duty" />
-						<label class="govuk-label govuk-radios__label" for="measure_scope_duty">Only show duty measures</label>
+						<input <?=checked($measure_scope, "preference") ?> type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_preference" value="preference" />
+						<label class="govuk-label govuk-radios__label" for="measure_scope_preference">Show preference measures</label>
+					</div>
+				</div><br/>
+				<div class="govuk-radios govuk-radios--inline">
+					<div class="govuk-radios__item break">
+						<input <?=checked($measure_scope, "quota") ?> type="radio" class="govuk-radios__input" name="measure_scope" id="measure_scope_quota" value="quota" />
+						<label class="govuk-label govuk-radios__label" for="measure_scope_quota">Show quota measures</label>
 					</div>
 				</div>
 			</div>
@@ -348,8 +354,10 @@
 	// Get the measures
 	if ($measure_scope == "all") {
 		$measure_scope_clause = "";
+	} elseif ($measure_scope == "preference") {
+		$measure_scope_clause = " AND m.measure_type_id IN ('142', '145') ";
 	} else {
-		$measure_scope_clause = " AND m.measure_type_id IN ('142', '143', '145', '146') ";
+		$measure_scope_clause = " AND m.measure_type_id IN ('143', '146') ";
 	}
 	if ($sort == "commodity") {
 		$sort_clause = "ORDER BY goods_nomenclature_item_id, validity_start_date DESC, validity_end_date DESC";
@@ -357,7 +365,7 @@
 		$sort_clause = "ORDER BY validity_start_date DESC, validity_end_date DESC, goods_nomenclature_item_id";
 	}
 	if ($currency == "current") {
-		$currency_clause = " AND (m.validity_end_date IS NULL OR m.validity_end_date > CURRENT_DATE) ";
+		$currency_clause = " AND (m.validity_end_date IS NULL OR m.validity_end_date >= '2019-11-01') ";
 	} else {
 		$currency_clause = "";
 	}
@@ -383,7 +391,7 @@
 					<th class="govuk-table__header" style="width:14%">Geographical area</th>
 					<th class="govuk-table__header" style="width:18%">Type</th>
 					<th class="govuk-table__header" style="width:8%">Regulation&nbsp;ID</th>
-					<th class="govuk-table__header" style="width:8%">Order number</th>
+					<th class="govuk-table__header c" style="width:8%">Order number</th>
 					<th class="govuk-table__header r" style="width:12%">Duty</th>
 				</tr>
 
@@ -440,7 +448,7 @@
 					<td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>
 					<td class="govuk-table__cell"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> - <?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
-					<td class="govuk-table__cell"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
+					<td class="govuk-table__cell c"><a href="quota_order_number_view.html?quota_order_number_id=<?=$ordernumber?>"><?=$ordernumber?></a></td>
 					<td class="govuk-table__cell r"><span id="measure_<?=$measure_sid?>"></span></td>
 				</tr>
 

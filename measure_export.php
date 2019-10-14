@@ -3,9 +3,18 @@
     $write_to_screen = false;
     require ("includes/db.php");
 	$base_regulation_id = get_querystring("base_regulation_id");
+    $measure_type_id    = get_querystring("measure_type_id");
+    
+    if ($base_regulation_id != "") {
+        $filename = $base_regulation_id . ".csv";
+    } elseif ($measure_type_id != "") {
+        $filename = "measure_type_" . $measure_type_id . ".csv";
+    }
+
+    
     if ($write_to_screen == false) {
         header("Content-type: text/csv");
-        header("Content-Disposition: attachment; filename=" . $base_regulation_id . ".csv");
+        header("Content-Disposition: attachment; filename=" . $filename);
         header("Pragma: no-cache");
         header("Expires: 0");
         $delimiter = "\n";
@@ -17,22 +26,29 @@
     echo "ID,Regulation,Type,Start date,End date,Commodity code,Additional code,Order number,Origin,Origin exclusions,Duties,Conditions,Footnotes";
     echo ($delimiter);
 
+    if ($base_regulation_id != "") {
+        if (strlen($base_regulation_id) == 7) {
+            $reg_clause = " and left(measure_generating_regulation_id, 7) = '" . $base_regulation_id . "'";
+        } else {
+            $reg_clause = " and measure_generating_regulation_id = '" . $base_regulation_id . "'";
+        }
+    }
 
-    if (strlen($base_regulation_id) == 7) {
-        $reg_clause = " and left(measure_generating_regulation_id, 7) = '" . $base_regulation_id . "'";
-    } else {
-        $reg_clause = " and measure_generating_regulation_id = '" . $base_regulation_id . "'";
+    $conditional_clause = "";
+    if ($base_regulation_id != "") {
+        $conditional_clause = $reg_clause;
+    } elseif ($measure_type_id != "") {
+        $conditional_clause = " and m.measure_type_id = '" . $measure_type_id . "'";
     }
 
     /* Get the measures */
     $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, m.geographical_area_id, m.measure_generating_regulation_id, 
     m.validity_start_date, m.validity_end_date, m.additional_code_type_id, m.additional_code_id,
     mtd.description as measure_type_description, g.description as geographical_area_description, m.ordernumber
-    from measures m, measure_type_descriptions mtd, ml.ml_geographical_areas g
+    from ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas g
     where m.measure_type_id = mtd.measure_type_id
     and m.geographical_area_id = g.geographical_area_id ";
-    
-    $sql .= $reg_clause;
+    $sql .= $conditional_clause;
     $sql .= " order by m.goods_nomenclature_item_id";
 
     $result = pg_query($conn, $sql);
@@ -61,8 +77,9 @@
     mc.measurement_unit_code, mc.measurement_unit_qualifier_code, mc.monetary_unit_code
     from measures m, measure_components mc
     where m.measure_sid = mc.measure_sid ";
-    $sql .= $reg_clause;
-    $sql .= "order by m.measure_sid, mc.duty_expression_id";
+    $sql .= $conditional_clause;
+    $sql .= " order by m.measure_sid, mc.duty_expression_id";
+
     $result = pg_query($conn, $sql);
     $measure_components = array();
 	if ($result) {
@@ -97,8 +114,8 @@
     $sql = "select m.measure_sid, fam.footnote_type_id, fam.footnote_id
     from measures m, footnote_association_measures fam
     where m.measure_sid = fam.measure_sid ";
-    $sql .= $reg_clause;
-    $sql .= "order by m.measure_sid, fam.footnote_type_id, fam.footnote_id";
+    $sql .= $conditional_clause;
+    $sql .= " order by m.measure_sid, fam.footnote_type_id, fam.footnote_id";
     $result = pg_query($conn, $sql);
     $footnotes = array();
 	if ($result) {
@@ -127,8 +144,10 @@
     $sql = "select mega.measure_sid, mega.excluded_geographical_area, mega.geographical_area_sid
     from measures m, measure_excluded_geographical_areas mega
     where m.measure_sid = mega.measure_sid ";
-    $sql .= $reg_clause;
+    $sql .= $conditional_clause;
     $sql .= " order by m.goods_nomenclature_item_id, mega.excluded_geographical_area";
+    //q ($sql);
+
     $result = pg_query($conn, $sql);
     $measure_excluded_geographical_areas = array();
 	if ($result) {
@@ -157,8 +176,8 @@
     (COALESCE(mc.certificate_type_code, ' - ') || COALESCE(mc.certificate_code, '') || ' ' || COALESCE(mc.action_code, '')) as action_string
     from measures m, measure_conditions mc
     where m.measure_sid = mc.measure_sid ";
-    $sql .= $reg_clause;
-    $sql .= "order by m.measure_sid, mc.condition_code, mc.component_sequence_number";
+    $sql .= $conditional_clause;
+    $sql .= " order by m.measure_sid, mc.condition_code, mc.component_sequence_number";
     $result = pg_query($conn, $sql);
     $conditions = array();
 	if ($result) {

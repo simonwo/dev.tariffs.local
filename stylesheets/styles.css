@@ -1,3 +1,20 @@
+.table_arrow {
+	font-weight:bold;
+	text-decoration:none;
+	padding:0px 1px 0px 1px;
+	color:#000;
+}
+ul.understated {
+	margin-left:0px;
+	list-style-image: square;
+	list-style: square;
+	padding:0px;
+	margin:0px 0px 0px 1em;
+}
+ul.understated li {
+	margin-bottom:0.25em;
+	font-size:12pt;
+}
 ul.main-menu {
 	margin-left:0px;
 	list-style-image: none;
@@ -193,8 +210,8 @@ p, h3 {
 }
 .inline_form {
 	padding:0em 1em 0px 1em;
-	xbackground-color:#f0f0f0;
-	xborder:1px solid #ccc;
+	background-color:#f0f0f0;
+	border:1px solid #ccc;
 	margin-bottom:1em;
 	display:block;
 }

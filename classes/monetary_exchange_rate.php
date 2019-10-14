@@ -60,7 +60,6 @@ class monetary_exchange_rate
 		$my_date_string = $my_date->format("Y-m-d");
 		#h1 ($my_date_string);
 		#exit();
-		#h1 ("here");
 		# First we need to close off the previous exchange rate, which is likely to have been un-ended
 		# Get the existing values first
 		$sql = "SELECT monetary_exchange_period_sid, parent_monetary_unit_code, validity_start_date

@@ -24,7 +24,7 @@
 		<h2 class="nomargin">Measure type details</h2>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" style="width:30%">Item</th>
+				<th class="govuk-table__header nopad" style="width:30%">Item</th>
 				<th class="govuk-table__header" style="width:70%">Value</th>
 			</tr>
 <?php
@@ -53,47 +53,47 @@
 			$measure_type_series_description    = $row['measure_type_series_description'];
 ?>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Description</td>
+				<td class="govuk-table__cell nopad">Description</td>
 				<td class="govuk-table__cell b"><?=$description?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Measure type ID</td>
+				<td class="govuk-table__cell nopad">Measure type ID</td>
 				<td class="govuk-table__cell"><?=$measure_type_id?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Validity start date</td>
+				<td class="govuk-table__cell nopad">Validity start date</td>
 				<td class="govuk-table__cell"><?=$validity_start_date?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Validity end date</td>
+				<td class="govuk-table__cell nopad">Validity end date</td>
 				<td class="govuk-table__cell"><?=$validity_end_date?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Trade movement code</td>
+				<td class="govuk-table__cell nopad">Trade movement code</td>
 				<td class="govuk-table__cell"><?=$trade_movement_code?> - <?=trade_movement_code($trade_movement_code)?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Priority code</td>
+				<td class="govuk-table__cell nopad">Priority code</td>
 				<td class="govuk-table__cell"><?=$priority_code?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Measure component applicable code</td>
+				<td class="govuk-table__cell nopad">Measure component applicable code</td>
 				<td class="govuk-table__cell"><?=$measure_component_applicable_code?> - <?=measure_component_applicable_code($measure_component_applicable_code)?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Origin dest code</td>
+				<td class="govuk-table__cell nopad">Origin dest code</td>
 				<td class="govuk-table__cell"><?=$origin_dest_code?> - <?=origin_dest_code($origin_dest_code)?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Order number capture code</td>
+				<td class="govuk-table__cell nopad">Order number capture code</td>
 				<td class="govuk-table__cell"><?=$order_number_capture_code?> - <?=order_number_capture_code($order_number_capture_code)?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Explosion level</td>
+				<td class="govuk-table__cell nopad">Explosion level</td>
 				<td class="govuk-table__cell"><?=$measure_explosion_level?></td>
 			</tr>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell">Measure type series ID</td>
+				<td class="govuk-table__cell nopad">Measure type series ID</td>
 				<td class="govuk-table__cell"><?=$measure_type_series_id?> - <?=$measure_type_series_description?></td>
 			</tr>
 <?php
@@ -174,9 +174,6 @@
 		}
 	}
 
-
-
-
 	$sql = "SELECT measure_sid, goods_nomenclature_item_id, measure_generating_regulation_id,
 	additional_code_type_id, additional_code_id, measure_type_id,
 	geographical_area_id, validity_start_date, validity_end_date, ordernumber
@@ -186,6 +183,7 @@
 ?>
 
 <h2 class="nomargin">Measures of type <?=$description?></h2>
+<p>There are <strong><?=pg_num_rows($result)?></strong> measures of type <?=$description?>.  Please click here to <a target="_blank" href="measure_export.html?measure_type_id=<?=$measure_type_id?>">export these measures to CSV</a>.</p>
 <?php
 	if (pg_num_rows($result) == 0){
 ?>
@@ -195,7 +193,7 @@
 ?>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" style="width:10%">Measure SID</th>
+				<th class="govuk-table__header nopad" style="width:10%">Measure SID</th>
 				<th class="govuk-table__header" style="width:8%">Commodity</th>
 				<th class="govuk-table__header c" style="width:8%">Additional code</th>
 				<th class="govuk-table__header c" style="width:10%">Geographical area</th>
@@ -253,7 +251,7 @@
 			$rowclass = rowclass($validity_start_date, $validity_end_date);
 ?>
 			<tr class="govuk-table__row <?=$rowclass?>">
-				<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+				<td class="govuk-table__cell nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
 				<td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
 				<td class="govuk-table__cell c"><?=$additional_code_show?></td>
 				<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
