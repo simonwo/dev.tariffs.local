@@ -1,11 +1,11 @@
 <?php
     $title = "Create quota blocking period";
 	require ("includes/db.php");
-    $application        = new application;
-    $phase              = get_querystring("phase");
-    $quota_blocking_period  = new quota_blocking_period;
-
-    $quota_order_number = new quota_order_number;
+    $application        	= new application;
+    $phase              	= get_querystring("phase");
+    $edit_mode				= get_querystring("edit_mode");
+    $quota_blocking_period	= new quota_blocking_period;
+    $quota_order_number 	= new quota_order_number;
     $quota_order_number->quota_order_number_id = $_COOKIE["quota_order_number_id"];
     $quota_order_number->get_quota_definitions();
 
@@ -25,20 +25,53 @@
 
 	$error_handler = new error_handler;
 	require ("includes/header.php");
-?>
+
+    if ($edit_mode == 1) {
+        // Edit mode
+        $quota_blocking_period->quota_order_number_id = "090006";
+        $disabled   = " disabled";
+        $title      = "Edit blocking period";
+        $msg        = '';
+        $on_msg     = '';
+		$quota_blocking_period->blocking_period_start_day	= "1";
+		$quota_blocking_period->blocking_period_start_day	= "1";
+		$quota_blocking_period->blocking_period_start_month = "7";
+		$quota_blocking_period->blocking_period_start_year	= "2019";
+		$quota_blocking_period->blocking_period_end_day		= "31";
+		$quota_blocking_period->blocking_period_end_month	= "7";
+		$quota_blocking_period->blocking_period_end_year	= "2019";
+		$quota_blocking_period->description					= "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec viverra cursus ante quis ultrices. Quisque tincidunt et odio iaculis volutpat. Nullam porttitor porttitor ex.";
+		$quota_blocking_period->blocking_period_type		= "4";
+    } else {
+        // Create mode
+        $disabled   = "";
+        $title      = "Create blocking period";
+        $msg        = 'Use this functionality to create a blocking period for a given quota.<br /><br />
+        Alternatively, please click here to view <a href="quota_blocking_periods.html">existing quota blocking periods</a>.';
+        $on_msg     = 'Please ensure that you select an existing quota order number ID with 6 numeric digits beginning &quot;09&quot;. Only select
+		<abbr title="First Come First Served">FCFS</abbr> quotas that do not start with the characters &quot;094&quot;.';
+		$quota_blocking_period->blocking_period_start_day	= "";
+		$quota_blocking_period->blocking_period_start_month = "";
+		$quota_blocking_period->blocking_period_start_year	= "";
+		$quota_blocking_period->blocking_period_end_day		= "";
+		$quota_blocking_period->blocking_period_end_month	= "";
+		$quota_blocking_period->blocking_period_end_year	= "";
+		$quota_blocking_period->description					= "";
+		$quota_blocking_period->blocking_period_type		= "";
+    }?>
 <!-- Start breadcrumbs //-->
 <div id="wrapper" class="direction-ltr">
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Main menu</a></li>
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quotas</a></li>
-		<li class="govuk-breadcrumbs__list-item">Create quota blocking period</li>
+		<li class="govuk-breadcrumbs__list-item"><?=$title?></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
 
 <div class="app-content__header">
-	<h1 class="govuk-heading-xl">Create quota blocking period</h1>
+	<h1 class="govuk-heading-xl"><?=$title?> on quota 900006</h1>
 </div>
 
 <form class="tariff" method="post" action="/quota_blocking_period_confirm.html">
@@ -53,6 +86,8 @@
 <!-- End error handler //-->
 
 
+
+
 <!-- Begin quota definition period field //-->
 <div class="govuk-form-group <?=$error_handler->get_error("footnote_type_id");?>">
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
@@ -60,9 +95,9 @@
             <label for="footnote_type_id">Select the quota definition period to block</label>
         </h1>
 	</legend>
-    <span class="govuk-hint">This is the quota definition to which the quota blocking period will be assigned.</span>
+    <span class="govuk-hint">This is the quota definition to which the quota blocking period will be assigned. This list only includes future and current definition periods.</span>
 	<?=$error_handler->display_error_message("footnote_type_id");?>
-	<select class="govuk-select" id="footnote_type_id" name="footnote_type_id">
+	<select <?=$disabled?> class="govuk-select" id="footnote_type_id" name="footnote_type_id">
 		<option value="">- Select quota definition period - </option>
 <?php
 	foreach ($quota_order_number->quota_definitions as $obj) {
@@ -81,7 +116,7 @@
 <div class="govuk-form-group <?=$error_handler->get_error("footnote_type_id");?>">
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
         <h1 id="heading_trade_movement_code" class="govuk-fieldset__heading" style="max-width:100%;">
-            <label for="footnote_type_id">Enter the type of blocking period</label>
+            <label for="footnote_type_id">Select the type of blocking period</label>
         </h1>
 	</legend>
     <span class="govuk-hint">This is the quota definition to which the quota blocking period will be assigned.</span>
@@ -91,7 +126,7 @@
         <option value="1">1 - Block the allocations for a quota due to a late publication</option>
         <option value="2">2 - Block the allocations for a quota after its reopening due to a volume increase</option>
         <option value="3">3 - Block the allocations for a quota after its reopening due to the reception of quota return requests</option>
-        <option value="4">4 - Block the allocations for a quota due to the modification of the validity period after receiving quota return requests</option>
+        <option selected checked value="4">4 - Block the allocations for a quota due to the modification of the validity period after receiving quota return requests</option>
         <option value="5">5 - Block the allocations for a quota on request of a MSA</option>
         <option value="6">6 - Block the allocations for a quota due to an end-user decision</option>
         <option value="7">7 - Block the allocations for a quota due to an exceptional condition</option>
@@ -106,6 +141,7 @@
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 			<h1 id="heading_blocking_period_start_date" class="govuk-fieldset__heading" style="max-width:100%;">Blocking period start date</h1>
 		</legend>
+		<span class="govuk-hint">Please ensure that this date falls on or after the definition start date.</span>
 		<?=$error_handler->display_error_message("blocking_period_start_date");?>
 		<div class="govuk-date-input" id="blocking_period_start">
 			<div class="govuk-date-input__item">
@@ -138,6 +174,7 @@
 		<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
 			<h1 id="heading_blocking_period_end_date" class="govuk-fieldset__heading" style="max-width:100%;">Blocking period end date</h1>
 		</legend>
+		<span class="govuk-hint">Please ensure that this date falls on or before the definition end date.</span>
 		<?=$error_handler->display_error_message("blocking_period_end_date");?>
 		<div class="govuk-date-input" id="blocking_period_end">
 			<div class="govuk-date-input__item">
@@ -168,7 +205,7 @@
 <!-- Begin description field //-->
 <div class="govuk-form-group">
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-        <h1 id="heading_workbasket_name" class="govuk-fieldset__heading" style="max-width:100%;"><label for="description">Please enter a description of this blocking pereiod</label></h1>
+        <h1 id="heading_workbasket_name" class="govuk-fieldset__heading" style="max-width:100%;"><label for="description">Please enter a description for this blocking period</label></h1>
 	</legend>
     <span class="govuk-hint">This field is for informational purposes only. It is not mandatory.</span>
 

@@ -24,6 +24,8 @@
 						<li><a href="/quota_association_create.html">Create quota association</a></li>
 						<li><a href="/quota_blocking_periods.html">View quota blocking periods</a></li>
 						<li><a href="/quota_blocking_period_create.html">Create quota blocking period</a></li>
+						<li><a href="/quota_suspension_periods.html">View quota suspension periods</a></li>
+						<li><a href="/quota_suspension_period_create.html">Create quota suspension period</a></li>
 					</ul>
 
 					<h2 class="small">Measures</h2>

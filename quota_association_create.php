@@ -57,7 +57,7 @@
 	<legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
         <h1 id="heading_workbasket_name" class="govuk-fieldset__heading" style="max-width:100%;"><label for="workbasket_name">Please enter the name of the workbasket</label></h1>
 	</legend>
-    <span class="govuk-hint">Lorem ipsum dolor sit amet ...</span>
+    <!--<span class="govuk-hint">Lorem ipsum dolor sit amet ...</span>//-->
 	<?=$error_handler->display_error_message("workbasket_name");?>
 	<input value="<?=$quota_association->workbasket_name?>" class="govuk-input" style="width:25%" id="workbasket_name" name="workbasket_name" type="text" maxlength="50" size="50">
 </div>

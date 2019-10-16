@@ -1,17 +1,16 @@
 <?php
-class quota_blocking_period
+class quota_suspension_period
 {
 	// Class properties and methods go here
 	public $workbasket_name				= "";
 	public $quota_order_number_id       = "";
 	public $description                 = "";
-	public $blocking_period_start_day	= "";
-	public $blocking_period_start_month	= "";
-	public $blocking_period_start_year	= "";
-	public $blocking_period_end_day     = "";
-	public $blocking_period_end_month	= "";
-	public $blocking_period_end_year	= "";
-	public $blocking_period_type		= "";
+	public $suspension_period_start_day	= "";
+	public $suspension_period_start_month	= "";
+	public $suspension_period_start_year	= "";
+	public $suspension_period_end_day     = "";
+	public $suspension_period_end_month	= "";
+	public $suspension_period_end_year	= "";
 
     public function __construct() {
         // Construction code goes here

@@ -8,11 +8,11 @@
     <div class="column-one-third" style="width:320px">
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-                <span id="base_regulation_hint" class="govuk-hint">Enter commodity code</span>
+                <span id="base_regulation_hint" class="govuk-hint">Enter measure SID</span>
                 <div class="govuk-date-input" id="measure_start">
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group" style="padding:0px;margin:0px">
-                            <input value="" class="govuk-input govuk-date-input__input govuk-input--width-16" id="goods_nomenclature_item_id" maxlength="100" style="width:300px" name="goods_nomenclature_item_id" type="text">
+                            <input value="" class="govuk-input govuk-date-input__input govuk-input--width-16" id="measure_sid" maxlength="100" style="width:300px" name="measure_sid" type="text">
                         </div>
                     </div>
                 </div>

@@ -471,7 +471,7 @@
 ?>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
-			<th class="govuk-table__header" style="width:20%">Geographical area ID</th>
+			<th class="govuk-table__header nopad" style="width:20%">Geographical area ID</th>
 			<th class="govuk-table__header" style="width:80%">Geographical area</th>
 		</tr>
 
@@ -481,7 +481,7 @@
 			$description                = $row['description'];
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell"><?=$excluded_geographical_area?></td>
+			<td class="govuk-table__cell nopad"><?=$excluded_geographical_area?></td>
 			<td class="govuk-table__cell"><?=$description?></td>
 		</tr>
 

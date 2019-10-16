@@ -41,7 +41,7 @@
     the two quota definition periods will be synchronised automatically.
 </p>
 
-<form class="tariff" method="post" action="/quota_association_confirm.html">
+<form class="tariff" method="post" action="/quota_blocking_period_confirm.html">
 
 <input type="hidden" name="phase" value="<?=$phase?>" />
 <input type="hidden" name="main_quota_order_number_id" value="<?=$quota_association->main_quota_order_number_id?>" />

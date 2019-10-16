@@ -1,5 +1,5 @@
 <?php
-    $title = "Create quota blocking period";
+    $title = "Create quota suspension period";
 	require ("includes/db.php");
     $application        = new application;
     $phase              = get_querystring("phase");
@@ -19,14 +19,14 @@
 	require ("includes/header.php");
     if ($edit_mode == 1) {
         // Edit mode
-        $crumb  = "Edit quota blocking period";
-        $title  = "Quota blocking period edit submitted";
-        $msg    = "1 quota blocking period edit has been submitted for approval.";
+        $crumb  = "Edit quota suspension period";
+        $title  = "Quota suspension period edit submitted";
+        $msg    = "1 quota suspension period edit has been submitted for approval.";
     } else {
         // Create mode
-        $crumb  = "Edit quota blocking period";
-        $title  = "New quota blocking period submitted";
-        $msg    = "1 new quota blocking period has been submitted for approval.";
+        $crumb  = "Create quota suspension period";
+        $title  = "New quota suspension period submitted";
+        $msg    = "1 new quota suspension period has been submitted for approval.";
     }
 ?>
 <div id="wrapper" class="direction-ltr">
@@ -49,9 +49,9 @@
     <!--
     <h3 class="heading-medium m-t-100">Next step</h3>
     <ul class="list next-steps">
-        <li><a href="#">Withdraw submission/edit quota blocking period</a></li>
-        <li><a href="#">Create more quota blocking periods</a></li>
-        <li><a href="#">View these quota blocking periods</a></li>
+        <li><a href="#">Withdraw submission/edit quota suspension period</a></li>
+        <li><a href="#">Create more quota suspension periods</a></li>
+        <li><a href="#">View these quota suspension periods</a></li>
         <li><a href="#">Return to main menu</a></li>
     </ul>
     //-->

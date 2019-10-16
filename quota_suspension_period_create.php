@@ -1,42 +1,44 @@
 <?php
-    $title = "Create quota blocking period";
-	require ("includes/db.php");
-    $application            = new application;
-    $phase                  = get_querystring("phase");
-    $edit_mode              = get_querystring("edit_mode");
-    $quota_blocking_period  = new quota_blocking_period;
-    $err                    = get_querystring("err");
+    $title = "Create quota suspension period";
+    require ("includes/db.php");
+    $application                = new application;
+    $phase                      = get_querystring("phase");
+    $edit_mode                  = get_querystring("edit_mode");
+    $quota_suspension_period    = new quota_suspension_period;
+    $err                        = get_querystring("err");
 
     if ($phase == "edit") {
         $footnote->footnote_id = $footnote_id;
         $footnote->populate_from_db();
-        $phase = "blocking_period_edit";
+        $phase = "suspension_period_edit";
     } else {
         if ($err != "") {
-            $quota_blocking_period->populate_from_cookies();
+            $quota_suspension_period->populate_from_cookies();
         }
-        $phase = "blocking_period_create";
+        $phase = "suspension_period_create";
     }
 
 	$error_handler = new error_handler;
-	require ("includes/header.php");
-
+    require ("includes/header.php");
+    
     if ($edit_mode == 1) {
         // Edit mode
-        $quota_blocking_period->quota_order_number_id = "090006";
+        $quota_suspension_period->quota_order_number_id = "090006";
         $disabled   = " disabled";
-        $title      = "Edit quota blocking period";
+        $title      = "Edit quota suspension period";
         $msg        = '';
         $on_msg     = '';
     } else {
         // Create mode
         $disabled   = "";
-        $title      = "Create quota blocking period";
-        $msg        = 'Use this functionality to create a blocking period for a given quota.<br /><br />
-        Alternatively, please click here to view <a href="quota_blocking_periods.html">existing quota blocking periods</a>.';
+        $title      = "Create quota suspension period";
+        $msg        = 'Use this functionality to create a suspension period for a given quota.<br /><br />
+        Alternatively, please click here to view <a href="quota_suspension_periods.html">existing quota suspension periods</a>.';
         $on_msg     = 'Please ensure that you select an existing quota order number ID with 6 numeric digits beginning &quot;09&quot;. Only select
         <abbr title="First Come First Served">FCFS</abbr> quotas that do not start with the characters &quot;094&quot;.';
-    }?>
+    }
+
+?>
 <!-- Start breadcrumbs //-->
 <div id="wrapper" class="direction-ltr">
 	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
@@ -53,7 +55,7 @@
 </div>
 <p style="margin-bottom:2em"><?=$msg?></p>
 
-<form class="tariff" method="post" action="/actions/quota_blocking_periods.html">
+<form class="tariff" method="post" action="/actions/quota_suspension_periods.html">
 <input type="hidden" name="phase" value="<?=$phase?>" />
 <?php
     if ($phase == "footnote_edit") {
@@ -72,7 +74,7 @@
 	</legend>
     <!--<span class="govuk-hint">Lorem ipsum dolor sit amet ...</span>//-->
 	<?=$error_handler->display_error_message("workbasket_name");?>
-	<input value="<?=$quota_blocking_period->workbasket_name?>" class="govuk-input" style="width:25%" id="workbasket_name" name="workbasket_name" type="text" maxlength="50" size="50">
+	<input value="<?=$quota_suspension_period->workbasket_name?>" class="govuk-input" style="width:25%" id="workbasket_name" name="workbasket_name" type="text" maxlength="50" size="50">
 </div>
 <!-- End workbasket field //-->
 
@@ -83,13 +85,10 @@
         <h1 id="heading_quota_order_number_id" class="govuk-fieldset__heading" style="max-width:100%;"><label for="quota_order_number_id">Please enter the quota order number ID</label></h1>
 	</legend>
     <span class="govuk-hint"><?=$on_msg?></span>
-    </span>
 	<?=$error_handler->display_error_message("quota_order_number_id");?>
-	<input <?=$disabled?> value="<?=$quota_blocking_period->quota_order_number_id?>" class="govuk-input" style="width:10%" id="quota_order_number_id" name="quota_order_number_id" type="text" maxlength="6" size="6">
+	<input <?=$disabled?> value="<?=$quota_suspension_period->quota_order_number_id?>" class="govuk-input" style="width:10%" id="quota_order_number_id" name="quota_order_number_id" type="text" maxlength="6" size="6">
 </div>
 <!-- End main quota order number field //-->
-
-
 
 
 		<button type="submit" class="govuk-button">Continue</button>

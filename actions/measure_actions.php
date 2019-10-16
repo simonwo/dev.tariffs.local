@@ -1,7 +1,5 @@
 <?php
 	require (dirname(__FILE__) . "../../includes/db.php");
-	pre($_REQUEST);
-	exit();
 	$phase = get_formvar("phase");
 	if ($phase == "1") {
 		get_formvars_phase1();
@@ -73,19 +71,10 @@
 
 
 	function get_formvars_measure_search() {
-		$goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
-		$goods_nomenclature_item_id = str_replace(" ", "", $goods_nomenclature_item_id);
-		if (strlen($goods_nomenclature_item_id) < 10) {
-			$goods_nomenclature_item_id .= str_repeat("0", 10 - strlen($goods_nomenclature_item_id));
-		}
-
-		$url  = "/goods_nomenclature_item_view.html";
-		$url .= "?goods_nomenclature_item_id=" . $goods_nomenclature_item_id . "#assigned";
-		#echo ($url);
-		#exit();
+		$measure_sid = get_querystring("measure_sid");
+		$url  = "/measure_view.html";
+		$url .= "?measure_sid=" . $measure_sid;
 		header("Location: " . $url);
-
 	}
-
 
 ?>

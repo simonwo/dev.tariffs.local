@@ -30,6 +30,7 @@ require (dirname(__FILE__) . "../../classes/base_regulation.php");
 require (dirname(__FILE__) . "../../classes/regulation_group.php");
 require (dirname(__FILE__) . "../../classes/quota_association.php");
 require (dirname(__FILE__) . "../../classes/quota_blocking_period.php");
+require (dirname(__FILE__) . "../../classes/quota_suspension_period.php");
 require (dirname(__FILE__) . "../../classes/additional_code.php");
 require (dirname(__FILE__) . "../../classes/measure_excluded_geographical_area.php");
 

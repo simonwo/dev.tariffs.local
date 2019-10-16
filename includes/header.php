@@ -2,7 +2,7 @@
 <html lang="en" class="govuk-template no-js">
 <head>
 	<meta charset="utf-8" />
-	<title>
+	<title><?=strtoupper(str_replace("tariff_", "", $dbase)); ?> : 
 <?php
 	if (isset($title)) {
 		echo ($title . " - ");
