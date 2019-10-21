@@ -299,7 +299,7 @@
             <th class="govuk-table__header" style="width:35%">Description</th>
             <th class="govuk-table__header l" style="width:10%">Measure type</th>
             <th class="govuk-table__header r" style="width:10%">Duty</th>
-            <th class="govuk-table__header c" style="width:10%">Declarable?</th>
+            <th class="govuk-table__header c" style="width:10%">End-line?</th>
         </tr>
 <?php
         foreach ($commodities as $commodity) {

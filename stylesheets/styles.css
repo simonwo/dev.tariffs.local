@@ -354,6 +354,7 @@ td.warning {
 }
 td.nopad, th.nopad {
 	padding-left:0px !important;
+	padding-right:0px !important;
 }
 .panel--confirmation {
 	font-family: "nta",Arial,sans-serif !important;

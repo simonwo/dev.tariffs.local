@@ -140,7 +140,7 @@ class quota_order_number
 		AND qon.quota_order_number_sid = qono.quota_order_number_sid
 		AND (qono.validity_end_date IS NULL OR qono.validity_end_date > CURRENT_DATE)
 		AND quota_order_number_id = '" . $this->quota_order_number_id . "'
-		ORDER BY qono.quota_order_number_sid, ga.description";
+		ORDER BY qono.validity_start_date desc, qono.quota_order_number_sid, ga.description";
 		#p ($sql);
 
 		$result = pg_query($conn, $sql);

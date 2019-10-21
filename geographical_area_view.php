@@ -462,6 +462,11 @@
 	if ($geographical_code == "1") {
 ?>
 			<h2 id="members1">Members of this country group</h2>
+			<div>
+				<ul class="tariff_menu">
+					<li><a target="_blank" href="geographical_area_member_export.php?geographical_area_id=<?=$geographical_area_id?>">Export members to CSV</a></li>
+				</ul>
+			</div>
 
 
 

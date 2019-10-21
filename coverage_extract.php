@@ -208,7 +208,7 @@
     }
 
     if (count($commodities) > 0) {
-        echo "Commodity code,Suffix,Indent,Description,Declarable?,Assigned,Measure type,Origin,Origin exclusions,Duties";
+        echo "Commodity code,Suffix,Indent,Description,End-line?,Assigned,Measure type,Origin,Origin exclusions,Duties";
         echo ($delimiter);
         foreach ($commodities as $commodity) {
             $match_class = "";

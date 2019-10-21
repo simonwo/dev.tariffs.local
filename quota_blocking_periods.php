@@ -32,7 +32,7 @@
     $key_date = "2019-04-10";
     $key_date2 = strtotime($key_date);
 
-    $sql = "select quota_order_number_id, qd.validity_start_date, qd.validity_end_date,
+    $sql = "select quota_blocking_period_sid, quota_order_number_id, qd.validity_start_date, qd.validity_end_date,
     qbp.blocking_start_date, qbp.blocking_end_date, blocking_period_type, qbp.description
     from quota_blocking_periods qbp, quota_definitions qd
     where qbp.quota_definition_sid = qd.quota_definition_sid
@@ -54,6 +54,7 @@
     </tr>
 <?php    
 		while ($row = pg_fetch_array($result)) {
+            $quota_blocking_period_sid  = $row['quota_blocking_period_sid'];
             $quota_order_number_id  = $row['quota_order_number_id'];
             $validity_start_date    = $row['validity_start_date'];
             $validity_end_date      = $row['validity_end_date'];
@@ -78,15 +79,15 @@
             if ($blocking_end_date >= $key_date) {
 ?>            
             <form action="#" method="get">
-                <input type="hidden" name="action" value="delete" />
                 <button type="submit" class="govuk-button btn_nomargin")>Edit</button>
             </form>    
 <?php
             }
             if ($blocking_start_date >= $key_date) {
 ?>
-            <form action="#" method="get">
-                <input type="hidden" name="action" value="delete" />
+            <form action="quota_blocking_period_delete.html" method="get">
+                <input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+                <input type="hidden" name="quota_blocking_period_sid" value="<?=$quota_blocking_period_sid?>" />
                 <button type="submit" class="govuk-button btn_nomargin")>Delete</button>
             </form>    
 <?php
