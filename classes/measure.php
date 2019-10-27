@@ -3,23 +3,39 @@ class measure
 {
 	// Class properties and methods go here
 	public function __construct() {
-		$this->geographical_area_description    = "";
-		$this->geographical_area_id    			= "";
-		$this->assigned                         = False;
-		$this->combined_duty          	        = "";
-		$this->duty_list              			= array();
-		$this->siv_component_list       		= array();
-		$this->footnote_list              		= array();
-		$this->condition_list              		= array();
-		$this->mega_list	              		= array();
-		$this->suppress							= False;
-		$this->marked							= False;
-		$this->significant_children   			= False;
-		$this->measure_count          			= 0;
-		$this->measure_type_count     			= 0;
-		$this->additional_code_id				= "";
-		$this->additional_code_type_id			= "";
-	}
+		$this->geographical_area_description    	= "";
+		$this->geographical_area_id    				= "";
+		$this->assigned                         	= False;
+		$this->combined_duty          	        	= "";
+		$this->duty_list              				= array();
+		$this->measure_components       			= array();
+		$this->measure_condition_components       	= array();
+		$this->footnote_association_measures		= array();
+		$this->condition_list              			= array();
+		$this->mega_list	              			= array();
+		$this->suppress								= False;
+		$this->marked								= False;
+		$this->significant_children   				= False;
+		$this->measure_count          				= 0;
+		$this->measure_type_count     				= 0;
+		$this->additional_code_id					= "";
+		$this->additional_code_type_id				= "";
+		$this->measure_heading						= "Temp";
+		$this->siv_component_list       			= array();
+		$this->measure_generating_regulation_id		= "";
+		$this->measure_generating_regulation_role	= "";
+		$this->goods_nomenclature_item_id			= "";
+		$this->additional_code_type_id				= "";
+		$this->additional_code_id					= "";
+		$this->validity_start_date					= "";
+		$this->validity_end_date					= "";
+
+		$this->measure_components_xml = "";
+		$this->measure_excluded_geographical_areas_xml = "";
+		$this->measure_conditions_xml = "";
+		$this->measure_partial_temporary_stops_xml = "";
+		$this->footnote_association_measures_xml = "";
+}
 
 	public function set_properties($measure_sid, $commodity_code, $quota_order_number_id, $validity_start_date,
 	$validity_end_date, $geographical_area_id, $measure_type_id, $additional_code_type_id,
@@ -36,6 +52,585 @@ class measure
 		$this->regulation_id_full		= $regulation_id_full;
 		$this->measure_type_description = $measure_type_description;
 	}
+
+	/* BEGIN MEASURE FUNCTIONS */
+	public function insert_measure() {
+        global $conn;
+        $application = new application;
+        $operation = "C";
+		$operation_date = $application->get_operation_date();
+		$this->get_new_measure_sid();
+
+		$sql = "INSERT INTO measures_oplog (
+			measure_sid,
+			measure_type_id,
+			geographical_area_id,
+			goods_nomenclature_item_id,
+			validity_start_date,
+			validity_end_date,
+			measure_generating_regulation_role,
+			measure_generating_regulation_id,
+			justification_regulation_role,
+			justification_regulation_id,
+			stopped_flag,
+			geographical_area_sid,
+			goods_nomenclature_sid,
+			ordernumber,
+			additional_code_type_id,
+			additional_code_id,
+			additional_code_sid,
+			reduction_indicator,
+			export_refund_nomenclature_sid, operation, operation_date)
+		VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)";
+
+		pg_prepare($conn, "measure_insert", $sql);
+		pg_execute($conn, "measure_insert", array(
+			$this->measure_sid,
+			$this->measure_type_id,
+			$this->geographical_area_id,
+			$this->goods_nomenclature_item_id,
+			$this->validity_start_date,
+			$this->validity_end_date,
+			$this->measure_generating_regulation_role,
+			$this->measure_generating_regulation_id,
+			$this->justification_regulation_role,
+			$this->justification_regulation_id,
+			$this->stopped_flag,
+			$this->geographical_area_sid,
+			$this->goods_nomenclature_sid,
+			$this->ordernumber,
+			$this->additional_code_type_id,
+			$this->additional_code_id ,
+			$this->additional_code_sid,
+			$this->reduction_indicator,
+			$this->export_refund_nomenclature_sid,
+			$operation, $operation_date
+		));
+
+		$url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        header("Location: " . $url);            
+	}
+
+	public function get_new_measure_sid() {
+		global $conn;
+		$sql = "select max(measure_sid) from measures";
+		$result = pg_query($conn, $sql);
+		if ($result) {
+			$row = pg_fetch_row($result);
+			$this->measure_sid = $row[0] + 1;
+		}
+	}
+
+	public function update_measure() {
+
+	}
+	/* END MEASURE FUNCTIONS */
+
+	/* BEGIN MEASURE COMPONENT FUNCTIONS */
+	public function update_component($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code) {
+        global $conn;
+        $application = new application;
+        $operation = "U";
+        $operation_date = $application->get_operation_date();
+
+		$sql = "INSERT INTO measure_components_oplog
+		(measure_sid, duty_expression_id, duty_amount, monetary_unit_code,
+		measurement_unit_code, measurement_unit_qualifier_code, operation, operation_date)
+		VALUES (
+		$1, $2, $3, $4, $5, $6, $7, $8)";
+
+		pg_prepare($conn, "component_insert", $sql);
+		pg_execute($conn, "component_insert", array($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code,
+		$measurement_unit_code, $measurement_unit_qualifier_code, $operation, $operation_date));
+
+		return (True);
+	}
+
+	public function insert_component($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code) {
+		global $conn;
+        $application = new application;
+        $operation = "C";
+        $operation_date = $application->get_operation_date();
+
+		$sql = "INSERT INTO measure_components_oplog
+		(measure_sid, duty_expression_id, duty_amount, monetary_unit_code,
+		measurement_unit_code, measurement_unit_qualifier_code, operation, operation_date)
+		VALUES (
+		$1, $2, $3, $4, $5, $6, $7, $8)";
+
+		pg_prepare($conn, "component_insert", $sql);
+		pg_execute($conn, "component_insert", array($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code,
+		$measurement_unit_code, $measurement_unit_qualifier_code, $operation, $operation_date));
+
+		return (True);
+	}
+
+
+	public function insert_footnote_association_measure($measure_sid, $footnote_type_id, $footnote_id) {
+		global $conn;
+        $application = new application;
+        $operation = "C";
+        $operation_date = $application->get_operation_date();
+
+		$sql = "INSERT INTO footnote_association_measures_oplog
+		(measure_sid, footnote_type_id, footnote_id, operation, operation_date)
+		VALUES (
+		$1, $2, $3, $4, $5)";
+
+		pg_prepare($conn, "insert_footnote_association_measure", $sql);
+		pg_execute($conn, "insert_footnote_association_measure", array($measure_sid, $footnote_type_id, $footnote_id, $operation, $operation_date));
+		return (True);
+	}
+
+
+	public function get_measure_oplog_components() {
+		global $conn;
+		$this->measure_components = array();
+		$sql = "select duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
+		from measure_components_oplog where measure_sid = $1 and operation = $2 order by duty_expression_id";
+		$query_name = "get_measure_oplog_components_" . $this->measure_sid;
+		pg_prepare($conn, $query_name, $sql);
+		$result = pg_execute($conn, $query_name, array($this->measure_sid, $this->operation));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_component = new measure_component();
+				$measure_component->measure_sid						= $this->measure_sid;
+				$measure_component->duty_expression_id              = $row[0];
+				$measure_component->duty_amount              		= $row[1];
+				$measure_component->monetary_unit_code              = $row[2];
+				$measure_component->measurement_unit_code           = $row[3];
+				$measure_component->measurement_unit_qualifier_code	= $row[4];
+				$measure_component->operation						= $this->operation;
+				array_push($this->measure_components, $measure_component);
+			}
+		}
+		$this->measure_components_xml = "";
+		foreach ($this->measure_components as $measure_component) {
+			$this->measure_components_xml .= $measure_component->xml();
+		}
+	}
+
+	public function get_measure_oplog_conditions() {
+		global $conn;
+		$this->measure_conditions = array();
+		$sql = "select measure_condition_sid, measure_sid, condition_code, component_sequence_number, condition_duty_amount, condition_monetary_unit_code,
+		condition_measurement_unit_code, condition_measurement_unit_qualifier_code,
+		action_code, certificate_type_code, certificate_code
+		from measure_conditions
+		where measure_sid = $1 and operation = $2
+		order by component_sequence_number";
+		$query_name = "get_measure_oplog_conditions_" . $this->measure_sid;
+		pg_prepare($conn, $query_name, $sql);
+		$result = pg_execute($conn, $query_name, array($this->measure_sid, $this->operation));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_condition = new measure_condition();
+				$measure_condition->measure_sid						= $this->measure_sid;
+				$measure_condition->measure_condition_sid              			= $row[0];
+				$measure_condition->condition_code              				= $row[2];
+				$measure_condition->component_sequence_number              		= $row[3];
+				$measure_condition->condition_duty_amount              			= $row[4];
+				$measure_condition->condition_monetary_unit_code              	= $row[5];
+				$measure_condition->condition_measurement_unit_code           	= $row[6];
+				$measure_condition->condition_measurement_unit_qualifier_code	= $row[7];
+				$measure_condition->action_code									= $row[8];
+				$measure_condition->certificate_type_code						= $row[9];
+				$measure_condition->certificate_code							= $row[10];
+				$measure_condition->operation						= $this->operation;
+				array_push($this->measure_conditions, $measure_condition);
+			}
+		}
+		$this->measure_conditions_xml = "";
+		foreach ($this->measure_conditions as $measure_condition) {
+			$this->measure_conditions_xml .= $measure_condition->xml();
+		}
+	}
+
+
+	public function get_measure_oplog_excluded_geographical_areas() {
+		global $conn;
+		$this->measure_excluded_geographical_areas = array();
+		$sql = "select excluded_geographical_area, geographical_area_sid from measure_excluded_geographical_areas_oplog where measure_sid = $1 and operation = $2
+		order by excluded_geographical_area";
+		$query_name = "get_measure_oplog_excluded_geographical_areas_" . $this->measure_sid;
+		pg_prepare($conn, $query_name, $sql);
+		$result = pg_execute($conn, $query_name, array($this->measure_sid, $this->operation));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_excluded_geographical_area = new measure_excluded_geographical_area();
+				$measure_excluded_geographical_area->measure_sid		= $this->measure_sid;
+				$measure_excluded_geographical_area->excluded_geographical_area	= $row[0];
+				$measure_excluded_geographical_area->geographical_area_sid		= $row[1];
+				$measure_excluded_geographical_area->operation					= $this->operation;
+				array_push($this->measure_excluded_geographical_areas, $measure_excluded_geographical_area);
+			}
+		}
+		$this->measure_excluded_geographical_areas_xml = "";
+		foreach ($this->measure_excluded_geographical_areas as $measure_excluded_geographical_area) {
+			$this->measure_excluded_geographical_areas_xml .= $measure_excluded_geographical_area->xml();
+		}
+	}
+
+
+	public function get_measure_components() {
+		global $conn;
+		$this->measure_components = array();
+		$sql = "select duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
+		from measure_components where measure_sid = $1 order by duty_expression_id";
+		pg_prepare($conn, "get_measure_components", $sql);
+		$result = pg_execute($conn, "get_measure_components", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_component = new measure_component();
+				$measure_component->measure_sid						= $this->measure_sid;
+				$measure_component->duty_expression_id              = $row[0];
+				$measure_component->duty_amount              		= $row[1];
+				$measure_component->monetary_unit_code              = $row[2];
+				$measure_component->measurement_unit_code           = $row[3];
+				$measure_component->measurement_unit_qualifier_code	= $row[4];
+				array_push($this->measure_components, $measure_component);
+			}
+		}		
+	}
+
+	public function delete_measure_components() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->measure_components as $measure_component) {
+			$sql = "INSERT INTO measure_components_oplog
+			(measure_sid, duty_expression_id, duty_amount, monetary_unit_code,
+			measurement_unit_code, measurement_unit_qualifier_code, operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8)";
+			$query_name = "component_delete" . $i;
+
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array($measure_component->measure_sid, $measure_component->duty_expression_id,
+			$measure_component->duty_amount, $measure_component->monetary_unit_code,
+			$measure_component->measurement_unit_code, $measure_component->measurement_unit_qualifier_code, $operation, $operation_date));
+			$i += 1;
+		}
+	}
+
+	public function delete_component($measure_sid, $duty_expression_id) {
+		// Here we need to get the latest details of the component from the database before adding in a delete record
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		
+		$sql = "select duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
+		from measure_components
+		where measure_sid = $1 and duty_expression_id = $2";
+		pg_prepare($conn, "get_component", $sql);
+		$result = pg_execute($conn, "get_component", array($measure_sid, $duty_expression_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+            $row = pg_fetch_row($result);
+			$duty_amount              			= $row[0];
+			$monetary_unit_code              	= $row[1];
+			$measurement_unit_code              = $row[2];
+			$measurement_unit_qualifier_code	= $row[3];
+		}
+
+		$sql = "INSERT INTO measure_components_oplog
+		(measure_sid, duty_expression_id, duty_amount, monetary_unit_code,
+		measurement_unit_code, measurement_unit_qualifier_code, operation, operation_date)
+		VALUES (
+		$1, $2, $3, $4, $5, $6, $7, $8)";
+
+		pg_prepare($conn, "component_delete", $sql);
+		pg_execute($conn, "component_delete", array($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code,
+		$measurement_unit_code, $measurement_unit_qualifier_code, $operation, $operation_date));
+
+		return (True);
+	}
+	/* END MEASURE COMPONENT FUNCTIONS */
+
+	/* BEGIN CONDITION COMPONENT FUNCTIONS */
+	public function get_measure_condition_components() {
+		global $conn;
+		$this->measure_condition_components = array();
+		$sql = "select mcc.measure_condition_sid, mcc.duty_expression_id, mcc.duty_amount, mcc.monetary_unit_code,
+		mcc.measurement_unit_code, mcc.measurement_unit_qualifier_code
+		from measure_condition_components mcc, measure_conditions mc
+		where mc.measure_condition_sid = mcc.measure_condition_sid and measure_sid = $1
+		order by mc.component_sequence_number, mcc.duty_expression_id;";
+		pg_prepare($conn, "get_measure_condition_components", $sql);
+		$result = pg_execute($conn, "get_measure_condition_components", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_condition_component = new measure_condition_component();
+				$measure_condition_component->measure_sid						= $this->measure_sid;
+				$measure_condition_component->measure_condition_sid             = $row[0];
+				$measure_condition_component->duty_expression_id              	= $row[1];
+				$measure_condition_component->duty_amount              			= $row[2];
+				$measure_condition_component->monetary_unit_code              	= $row[3];
+				$measure_condition_component->measurement_unit_code           	= $row[4];
+				$measure_condition_component->measurement_unit_qualifier_code	= $row[5];
+				array_push($this->measure_condition_components, $measure_condition_component);
+			}
+		}
+	}
+
+	public function delete_measure_condition_components() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->measure_condition_components as $mcc) {
+			$sql = "INSERT INTO measure_condition_components_oplog
+			(measure_condition_sid, duty_expression_id, duty_amount, monetary_unit_code,
+			measurement_unit_code, measurement_unit_qualifier_code,
+			operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8)";
+			$query_name = "mcc_delete" . $i;
+
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array($mcc->measure_condition_sid, $mcc->duty_expression_id, $mcc->duty_amount, $mcc->monetary_unit_code,
+			$mcc->measurement_unit_code, $mcc->measurement_unit_qualifier_code,
+			$operation, $operation_date));
+			$i += 1;
+		}
+	}
+
+	/* BEGIN MEASURE CONDITION FUNCTIONS */
+	public function get_measure_conditions() {
+		global $conn;
+		$this->measure_conditions = array();
+		$sql = "select measure_condition_sid, condition_code, component_sequence_number, condition_duty_amount, 
+		condition_monetary_unit_code, condition_measurement_unit_code, condition_measurement_unit_qualifier_code
+		from measure_conditions where measure_sid = $1 order by component_sequence_number;";
+		pg_prepare($conn, "get_measure_conditions", $sql);
+		$result = pg_execute($conn, "get_measure_conditions", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_condition = new measure_condition();
+				$measure_condition->measure_sid									= $this->measure_sid;
+				$measure_condition->measure_condition_sid             			= $row[0];
+				$measure_condition->condition_code              				= $row[1];
+				$measure_condition->component_sequence_number					= $row[2];
+				$measure_condition->condition_duty_amount              			= $row[3];
+				$measure_condition->condition_monetary_unit_code              	= $row[4];
+				$measure_condition->condition_measurement_unit_code           	= $row[5];
+				$measure_condition->condition_measurement_unit_qualifier_code	= $row[6];
+				array_push($this->measure_conditions, $measure_condition);
+			}
+		}
+	}
+
+	public function delete_measure_conditions() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->measure_conditions as $mc) {
+			$sql = "INSERT INTO measure_conditions_oplog
+			(measure_condition_sid, measure_sid, condition_code, component_sequence_number,
+			condition_duty_amount, condition_monetary_unit_code, condition_measurement_unit_code, 
+			condition_measurement_unit_qualifier_code, action_code, certificate_type_code, certificate_code,
+			operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)";
+			$query_name = "mc_delete" . $i;
+
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array(
+				$mc->measure_condition_sid,
+				$mc->measure_sid,
+				$mc->condition_code,
+				$mc->component_sequence_number,
+				$mc->condition_duty_amount,
+				$mc->condition_monetary_unit_code,
+				$mc->condition_measurement_unit_code,
+				$mc->condition_measurement_unit_qualifier_code,
+				$mc->action_code,
+				$mc->certificate_type_code,
+				$mc->certificate_code,
+				$operation, $operation_date));
+			$i += 1;
+		}
+	}
+	/* END MEASURE CONDITION FUNCTIONS */
+
+	/* BEGIN PARTIAL TEMPORARY STOP FUNCTIONS */
+	public function get_measure_partial_temporary_stops() {
+		global $conn;
+		$this->measure_partial_temporary_stops = array();
+		$sql = "select validity_start_date, validity_end_date, partial_temporary_stop_regulation_id,
+		partial_temporary_stop_regulation_officialjournal_number, partial_temporary_stop_regulation_officialjournal_page,
+		abrogation_regulation_id, abrogation_regulation_officialjournal_number, abrogation_regulation_officialjournal_page
+		from measure_partial_temporary_stops where measure_sid = $1;";
+		pg_prepare($conn, "get_measure_partial_temporary_stops", $sql);
+		$result = pg_execute($conn, "get_measure_partial_temporary_stops", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_partial_temporary_stop = new measure_partial_temporary_stop();
+				$measure_partial_temporary_stop->measure_sid												= $this->measure_sid;
+				$measure_partial_temporary_stop->validity_start_date             							= $row[0];
+				$measure_partial_temporary_stop->validity_end_date              							= $row[1];
+				$measure_partial_temporary_stop->partial_temporary_stop_regulation_id						= $row[2];
+				$measure_partial_temporary_stop->partial_temporary_stop_regulation_officialjournal_number	= $row[3];
+				$measure_partial_temporary_stop->partial_temporary_stop_regulation_officialjournal_page		= $row[4];
+				$measure_partial_temporary_stop->abrogation_regulation_id           						= $row[5];
+				$measure_partial_temporary_stop->abrogation_regulation_officialjournal_number				= $row[6];
+				$measure_partial_temporary_stop->abrogation_regulation_officialjournal_page					= $row[7];
+				array_push($this->measure_partial_temporary_stops, $measure_partial_temporary_stop);
+			}
+		}
+	}
+
+	public function delete_measure_partial_temporary_stops() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->measure_partial_temporary_stops as $mpts) {
+			$sql = "INSERT INTO measure_partial_temporary_stops_oplog
+			(measure_sid, validity_start_date, validity_end_date, partial_temporary_stop_regulation_id,
+			partial_temporary_stop_regulation_officialjournal_number, partial_temporary_stop_regulation_officialjournal_page,
+			abrogation_regulation_id, abrogation_regulation_officialjournal_number, abrogation_regulation_officialjournal_page,
+			operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
+			$query_name = "mpts_delete" . $i;
+
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array($mpts->measure_sid, $mpts->validity_start_date, $mpts->validity_end_date, $mpts->partial_temporary_stop_regulation_id,
+			$mpts->partial_temporary_stop_regulation_officialjournal_number, $mpts->partial_temporary_stop_regulation_officialjournal_page,
+			$mpts->abrogation_regulation_id, $mpts->abrogation_regulation_officialjournal_number, $mpts->abrogation_regulation_officialjournal_page,
+			$operation, $operation_date));
+			$i += 1;
+		}
+	}
+	/* END PARTIAL TEMPORARY STOP FUNCTIONS */
+
+
+	/* BEGIN FOOTNOTE ASSOCIATION FUNCTIONS */
+	public function get_footnote_association_measures() {
+		global $conn;
+		$this->footnote_association_measures = array();
+		$sql = "select footnote_type_id, footnote_id from footnote_association_measures where measure_sid = $1 order by footnote_type_id, footnote_id";
+		pg_prepare($conn, "get_footnote_association_measures", $sql);
+		$result = pg_execute($conn, "get_footnote_association_measures", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$footnote_association					= new footnote_association_measure();
+				$footnote_association->measure_sid		= $this->measure_sid;
+				$footnote_association->footnote_type_id	= $row[0];
+				$footnote_association->footnote_id		= $row[1];
+				array_push($this->footnote_association_measures, $footnote_association);
+			}		
+		}		
+	}
+
+	public function delete_footnote_association_measures() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->footnote_association_measures as $footnote_association_measure) {
+			$sql = "INSERT INTO footnote_association_measures_oplog
+			(measure_sid, footnote_type_id, footnote_id, operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5)";
+			$query_name = "measure_footnote_association_delete" . $i;
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array($footnote_association_measure->measure_sid, $footnote_association_measure->footnote_type_id,
+			$footnote_association_measure->footnote_id, $operation, $operation_date));
+			$i += 1;
+		}
+	}
+	/* END FOOTNOTE ASSOCIATION FUNCTIONS */
+
+	/* BEGIN EXCLUDED GEO AREAS FUNCTIONS */
+
+	public function measure_excluded_geographical_area_insert($excluded_geographical_area, $geographical_area_sid) {
+		global $conn;
+        $application = new application;
+        $operation = "C";
+		$operation_date = $application->get_operation_date();
+		$sql = "INSERT INTO measure_excluded_geographical_areas_oplog
+		(measure_sid, excluded_geographical_area, geographical_area_sid, operation, operation_date)
+		VALUES (
+		$1, $2, $3, $4, $5)";
+		pg_prepare($conn, "measure_excluded_geographical_area_insert", $sql);
+		pg_execute($conn, "measure_excluded_geographical_area_insert", array($this->measure_sid, $excluded_geographical_area,
+		$geographical_area_sid, $operation, $operation_date));
+	}
+
+	public function measure_excluded_geographical_area_delete($excluded_geographical_area) {
+		global $conn;
+		$application = new application;
+		$geo = new geographical_area();
+		$geo->geographical_area_id = $excluded_geographical_area;
+		$geo->get_geographical_area_sid();
+		$operation = "D";
+		$operation_date = $application->get_operation_date();
+		$sql = "INSERT INTO measure_excluded_geographical_areas_oplog
+		(measure_sid, excluded_geographical_area, geographical_area_sid, operation, operation_date)
+		VALUES ($1, $2, $3, $4, $5)";
+		pg_prepare($conn, "measure_excluded_geographical_area_delete", $sql);
+		pg_execute($conn, "measure_excluded_geographical_area_delete", array($this->measure_sid, $excluded_geographical_area,
+		$geo->geographical_area_sid, $operation, $operation_date));
+	}
+
+
+	public function get_measure_excluded_geographical_areas() {
+		global $conn;
+		$this->measure_excluded_geographical_areas = array();
+		$sql = "select excluded_geographical_area, geographical_area_sid from measure_excluded_geographical_areas where measure_sid = $1 order by excluded_geographical_area";
+		pg_prepare($conn, "get_measure_excluded_geographical_areas", $sql);
+		$result = pg_execute($conn, "get_measure_excluded_geographical_areas", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			while ($row = pg_fetch_array($result)) {
+				$measure_excluded_geographical_area								= new measure_excluded_geographical_area();
+				$measure_excluded_geographical_area->measure_sid				= $this->measure_sid;
+				$measure_excluded_geographical_area->excluded_geographical_area	= $row[0];
+				$measure_excluded_geographical_area->geographical_area_sid		= $row[1];
+				array_push($this->measure_excluded_geographical_areas, $measure_excluded_geographical_area);
+			}		
+		}
+	}
+
+	public function delete_measure_excluded_geographical_areas() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+		foreach ($this->measure_excluded_geographical_areas as $measure_excluded_geographical_area) {
+			$sql = "INSERT INTO measure_excluded_geographical_areas_oplog
+			(measure_sid, excluded_geographical_area, geographical_area_sid, operation, operation_date)
+			VALUES (
+			$1, $2, $3, $4, $5)";
+			$query_name = "measure_excluded_geographical_area_delete" . $i;
+			pg_prepare($conn, $query_name, $sql);
+			pg_execute($conn, $query_name, array($measure_excluded_geographical_area->measure_sid, $measure_excluded_geographical_area->excluded_geographical_area,
+			$measure_excluded_geographical_area->geographical_area_sid, $operation, $operation_date));
+			$i += 1;
+		}
+	}
+	/* END EXCLUDED GEO AREAS FUNCTIONS */
+
 
 	public function get_footnote_string() {
 		$s = "";

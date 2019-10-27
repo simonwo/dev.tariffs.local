@@ -13,6 +13,7 @@ class measure_type
 	public $measure_explosion_level             = "";
 	public $measure_type_series_id              = "";
 	public $description                         = "";
+	public $measure_heading                     = "Temp";
 	public $is_quota							= False;
 	public $validity_start_day = "";
 	public $validity_start_month = "";

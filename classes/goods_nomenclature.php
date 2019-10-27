@@ -17,6 +17,22 @@ class goods_nomenclature
 		$this->mega_string				= "";
 	}
 
+	public function get_goods_nomenclature_sid() {
+		global $conn;
+		$sql = "select goods_nomenclature_sid from goods_nomenclatures
+		where goods_nomenclature_item_id = $1 and producline_suffix = '80'
+		order by validity_start_date desc limit 1";
+		pg_prepare($conn, "get_goods_nomenclature_sid", $sql);
+		$result = pg_execute($conn, "get_goods_nomenclature_sid", array($this->goods_nomenclature_item_id));
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->goods_nomenclature_sid  = $row['goods_nomenclature_sid'];
+			}
+		}
+		return ($this->goods_nomenclature_sid);
+	}
+	
+	
 
 	public function get_measure_type_description() {
 		switch ($this->measure_type_id) {

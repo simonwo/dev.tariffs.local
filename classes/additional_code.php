@@ -40,7 +40,20 @@ class additional_code
 		}
 	}
 
-
+	public function get_additional_code_sid() {
+		global $conn;
+		$sql = "select additional_code_sid
+		from additional_codes where additional_code_type_id = $1 and additional_code = $2
+		order by validity_start_date desc limit 1;";
+		pg_prepare($conn, "get_additional_code_sid", $sql);
+		$result = pg_execute($conn, "get_additional_code_sid", array($this->additional_code_type_id, $this->additional_code));
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->additional_code_sid  = $row['additional_code_sid'];
+			}
+		}
+		return ($this->additional_code_sid);
+	}
 
 
 	public function set_properties($certificate_code, $validity_start_date, $validity_end_date, $trade_movement_code,

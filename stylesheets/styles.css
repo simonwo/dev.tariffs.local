@@ -1,3 +1,10 @@
+div.govuk-tabs ul.compact li.govuk-tabs__list-item {
+	xpadding:1px !important;
+}
+div.govuk-tabs ul.compact li.govuk-tabs__list-item a {
+	font-size:11pt !important;
+	padding:8px !important;
+}
 .table_arrow {
 	font-weight:bold;
 	text-decoration:none;
@@ -163,8 +170,19 @@ th.tiny, td.tiny {
 .vsmall, th.vsmall, td.vsmall {
 	font-size:9pt !important;   
 }
-.small, th.small, td.small {
+.small, th.small, td.small, td.small input {
 	font-size:10pt !important;   
+}
+input.small {
+	padding:2px 4px 2px 4px !important;
+	margin:4px 0px !important;
+	height:auto !important;
+}
+.medium, th.medium, td.medium {
+	font-size:11pt !important;   
+}
+.large, th.large, td.large {
+	font-size:14pt !important;   
 }
 .break {
 	clear:both !important;

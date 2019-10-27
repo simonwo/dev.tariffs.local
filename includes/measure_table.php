@@ -9,8 +9,9 @@
 		$current_file_name = basename($_SERVER['PHP_SELF']);
 		$productline_suffix         = get_querystring("productline_suffix");
 		$goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
-		$geographical_area_id       = get_querystring("geographical_area_id");
+		$geographical_area_id       = strtoupper(get_querystring("geographical_area_id"));
 		$measure_type_id            = get_querystring("measure_type_id");
+		$base_regulation_id         = get_querystring("base_regulation_id");
 		if ($productline_suffix == "") {
 			$productline_suffix = "80";
 		}
@@ -213,6 +214,8 @@
 					$sql .= " ORDER BY m.validity_start_date DESC, goods_nomenclature_item_id";
 					break;
 				}
+
+
 
 			$result = pg_query($conn, $sql);
 			if  (($result) && (pg_num_rows($result) > 0)){

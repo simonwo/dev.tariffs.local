@@ -232,6 +232,87 @@ class application
 		}
 	}
 
+	public function get_footnote_types() {
+		global $conn;
+		$sql = "select ft.footnote_type_id, ftd.description from footnote_types ft, footnote_type_descriptions ftd 
+		where ft.footnote_type_id = ftd.footnote_type_id order by 1";
+
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$footnote_type_id	= $row['footnote_type_id'];
+				$description		= $row['description'];
+				$footnote_type = new footnote_type;
+
+				$footnote_type->footnote_type_id = $footnote_type_id;
+				$footnote_type->description = $description;
+				array_push($temp, $footnote_type);
+			}
+			$this->footnote_types = $temp;
+		}
+	}
+
+	public function get_measure_condition_codes() {
+		global $conn;
+		$sql = "select mcc.condition_code, mccd.description from measure_condition_codes mcc, measure_condition_code_descriptions mccd 
+		where mcc.condition_code = mccd.condition_code and validity_end_date is null order by 1;";
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$condition_code	= $row['condition_code'];
+				$description	= $row['description'];
+				$measure_condition_code					= new measure_condition_code;
+
+				$measure_condition_code->condition_code	= $condition_code;
+				$measure_condition_code->description	= $description;
+				array_push($temp, $measure_condition_code);
+			}
+			$this->measure_condition_codes = $temp;
+		}
+	}
+
+	public function get_action_codes() {
+		global $conn;
+		$sql = "select ma.action_code, mad.description from measure_actions ma, measure_action_descriptions mad 
+		where ma.action_code = mad.action_code and validity_end_date is null order by 1;";
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$action_code	= $row['action_code'];
+				$description	= $row['description'];
+				$measure_action_code	= new measure_action_code;
+				$measure_action_code->action_code = $action_code;
+				$measure_action_code->description = $description;
+				array_push($temp, $measure_action_code);
+			}
+			$this->action_codes = $temp;
+		}
+	}
+
+
+	public function get_certificate_types() {
+		global $conn;
+		$sql = "select ct.certificate_type_code, ctd.description from certificate_types ct, certificate_type_descriptions ctd 
+		where ct.certificate_type_code = ctd.certificate_type_code and validity_end_date is null
+		order by 1";
+		$result = pg_query($conn, $sql);
+		$temp = array();
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$certificate_type_code	= $row['certificate_type_code'];
+				$description			= $row['description'];
+				$certificate_type		= new certificate_type;
+				$certificate_type->certificate_type_code = $certificate_type_code;
+				$certificate_type->description = $description;
+				array_push($temp, $certificate_type);
+			}
+			$this->certificate_types = $temp;
+		}
+	}
+
 	public function get_maximum_precisions() {
 		$array = array(1, 2, 3, 4, 5);
 		$this->maximum_precisions = $array;

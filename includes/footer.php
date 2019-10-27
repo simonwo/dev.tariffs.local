@@ -51,5 +51,12 @@
 
 
 </div>
+<script src="/javascripts/govuk-frontend-5a043b61d9ca00f1e1fcc0f6c6b0835c.js"></script>
+<!--[if !IE 8]><!-->
+<script src="/javascripts/application-759f80740554048df43b3cf42f4990e3.js"></script>
+<!--<![endif]-->
+<!--[if lt IE 9]>
+<script src="/javascripts/application-ie8-e558392cf4a0a061363e6d4c51520b23.js"></script>
+<![endif]-->
 </body>
 </html>

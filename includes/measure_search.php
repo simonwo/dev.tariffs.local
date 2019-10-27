@@ -4,26 +4,28 @@
 ?>
 <form action="/actions/measure_actions.html" method="get" class="inline_form">
     <input type="hidden" name="phase" value="<?=$phase?>" />
-    <h3>Measure search</h3>
-    <div class="column-one-third" style="width:320px">
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-                <span id="base_regulation_hint" class="govuk-hint">Enter measure SID</span>
-                <div class="govuk-date-input" id="measure_start">
-                    <div class="govuk-date-input__item">
-                        <div class="govuk-form-group" style="padding:0px;margin:0px">
-                            <input value="" class="govuk-input govuk-date-input__input govuk-input--width-16" id="measure_sid" maxlength="100" style="width:300px" name="measure_sid" type="text">
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-        </div>
-    </div>
-    
-    <div class="column-one-third">
-        <div class="govuk-form-group" style="padding:0px;margin:0px">
-            <button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
-        </div>
-    </div>
-    <div class="clearer"><!--&nbsp;//--></div>
+    <h3 style="margin-bottom:0px">Search by ...</h3>
+    <table class="govuk-table" cellspacing="0" style="width:75%">
+        <tr>
+            <td class="medium nopad" style="width:20%"><label for="measure_sid">Measure SID</label></td>
+            <td><input value="" class="govuk-input small" id="measure_sid" maxlength="10" style="width:200px" name="measure_sid" type="text"></td>
+        </tr>
+        <tr>
+            <td class="medium nopad"><label for="goods_nomenclature_item_id">Commodity code</label></td>
+            <td><input value="" class="govuk-input small" id="goods_nomenclature_item_id" maxlength="14" style="width:200px" name="goods_nomenclature_item_id" type="text"></td>
+        </tr>
+        <tr>
+            <td class="medium nopad"><label for="measure_type_id">Measure type</label></td>
+            <td><input value="" class="govuk-input small" id="measure_type_id" maxlength="3" style="width:100px" name="measure_type_id" type="text"></td>
+        </tr>
+        <tr>
+            <td class="medium nopad"><label for="geographical_area_id">Geographical area ID</label></td>
+            <td><input value="" class="govuk-input small" id="geographical_area_id" maxlength="4" style="width:100px" name="geographical_area_id" type="text"></td>
+        </tr>
+
+
+        <tr>
+            <td colspan="2" class="medium nopad"><button type="submit" class="govuk-button small">Search</button></td>
+        </tr>
+    </table>
 </form>

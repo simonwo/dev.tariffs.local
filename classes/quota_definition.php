@@ -57,14 +57,56 @@ class quota_definition
         }
     }
 
-    function conflict_check() {
+    function update($quota_definition_sid, $quota_order_number_id, $validity_start_date, $validity_end_date,
+    $quota_order_number_sid, $initial_volume, $measurement_unit_code, $maximum_precision,
+    $critical_state, $critical_threshold, $monetary_unit_code, $measurement_unit_qualifier_code, $description) {
+        global $conn;
+        $application = new application;
+        $operation = "U";
+        $operation_date = $application->get_operation_date();
+
+        $this->quota_definition_sid = $quota_definition_sid;
+        $this->quota_order_number_id = $quota_order_number_id;
+        $this->validity_start_date = $validity_start_date;
+        $this->validity_end_date = $validity_end_date;
+
+        $errors = $this->conflict_check($quota_definition_sid);
+        #h1 (count($errors));
+        #exit();
+        if (count($errors) > 0) {
+            /*foreach ($errors as $error) {
+                h1 ($error);
+            }
+            exit();*/
+            return ($errors);
+        } else {
+            $sql = "INSERT INTO quota_definitions_oplog
+            (quota_definition_sid, quota_order_number_id, validity_start_date, validity_end_date, quota_order_number_sid, volume, initial_volume,
+            measurement_unit_code, maximum_precision, critical_state, critical_threshold, monetary_unit_code, measurement_unit_qualifier_code,
+            description, operation, operation_date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)";
+            pg_prepare($conn, "quota_definition_insert", $sql);
+            pg_execute($conn, "quota_definition_insert", array($quota_definition_sid, $quota_order_number_id, $validity_start_date, $validity_end_date,
+            $quota_order_number_sid, $initial_volume, $initial_volume, $measurement_unit_code, $maximum_precision,
+            $critical_state, $critical_threshold, $monetary_unit_code, $measurement_unit_qualifier_code, $description, $operation, $operation_date));
+            return (True);
+        }
+    }
+
+    function conflict_check($quota_definition_sid = -1) {
         global $conn;
         $errors = array();
+
         # First, check for items that start at the exact same start date, which is the real fail
-        #h1 ($this->validity_start_date . $this->validity_end_date);
-        $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 AND validity_start_date = $2";
-        pg_prepare($conn, "quota_definition_conflict_check", $sql);
-        $result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date));      
+        if ($quota_definition_sid != -1) {
+            $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 and quota_definition_sid != $3 AND validity_start_date = $2";
+            pg_prepare($conn, "quota_definition_conflict_check", $sql);
+            $result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date, $this->quota_definition_sid));
+        } else {
+            $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 AND validity_start_date = $2";
+            pg_prepare($conn, "quota_definition_conflict_check", $sql);
+            $result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date));
+        }
         if ($result) {
             if (pg_num_rows($result) > 0){
                 array_push($errors, "Error scenario 1");
@@ -72,9 +114,15 @@ class quota_definition
         }
 
         # Second, check all definitions on this order number
-        $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 ORDER BY validity_start_date DESC";
-        pg_prepare($conn, "quota_definition_conflict_check2", $sql);
-        $result = pg_execute($conn, "quota_definition_conflict_check2", array($this->quota_order_number_id));      
+        if ($quota_definition_sid != -1) {
+            $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 and quota_definition_sid != $2 ORDER BY validity_start_date DESC";
+            pg_prepare($conn, "quota_definition_conflict_check2", $sql);
+            $result = pg_execute($conn, "quota_definition_conflict_check2", array($this->quota_order_number_id, $this->quota_definition_sid));      
+        } else {
+            $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 ORDER BY validity_start_date DESC";
+            pg_prepare($conn, "quota_definition_conflict_check2", $sql);
+            $result = pg_execute($conn, "quota_definition_conflict_check2", array($this->quota_order_number_id));      
+        }
         if ($result) {
             while ($row = pg_fetch_array($result)) {
                 $quota_definition_sid   = $row["quota_definition_sid"];
@@ -118,6 +166,7 @@ class quota_definition
                 $this->critical_threshold               = $row['critical_threshold'];
                 $this->monetary_unit_code               = $row['monetary_unit_code'];
                 $this->measurement_unit_qualifier_code  = $row['measurement_unit_qualifier_code'];
+                $this->description                      = $row['description'];
 
                 $this->validity_start_day   = date('d', strtotime($this->validity_start_date));
                 $this->validity_start_month = date('m', strtotime($this->validity_start_date));

@@ -20,6 +20,20 @@ class geographical_area
 		$this->validity_start_date		= $validity_start_date;
 		$this->validity_end_date		= $validity_end_date;
 	}
+
+	public function get_geographical_area_sid() {
+		global $conn;
+		$sql = "select geographical_area_sid from geographical_areas where geographical_area_id = $1
+		order by validity_start_date desc limit 1";
+		pg_prepare($conn, "get_geographical_area_sid", $sql);
+		$result = pg_execute($conn, "get_geographical_area_sid", array($this->geographical_area_id));
+		if ($result) {
+			while ($row = pg_fetch_array($result)) {
+				$this->geographical_area_sid  = $row['geographical_area_sid'];
+			}
+		}
+		return ($this->geographical_area_sid);
+	}
 	
 	public function delete_member() {
 		global $conn;

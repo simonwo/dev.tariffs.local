@@ -20,11 +20,11 @@ class base_regulation
         $operation = "C";
         $operation_date = $application->get_operation_date();
 
-        $this->base_regulation_id = $base_regulation_id;
-        $this->information_text = $information_text;
-        $this->validity_start_date = $validity_start_date;
-		$this->regulation_group_id = $regulation_group_id;
-		$this->published_date = '2019-03-30';
+        $this->base_regulation_id	= $base_regulation_id;
+        $this->information_text		= $information_text;
+        $this->validity_start_date	= $validity_start_date;
+		$this->regulation_group_id	= $regulation_group_id;
+		$this->published_date		= $validity_start_date;
 
 		$errors = $this->conflict_check();
         if (count($errors) > 0) {
@@ -63,7 +63,7 @@ class base_regulation
         $operation = "U";
         $operation_date = $application->get_operation_date();
 
-		$this->published_date = '2019-03-30';
+		$this->published_date = $this->validity_start_date;
 
 		#h1 ("Update" . $this->base_regulation_id);
 		#exit();

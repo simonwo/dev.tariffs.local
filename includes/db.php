@@ -2,7 +2,6 @@
 require ("p.php");
 $http_host = strtolower($_SERVER["HTTP_HOST"]);
 date_default_timezone_set("Europe/London");
-require (dirname(__FILE__) . "../../classes/extract.php");
 require (dirname(__FILE__) . "../../classes/application.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
 require (dirname(__FILE__) . "../../classes/duty_expression.php");
@@ -19,6 +18,9 @@ require (dirname(__FILE__) . "../../classes/measurement_unit.php");
 require (dirname(__FILE__) . "../../classes/measurement_unit_qualifier.php");
 require (dirname(__FILE__) . "../../classes/measure.php");
 require (dirname(__FILE__) . "../../classes/measure_condition.php");
+require (dirname(__FILE__) . "../../classes/measure_condition_component.php");
+require (dirname(__FILE__) . "../../classes/measure_component.php");
+require (dirname(__FILE__) . "../../classes/measure_partial_temporary_stop.php");
 require (dirname(__FILE__) . "../../classes/duty.php");
 require (dirname(__FILE__) . "../../classes/siv_component.php");
 require (dirname(__FILE__) . "../../classes/geographical_area.php");
@@ -33,6 +35,30 @@ require (dirname(__FILE__) . "../../classes/quota_blocking_period.php");
 require (dirname(__FILE__) . "../../classes/quota_suspension_period.php");
 require (dirname(__FILE__) . "../../classes/additional_code.php");
 require (dirname(__FILE__) . "../../classes/measure_excluded_geographical_area.php");
+require (dirname(__FILE__) . "../../classes/footnote_association_measure.php");
+require (dirname(__FILE__) . "../../classes/measure_condition_code.php");
+require (dirname(__FILE__) . "../../classes/measure_action_code.php");
+
+/* Extract classes */
+require (dirname(__FILE__) . "../../classes/extract.php");
+
+require (dirname(__FILE__) . "../../classes/extract/extract_measures.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_components.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_conditions.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_condition_components.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_excluded_geographical_areas.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_partial_temporary_stops.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_footnote_association_measures.php");
+
+require (dirname(__FILE__) . "../../classes/extract/extract_geographical_area_descriptions.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_geographical_area_memberships.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_measure_types.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_base_regulations.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_quota_definitions.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_footnotes.php");
+require (dirname(__FILE__) . "../../classes/extract/extract_certificates.php");
+
+
 
 
 if(isset($_COOKIE["showing"])) {
@@ -73,6 +99,30 @@ function get_checked($key, $value) {
 		return (" checked");
 	} else {
 		return ("");
+	}
+}
+
+function get_checked_array($key, $value) {
+	if (is_array($key)) {
+		$checked = false;
+		foreach ($key as $key_item) {
+			if (strval($key_item) == strval($value)) {
+				$checked = true;
+				break;
+			}
+		}
+		if ($checked == true) {
+			return (" checked");
+		} else {
+			return ("");
+		}
+
+} else {
+		if ($key == $value) {
+			return (" checked");
+		} else {
+			return ("");
+		}
 	}
 }
 
@@ -452,6 +502,15 @@ function short_date($s) {
 	return ($s2);
 }
 
+function xml_date($s) {
+	if ($s == "") {
+		$s2 = "";
+	} else {
+		$s2 = date("Y-m-d", strtotime($s));
+	}
+	return ($s2);
+}
+
 function dm($s) {
 	if ($s == "") {
 		$s2 = "-";
@@ -468,6 +527,14 @@ function vshort_date($s) {
 		$s2 = date("d/m/y", strtotime($s));
 	}
 	return ($s2);
+}
+
+function standardise_commodity_code($goods_nomenclature_item_id) {
+	$goods_nomenclature_item_id = str_replace(" ", "", $goods_nomenclature_item_id);
+	if (strlen($goods_nomenclature_item_id) < 10) {
+		$goods_nomenclature_item_id .= str_repeat("0", 10 - strlen($goods_nomenclature_item_id));
+	}
+	return ($goods_nomenclature_item_id);
 }
 
 function format_commodity_code($s) {
@@ -518,5 +585,22 @@ function explode_string($var) {
 	$s = trim($s, ",");
 	return ($s);
 }
+
+function get_operation($s) {
+	switch ($s) {
+	case "U":
+		#h1 ("here");
+		$s2 = "1";
+		break;
+	case "D":
+		$s2 = "2";
+		break;
+	case "C":
+		$s2 = "3";
+		break;
+	}
+	return ($s2);
+}
+
 
 ?>

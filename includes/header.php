@@ -18,10 +18,13 @@
 	<link rel="apple-touch-icon" sizes="152x152" href="/assets/images/govuk-apple-touch-icon-152x152.png">
 	<link rel="apple-touch-icon" href="/assets/images/govuk-apple-touch-icon.png">
 	<link href="/stylesheets/main-9fc2b6373f3fed690333ff1e95b23718.css" rel="stylesheet" media="all" />
+	<!--<link href="/stylesheets/design_system.css" rel="stylesheet" media="all" />//-->
 	<link href="/stylesheets/styles.css" rel="stylesheet" />
 	<script src="/javascripts/vendor/modernizr.js"></script>
 	<script src="/javascripts/vendor/jquery-latest.js"></script>
 	<script src="/javascripts/vendor/jquery.cookie.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 	<script src="/javascripts/tariffs.js" type="text/javascript"></script>
 	<link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
 </head>
@@ -55,35 +58,33 @@
 						<a id="context_switcher_dev" href="#"><span id="show_dev">dev</span></a>&nbsp;
 <?php
 	}
-?>						
-<?php
 	if (strpos($my_url, "staging.") === False) {
 ?>						
 						<a id="context_switcher_staging" href="#"><span id="show_staging">staging</span></a>&nbsp;
 <?php
 	}
-?>
-<?php
 	if (strpos($my_url, "eu.") === False) {
 ?>						
 						<a id="context_switcher_eu" href="#"><span id="show_eu">eu</span></a>&nbsp;
 <?php
 	}
-?>					
-<?php
 	if (strpos($my_url, "fta.") === False) {
 ?>						
 						<a id="context_switcher_fta" href="#"><span id="show_fta">fta</span></a>&nbsp;
 <?php
 	}
-?>					
-<?php
-	if (strpos($my_url, "national.") === False) {
+	if (strpos($my_url, "load.") === False) {
 ?>						
-						<a id="context_switcher_national" href="#"><span id="show_national">national</span></a>&nbsp;
+						<a id="context_switcher_load" href="#"><span id="show_load">load</span></a>&nbsp;
+<?php
+	}
+	if (strpos($my_url, "remedies.") === False) {
+?>						
+						<a id="context_switcher_remedies" href="#"><span id="show_remedies">remedies</span></a>&nbsp;
 <?php
 	}
 ?>					
+
 					</div>
 					<div class="options">
 						<span id="current_db">Connected to database <?=$dbase?></span>

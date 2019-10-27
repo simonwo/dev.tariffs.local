@@ -1,11 +1,337 @@
 <?php
 	require (dirname(__FILE__) . "../../includes/db.php");
+	//pre($_REQUEST);
+	//die();
+
 	$phase = get_formvar("phase");
-	if ($phase == "1") {
-		get_formvars_phase1();
-	}
-	elseif ($phase == "measure_search") {
+    switch ($phase) {
+	case "measure_condition_insert":
+		get_formvars_measure_condition_insert();
+		break;
+	case "measure_excluded_geographical_area_delete":
+		get_formvars_measure_excluded_geographical_area_delete();
+		break;
+	case "measure_excluded_geographical_area_insert":
+		get_formvars_measure_excluded_geographical_area_insert();
+		break;
+	case "measure_create":
+		get_formvars_measure_create();
+		break;
+	case "measure_search":
 		get_formvars_measure_search();
+		break;
+	case "delete_measure":
+		//get_formvars_delete_measure();
+		break;
+	case "edit_component":
+		get_formvars_edit_component();
+		break;
+	case "add_component":
+		get_formvars_add_component();
+		break;
+	case "add_footnote":
+		get_formvars_add_footnote();
+		break;
+	case "add_condition":
+		get_formvars_add_condition();
+		break;
+	case "add_exclusion":
+		get_formvars_add_exclusion();
+		break;
+	case "delete_component":
+		get_formvars_delete_component();
+		break;
+	case "measure_component_insert":
+		get_formvars_measure_component_insert();
+		break;
+	case "footnote_association_measure_insert":
+		get_formvars_footnote_association_measure_insert();
+		break;
+	case "measure_component_update":
+		get_formvars_measure_component_update();
+		break;
+	}
+
+	function get_formvars_measure_condition_insert() {
+		$measure_sid								= get_querystring("measure_sid");
+		$condition_code								= get_querystring("condition_code");
+		$component_sequence_number					= get_querystring("component_sequence_number");
+		$condition_duty_amount						= get_querystring("condition_duty_amount");
+		$condition_monetary_unit_code				= get_querystring("condition_monetary_unit_code");
+		$condition_measurement_unit_code			= get_querystring("condition_measurement_unit_code");
+		$condition_measurement_unit_qualifier_code	= get_querystring("condition_measurement_unit_qualifier_code");
+		$action_code								= get_querystring("action_code");
+		$certificate_type_code						= get_querystring("certificate_type_code");
+		$certificate_code							= get_querystring("certificate_code");
+
+		if ($condition_duty_amount == "") {
+			$condition_duty_amount = Null;
+		}
+		if ($condition_monetary_unit_code == "") {
+			$condition_monetary_unit_code = Null;
+		}
+		if ($condition_measurement_unit_code == "") {
+			$condition_measurement_unit_code = Null;
+		}
+		if ($condition_measurement_unit_qualifier_code == "") {
+			$condition_measurement_unit_qualifier_code = Null;
+		}
+		if ($action_code == "") {
+			$action_code = Null;
+		}
+		if ($certificate_type_code == "") {
+			$certificate_type_code = Null;
+		}
+		if ($certificate_code == "") {
+			$certificate_code = Null;
+		}
+		
+		$measure_condition												= new measure_condition();
+		$measure_condition->measure_sid									= $measure_sid;
+		$measure_condition->condition_code								= $condition_code;
+		$measure_condition->component_sequence_number					= $component_sequence_number;
+		$measure_condition->condition_duty_amount						= $condition_duty_amount;
+		$measure_condition->condition_monetary_unit_code				= $condition_monetary_unit_code;
+		$measure_condition->condition_measurement_unit_code				= $condition_measurement_unit_code;
+		$measure_condition->condition_measurement_unit_qualifier_code	= $condition_measurement_unit_qualifier_code;
+		$measure_condition->action_code									= $action_code;
+		$measure_condition->certificate_type_code						= $certificate_type_code;
+		$measure_condition->certificate_code							= $certificate_code;
+		$measure_condition->insert();
+		//pre($_REQUEST);
+		//die();
+		$url  = "/measure_view.html?measure_sid=" . $measure_sid . "#measure_conditions";
+		header("Location: " . $url);
+	}
+
+	function get_formvars_measure_excluded_geographical_area_delete() {
+		//pre($_REQUEST);
+		//die();
+		$measure_sid				= get_querystring("measure_sid");
+		$excluded_geographical_area	= get_querystring("excluded_geographical_area");
+		$measure					= new measure();
+		$measure->measure_sid		= $measure_sid;
+		$measure->measure_excluded_geographical_area_delete($excluded_geographical_area);
+		$url  = "/measure_view.html?measure_sid=" . $measure_sid . "#measure_excluded_geographical_areas";
+		header("Location: " . $url);
+	}
+
+	function get_formvars_measure_excluded_geographical_area_insert() {
+		$measure_sid				= get_querystring("measure_sid");
+		$excluded_geographical_area	= get_querystring("excluded_geographical_area");
+		$geo = new geographical_area();
+		$geo->geographical_area_id = $excluded_geographical_area;
+		$geo->get_geographical_area_sid();
+		$measure = new measure();
+		$measure->measure_sid = $measure_sid;
+		$measure->measure_excluded_geographical_area_insert($excluded_geographical_area, $geo->geographical_area_sid);
+		$url  = "/measure_view.html?measure_sid=" . $measure_sid . "#measure_excluded_geographical_areas";
+		header("Location: " . $url);
+
+	}
+
+	function get_formvars_measure_create() {
+		$measure_generating_regulation_id	= get_querystring("measure_generating_regulation_id");
+		$measure_start_day					= get_querystring("measure_start_day");
+		$measure_start_month				= get_querystring("measure_start_month");
+		$measure_start_year					= get_querystring("measure_start_year");
+		$measure_end_day					= get_querystring("measure_end_day");
+		$measure_end_month					= get_querystring("measure_end_month");
+		$measure_end_year					= get_querystring("measure_end_year");
+		$measure_type_id					= strtoupper(get_querystring("measure_type_id"));
+		$ordernumber						= get_querystring("ordernumber");
+
+		// Get validity start date
+		if (($measure_start_day != "") and ($measure_start_month != "") and ($measure_start_year != "")) {
+			$validity_start_date = to_date_string($measure_start_day, $measure_start_month, $measure_start_year);
+			h1 ($validity_start_date);
+		} else {
+			h1 ("Start date invalid");
+			die();
+		}
+
+		// Get validity end date
+		if (($measure_end_day != "") and ($measure_end_month != "") and ($measure_end_year != "")) {
+			$validity_end_date = to_date_string($measure_end_day, $measure_end_month, $measure_end_year);
+			$justification_regulation_id	= $measure_generating_regulation_id;
+			$justification_regulation_role	= 1;
+		} else {
+			$validity_end_date				= Null;
+			$justification_regulation_id	= Null;
+			$justification_regulation_role	= Null;
+		}
+
+		// Get goods nomenclature item id
+		$goods_nomenclature_item_id						= get_querystring("goods_nomenclature_item_id");
+		$goods_nomenclature								= new goods_nomenclature();
+		$goods_nomenclature->goods_nomenclature_item_id	= $goods_nomenclature_item_id;
+		$goods_nomenclature_sid							= $goods_nomenclature->get_goods_nomenclature_sid();
+		h1 ($goods_nomenclature_sid);
+
+		// Get the additional code type id and id
+		$additional_code					= get_querystring("additional_code");
+		if ($additional_code != "") {
+			$additional_code_type_id						= strtoupper(substr($additional_code, 0, 1));
+			$additional_code_id								= strtoupper(substr($additional_code, 1, 3));
+			$obj_additional_code							= new additional_code();
+			$obj_additional_code->additional_code_type_id	= $additional_code_type_id;
+			$obj_additional_code->additional_code			= $additional_code_id;
+			$additional_code_sid							= $obj_additional_code->get_additional_code_sid();
+		} else {
+			$additional_code_type_id	= Null;
+			$additional_code_id			= Null;
+			$additional_code_sid		= Null;
+		}
+
+		// Get the geo area -- don't worry about exclusions yet
+		$geographical_area_id						= get_querystring("geographical_area_id");
+		$geographical_area							= new geographical_area();
+		$geographical_area->geographical_area_id	= $geographical_area_id;
+		$geographical_area_sid						= $geographical_area->get_geographical_area_sid();
+
+		$measure = new measure();
+		$measure->measure_generating_regulation_id		= $measure_generating_regulation_id;
+		$measure->goods_nomenclature_item_id			= $goods_nomenclature_item_id;
+		$measure->additional_code_type_id				= $additional_code_type_id;
+		$measure->additional_code_id					= $additional_code_id;
+		$measure->geographical_area_id					= $geographical_area_id;
+		$measure->measure_generating_regulation_id		= $measure_generating_regulation_id;
+		$measure->measure_generating_regulation_role	= 1;
+		$measure->measure_type_id						= $measure_type_id;
+		$measure->validity_start_date					= $validity_start_date;
+		$measure->validity_end_date						= $validity_end_date;
+		$measure->justification_regulation_id			= $justification_regulation_id;
+		$measure->justification_regulation_role			= $justification_regulation_role;
+		$measure->stopped_flag							= 0;
+		$measure->geographical_area_sid					= $geographical_area_sid;
+		$measure->goods_nomenclature_sid				= $goods_nomenclature_sid;
+		$measure->ordernumber							= $ordernumber;
+		$measure->additional_code_sid					= $additional_code_sid;
+		$measure->reduction_indicator					= Null;
+		$measure->export_refund_nomenclature_sid		= Null;
+
+		$measure->insert_measure();
+
+	}
+
+	function get_formvars_delete_measure() {
+		$measure_sid						= get_querystring("measure_sid");
+		/* In deleting a measure, we also need to delete the following items
+		   -- measure components
+		   -- meeasure condition
+		   -- measure condition component
+		   -- measure excluded geogrraphical area
+		   -- footnote association measure
+		   -- measure partial temporary stop
+		*/
+		$measure = new measure();
+		$measure->measure_sid = get_querystring("measure_sid");
+
+		// First, get all the subsidiary objects
+		$measure->get_measure_condition_components();
+		$measure->get_measure_conditions();
+		$measure->get_measure_components();
+		$measure->get_footnote_association_measures();
+		$measure->get_measure_excluded_geographical_areas();
+		$measure->get_measure_partial_temporary_stops();
+
+		// Second, delete the subsidiary objects
+		$measure->delete_measure_condition_components();
+		$measure->delete_measure_conditions();
+		$measure->delete_measure_components();
+		$measure->delete_footnote_association_measures();
+		$measure->delete_measure_excluded_geographical_areas();
+		$measure->delete_measure_partial_temporary_stops();
+		pre($_REQUEST);
+		die();
+	}
+
+	function get_formvars_measure_component_insert() {
+		/*h1 ("get_formvars_measure_component_insert");
+		pre($_REQUEST);
+		die();*/
+
+		$measure_sid						= get_querystring("measure_sid");
+		$duty_expression_id					= get_querystring("duty_expression_id");
+		$duty_amount						= get_querystring("duty_amount");
+		$monetary_unit_code					= get_querystring("monetary_unit_code");
+		$measurement_unit_code				= get_querystring("measurement_unit_code");
+		$measurement_unit_qualifier_code	= get_querystring("measurement_unit_qualifier_code");
+
+		$measure = new measure();
+		$ret = $measure->insert_component($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code);
+
+		header('Location: /measure_view.html?measure_sid=' . $measure_sid . '#measure_components');
+	
+	}
+
+	function get_formvars_footnote_association_measure_insert() {
+		//pre($_REQUEST);
+		//die();
+
+		$measure_sid						= get_querystring("measure_sid");
+		$footnote_type_id					= get_querystring("footnote_type_id");
+		$footnote_id						= get_querystring("footnote_id");
+		$measure = new measure();
+		$ret = $measure->insert_footnote_association_measure($measure_sid, $footnote_type_id, $footnote_id);
+
+		header('Location: /measure_view.html?measure_sid=' . $measure_sid . '#measure_footnotes');
+	
+	}
+
+	function get_formvars_measure_component_update() {
+		$measure_sid						= get_querystring("measure_sid");
+		$duty_expression_id					= get_querystring("duty_expression_id");
+		$duty_amount						= get_querystring("duty_amount");
+		$monetary_unit_code					= get_querystring("monetary_unit_code");
+		$measurement_unit_code				= get_querystring("measurement_unit_code");
+		$measurement_unit_qualifier_code	= get_querystring("measurement_unit_qualifier_code");
+
+		$measure = new measure();
+		$ret = $measure->update_component($measure_sid, $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code);
+
+		header('Location: /measure_view.html?measure_sid=' . $measure_sid . '#measure_components');
+	
+	}
+
+	function get_formvars_edit_component() {
+		$measure_sid = get_querystring("measure_sid");
+		$duty_expression_id = get_querystring("duty_expression_id");
+		$phase = get_querystring("phase");
+		header('Location: /measure_component_insert_update.html?phase=' . $phase . '&measure_sid=' . $measure_sid . '&duty_expression_id=' . $duty_expression_id);
+	}
+
+	function get_formvars_delete_component() {
+		$measure_sid		= get_querystring("measure_sid");
+		$duty_expression_id	= get_querystring("duty_expression_id");
+		$measure = new measure();
+		$ret = $measure->delete_component($measure_sid, $duty_expression_id);
+		header('Location: /measure_view.html?measure_sid=' . $measure_sid . '#measure_components');
+	}
+
+	function get_formvars_add_component() {
+		$measure_sid = get_querystring("measure_sid");
+		$phase = "add_component_form";
+		header('Location: /measure_component_insert_update.html?phase=' . $phase . '&measure_sid=' . $measure_sid);
+	}
+
+	function get_formvars_add_footnote() {
+		$measure_sid = get_querystring("measure_sid");
+		$phase = "add_footnote_form";
+		header('Location: /footnote_association_measure_insert_update.html?phase=' . $phase . '&measure_sid=' . $measure_sid);
+	}
+
+	function get_formvars_add_condition() {
+		$measure_sid = get_querystring("measure_sid");
+		$phase = "add_condition_form";
+		header('Location: /measure_condition_insert_update.html?phase=' . $phase . '&measure_sid=' . $measure_sid);
+	
+	}
+
+	function get_formvars_add_exclusion() {
+		$measure_sid = get_querystring("measure_sid");
+		$phase = "add_component_form";
+		header('Location: /measure_excluded_geographical_area_insert_update.html?phase=' . $phase . '&measure_sid=' . $measure_sid);
 	}
 
 	function get_formvars_phase1() {
@@ -71,10 +397,39 @@
 
 
 	function get_formvars_measure_search() {
-		$measure_sid = get_querystring("measure_sid");
-		$url  = "/measure_view.html";
-		$url .= "?measure_sid=" . $measure_sid;
-		header("Location: " . $url);
+		$measure_sid				= get_querystring("measure_sid");
+		$goods_nomenclature_item_id	= get_querystring("goods_nomenclature_item_id");
+		$measure_type_id			= get_querystring("measure_type_id");
+		$geographical_area_id		= get_querystring("geographical_area_id");
+		$base_regulation_id			= get_querystring("base_regulation_id");
+
+		if ($goods_nomenclature_item_id != "") {
+			$goods_nomenclature_item_id = standardise_commodity_code($goods_nomenclature_item_id);
+		}
+		
+		if ($measure_sid != "") {
+			$url  = "/measure_view.html";
+			$url .= "?measure_sid=" . $measure_sid;
+			header("Location: " . $url);
+		} elseif ($goods_nomenclature_item_id != "") {
+			$url  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id;
+			if ($measure_type_id != "") {
+				$url .= "&measure_type_id=" . $measure_type_id;
+			}
+			if ($geographical_area_id != "") {
+				$url .= "&geographical_area_id=" . $geographical_area_id;
+			}
+			$url .= "#assigned";
+			header("Location: " . $url);
+		} elseif ($measure_type_id != "") {
+			$url  = "/measure_type_view.html?measure_type_id=" . $measure_type_id;
+			$url .= "#measures";
+			header("Location: " . $url);
+		} elseif ($geographical_area_id != "") {
+			$url  = "/geographical_area_view.html?geographical_area_id=" . $geographical_area_id;
+			$url .= "#measures";
+			header("Location: " . $url);
+		}
 	}
 
 ?>

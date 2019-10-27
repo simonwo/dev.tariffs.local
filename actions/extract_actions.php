@@ -4,6 +4,8 @@
 
     if ($phase == "extract_data") {
         $extract = new extract;
+        $extract->set_parameters();
+        $extract->create_subclasses();
         $extract->extract_data();
     }
 ?>

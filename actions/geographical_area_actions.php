@@ -179,12 +179,19 @@
     }
 
     function get_formvars_filter_geography() {
-        h1 ("ushfiu");
+        $area_code = "";
+        foreach($_GET['geographical_area_code'] as $selected){
+            $area_code .= $selected . ",";
+        }
+        $area_code = rtrim($area_code, ",");
+    
+
         $geographical_area_text   = get_querystring("geographical_area_text");
         $geography_scope          = get_querystring("geography_scope");
         $url  = "/geographical_areas.html";
         $url .= "?geographical_area_text=" . $geographical_area_text;
         $url .= "&geography_scope=" . $geography_scope;
+        $url .= "&area_code=" . $area_code;
         header("Location: " . $url);
     }
 

@@ -9,6 +9,7 @@
         global $conn;
         $errors = array();
         pre($_REQUEST);
+        $quota_definition_sid               = get_formvar("quota_definition_sid");
         $quota_order_number_id              = get_formvar("quota_order_number_id");
         $quota_order_number_sid             = get_formvar("quota_order_number_sid");
         $validity_start_day                 = get_formvar("validity_start_day",                 "quota_definition_", True);
@@ -63,16 +64,16 @@
         if ($critical_threshold == "") {
             array_push($errors, "critical_threshold");
         }
-        
+
         if ($valid_start_date && $valid_end_date) {
             $validity_start_date2    = to_date($validity_start_day, $validity_start_month, $validity_start_year);
             $validity_end_date2      = to_date($validity_end_day, $validity_end_month, $validity_end_year);
             $diff = date_diff($validity_start_date2, $validity_end_date2);
-            #print ($diff->format('%R%a'));
             if ($diff->format('%R%a') <= 0) {
                 array_push($errors, "validity_end_date_before_start_date");
             }
-
+        }
+        if ($quota_definition_sid == "") {
             if (count($errors) == 0) {
                 $quota_definition = new quota_definition;
                 $ret = $quota_definition->insert($quota_order_number_id, $validity_start_date, $validity_end_date,
@@ -80,7 +81,17 @@
                     $critical_state, $critical_threshold, $monetary_unit_code, $measurement_unit_qualifier_code, $description);
                 if (is_array($ret)) {
                     array_push($errors, "conflict_with_existing");
-                }    
+                }
+            }
+        } else {
+            if (count($errors) == 0) {
+                $quota_definition = new quota_definition;
+                $ret = $quota_definition->update($quota_definition_sid, $quota_order_number_id, $validity_start_date, $validity_end_date,
+                    $quota_order_number_sid, $initial_volume, $measurement_unit_code, $maximum_precision,
+                    $critical_state, $critical_threshold, $monetary_unit_code, $measurement_unit_qualifier_code, $description);
+                if (is_array($ret)) {
+                    array_push($errors, "conflict_with_existing");
+                }
             }
         }
         
@@ -91,10 +102,10 @@
         
         if (count($errors) > 0) {
             $error_string = serialize($errors);
-            #h1 ($error_string);
-            #exit();
+            h1 ($error_string);
+            exit();
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-          $url = "/quota_definition_create_edit.html?action=new&err=1&quota_order_number_id=" . $quota_order_number_id;
+          $url = "/quota_definition_create_edit.html?action=new&err=1quota_definition_sid=" . $quota_definition_sid . "&quota_order_number_id=" . $quota_order_number_id;
         } else {
             $url = "/quota_order_number_view.html?quota_order_number_id=" . $quota_order_number_id . "#definitions";
         }
