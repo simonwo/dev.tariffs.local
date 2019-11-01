@@ -38,6 +38,7 @@
 <div class="app-content__header">
 	<h1 class="govuk-heading-xl">Regulations</h1>
 </div>
+
 <form action="/actions/regulation_actions.html" method="get" class="inline_form">
     <h3>Filter results</h3>
     <input type="hidden" name="phase" id="phase" value="filter_regulations" />
@@ -55,8 +56,15 @@
             </fieldset>
         </div>
     </div>
-    
-    <div class="column-one-third" style="width:28%">
+
+
+
+    <details class="govuk-details" data-module="govuk-details" style="clear:both">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text medium">Advanced filters</span>
+        </summary>
+        <div class="govuk-details__text">
+
         <div class="govuk-form-group">
             <fieldset class="govuk-fieldset" aria-describedby="select_scope_hint" role="group">
                 <span id="select_scope_hint" class="govuk-hint">Select scope</span>
@@ -80,8 +88,6 @@
                 </div>
             </fieldset>
         </div>
-    </div>
-    <div class="column-one-third">
         <div class="govuk-form-group">
 			<span id="validity_start_hint" class="govuk-hint">Please select the regulation group.</span>
 			<select class="govuk-select" id="regulation_group_id" name="regulation_group_id">
@@ -98,12 +104,13 @@
 ?>
 			</select>
 		</div>
-        <div class="govuk-form-group" style="padding:0px;margin:0px">
-            <button type="submit" class="govuk-button" style="margin-top:-12px">Search</button>
-        </div>
+    </div>
+    </details>    
+    <div class="clearer"><!--&nbsp;//--></div>
+    <div class="govuk-form-group" style="padding:0px;margin:0px">
+        <button type="submit" class="govuk-button" style="margin-top:-12px">Search</button>
     </div>
 </form>
-<div class="clearer"><!--&nbsp;//--></div>
 
 <?php
     $clause1 = "";
@@ -192,6 +199,11 @@
                 <input type="hidden" name="action" value="edit" />
                 <input type="hidden" name="base_regulation_id" value="<?=$regulation_id?>" />
                 <button type="submit" class="govuk-button btn_nomargin">Edit</button>
+            </form>
+            <form action="measure_export.php" method="get">
+                <input type="hidden" name="action" value="edit" />
+                <input type="hidden" name="base_regulation_id" value="<?=$regulation_id?>" />
+                <button type="submit" class="govuk-button btn_nomargin">Export measures</button>
             </form>
         </td>
     </tr>

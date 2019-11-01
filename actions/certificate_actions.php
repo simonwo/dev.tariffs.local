@@ -87,16 +87,12 @@
             array_push($errors, "validity_end_date");
         }
         
-        h1 (count($errors));
-        #exit();
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             $url = "/certificate_create_edit.html?phase=" . $create_edit . "&action=new&err=1&certificate_code=" . $certificate->certificate_code;
         } else {
             if ($create_edit == "create") {
-                #h1 ("here");
-                #exit();
                 // Do create scripts
                 $certificate->create();
             } else {
@@ -126,8 +122,6 @@
         $certificate_scope          = get_querystring("certificate_scope");
         $url  = "/certificates.html";
         $url .= "?certificate_scope=" . $certificate_scope;
-        #h1 ($url);
-        #exit();
         header("Location: " . $url);
     }
 
@@ -142,14 +136,10 @@
         $description                       = get_formvar("description",            "certificate_", True);
 
         $validity_start_date    = to_date_string($validity_start_day, $validity_start_month, $validity_start_year);
-        #h1 ($validity_start_date);
-        #exit();
 
         if ($certificate_description_period_sid == -1) {
             # Check on the validity start and end dates
             $valid_start_date = checkdate($validity_start_month, $validity_start_day, $validity_start_year);
-            #h1 ("valid start date" . $valid_start_date);
-            #exit();
             if ($valid_start_date != 1) {
                 array_push($errors, "validity_start_date");
             }

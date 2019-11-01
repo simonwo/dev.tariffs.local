@@ -95,11 +95,6 @@
             }
         }
         
-        /*foreach ($errors as $error) {
-            h1 ($error);
-        }
-        exit();*/
-        
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             h1 ($error_string);

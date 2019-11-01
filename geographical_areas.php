@@ -2,9 +2,21 @@
     $title = "Geographical areas";
     require ("includes/db.php");
     require ("includes/header.php");
+    
     $regulation_group_id    = get_querystring("regulation_group_id");
     $geographical_area_text = get_querystring("geographical_area_text");
-    $geography_scope = get_querystring("geography_scope");
+    $geography_scope        = get_querystring("geography_scope");
+    $area_code              = get_querystring("area_code");
+    if ($area_code == "") {
+        $area_code = "0,1,2";
+    }
+    $area_codes = explode(",", $area_code);
+    $area_code = "";
+    foreach($area_codes as $code){
+        $area_code .= "'" . $code . "',";
+    }
+    $area_code = rtrim($area_code, ",");
+    
     if ($geography_scope == "") {
         $geography_scope = "all";
     }
@@ -61,19 +73,68 @@
             </div>
         </div>
         <div class="clearer"><!--&nbsp;//--></div>
-        <div class="govuk-radios govuk-radios--inline">
-            <div class="govuk-radios__item break">
-                <input <?=get_checked($geography_scope, "all")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_all" value="all" />
-                <label class="govuk-label govuk-radios__label" for="geography_scope_all">Show all geographical areas</label>
+
+
+
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text medium">Advanced filters</span>
+            </summary>
+            <div class="govuk-details__text">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl" style="width:100% !important;">
+                    <h1 class="govuk-fieldset__heading large" style="min-width:90% !important;">
+                        Select types of geographical area
+                    </h1>
+                </legend>
+                <div style="width:40%;float:left">
+                    <div class="govuk-radios govuk-radios--inline" style="margin-bottom:0.5em">
+                        <div class="govuk-radios__item break">
+                            <input <?=get_checked($geography_scope, "all")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_all" value="all" />
+                            <label class="govuk-label govuk-radios__label" for="geography_scope_all">Show all geographical areas</label>
+                        </div>
+                    </div>
+                    <div class="govuk-radios govuk-radios--inline">
+                        <div class="govuk-radios__item break">
+                            <input <?=get_checked($geography_scope, "current")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_current" value="current" />
+                            <label class="govuk-label govuk-radios__label" for="geography_scope_current">Only show current geographical areas</label>
+                        </div>
+                    </div>
+                </div>
+                <div style="width:55%;float:left;">
+                    
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset" aria-describedby="geographical_area_code-hint">
+                            <div class="govuk-checkboxes">
+                                <div class="govuk-checkboxes__item">
+                                    <input <?=get_checked_array($area_codes, 0)?> class="govuk-checkboxes__input" id="geographical_area_code-0" name="geographical_area_code[]" type="checkbox" value="0">
+                                    <label class="govuk-label govuk-checkboxes__label" for="geographical_area_code-0">
+                                    Countries
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input <?=get_checked_array($area_codes, 2)?> class="govuk-checkboxes__input" id="geographical_area_code-2" name="geographical_area_code[]" type="checkbox" value="2">
+                                    <label class="govuk-label govuk-checkboxes__label" for="geographical_area_code-2">
+                                    Regions
+                                    </label>
+                                </div>
+                                <div class="govuk-checkboxes__item">
+                                    <input <?=get_checked_array($area_codes, 1)?> class="govuk-checkboxes__input" id="geographical_area_code-1" name="geographical_area_code[]" type="checkbox" value="1">
+                                    <label class="govuk-label govuk-checkboxes__label" for="geographical_area_code-1">
+                                    Country groups
+                                    </label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>                
+
+                </div>
+                <div class="clearer"><!--&nbsp;//--></div>
+
             </div>
-        </div><br/>
-        <div class="govuk-radios govuk-radios--inline" style="margin-bottom:1em">
-            <div class="govuk-radios__item break">
-                <input <?=get_checked($geography_scope, "current")?> type="radio" class="govuk-radios__input" name="geography_scope" id="geography_scope_current" value="current" />
-                <label class="govuk-label govuk-radios__label" for="geography_scope_current">Only show current geographical areas</label>
-            </div>
-        </div>
-        <div class="clearer"><!--&nbsp;//--></div>
+        </details>
+
+
+        
     </form>
 <?php
     $clause = "";
@@ -113,10 +174,23 @@
             $sql .= " WHERE ";
         }
         $sql .= " validity_end_date IS NULL ";
+        $where_added = True;
     }
+
+    // Area codes
+    if ($where_added == True) {
+        $sql .= " AND ";
+    } else {
+        $sql .= " WHERE ";
+    }
+    $sql .= " geographical_code in (" . $area_code . ") ";
+    $where_added = True;
+    
+
+
     $sql .= " ORDER BY 2";
     $sql .= $limit_clause;
-    #echo ($sql);
+    //echo ($sql);
     $result = pg_query($conn, $sql);
 	if (($result) && pg_num_rows($result) > 0) {
 ?>

@@ -26,7 +26,6 @@ class extract
 	function extract_data() {
 		global $extracted_measure_list;
 		$extracted_measure_list = array();
-		h1 ("Extracting data");
 		$this->extract_string = '<?xml version="1.0" encoding="UTF-8"?>' . "\r\n";
 		$this->extract_string .= '<env:envelope xmlns="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" xmlns:env="urn:publicid:-:DGTAXUD:GENERAL:ENVELOPE:1.0" id="' . $this->envelope_id . '">' . "\r\n";
 		$this->extract_string .= $this->extract_footnotes->extract();							// 200 00
@@ -52,11 +51,11 @@ class extract
 		global $conn, $message_id, $last_transaction_id, $last_exported_operation_date;
 		$message_id = 1;
 
+		/*
 		$last_exported_operation_date = '2019-10-25 08:00:00';
 		$last_transaction_id				= 1;
-		h1 ($last_exported_operation_date);
+		*/
 
-		/*
 		$sql = "SELECT last_exported_operation_date, last_transaction_id FROM ml.config";
 		$result = pg_query($conn, $sql);
 		if ($result) {
@@ -74,7 +73,6 @@ class extract
 				$last_transaction_id          = $last_transaction_id;
 			}
 		}
-		*/
 	}
 
 
@@ -153,6 +151,7 @@ class extract
 
 		$xml = new DOMDocument();
 		$opdate = str_replace(":", "-", $last_exported_operation_date);
+		$opdate = str_replace(" ", "-", $opdate);
 		$filename = "../extracts/" . $http_host . "_since_" . $opdate . ".xml";
 		#$filename = "../extracts/newfile2.xml";
 
@@ -169,8 +168,10 @@ class extract
 		} else {
 			H1 ("The file has validated ");
 			prex ($this->extract_string);
+			/*
 			$last_exported_operation_date = date("Y-m-d h:i:s");
 			$this->update_last_exported_operation_date();
+			*/
 			#h1 (date("Y-m-d h:i:s"));
 
 		}

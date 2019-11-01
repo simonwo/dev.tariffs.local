@@ -10,7 +10,7 @@ class extract_quota_definitions extends extract
         validity_end_date, quota_order_number_sid, volume, initial_volume,
         measurement_unit_code, maximum_precision, critical_state, critical_threshold,
         monetary_unit_code, measurement_unit_qualifier_code, description, operation
-        from quota_definitions WHERE operation_date > $1
+        from quota_definitions_oplog WHERE operation_date > $1
 		ORDER BY operation_date";
 		
 		pg_prepare($conn, "extract_quota_definitions", $sql);
@@ -34,7 +34,7 @@ class extract_quota_definitions extends extract
 					$monetary_unit_code                 = $row["monetary_unit_code"];
 					$measurement_unit_qualifier_code    = $row["measurement_unit_qualifier_code"];
 					$description                        = $row["description"];
-                    $operation = get_operation($row["operation"]);
+					$operation = get_operation($row["operation"]);
                     
 					$instance = str_replace("[TRANSACTION_ID]", $last_transaction_id, $instance);
 					$instance = str_replace("[MESSAGE_ID]", $message_id, $instance);

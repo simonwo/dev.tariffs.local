@@ -1,11 +1,12 @@
 <?php
+	$today = time();
+	$today_string = date('Y-m-d', $today);
     $title = "View quota order number";
 	require ("includes/db.php");
 	$quota_order_number_id 	= get_querystring("quota_order_number_id");
 	$quota_order_number_id 	= str_replace( ".", "", $quota_order_number_id);
-	//h1 ($quota_order_number_id);
 	$quota_order_number 	= new quota_order_number;
-	$quota_order_number->set_properties($quota_order_number_id, "", "");
+	$quota_order_number->quota_order_number_id = $quota_order_number_id;
 	$quota_order_number->get_origins();
 	if (substr($quota_order_number->quota_order_number_id, 0, 3) == "094") {
 		$quota_order_number->licensed = true;
@@ -14,6 +15,7 @@
 		$quota_order_number->licensed = false;
 		$type = "FCFS quota order number";
 	}
+	$type = "Quota order number";
 
 	$quota_definition = new quota_definition;
 	$quota_definition->clear_cookies();
@@ -21,64 +23,50 @@
 ?>
 
 <div id="wrapper" class="direction-ltr">
-<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
-	<ol class="govuk-breadcrumbs__list">
-		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
-		</li>
+	<div class="gem-c-breadcrumbs govuk-breadcrumbs " data-module="track-click">
+		<ol class="govuk-breadcrumbs__list">
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/">Main menu</a>
+			</li>
 <?php
 	if ($quota_order_number->licensed == true) {
 ?>
-		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/licensed_quota_order_numbers.html">Licensed quota order numbers</a>
-		</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/licensed_quota_order_numbers.html">Licensed quota order numbers</a>
+			</li>
 <?php
 	} else {
 ?>
-		<li class="govuk-breadcrumbs__list-item">
-			<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a>
-		</li>
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="/quota_order_numbers.html">Quota order numbers</a>
+			</li>
 <?php		
 	}
 ?>		
-		<li class="govuk-breadcrumbs__list-item">Quota <?=$quota_order_number_id?></li>
-	</ol>
+			<li class="govuk-breadcrumbs__list-item">Quota <?=$quota_order_number_id?></li>
+		</ol>
 	</div>
 	<div class="app-content__header">
     	<h1 class="govuk-heading-xl"><?=$type?> <?=$quota_order_number_id?></h1>
 	</div>
 
-		<!-- MENU //-->
-		<h2>Page content</h2>
-		<ul class="tariff_menu">
-<?php
-	if ($quota_order_number->licensed == false) {
-?>			
-			<li><a href="#details">Quota details</a></li>
-			<li><a href="#origins">Quota origins</a></li>
-			<li><a href="#definitions">Quota definitions</a></li>
-			<li><a href="#associations">Quota associations</a></li>
-<?php
-	}
-?>
-			<li><a href="#measures">Quota measures</a></li>
-			<li><a href="#commodities">Commodities</a></li>
-<?php
-	if ($quota_order_number->licensed == false) {
-?>			
-			<li><a target="_blank" href="https://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-01&Code=<?=$quota_order_number_id?>">View on EU Taric quota consultation site</a></li>
-<?php
-	}
-?>
-		</ul>
+<!-- Begin tabs //-->
+<div class="govuk-tabs" data-module="govuk-tabs">
+	<h2 class="govuk-tabs__title">Contents</h2>
+	<ul class="govuk-tabs__list compact" style="max-width:100% !important;width:100%">
+		<li class="govuk-tabs__list-item govuk-tabs__list-item--selected"><a class="govuk-tabs__tab" href="#details">Quota details</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#origins">Origins</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#definitions">Definition periods</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#associations">Associations</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measures">Measures</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#commodities">Commodities</a></li>
+	</ul>
 
+	<!-- Begin details section //-->
+	<section class="govuk-tabs__panel" id="details">
+		<h2 style="margin-top:0px">Quota details</h2>
 <?php
-	if ($quota_order_number->licensed == false) {
-?>			
-
-		<h2 id="details">Quota details</h2>
-<?php
-	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date
+	$sql = "SELECT quota_order_number_sid, quota_order_number_id, validity_start_date, validity_end_date, description
 	FROM quota_order_numbers WHERE quota_order_number_id = '" . $quota_order_number_id . "' ORDER BY validity_start_date DESC";
 	$result = pg_query($conn, $sql);
 	$quota_order_number_count = pg_num_rows($result);
@@ -91,24 +79,42 @@
 ?>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header nopad">SID</th>
-				<th class="govuk-table__header">Quota order number ID</th>
-				<th class="govuk-table__header">Start date</th>
-				<th class="govuk-table__header">End date</th>
+				<th class="govuk-table__header nopad" style="width:8%">SID</th>
+				<th class="govuk-table__header" style="width:18%">Quota order number ID</th>
+				<th class="govuk-table__header" style="width:10%">Start date</th>
+				<th class="govuk-table__header" style="width:10%">End date</th>
+				<th class="govuk-table__header" style="width:44%">Description</th>
+				<th class="govuk-table__header r" style="width:10%">Actions</th>
 			</tr>
 <?php            
 		while ($row = pg_fetch_array($result)) {
 			$quota_order_number_sid = $row["quota_order_number_sid"];
 			$quota_order_number_id  = $row["quota_order_number_id"];
-			$validity_start_date    = short_date($row["validity_start_date"]);
-			$validity_end_date      = short_date($row["validity_end_date"]);
+			$validity_start_date    = $row["validity_start_date"];
+			$validity_end_date      = $row["validity_end_date"];
+			$description			= $row["description"];
 ?>
-			<tr class="govuk-table__row">
-				<td class="govuk-table__cell nopad"><?=$quota_order_number_sid?></td>
-				<td class="govuk-table__cell"><?=$quota_order_number_id?></td>
-				<td class="govuk-table__cell"><?=$validity_start_date?></td>
-				<td class="govuk-table__cell"><?=$validity_end_date?></td>
-			</tr>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell nopad"><?=$quota_order_number_sid?></td>
+					<td class="govuk-table__cell"><?=$quota_order_number_id?></td>
+					<td class="govuk-table__cell"><?=short_date($validity_start_date)?></td>
+					<td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
+					<td class="govuk-table__cell"><?=$description?></td>
+					<td class="govuk-table__cell r">
+<?php
+	if (($validity_end_date > $today_string) or (is_null($validity_end_date))) {
+?>
+						<form action="quota_order_number_create_edit.html" method="get">
+							<input type="hidden" name="phase" value="edit" />
+							<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+							<input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number_sid?>" />
+							<button type="submit" class="govuk-button btn_nomargin">Edit</button>
+						</form>
+<?php
+	}
+?>						
+					</td>
+				</tr>
 <?php
 		}
 ?>
@@ -117,26 +123,12 @@
 	}
 ?>
 
-		<p class="back_to_top"><a href="#top">Back to top</a></p>
-<?php
-	}
-	if ($quota_order_number->licensed == false) {
-?>
-		<h2 id="origins">Quota origins</h2>
-<!--		
-		<form action="/quota_order_number_add_origin.html" method="get" class="inline_form">
-			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
-			<input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number_sid?>" />
-		<input type="hidden" name="action" value="new" />
-		<h3>New origin</h3>
-		<div class="column-one-third" style="width:320px">
-		<div class="govuk-form-group" style="padding:0px;margin:0px">
-				<button type="submit" class="govuk-button">Add origin</button>
-			</div>
-		</div>
-		<div class="clearer">&nbsp;</div>
-		</form>
-//-->		
+	</section>
+
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="origins">
+		<h2 style="margin-top:0px">Quota origins</h2>
+		<p>Please use this section to assign quota origins to this quota. An origin needs to
+			be assigned to a quota to identify the origin country to which the quota applies.</p>
 <?php
 	$origin_count = count($quota_order_number->origins);
 	if ($origin_count > 0) {
@@ -178,30 +170,21 @@
 ?>			
 		</table>
 <?php		
+	} else {
+		echo ("<p>There are currently no origins assigned to this quota.</a>");
 	}
 ?>
-		<p class="back_to_top"><a href="#top">Back to top</a></p>
-		
-<?php
-	}
-	if ($quota_order_number->licensed == false) {
-?>
-
-
-		<h2 id="definitions">Quota definitions</h2>
-<!--
-		<form action="/quota_definition_create_edit.html" method="get" class="inline_form">
-		<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
-		<input type="hidden" name="action" value="new" />
-		<h3>New definition</h3>
-		<div class="column-one-third" style="width:320px">
-			<div class="govuk-form-group" style="padding:0px;margin:0px">
-				<button type="submit" class="govuk-button">Create new quota definition</button>
-			</div>
-		</div>
-		<div class="clearer">&nbsp;</div>
+		<form action="/quota_order_number_add_origin.html" method="get">
+			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+			<input type="hidden" name="quota_order_number_sid" value="<?=$quota_order_number_sid?>" />
+			<input type="hidden" name="action" value="new" />
+			<button type="submit" class="govuk-button small">Create new quota origin</button>
 		</form>
-//-->
+	</section>
+
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="definitions">
+		<h2 style="margin-top:0px">Quota definitions</h2>
+		<p>Use this section to manage quota definition periods for this quota.</p>
 
 <?php
 	$sql = "SELECT quota_definition_sid, quota_order_number_id, validity_start_date, validity_end_date,
@@ -211,10 +194,7 @@
 	FROM quota_definitions qd, measurement_unit_descriptions mud
 	WHERE quota_order_number_id = '" . $quota_order_number_id . "'
 	and qd.measurement_unit_code = mud.measurement_unit_code
-	--and validity_start_date >= '2019-11-01'
 	ORDER BY validity_start_date DESC";
-
-	//echo ($sql);
 
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
@@ -223,7 +203,7 @@
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header tiny nopad">Definition SID</th>
-				<th class="govuk-table__header tiny">Order number SID</th>
+				<th class="govuk-table__header tiny c">Order number SID</th>
 				<th class="govuk-table__header tiny">Start date</th>
 				<th class="govuk-table__header tiny">End date</th>
 				<th class="govuk-table__header tiny">Vol</th>
@@ -240,8 +220,8 @@
 			$quota_definition_sid 				= $row["quota_definition_sid"];
 			$quota_order_number_id  			= $row["quota_order_number_id"];
 			$quota_order_number_sid  			= $row["quota_order_number_sid"];
-			$validity_start_date                = short_date($row["validity_start_date"]);
-			$validity_end_date                  = short_date($row["validity_end_date"]);
+			$validity_start_date                = $row["validity_start_date"];
+			$validity_end_date                  = $row["validity_end_date"];
 			$initial_volume                     = number_format($row["initial_volume"], 2);
 			$measurement_unit_code              = $row["measurement_unit_code"];
 			$maximum_precision                  = $row["maximum_precision"];
@@ -254,9 +234,9 @@
 ?>
 			<tr class="govuk-table__row" id="def<?=$quota_definition_sid?>">
 				<td class="govuk-table__cell tiny nopad"><?=$quota_definition_sid?></td>
-				<td class="govuk-table__cell tiny"><?=$quota_order_number_sid?></td>
-				<td class="govuk-table__cell tiny" nowrap><?=$validity_start_date?></td>
-				<td class="govuk-table__cell tiny" nowrap><?=$validity_end_date?></td>
+				<td class="govuk-table__cell tiny c"><?=$quota_order_number_sid?></td>
+				<td class="govuk-table__cell tiny" nowrap><?=short_date($validity_start_date)?></td>
+				<td class="govuk-table__cell tiny" nowrap><?=short_date($validity_end_date)?></td>
 				<td class="govuk-table__cell tiny"><?=$initial_volume?></td>
 				<td class="govuk-table__cell c tiny"><abbr title="<?=$measurement_unit_description?>"><?=$measurement_unit_code?></abbr>&nbsp;<?=$measurement_unit_qualifier_code?></td>
 				<td class="govuk-table__cell c tiny"><?=$maximum_precision?></td>
@@ -265,31 +245,28 @@
 				<td class="govuk-table__cell c tiny"><?=$monetary_unit_code?></td>
 				<td class="govuk-table__cell tiny"><?=$description?></td>
 				<td class="govuk-table__cell c nopad">
-					<form action="quota_events.html" method="get">
-						<input type="hidden" name="action" value="events" />
-						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
-						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
-						<input type="hidden" name="measurement_unit_code" value="<?=$measurement_unit_code?>" />
-						<button type="submit" class="govuk-button btn_nomargin")>Events</button>
-					</form>
+<?php
+	if (($validity_end_date > $today_string) or (is_null($validity_end_date))) {
+?>
 					<form action="quota_definition_create_edit.html" method="get">
 						<input type="hidden" name="action" value="edit" />
 						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
 						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
-						<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+						<button type="submit" class="govuk-button btn_nomargin">Edit</button>
 					</form>
-					<form action="quota_definition_create_edit.html" method="get">
-						<input type="hidden" name="action" value="duplicate" />
-						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
-						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
-						<button type="submit" class="govuk-button btn_nomargin")>Duplicate</button>
-					</form>
+<?php
+	}
+	if (($validity_end_date > $today_string) or (is_null($validity_start_date))) {
+?>
 					<form action="actions/quota_definition_actions.html" method="get">
 						<input type="hidden" name="action" value="delete" />
 						<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
 						<input type="hidden" name="quota_definition_sid" value="<?=$quota_definition_sid?>" />
-						<button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+						<button type="submit" class="govuk-button btn_nomargin">Delete</button>
 					</form>
+					<?php		
+	}					
+?>
 				</td>
 			</tr>
 <?php
@@ -299,18 +276,19 @@
 <?php        
 	}
 ?>
-
-			<p class="back_to_top"><a href="#top">Back to top</a></p>
-
-
-<?php
-	}
-	if ($quota_order_number->licensed == false) {
-?>
-
-		<h2 id="associations">Quota associations</h2>
+		<form action="/quota_definition_create_edit.html" method="get" xclass="inline_form">
+			<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+			<input type="hidden" name="action" value="new" />
+			<button type="submit" class="small govuk-button">Create new quota definition</button>
+		</form>
 
 
+	</section>
+	<!-- End quota definitions //-->
+
+	<!-- Start quota associations //-->
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="associations">
+		<h2 style="margin-top:0px">Quota associations</h2>
 <?php
 	$sql = "select qdm.quota_order_number_id as main_quota_order_number_id, qdm.quota_definition_sid as main_quota_definition_sid,
 	qds.quota_order_number_id as sub_quota_order_number_id, qds.quota_definition_sid as sub_quota_definition_sid, 
@@ -400,22 +378,18 @@
 <?php        
 	} else {
 ?>
-<P>There are no quota associations on this quota.</p>
+		<P>There are no quota associations on this quota.</p>
 <?php		
 	}
 ?>
 
-			<p class="back_to_top"><a href="#top">Back to top</a></p>
+	</section>
+	<!-- End quota associations //-->
 
 
-
-
-
-<?php
-	}
-?>
-
-<h2 id="measures">Measures associated with this quota</h2>
+	<!-- Start measures //-->
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measures">
+		<h2 style="margin-top:0px">Measures</h2>
 <?php
 	$sql = "SELECT measure_sid, m.measure_type_id, m.geographical_area_id, goods_nomenclature_item_id, m.validity_start_date,
 	m.validity_end_date, measure_generating_regulation_id, mtd.description as measure_type_description,
@@ -428,17 +402,17 @@
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
-			<p>There are <strong><?=pg_num_rows($result)?> measures</strong> associated with quota order number <strong><?=$quota_order_number_id?></strong>.</p>
-			<table class="govuk-table" cellspacing="0">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header small nopad" style="width:8%">SID</th>
-					<th class="govuk-table__header small" style="width:24%">Measure type</th>
-					<th class="govuk-table__header small" style="width:22%">Geographical area</th>
-					<th class="govuk-table__header small" style="width:20%">Commodity</th>
-					<th class="govuk-table__header small" style="width:8%">Start date</th>
-					<th class="govuk-table__header small" style="width:8%">End date</th>
-					<th class="govuk-table__header small r" style="width:10%">Regulation</th>
-				</tr>
+		<p>There are <strong><?=pg_num_rows($result)?> measures</strong> associated with quota order number <strong><?=$quota_order_number_id?></strong>.</p>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header small nopad" style="width:8%">SID</th>
+				<th class="govuk-table__header small" style="width:24%">Measure type</th>
+				<th class="govuk-table__header small" style="width:22%">Geographical area</th>
+				<th class="govuk-table__header small" style="width:20%">Commodity</th>
+				<th class="govuk-table__header small" style="width:8%">Start date</th>
+				<th class="govuk-table__header small" style="width:8%">End date</th>
+				<th class="govuk-table__header small r" style="width:10%">Regulation</th>
+			</tr>
 <?php
 		while ($row = pg_fetch_array($result)) {
 			$measure_sid                	= $row['measure_sid'];
@@ -454,29 +428,30 @@
 			
 			$commodity_url                  = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-				<tr class="govuk-table__row">
-					<td class="govuk-table__cell small nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell small"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
-					<td class="govuk-table__cell small"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?>&nbsp;<?=$geographical_area_description?></a></td>
-					<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
-					<td class="govuk-table__cell small" nowrap><?=$validity_start_date?></td>
-					<td class="govuk-table__cell small" nowrap><?=$validity_end_date?></td>
-					<td class="govuk-table__cell small r"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
-				</tr>
-
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell small nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
+				<td class="govuk-table__cell small"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
+				<td class="govuk-table__cell small"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?>&nbsp;<?=$geographical_area_description?></a></td>
+				<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
+				<td class="govuk-table__cell small" nowrap><?=$validity_start_date?></td>
+				<td class="govuk-table__cell small" nowrap><?=$validity_end_date?></td>
+				<td class="govuk-table__cell small r"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
+			</tr>
 <?php
 		}
 ?>
-			</table>
+		</table>
 <?php
 	} else {
 		echo ("<p>There are no measures featuring this quota.");
 	}
 ?>
-			<p class="back_to_top"><a href="#top">Back to top</a></p>
+	</section>
+	<!-- End quota measures //-->
 
-
-		<h2 id="commodities">Commodities associated with this quota</h2>
+	<!-- End quota commodities //-->
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="commodities">
+		<h2 style="margin-top:0px">Commodities</h2>
 		<p>Any commodity highlighted in pink has an end-date associated with it, and therefore will
 			not necessarily feature in any future quotas.</p>
 <?php
@@ -488,23 +463,21 @@
 	and g.goods_nomenclature_item_id = gd.goods_nomenclature_item_id
 	and g.producline_suffix = gd.productline_suffix
 	and m.ordernumber = '" . $quota_order_number_id . "'
-	--and (m.validity_end_date > '2019-11-01' or m.validity_end_date is null)
 	ORDER BY 1, gd.goods_nomenclature_description_period_sid desc";
-	//print ($sql);
 
 	$result = pg_query($conn, $sql);
 	if  (($result) && (pg_num_rows($result) > 0)){
 ?>
-			<p>
-				There are <strong><?=pg_num_rows($result)?> commodities</strong> associated with quota order number <?=$quota_order_number_id?>.
-				&nbsp;&nbsp;<a target="_blank" href="https://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-01&Code=<?=$quota_order_number_id?>">Check on EU Taric quota consultation site</a>
-			</p>
-			<table class="govuk-table" cellspacing="0">
-				<tr class="govuk-table__row">
-					<th class="govuk-table__header small" style="width:10%">Commodity</th>
-					<th class="govuk-table__header small" style="width:45%">Description</th>
-					<th class="govuk-table__header small" style="width:45%">Friendly description *</th>
-				</tr>
+		<p>
+			There are <strong><?=pg_num_rows($result)?> commodities</strong> associated with quota order number <?=$quota_order_number_id?>.
+			&nbsp;&nbsp;<a target="_blank" href="https://ec.europa.eu/taxation_customs/dds2/taric/quota_tariff_details.jsp?Lang=en&StartDate=2019-01-01&Code=<?=$quota_order_number_id?>">Check on EU Taric quota consultation site</a>
+		</p>
+		<table class="govuk-table" cellspacing="0">
+			<tr class="govuk-table__row">
+				<th class="govuk-table__header small" style="width:10%">Commodity</th>
+				<th class="govuk-table__header small" style="width:45%">Description</th>
+				<th class="govuk-table__header small" style="width:45%">Friendly description *</th>
+			</tr>
 <?php
 		while ($row = pg_fetch_array($result)) {
 			$goods_nomenclature_item_id 	= $row['goods_nomenclature_item_id'];
@@ -521,32 +494,24 @@
 			
 			$commodity_url = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
-				<tr class="govuk-table__row">
-					<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
-					<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
-					<td class="govuk-table__cell small <?=$cellclass?>"><span style="padding-right:1em"><?=$friendly?></span><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
-				</tr>
-
+			<tr class="govuk-table__row">
+				<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+				<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
+				<td class="govuk-table__cell small <?=$cellclass?>"><span style="padding-right:1em"><?=$friendly?></span><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
+			</tr>
 <?php
 		}
 ?>
-			</table>
-			<p>* Please note: the 'friendly descriptions' are derived from the website '<a target="_blank" href="https://www.tariffnumber.com/2019/611530">tariffnumber.com</a>'.</p>
+		</table>
+		<p>* Please note: the 'friendly descriptions' are derived from the website '<a target="_blank" href="https://www.tariffnumber.com/2019/611530">tariffnumber.com</a>'.</p>
 <?php
 	} else {
 		echo ("<p>There are no commodities associated with quota order number " . $quota_order_number_id . ".");
 	}
 ?>
-			<p class="back_to_top"><a href="#top">Back to top</a></p>
-
-
-
-
-
-
-
+	</section>
 </div>
-
+</div>
 <?php
-	require ("includes/footer.php")
+	require ("includes/footer.php");
 ?>

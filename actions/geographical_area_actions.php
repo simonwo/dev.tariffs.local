@@ -267,8 +267,6 @@
         #exit();
         if (count($errors) > 0) {
             $error_string = serialize($errors);
-            #h1 ($error_string);
-            #exit();
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             $url = "/geographical_area_add_description.html?action=new&err=1&geographical_area_id=" . $geographical_area_id . "&geographical_area_sid=" . $geographical_area_sid;
         } else {

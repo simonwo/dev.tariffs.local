@@ -8,33 +8,30 @@
 			</div>
 			<div class="app-prose-scope">
 				<div class="column-one-third" style="width:23%;padding-right:1%">
+					<h2 class="small">Measures</h2>
+					<ul class="main-menu">
+						<li><a href="/measures.html">Find and edit measures</a></li>
+						<li><a href="/measure_create_edit.html">Create measures</a></li>
+					</ul>
+
 					<h2 class="small">Regulations</h2>
 					<ul class="main-menu">
-						<li><a href="/regulations.html">Regulations</a></li>
-						<li><a href="/regulation_groups.html">Regulation groups</a></li>
-						<li><a href="/regulation_create_edit.html?action=new&phase=regulation_create">Create regulation</a></li>
+						<li><a href="/regulations.html">Find and edit regulations</a></li>
+						<li><a href="/regulation_create_edit.html?action=new&phase=regulation_create">Create a new regulation</a></li>
 					</ul>
 
 					<h2 class="small">Quotas</h2>
 					<ul class="main-menu">
 						<li><a href="/quota_order_numbers.html">FCFS quota order numbers</a></li>
 						<li><a href="/licensed_quota_order_numbers.html">Licensed quota order numbers</a></li>
-						<li><a href="/quota_order_number_create_edit.html">Create quota</a></li>
+						<li><a href="/quota_order_number_create_edit.html">Create a quota</a></li>
 						<li><a href="/quota_associations.html">View quota associations</a></li>
-						<li><a href="/quota_association_create.html">Create quota association</a></li>
+						<!--<li><a href="/quota_association_create.html">Create quota association</a></li>//-->
 						<li><a href="/quota_blocking_periods.html">View quota blocking periods</a></li>
-						<li><a href="/quota_blocking_period_create.html">Create quota blocking period</a></li>
+						<!--<li><a href="/quota_blocking_period_create.html">Create quota blocking period</a></li>//-->
 						<li><a href="/quota_suspension_periods.html">View quota suspension periods</a></li>
-						<li><a href="/quota_suspension_period_create.html">Create quota suspension period</a></li>
+						<!--<li><a href="/quota_suspension_period_create.html">Create quota suspension period</a></li>//-->
 					</ul>
-
-					<h2 class="small">Measures</h2>
-					<ul class="main-menu">
-						<li><a href="/measures.html">Measures</a></li>
-						<li><a href="/measure_create.html">Create measure</a></li>
-						<li><a href="/measure_create_edit.html">Create measure</a></li>
-					</ul>
-
 
 				</div>
 
@@ -49,11 +46,6 @@
 					<ul class="main-menu">
 						<li><a href="/measure_types.html">Measure types</a></li>
 						<li><a href="/measure_type_create_edit.html?action=new&phase=create">Create measure type</a></li>
-					</ul>
-
-					<h2 class="small">Measure type series</h2>
-					<ul class="main-menu">
-						<li><a href="/measure_type_series.html">Measure type series</a></li>
 					</ul>
 
 					<h2 class="small">Certificates</h2>
@@ -110,10 +102,11 @@
 
 					
 <?php
-	if ((strpos($http_host, "staging") > -1) || (strpos($http_host, "dev") > -1)) {
+	if ((strpos($http_host, "build") > -1) || (strpos($http_host, "dev") > -1)) {
 ?>
 					<h2 class="small">Data extract</h2>
 					<ul class="main-menu">
+						<li><a href="/extract_date_set.html">Set extract date time</a></li>
 						<li><a href="/data_extract.html">Extract latest data set</a></li>
 					</ul>
 
@@ -132,14 +125,17 @@
 					<ul class="main-menu">
 						<li><a href="/measurement_units.html">Measurement units</a></li>
 						<li><a href="/measurement_unit_qualifiers.html">Measurement unit qualifiers</a></li>
+						<li><a href="/regulation_groups.html">Regulation groups</a></li>
+						<li><a href="/measure_type_series.html">Measure type series</a></li>
 					</ul>
 
+<!--
 					<h2 class="small">Backup and restore</h2>
 					<ul class="main-menu">
 						<li><a href="/backup.html">Backup database</a></li>
 						<li><a href="#">Restore database</a></li>
 					</ul>
-
+//-->
 				</div>
 			<div class="clearer"><!--&nbsp;//--></div>
 		</div>

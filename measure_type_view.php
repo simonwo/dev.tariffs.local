@@ -2,6 +2,12 @@
     $title = "View measure type";
 	require ("includes/db.php");
 	$measure_type_id = get_querystring("measure_type_id");
+	$measure_scope = get_querystring("measure_scope");
+	$sort_order					= get_querystring("so");
+	$sort_direction				= get_querystring("sd");
+	if ($measure_scope == "") {
+		$measure_scope = "current";
+	}
 	$measure_type = new measure_type;
 	$measure_type->clear_cookies();
 	require ("includes/header.php");
@@ -174,16 +180,44 @@
 		}
 	}
 
+	$today = date("Y-m-d");
 	$sql = "SELECT measure_sid, goods_nomenclature_item_id, measure_generating_regulation_id,
 	additional_code_type_id, additional_code_id, measure_type_id,
 	geographical_area_id, validity_start_date, validity_end_date, ordernumber
-	FROM ml.measures_real_end_dates WHERE measure_type_id = '" . $measure_type_id . "' ORDER BY validity_start_date DESC, goods_nomenclature_item_id";
+	FROM ml.measures_real_end_dates m WHERE measure_type_id = '" . $measure_type_id . "'";
+	if ($measure_scope == "current") {
+		$sql .= " and (m.validity_end_date is null or m.validity_end_date > '" . $today . "')";
+	}
+	
+	$sql .= " ORDER BY validity_start_date DESC, goods_nomenclature_item_id";
 	$result = pg_query($conn, $sql);
 	if  ($result) {
 ?>
 
-<h2 class="nomargin">Measures of type <?=$description?></h2>
-<p>There are <strong><?=pg_num_rows($result)?></strong> measures of type <?=$description?>.  Please click here to <a target="_blank" href="measure_export.html?measure_type_id=<?=$measure_type_id?>">export these measures to CSV</a>.</p>
+<h2 id="measures" class="nomargin">Measures of type <?=$description?></h2>
+<form action="measure_type_view.html#measure_details" method="get" class="inline_form">
+	<input type="hidden" name="measure_type_id" value="<?=$measure_type_id?>" />
+	<h3>Filter measures</h3>
+	<div class="xgovuk-form-group">
+		<fieldset class="govuk-fieldset" aria-describedby="hint">
+			<span id="hint" class="govuk-hint">Select the measures to display</span>
+			<div class="govuk-radios govuk-radios--inline">
+				<div class="govuk-radios__item">
+					<input <?=get_checked($measure_scope, "current")?> class="govuk-radios__input" id="measure_scope_current" name="measure_scope" type="radio" value="current">
+					<label class="govuk-label govuk-radios__label" for="changed-name-2">Current measures only</label>
+				</div>
+				<div class="govuk-radios__item">
+					<input <?=get_checked($measure_scope, "all")?> class="govuk-radios__input" id="measure_scope_all" name="measure_scope" type="radio" value="all">
+					<label class="govuk-label govuk-radios__label" for="changed-name">All measures</label>
+				</div>
+			</div>
+		</fieldset>
+		<div class="govuk-form-group" style="padding:0px;margin:0.5em 0px 0px 0px !important">
+			<button type="submit" class="govuk-button">Filter</button>
+		</div>
+	</div>
+</form>
+<p id="measure_details">There are <strong><?=pg_num_rows($result)?></strong> measures of type <?=$description?>.  Please click here to <a target="_blank" href="measure_export.html?measure_type_id=<?=$measure_type_id?>">export these measures to CSV</a>.</p>
 <?php
 	if (pg_num_rows($result) == 0){
 ?>
@@ -194,14 +228,14 @@
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
 				<th class="govuk-table__header nopad" style="width:10%">Measure SID</th>
-				<th class="govuk-table__header" style="width:8%">Commodity</th>
+				<th class="govuk-table__header" style="width:12%">Commodity</th>
 				<th class="govuk-table__header c" style="width:8%">Additional code</th>
 				<th class="govuk-table__header c" style="width:10%">Geographical area</th>
 				<th class="govuk-table__header" style="width:8%">Start date</th>
 				<th class="govuk-table__header" style="width:8%">End date</th>
 				<th class="govuk-table__header" style="width:10%">Regulation</th>
 				<th class="govuk-table__header" style="width:10%">Order number</th>
-				<th class="govuk-table__header r" style="width:28%">Duty</th>
+				<th class="govuk-table__header r" style="width:24%">Duty</th>
 			</tr>
 <?php
 		$measure_list = [];
@@ -252,7 +286,7 @@
 ?>
 			<tr class="govuk-table__row <?=$rowclass?>">
 				<td class="govuk-table__cell nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-				<td class="govuk-table__cell"><a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=$goods_nomenclature_item_id?></a></td>
+				<td class="govuk-table__cell"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 				<td class="govuk-table__cell c"><?=$additional_code_show?></td>
 				<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
 				<td class="govuk-table__cell"><?=$validity_start_date?></td>

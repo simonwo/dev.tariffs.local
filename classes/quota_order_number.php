@@ -17,37 +17,149 @@ class quota_order_number
 		$this->validity_end_date		= $validity_end_date;
 	}
 
-    function insert($quota_order_number_id, $validity_start_date) {
+
+	function populate_from_db() {
+        global $conn;
+        $sql = "SELECT validity_start_date, validity_end_date, description, origin_quota, quota_scope, quota_staging, quota_order_number_sid
+		FROM quota_order_numbers WHERE quota_order_number_sid = $1
+		order by validity_start_date desc limit 1";
+        pg_prepare($conn, "quota_populate_from_db", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db", array($this->quota_order_number_sid));      
+        if ($result) {
+            if (pg_num_rows($result) > 0){
+				$row = pg_fetch_row($result);
+				$this->validity_start_date		= $row[0];
+				$this->validity_end_date		= $row[1];
+				$this->description				= $row[2];
+				$this->origin_quota				= $row[3];
+				$this->quota_scope				= $row[4];
+				$this->quota_staging			= $row[5];
+				$this->quota_order_number_sid	= $row[6];
+				$this->validity_start_day   	= date('d', strtotime($this->validity_start_date));
+				$this->validity_start_month 	= date('m', strtotime($this->validity_start_date));
+				$this->validity_start_year  	= date('Y', strtotime($this->validity_start_date));
+				if ($this->validity_end_date != "") {
+					$this->validity_end_day   = date('d', strtotime($this->validity_end_date));
+					$this->validity_end_month = date('m', strtotime($this->validity_end_date));
+					$this->validity_end_year  = date('Y', strtotime($this->validity_end_date));
+				} else {
+					$this->validity_end_day   = "";
+					$this->validity_end_month = "";
+					$this->validity_end_year  = "";
+				}
+			}
+        }
+	}
+
+	function populate_from_cookies() {
+        $this->validity_start_day					= get_cookie("quota_order_number_validity_start_day");
+        $this->validity_start_month					= get_cookie("quota_order_number_goods_nomenclature_validity_start_month");
+        $this->validity_start_year					= get_cookie("quota_order_number_goods_nomenclature_validity_start_year");
+        $this->validity_end_day						= get_cookie("quota_order_number_goods_nomenclature_validity_end_day");
+        $this->validity_end_month					= get_cookie("quota_order_number_goods_nomenclature_validity_end_month");
+        $this->validity_end_year					= get_cookie("quota_order_number_goods_nomenclature_validity_end_year");
+        $this->description							= get_cookie("quota_order_number_goods_nomenclature_description");
+        $this->quota_scope							= get_cookie("quota_order_number_quota_scope");
+        $this->quota_staging						= get_cookie("quota_order_number_quota_staging");
+        $this->origin_quota							= get_cookie("quota_order_number_origin_quota");
+	}
+
+function clear() {
+        $this->validity_start_day					= "";
+        $this->validity_start_month					= "";
+        $this->validity_start_year					= "";
+        $this->validity_end_day						= "";
+        $this->validity_end_month					= "";
+        $this->validity_end_year					= "";
+        $this->description							= "";
+        $this->quota_scope							= "";
+        $this->quota_staging						= "";
+        $this->origin_quota							= "";
+	}
+
+
+    function insert() {
         global $conn;
         $application = new application;
+        $this->quota_order_number_sid  = $application->get_next_quota_order_number();
         $operation = "C";
-        $quota_order_number_sid  = $application->get_next_quota_order_number();
         $operation_date = $application->get_operation_date();
 
-        $this->quota_order_number_id = $quota_order_number_id;
-        $this->validity_start_date = $validity_start_date;
-
         $errors = $this->conflict_check();
-        #h1 (count($errors));
-        #exit();
+        h1 (count($errors));
         if (count($errors) > 0) {
 			/*
 			foreach ($errors as $error) {
                 h1 ($error);
             }
-            exit();*/
+			exit();
+			*/
             return ($errors);
         } else {
             $sql = "INSERT INTO quota_order_numbers_oplog
-            (quota_order_number_sid, quota_order_number_id, validity_start_date, operation, operation_date)
-            VALUES ($1, $2, $3, $4, $5)";
+            (
+				quota_order_number_sid,
+				quota_order_number_id,
+				validity_start_date,
+				description,
+				origin_quota,
+				quota_scope,
+				quota_staging,
+				operation,
+				operation_date)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
             pg_prepare($conn, "quota_order_number_insert", $sql);
-            pg_execute($conn, "quota_order_number_insert", array($quota_order_number_sid, $quota_order_number_id, $validity_start_date, $operation, $operation_date));
+            pg_execute($conn, "quota_order_number_insert", array(
+				$this->quota_order_number_sid,
+				$this->quota_order_number_id,
+				$this->validity_start_date,
+				$this->description,
+				$this->origin_quota,
+				$this->quota_scope,
+				$this->quota_staging,
+				$operation,
+				$operation_date));
 			return (True);
         }
 	}
 	
 
+    function update() {
+        global $conn;
+        $application = new application;
+        $operation = "U";
+        $operation_date = $application->get_operation_date();
+
+		$errors = array();
+		$sql = "INSERT INTO quota_order_numbers_oplog
+		(
+			quota_order_number_sid,
+			quota_order_number_id,
+			validity_start_date,
+			validity_end_date,
+			description,
+			origin_quota,
+			quota_scope,
+			quota_staging,
+			operation,
+			operation_date)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
+
+		pg_prepare($conn, "quota_order_number_insert", $sql);
+
+		pg_execute($conn, "quota_order_number_insert", array(
+			$this->quota_order_number_sid,
+			$this->quota_order_number_id,
+			$this->validity_start_date,
+			$this->validity_end_date,
+			$this->description,
+			$this->origin_quota,
+			$this->quota_scope,
+			$this->quota_staging,
+			$operation,
+			$operation_date));
+	}
+	
 	function get_measure_types() {
 		$out = "";
 		foreach ($this->measure_types as $m) {
@@ -80,6 +192,7 @@ class quota_order_number
 		WHERE quota_order_number_id = '" . $this->quota_order_number_id . "' ORDER BY validity_start_date DESC LIMIT 1";
 		$result = pg_query($conn, $sql);
 		if ($result) {
+        $row = pg_fetch_row($result);
 			while ($row = pg_fetch_array($result)) {
 				$this->quota_order_number_sid = $row['quota_order_number_sid'];
 			}
@@ -170,5 +283,31 @@ class quota_order_number
 			}
 		}
 		$this->origins = $quota_order_number_origins;
+	}
+
+	function validate_fcfs_order_number() {
+		global $conn;
+
+		$this->quota_order_number_id = trim($this->quota_order_number_id);
+		if (strlen($this->quota_order_number_id) != 6 ) {
+			$ret = false;
+			return $ret;
+		}
+		if (substr($this->quota_order_number_id, 0, 3) == "094") {
+			$ret = false;
+			return $ret;
+		}
+		$sql = "select quota_order_number_sid from quota_order_numbers
+		where validity_end_date is null and quota_order_number_id = $1
+		order by validity_start_date desc;";
+		pg_prepare($conn, "validate_fcfs_order_number", $sql);
+		$result = pg_execute($conn, "validate_fcfs_order_number", array($this->quota_order_number_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
+		return ($ret);
 	}
 }    

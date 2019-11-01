@@ -17,13 +17,6 @@
 <div class="app-content__header">
 	<h1 class="govuk-heading-xl nomargin">Quota order numbers</h1>
 </div>
-<!--
-<ul class="tariff_menu">
-	<li><a href="#fcfs">First come first served quotas</a></li>
-	<li><a href="#licensed">Licensed quotas</a></li>
-</ul>
-//-->
-
 
 <form action="/quota_order_number_create_edit.html" method="get" class="inline_form" style="display:none">
 	<input type="hidden" name="phase" value="<?=$phase?>" />
@@ -35,7 +28,6 @@
 	</div>
 	<div class="clearer"><!--&nbsp;//--></div>
 </form>
-
 
 
 <?php
@@ -167,9 +159,12 @@
 		<th class="govuk-table__header c" scope="col" style="width:10%">EU Link</th>
 		<th class="govuk-table__header" scope="col" style="width:16%">Origins</th>
 		<th class="govuk-table__header" scope="col" style="width:15%">Measure type(s)</th>
-		<th class="govuk-table__header" scope="col" style="width:12%">Start date</th>
-		<th class="govuk-table__header" scope="col" style="width:12%">End date</th>
+		<th class="govuk-table__header" scope="col" style="width:17%">Start date</th>
+		<th class="govuk-table__header" scope="col" style="width:17%">End date</th>
+<!--
 		<th class="govuk-table__header" scope="col" style="width:26%">Definition periods</th>
+//-->		
+		<th class="govuk-table__header r" scope="col" style="width:16%">Actions</th>
 	</tr>
 	</thead>
 <?php
@@ -229,7 +224,16 @@
 		<td class="govuk-table__cell"><?=$measure_types?></td>
 		<td class="govuk-table__cell"><?=$validity_start_date?></td>
 		<td class="govuk-table__cell"><?=$validity_end_date?></td>
+<!--
 		<td class="govuk-table__cell"><?=$definitions?></td>
+//-->			
+		<td class="govuk-table__cell r">
+			<form action="quota_order_number_create_edit.html" method="get">
+				<input type="hidden" name="phase" value="edit" />
+				<input type="hidden" name="quota_order_number_id" value="<?=$quota_order_number_id?>" />
+				<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+			</form>
+		</td>
 	</tr>
 <?php
 		}

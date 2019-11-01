@@ -75,8 +75,6 @@
         $description                                = get_formvar("description",            "goods_nomenclature_", True);
 
         $validity_start_date    = to_date_string($validity_start_day, $validity_start_month, $validity_start_year);
-        #h1 ($validity_start_date);
-        #exit();
 
         if ($goods_nomenclature_description_period_sid == -1) {
             # Check on the validity start and end dates

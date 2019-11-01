@@ -37,7 +37,7 @@
         <th class="govuk-table__header" style="width:12%">Start date</th>
         <th class="govuk-table__header" style="width:12%">End date</th>
     </tr>
-<?php    
+<?php
 		while ($row = pg_fetch_array($result)) {
             $additional_code_type_id    = $row['additional_code_type_id'];
             $description                = $row['description'];

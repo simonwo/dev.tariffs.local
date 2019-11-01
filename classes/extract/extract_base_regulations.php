@@ -61,7 +61,6 @@ class extract_base_regulations extends extract
 
 					$ret .= $instance;
 					$message_id += 1;
-					h1 ($message_id);
 					$last_transaction_id += 1;
 				}
 			}

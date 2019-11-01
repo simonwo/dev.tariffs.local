@@ -14,21 +14,21 @@ $(document).ready(function() {
 	common_url	= common_url.replace("staging.", "common.");
 	common_url	= common_url.replace("eu.", "common.");
 	common_url	= common_url.replace("fta.", "common.");
-	common_url	= common_url.replace("load.", "common.");
+	common_url	= common_url.replace("build.", "common.");
 	common_url	= common_url.replace("remedies.", "common.");
 
 	dev_url			= common_url.replace("common.", "dev.");
 	staging_url 	= common_url.replace("common.", "staging.");
 	eu_url			= common_url.replace("common.", "eu.");
 	fta_url			= common_url.replace("common.", "fta.");
-	load_url		= common_url.replace("common.", "load.");
+	build_url		= common_url.replace("common.", "build.");
 	remedies_url	= common_url.replace("common.", "remedies.");
 
 	$("#context_switcher_dev").attr("href", dev_url);
 	$("#context_switcher_staging").attr("href", staging_url);
 	$("#context_switcher_eu").attr("href", eu_url);
 	$("#context_switcher_fta").attr("href", fta_url);
-	$("#context_switcher_load").attr("href", load_url);
+	$("#context_switcher_build").attr("href", build_url);
 	$("#context_switcher_remedies").attr("href", remedies_url);
 
 
@@ -87,6 +87,21 @@ $(document).ready(function() {
 	
 	$("#radioID2").click(function() {
 		$("div#cross-check-rejection-reason").css("display", "block !important");
+	});
+
+
+	$("#quota_order_number_id").keyup(function() {
+		txt = $("#quota_order_number_id").val();
+		var ln = txt.length;
+		if (ln == 6) {
+			if (txt.substring(0, 3) == "094") {
+				$("#quota_fulfilment_method").text("This is a licensed quota");
+			} else {
+				$("#quota_fulfilment_method").text("This is a first come first served (FCFS) quota");
+			}
+		} else {
+			$("#quota_fulfilment_method").text("");
+		}
 	});
 
 	

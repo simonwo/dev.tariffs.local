@@ -48,9 +48,10 @@ class additional_code
 		pg_prepare($conn, "get_additional_code_sid", $sql);
 		$result = pg_execute($conn, "get_additional_code_sid", array($this->additional_code_type_id, $this->additional_code));
 		if ($result) {
-			while ($row = pg_fetch_array($result)) {
-				$this->additional_code_sid  = $row['additional_code_sid'];
-			}
+			$row = pg_fetch_row($result);
+			$this->additional_code_sid  = $row[0];
+		} else {
+			$this->additional_code_sid  = Null;
 		}
 		return ($this->additional_code_sid);
 	}
@@ -143,5 +144,27 @@ class additional_code
         setcookie("certificate_validity_end_year", "", time() + (86400 * 30), "/");
 	}
 
+	function validate() {
+		global $conn;
+
+		$this->base_regulation_id = trim($this->base_regulation_id);
+		if (strlen($this->base_regulation_id) != 8 ) {
+			$ret = false;
+			return $ret;
+		}
+
+		$sql = "select base_regulation_id from base_regulations where base_regulation_id = $1
+		and validity_end_date is null;";
+		pg_prepare($conn, "validate_base_regulation", $sql);
+		$result = pg_execute($conn, "validate_base_regulation", array($this->base_regulation_id));
+		$row_count = pg_num_rows($result);
+		h1 ($row_count);
+		if (($result) && ($row_count > 0)) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
+		return ($ret);
+	}
 }
 

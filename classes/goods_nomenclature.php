@@ -3,6 +3,7 @@ class goods_nomenclature
 {
 	// Class properties and methods go here
 	public $goods_nomenclature_item_id	= "";
+	public $goods_nomenclature_sid		= Null;
 	public $productline_suffix			= "";
 	public $measure_type_desc			= "";
 
@@ -24,11 +25,14 @@ class goods_nomenclature
 		order by validity_start_date desc limit 1";
 		pg_prepare($conn, "get_goods_nomenclature_sid", $sql);
 		$result = pg_execute($conn, "get_goods_nomenclature_sid", array($this->goods_nomenclature_item_id));
-		if ($result) {
-			while ($row = pg_fetch_array($result)) {
-				$this->goods_nomenclature_sid  = $row['goods_nomenclature_sid'];
-			}
+        $row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$row = pg_fetch_row($result);
+			$this->goods_nomenclature_sid  = $row[0];
+		} else {
+			$this->goods_nomenclature_sid = Null;
 		}
+
 		return ($this->goods_nomenclature_sid);
 	}
 	

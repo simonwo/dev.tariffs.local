@@ -87,16 +87,12 @@
             array_push($errors, "validity_end_date");
         }
         
-        h1 (count($errors));
-        #exit();
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             $url = "/footnote_create_edit.html?phase=" . $create_edit . "&action=new&err=1&footnote_id=" . $footnote->footnote_id;
         } else {
             if ($create_edit == "create") {
-                #h1 ("here");
-                #exit();
                 // Do create scripts
                 $footnote->create();
             } else {

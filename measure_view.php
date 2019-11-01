@@ -43,19 +43,19 @@
 
 	if ($valid == true) {
 ?>
-
-	<h2>Page content</h2>
-	<ul class="tariff_menu">
-		<li><a href="#measure_details">Measure details</a></li>
-		<li><a href="#oplog">Oplog entries</a></li>
-		<li><a href="#measure_components">Measure components</a></li>
-		<li><a href="#measure_conditions">Measure conditions</a></li>
-		<li><a href="#measure_footnotes">Measure footnotes</a></li>
-		<li><a href="#measure_excluded_geographical_areas">Excluded geographical areas</a></li>
-		<li><a title="Opens in new window" href="<?=$url?>" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a></li>
+<div class="govuk-tabs" data-module="govuk-tabs">
+	<h2 class="govuk-tabs__title">Contents</h2>
+	<ul class="govuk-tabs__list compact" style="max-width:100% !important;width:100%">
+		<li class="govuk-tabs__list-item govuk-tabs__list-item--selected"><a class="govuk-tabs__tab" href="#measure_details">Measure details</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measure_components">Components</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measure_conditions">Conditions</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measure_footnotes">Footnotes</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measure_excluded_geographical_areas">Exclusions</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#measure_partial_temporary_stops">MPTS</a></li>
+		<li class="govuk-tabs__list-item"><a class="govuk-tabs__tab" href="#oplog">Oplog entries</a></li>
 	</ul>
-
-	<h2 id="measure_details">Measure details</h2>
+	<section class="govuk-tabs__panel" id="measure_details">
+	<h2 style="margin-top:0px">Measure details</h2>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row">
 			<th class="govuk-table__header nopad" style="width:25%">Item</th>
@@ -119,13 +119,10 @@
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell nopad">Goods nomenclature item ID</td>
 			<td class="govuk-table__cell">
-				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
-					<?=$goods_nomenclature_item_id?>
+				<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
+					<?=format_commodity_code($goods_nomenclature_item_id)?>
 				</a>
-				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>#hierarchy">
-					Show commodity code in hierarchy
-				</a>
+				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)
 			</td>
 		</tr>
 		<tr class="govuk-table__row">
@@ -181,14 +178,383 @@
 			<td class="govuk-table__cell nopad">Reduction indicator</td>
 			<td class="govuk-table__cell"><?=$reduction_indicator?></td>
 		</tr>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad">More information</td>
+			<td class="govuk-table__cell">
+				<a href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>#hierarchy">
+					Show commodity code in hierarchy
+				</a><br />
+				<a title="Opens in new window" href="<?=$url?>" target="_blank" href="#usage_measures">View commodity in Trade Tariff Service</a>
+			</td>
+		</tr>
 <?php
 		}
 	}
 ?>
 		</table>
-		<p class="back_to_top"><a href="#top">Back to top</a></p>
 
-		<h2 id="oplog">Oplog entries</h2>
+		<form action="/actions/measure_actions.html" method="get" class="inline_form">
+			<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+			<input type="hidden" name="phase" value="edit_measure" />
+			<h3>Measure actions</h3>
+			<div class="column-one-third" style="width:320px">
+				<div class="govuk-form-group" style="padding:0px;margin:0px">
+					<button type="submit" class="govuk-button small">Edit this measure</button>
+				</div>
+			</div>
+			<div class="clearer"><!--&nbsp;//--></div>
+		</form>
+
+		<form action="/actions/measure_actions.html" method="get" class="inline_form">
+			<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+			<input type="hidden" name="phase" value="delete_measure" />
+			<h3>Measure actions</h3>
+			<div class="column-one-third" style="width:320px">
+				<div class="govuk-form-group" style="padding:0px;margin:0px">
+					<button onclick="return confirm('Are you sure?');" type="submit" class="govuk-button small">Delete this measure</button>
+				</div>
+			</div>
+			<div class="clearer"><!--&nbsp;//--></div>
+		</form>
+
+
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measure_components">
+	<h2 style="margin-top:0px">Measure components</h2>
+<?php
+	$sql = "SELECT mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
+	ded.description as duty_expression_description, mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
+	FROM duty_expression_descriptions ded, measurement_unit_qualifier_descriptions muqd RIGHT OUTER JOIN 
+	measure_components mc ON mc.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code
+	LEFT OUTER JOIN measurement_unit_descriptions mud ON mc.measurement_unit_code = mud.measurement_unit_code
+	WHERE measure_sid = " . $measure_sid . " AND ded.duty_expression_id = mc.duty_expression_id ORDER BY duty_expression_id";
+	#print ($sql);
+	$result = pg_query($conn, $sql);
+	if  ($result) {
+?>
+	<p class="medium">The following components are assigned to this measure.</p>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header nopad" style="width:15%">Duty expression</th>
+			<th class="govuk-table__header" style="width:15%">Duty amount</th>
+			<th class="govuk-table__header" style="width:15%">Monetary unit code</th>
+			<th class="govuk-table__header" style="width:38 %">Measurement unit code / qualifier code</th>
+			<th class="govuk-table__header" style="width:17%">Actions</th>
+		</tr>
+
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$duty_expression_id                     = $row['duty_expression_id'];
+			$duty_amount                            = $row['duty_amount'];
+			$monetary_unit_code                     = $row['monetary_unit_code'];
+			$measurement_unit_code                  = $row['measurement_unit_code'];
+			$measurement_unit_qualifier_code        = $row['measurement_unit_qualifier_code'];
+			$measurement_unit_description           = $row['measurement_unit_description'];
+			$measurement_unit_qualifier_description = $row['measurement_unit_qualifier_description'];
+			$measurement_unit_show = $measurement_unit_code;
+			if ($measurement_unit_description != ""){
+				$measurement_unit_show .= " - " . $measurement_unit_description;
+			}
+			$measurement_unit_qualifier_show = $measurement_unit_qualifier_code;
+			if ($measurement_unit_qualifier_description != ""){
+				$measurement_unit_qualifier_show .= " - " . $measurement_unit_qualifier_description;
+			}
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad"><?=$duty_expression_id?></td>
+			<td class="govuk-table__cell"><?=number_format($duty_amount, 3)?></td>
+			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
+			<td class="govuk-table__cell"><?=$measurement_unit_show?><?php if ($measurement_unit_show != "") { echo ("&nbsp;/&nbsp;"); } ?><?=$measurement_unit_qualifier_show?></td>
+			<td class="govuk-table__cell">
+				<form action="actions/measure_actions.html" method="get" style="display:inline">
+					<input type="hidden" name="phase" value="edit_component" />
+					<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+					<input type="hidden" name="duty_expression_id" value="<?=$duty_expression_id?>" />
+					<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
+				</form>
+				<form action="actions/measure_actions.html" method="get" style="display:inline">
+					<input type="hidden" name="phase" value="delete_component" />
+					<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+					<input type="hidden" name="duty_expression_id" value="<?=$duty_expression_id?>" />
+					<button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+				</form>
+			</td>
+		</tr>
+
+<?php
+		}
+?>
+	</table>
+	<form action="actions/measure_actions.html" method="get">
+		<input type="hidden" name="phase" value="add_component" />
+		<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+		<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+		<button type="submit" class="govuk-button btn_nomargin" style="width:120px !important">Add component</button>
+	</form>
+<?php
+	}
+?>
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measure_conditions">
+
+<!-- Measure conditions //-->
+	<h2 style="margin-top:0px">Measure conditions</h2>
+<?php
+	$sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
+	mc.condition_monetary_unit_code, mc.condition_measurement_unit_code, mc.condition_measurement_unit_qualifier_code,
+	mc.action_code, mc.certificate_type_code, mc.certificate_code, mccd.description as condition_code_description, mad.description as action_code_description
+	FROM measure_condition_code_descriptions mccd, measure_conditions mc
+	LEFT OUTER JOIN measure_action_descriptions mad
+	ON mc.action_code = mad.action_code WHERE measure_sid = " . $measure_sid . "
+	AND mc.condition_code = mccd.condition_code ORDER BY condition_code, component_sequence_number";
+	$result = pg_query($conn, $sql);
+	$row_count = pg_num_rows($result);
+	if (($result) && ($row_count > 0)) {
+?>
+	<p class="medium">The following conditions apply to this measure.</p>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row" valign="bottom">
+			<th class="govuk-table__header nopad" style="width:7%">SID</th>
+			<th class="govuk-table__header" style="width:18%">Condition code</th>
+			<th class="govuk-table__header" style="width:6%">Seq</th>
+			<th class="govuk-table__header c" style="width:10%">Duty amount</th>
+			<th class="govuk-table__header c" style="width:10%">Monetary unit code</th>
+			<th class="govuk-table__header c" style="width:12%">Measurement unit code / qualifier code</th>
+			<th class="govuk-table__header" style="width:16%">Action code</th>
+			<th class="govuk-table__header" style="width:12%">Certificate code</th>
+			<th class="govuk-table__header" style="width:8%">Actions</th>
+		</tr>
+
+<?php
+		while ($row = pg_fetch_array($result)) {
+			$measure_condition_sid              = $row['measure_condition_sid'];
+			$condition_code                     = $row['condition_code'];
+			$component_sequence_number          = $row['component_sequence_number'];
+			$duty_amount                        = $row['condition_duty_amount'];
+			$monetary_unit_code                 = $row['condition_monetary_unit_code'];
+			$measurement_unit_code              = $row['condition_measurement_unit_code'];
+			$measurement_unit_qualifier_code    = $row['condition_measurement_unit_qualifier_code'];
+			$action_code                        = $row['action_code'];
+			$certificate_type_code              = $row['certificate_type_code'];
+			$certificate_code                   = $row['certificate_code'];
+			$condition_code_description         = $row['condition_code_description'];
+			$action_code_description            = $row['action_code_description'];
+
+			$action_code_show = $action_code;
+			if ($action_code_description != ""){
+				$action_code_show .= " - " . $action_code_description;
+			}
+			$condition_code_show = $condition_code;
+			if ($condition_code_description != ""){
+				$condition_code_show .= " - " . $condition_code_description;
+			}
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad small"><?=$measure_condition_sid?></td>
+			<td class="govuk-table__cell small"><?=$condition_code_show?></td>
+			<td class="govuk-table__cell nopad c small"><?=$component_sequence_number?></td>
+			<td class="govuk-table__cell c small"><?=duty_format($duty_amount)?></td>
+			<td class="govuk-table__cell c small"><?=$monetary_unit_code?></td>
+			<td class="govuk-table__cell c small"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
+			<td class="govuk-table__cell small"><?=$action_code_show?></td>
+<?php
+	if ($certificate_type_code != "") {
+?>		
+			<td class="govuk-table__cell small"><a href="certificate_view.html?certificate_type_code=<?=$certificate_type_code?>&certificate_code=<?=$certificate_code?>"><?=$certificate_type_code?><?=$certificate_code?></a></td>
+<?php
+	} else {
+?>		
+			<td class="govuk-table__cell small">&nbsp;</td>
+<?php
+	}
+?>
+			<td class="govuk-table__cell small">
+				Actions here
+			</td>
+		</tr>
+
+<?php
+		}
+?>
+	</table>
+<?php
+	} else {
+?>
+	<p class="medium">There are no conditions associated with this measure.</p>
+<?php		
+	}
+?>
+<form action="actions/measure_actions.html" method="get">
+	<input type="hidden" name="phase" value="add_condition" />
+	<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+	<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+	<button type="submit" class="govuk-button btn_nomargin" style="width:120px !important">Add condition</button>
+</form>
+
+
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measure_footnotes">
+		<!-- Footnotes //-->
+<h2 style="margin-top:0px">Footnotes</h2>
+
+
+<?php
+	$sql = "select f.footnote_type_id, f.footnote_id, description
+	from footnote_association_measures fam, ml.ml_footnotes f 
+	where fam.footnote_id = f.footnote_id and fam.footnote_type_id = f.footnote_type_id
+	and fam.measure_sid = " . $measure_sid . "
+	order by 1, 2";
+	$result = pg_query($conn, $sql);
+	if  (($result) and (pg_num_rows($result) > 0)) {
+?>
+	<p class="medium">The following footnotes are associated with this measure.</p>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header nopad" style="width:10%">Footnote</th>
+			<th class="govuk-table__header" style="width:90%">Description</th>
+		</tr>
+
+<?php        
+		while ($row = pg_fetch_array($result)) {
+			$footnote_type_id	= $row['footnote_type_id'];
+			$footnote_id		= $row['footnote_id'];
+			$description        = $row['description'];
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
+			<td class="govuk-table__cell"><?=$description?></td>
+		</tr>
+
+<?php
+		}
+?>
+	</table>
+<?php
+	} else {
+?>
+<p class="medium">There are no foonotes associated with this measure.</p>
+<?php		
+	}
+?>
+<form action="actions/measure_actions.html" method="get">
+	<input type="hidden" name="phase" value="add_footnote" />
+	<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+	<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+	<button type="submit" class="govuk-button btn_nomargin" style="width:120px !important">Add footnote</button>
+</form>
+
+
+
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measure_excluded_geographical_areas">
+		<!-- Excluded geographical areas //-->
+
+		<h2 style="margin-top:0px">Excluded geographical areas</h2>
+<?php
+	$sql = "SELECT x.excluded_geographical_area, description
+	FROM measure_excluded_geographical_areas x, ml.ml_geographical_areas ga
+	WHERE x.excluded_geographical_area = ga.geographical_area_id
+	AND measure_sid = " . $measure_sid . "
+	ORDER BY excluded_geographical_area";
+	$result = pg_query($conn, $sql);
+	$row_count = pg_num_rows($result);
+	if (($result) && ($row_count > 0)) {
+?>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header nopad" style="width:20%">Geographical area ID</th>
+			<th class="govuk-table__header" style="width:40%">Geographical area</th>
+			<th class="govuk-table__header r" style="width:40%">Actions</th>
+		</tr>
+
+<?php        
+		while ($row = pg_fetch_array($result)) {
+			$excluded_geographical_area	= $row['excluded_geographical_area'];
+			$description                = $row['description'];
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad"><?=$excluded_geographical_area?></td>
+			<td class="govuk-table__cell"><?=$description?></td>
+			<td class="govuk-table__cell r">
+				<form action="/actions/measure_actions.html" method="get">
+					<input type="hidden" name="phase" value="measure_excluded_geographical_area_delete" />
+					<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+					<input type="hidden" name="excluded_geographical_area" value="<?=$excluded_geographical_area?>" />
+					<button type="submit" class="govuk-button btn_nomargin")>Delete</button>
+				</form>				
+			</td>
+		</tr>
+
+<?php
+		}
+?>
+	</table>
+<?php
+	} else {
+?>
+<p class="medium">There are no excluded geographical areas associated to this measure.</p>
+<?php		
+	}
+?>
+	<form action="actions/measure_actions.html" method="get">
+		<input type="hidden" name="phase" value="add_exclusion" />
+		<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+		<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
+		<button type="submit" class="govuk-button btn_nomargin" style="width:120px !important">Add exclusion</button>
+	</form>
+
+	
+
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="measure_partial_temporary_stops">
+		<!-- Start partial temporary stops //-->
+<h2 style="margin-top:0px">Measure partial temporary stops</h2>
+<?php
+	$measure->get_measure_partial_temporary_stops();
+	if (count($measure->measure_partial_temporary_stops) > 0) {
+?>
+	<table cellspacing="0" class="govuk-table">
+		<tr class="govuk-table__row">
+			<th class="govuk-table__header nopad">Start date</th>
+			<th class="govuk-table__header">End date</th>
+			<th class="govuk-table__header">PTS regulation ID</th>
+			<th class="govuk-table__header">PTS OJ number</th>
+			<th class="govuk-table__header">PTS OJ page</th>
+			<th class="govuk-table__header">Abr. regulation IS</th>
+			<th class="govuk-table__header">Abr. OJ number</th>
+			<th class="govuk-table__header">Abr. OJ page</th>
+		</tr>
+
+<?php        
+		foreach ($measure->measure_partial_temporary_stops as $mpts) {
+?>
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell nopad"><?=short_date($mpts->validity_start_date)?></td>
+			<td class="govuk-table__cell"><?=short_date($mpts->validity_end_date)?></td>
+			<td class="govuk-table__cell"><?=$mpts->partial_temporary_stop_regulation_id?></td>
+			<td class="govuk-table__cell"><?=$mpts->partial_temporary_stop_regulation_officialjournal_number?></td>
+			<td class="govuk-table__cell"><?=$mpts->partial_temporary_stop_regulation_officialjournal_page?></td>
+			<td class="govuk-table__cell"><?=$mpts->abrogation_regulation_id?></td>
+			<td class="govuk-table__cell"><?=$mpts->abrogation_regulation_officialjournal_number?></td>
+			<td class="govuk-table__cell"><?=$mpts->abrogation_regulation_officialjournal_page?></td>
+		</tr>
+<?php
+		}
+?>
+	</table>
+<?php
+	} else {
+?>
+<p class="medium">There are no measure partial temporary stops for this measure.</p>
+<?php		
+	}
+?>	
+<?php
+}
+?>
+	</section>
+	<section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="oplog">
+	<h2 style="margin-top:0px">Oplog entries</h2>
 		<?php
 	$sql = "select measure_type_id, geographical_area_id, goods_nomenclature_item_id,
 	validity_start_date, validity_end_date, measure_generating_regulation_id,
@@ -204,7 +570,7 @@
 		<tr class="govuk-table__row">
 			<th class="govuk-table__header nopad small">Measure type</th>
 			<th class="govuk-table__header small">Geography</th>
-			<th class="govuk-table__header small">Commodity</th>
+			<th class="govuk-table__header small" style="width:10%">Commodity</th>
 			<th class="govuk-table__header small">Start date</th>
 			<th class="govuk-table__header small">End date</th>
 			<th class="govuk-table__header small">Meas. reg</th>
@@ -233,7 +599,7 @@
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell nopad small"><?=$measure_type_id?></td>
 				<td class="govuk-table__cell small"><?=$geographical_area_id?></td>
-				<td class="govuk-table__cell small"><?=$goods_nomenclature_item_id?></td>
+				<td class="govuk-table__cell small"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=80"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
 				<td class="govuk-table__cell small"><?=short_date($validity_start_date)?></td>
 				<td class="govuk-table__cell small"><?=short_date($validity_end_date)?></td>
 				<td class="govuk-table__cell small"><?=$measure_generating_regulation_id?></td>
@@ -251,255 +617,14 @@
 <?php
 	}
 ?>
-		<p class="back_to_top"><a href="#top">Back to top</a></p>
+	</section>
+</div>
 
-		<h2 id="measure_components">Measure components</h2>
-		<p>The following components are assigned to this measure.</p>
-<?php
-	$sql = "SELECT mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
-	ded.description as duty_expression_description, mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
-	FROM duty_expression_descriptions ded, measurement_unit_qualifier_descriptions muqd RIGHT OUTER JOIN 
-	measure_components mc ON mc.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code
-	LEFT OUTER JOIN measurement_unit_descriptions mud ON mc.measurement_unit_code = mud.measurement_unit_code
-	WHERE measure_sid = " . $measure_sid . " AND ded.duty_expression_id = mc.duty_expression_id ORDER BY duty_expression_id";
-	#print ($sql);
-	$result = pg_query($conn, $sql);
-	if  ($result) {
-?>
-	<table cellspacing="0" class="govuk-table">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header nopad" style="width:15%">Duty expression</th>
-			<th class="govuk-table__header" style="width:15%">Duty amount</th>
-			<th class="govuk-table__header" style="width:15%">Monetary unit code</th>
-			<th class="govuk-table__header" style="width:38 %">Measurement unit code / qualifier code</th>
-			<th class="govuk-table__header" style="width:17%">Actions</th>
-		</tr>
+		
 
-<?php        
-		while ($row = pg_fetch_array($result)) {
-			$duty_expression_id                     = $row['duty_expression_id'];
-			$duty_amount                            = $row['duty_amount'];
-			$monetary_unit_code                     = $row['monetary_unit_code'];
-			$measurement_unit_code                  = $row['measurement_unit_code'];
-			$measurement_unit_qualifier_code        = $row['measurement_unit_qualifier_code'];
-			$measurement_unit_description           = $row['measurement_unit_description'];
-			$measurement_unit_qualifier_description = $row['measurement_unit_qualifier_description'];
-			$measurement_unit_show = $measurement_unit_code;
-			if ($measurement_unit_description != ""){
-				$measurement_unit_show .= " - " . $measurement_unit_description;
-			}
-			$measurement_unit_qualifier_show = $measurement_unit_qualifier_code;
-			if ($measurement_unit_qualifier_description != ""){
-				$measurement_unit_qualifier_show .= " - " . $measurement_unit_qualifier_description;
-			}
-?>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell nopad"><?=$duty_expression_id?></td>
-			<td class="govuk-table__cell"><?=number_format($duty_amount, 3)?></td>
-			<td class="govuk-table__cell"><?=$monetary_unit_code?></td>
-			<td class="govuk-table__cell"><?=$measurement_unit_show?><?php if ($measurement_unit_show != "") { echo ("&nbsp;/&nbsp;"); } ?><?=$measurement_unit_qualifier_show?></td>
-			<td class="govuk-table__cell">
-				<form action="actions/measure_actions.html" method="get" style="display:inline">
-					<input type="hidden" name="action" value="edit_component" />
-					<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
-					<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
-					<button type="submit" class="govuk-button btn_nomargin")>Edit</button>
-				</form>
-				<form action="actions/measure_actions.html" method="get" style="display:inline">
-					<input type="hidden" name="action" value="delete_component" />
-					<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
-					<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
-					<button type="submit" class="govuk-button btn_nomargin")>Delete</button>
-				</form>
-			</td>
-		</tr>
-
-<?php
-		}
-?>
-	</table>
-	<form action="actions/measure_actions.html" method="get">
-		<input type="hidden" name="action" value="add_component" />
-		<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
-		<input type="hidden" name="measure_sid" value="<?=$measure_sid?>" />
-		<button type="submit" class="govuk-button btn_nomargin" style="width:120px !important">Add component</button>
-	</form>
-	<p class="back_to_top"><a href="#top">Back to top</a></p>
-<?php
-	}
-?>
-
-<!-- Measure conditions //-->
-		<h2 id="measure_conditions">Measure conditions</h2>
-		<p>The following conditions apply to this measure.</p>
-<?php
-	$sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
-	mc.condition_monetary_unit_code, mc.condition_measurement_unit_code, mc.condition_measurement_unit_qualifier_code,
-	mc.action_code, mc.certificate_type_code, mc.certificate_code, mccd.description as condition_code_description, mad.description as action_code_description
-	FROM measure_condition_code_descriptions mccd, measure_conditions mc
-	LEFT OUTER JOIN measure_action_descriptions mad
-	ON mc.action_code = mad.action_code WHERE measure_sid = " . $measure_sid . "
-	AND mc.condition_code = mccd.condition_code ORDER BY condition_code, component_sequence_number";
-	$result = pg_query($conn, $sql);
-	$row_count = pg_num_rows($result);
-	if (($result) && ($row_count > 0)) {
-?>
-	<table cellspacing="0" class="govuk-table">
-		<tr class="govuk-table__row" valign="bottom">
-			<th class="govuk-table__header nopad" style="width:8%">SID</th>
-			<th class="govuk-table__header" style="width:12%">Condition code</th>
-			<th class="govuk-table__header c" style="width:10%">Duty amount</th>
-			<th class="govuk-table__header c" style="width:10%">Monetary unit code</th>
-			<th class="govuk-table__header c" style="width:20%">Measurement unit code / qualifier code</th>
-			<th class="govuk-table__header" style="width:20%">Action code</th>
-			<th class="govuk-table__header" style="width:20%">Certificate code</th>
-		</tr>
-
-<?php        
-		while ($row = pg_fetch_array($result)) {
-			$measure_condition_sid              = $row['measure_condition_sid'];
-			$condition_code                     = $row['condition_code'];
-			$component_sequence_number          = $row['component_sequence_number'];
-			$duty_amount                        = $row['condition_duty_amount'];
-			$monetary_unit_code                 = $row['condition_monetary_unit_code'];
-			$measurement_unit_code              = $row['condition_measurement_unit_code'];
-			$measurement_unit_qualifier_code    = $row['condition_measurement_unit_qualifier_code'];
-			$action_code                        = $row['action_code'];
-			$certificate_type_code              = $row['certificate_type_code'];
-			$certificate_code                   = $row['certificate_code'];
-			$condition_code_description         = $row['condition_code_description'];
-			$action_code_description            = $row['action_code_description'];
-
-			$action_code_show = $action_code;
-			if ($action_code_description != ""){
-				$action_code_show .= " - " . $action_code_description;
-			}
-			$condition_code_show = $condition_code;
-			if ($condition_code_description != ""){
-				$condition_code_show .= " - " . $condition_code_description;
-			}
-?>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell nopad"><?=$measure_condition_sid?></td>
-			<td class="govuk-table__cell"><?=$condition_code_show?></td>
-			<td class="govuk-table__cell c"><?=duty_format($duty_amount)?></td>
-			<td class="govuk-table__cell c"><?=$monetary_unit_code?></td>
-			<td class="govuk-table__cell c"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
-			<td class="govuk-table__cell"><?=$action_code_show?></td>
-<?php
-	if ($certificate_type_code != "") {
-?>		
-			<td class="govuk-table__cell"><a href="certificate_view.html?certificate_type_code=<?=$certificate_type_code?>&certificate_code=<?=$certificate_code?>"><?=$certificate_type_code?><?=$certificate_code?></a></td>
-<?php
-	} else {
-?>		
-			<td class="govuk-table__cell">&nbsp;</td>
-<?php
-	}
-?>		
-		</tr>
-
-<?php
-		}
-?>
-	</table>
-<?php
-	} else {
-?>
-	<p>There are no conditions associated with this measure.</p>
-<?php		
-	}
-?>
-	<p class="back_to_top"><a href="#top">Back to top</a></p>
-
-<!-- Footnotes //-->
-<h2 id="measure_footnotes">Footnotes</h2>
+		
 
 
-<?php
-	$sql = "select f.footnote_type_id, f.footnote_id, description
-	from footnote_association_measures fam, ml.ml_footnotes f 
-	where fam.footnote_id = f.footnote_id and fam.footnote_type_id = f.footnote_type_id
-	and fam.measure_sid = " . $measure_sid . "
-	order by 1, 2";
-	$result = pg_query($conn, $sql);
-	if  (($result) and (pg_num_rows($result) > 0)) {
-?>
-	<p>The following footnotes are associated with this measure.</p>
-	<table cellspacing="0" class="govuk-table">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header nopad" style="width:10%">Footnote</th>
-			<th class="govuk-table__header" style="width:90%">Description</th>
-		</tr>
-
-<?php        
-		while ($row = pg_fetch_array($result)) {
-			$footnote_type_id	= $row['footnote_type_id'];
-			$footnote_id		= $row['footnote_id'];
-			$description        = $row['description'];
-?>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell nopad"><a href="footnote_view.html?footnote_type_id=<?=$footnote_type_id?>&footnote_id=<?=$footnote_id?>"><?=$footnote_type_id?><?=$footnote_id?></a></td>
-			<td class="govuk-table__cell"><?=$description?></td>
-		</tr>
-
-<?php
-		}
-?>
-	</table>
-<?php
-	} else {
-?>
-<p>There are no foonotes associated with this measure.</p>
-<p class="back_to_top"><a href="#top">Back to top</a></p>
-<?php		
-	}
-?>
-
-<!-- Excluded geographical areas //-->
-
-		<h2 id="measure_excluded_geographical_areas">Excluded geographical areas</h2>
-<?php
-	$sql = "SELECT x.excluded_geographical_area, description
-	FROM measure_excluded_geographical_areas x, ml.ml_geographical_areas ga
-	WHERE x.excluded_geographical_area = ga.geographical_area_id
-	AND measure_sid = " . $measure_sid . "
-	ORDER BY excluded_geographical_area";
-	$result = pg_query($conn, $sql);
-	$row_count = pg_num_rows($result);
-	if (($result) && ($row_count > 0)) {
-?>
-	<table cellspacing="0" class="govuk-table">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header nopad" style="width:20%">Geographical area ID</th>
-			<th class="govuk-table__header" style="width:80%">Geographical area</th>
-		</tr>
-
-<?php        
-		while ($row = pg_fetch_array($result)) {
-			$excluded_geographical_area	= $row['excluded_geographical_area'];
-			$description                = $row['description'];
-?>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell nopad"><?=$excluded_geographical_area?></td>
-			<td class="govuk-table__cell"><?=$description?></td>
-		</tr>
-
-<?php
-		}
-?>
-	</table>
-<?php
-	} else {
-?>
-<p>There are no excluded geographical areas associated to this measure.</p>
-<?php		
-	}
-?>	
-	<p class="back_to_top"><a href="#top">Back to top</a></p>
-<?php
-}
-?>
 </div>
 
 <?php

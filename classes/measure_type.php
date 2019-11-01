@@ -317,5 +317,27 @@ class measure_type
 		#exit();
 		return ($succeeds);
 	}
+
+	function validate() {
+		global $conn;
+
+		if ($this->measure_type_id == 0) {
+			return (false);
+		}
+
+		$sql = "select measure_type_id from measure_types where measure_type_id = $1
+		and validity_end_date is null;;";
+		pg_prepare($conn, "validate_measure_type", $sql);
+		$result = pg_execute($conn, "validate_measure_type", array($this->measure_type_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
+		return ($ret);
+	}
+
+
 }
 

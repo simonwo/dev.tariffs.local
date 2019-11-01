@@ -80,6 +80,7 @@
 			<h1 id="heading_validity_start_date" class="govuk-fieldset__heading" style="max-width:100%;">Origin start date</h1>
 		</legend>
 		<span id="validity_start_hint" class="govuk-hint">This is the start of the origin's validity period.</span>
+		<span class="note_to_self"><b>Note to self</b> - force origin starting at the start of the quota period</span>
 		<?=$error_handler->display_error_message("validity_start_date");?>
 		<div class="govuk-date-input" id="validity_start">
 			<div class="govuk-date-input__item">

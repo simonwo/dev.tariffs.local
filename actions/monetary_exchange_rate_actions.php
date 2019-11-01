@@ -63,7 +63,6 @@
 	}
 
 	function monetary_exchange_rate_edit() {
-		h1 ("Editing");
 		$errors = array();
 		$monetary_exchange_rate = new monetary_exchange_rate;
 		$monetary_exchange_rate->monetary_exchange_period_sid	= get_formvar("monetary_exchange_period_sid", "", True);

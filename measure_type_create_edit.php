@@ -8,7 +8,6 @@
 	if ($phase == "edit") {
 		$measure_type->measure_type_id = $measure_type_id;
 		$measure_type->populate_from_db();
-		#h1 ("Getting from DB " . $measure_type->measure_type_id);
 		$phase = "measure_type_edit";
 	} else {
 		$measure_type->populate_from_cookies();
@@ -26,23 +25,22 @@
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Main menu</a></li>
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/measure_types.html">Measure types</a></li>
-		<li class="govuk-breadcrumbs__list-item"><?=$measure->measure_heading?></li>
+		<li class="govuk-breadcrumbs__list-item"><?=$measure_type->measure_heading?></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->
 
 <div class="app-content__header">
-	<h1 class="govuk-heading-xl"><?=$measure->measure_heading?></h1>
+	<h1 class="govuk-heading-xl"><?=$measure_type->measure_heading?></h1>
 </div>
 
 <form class="tariff" method="post" action="/actions/measure_type_actions.html">
 <input type="hidden" name="phase" value="<?=$phase?>" />
 <?php
 	if ($phase == "measure_type_edit") {
-		echo ('<input type="hidden" name="measure_sid" value="' . $measure->measure_sid . '" />');
+		echo ('<input type="hidden" name="measure_type_id" value="' . $measure_type->measure_type_id . '" />');
 	}
 ?>
-ssss
 <!-- Start error handler //-->
 <?=$error_handler->get_primary_error_block() ?>
 <!-- End error handler //-->

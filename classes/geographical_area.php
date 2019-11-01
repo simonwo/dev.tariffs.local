@@ -2,7 +2,7 @@
 class geographical_area
 {
 	// Class properties and methods go here
-	public $geographical_area_sid   	= 0;
+	public $geographical_area_sid   	= Null;
 	public $geographical_area_id    	= "";
 	public $geographical_area_group_sid	= 0;
 	public $geographical_area_group_id  = "";
@@ -21,19 +21,6 @@ class geographical_area
 		$this->validity_end_date		= $validity_end_date;
 	}
 
-	public function get_geographical_area_sid() {
-		global $conn;
-		$sql = "select geographical_area_sid from geographical_areas where geographical_area_id = $1
-		order by validity_start_date desc limit 1";
-		pg_prepare($conn, "get_geographical_area_sid", $sql);
-		$result = pg_execute($conn, "get_geographical_area_sid", array($this->geographical_area_id));
-		if ($result) {
-			while ($row = pg_fetch_array($result)) {
-				$this->geographical_area_sid  = $row['geographical_area_sid'];
-			}
-		}
-		return ($this->geographical_area_sid);
-	}
 	
 	public function delete_member() {
 		global $conn;
@@ -346,4 +333,40 @@ class geographical_area
         setcookie("geographical_area_description", "", time() + (86400 * 30), "/");
     }
 
+	public function get_geographical_area_sid() {
+		global $conn;
+		$this->geographical_area_id = trim($this->geographical_area_id);
+		$l = strlen($this->geographical_area_id);
+
+		if (($l != 2) and ($l != 4)) {
+			return (Null);
+		}
+		$sql = "select geographical_area_sid from geographical_areas where geographical_area_id = $1
+		order by validity_start_date desc limit 1";
+		pg_prepare($conn, "get_geographical_area_sid", $sql);
+		$result = pg_execute($conn, "get_geographical_area_sid", array($this->geographical_area_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$row = pg_fetch_row($result);
+			$this->geographical_area_sid  = $row[0];
+		}
+		return ($this->geographical_area_sid);
+	}
+
+	function validate() {
+		global $conn;
+
+
+		$sql = "select measure_type_id from measure_types where measure_type_id = $1
+		and validity_end_date is null;;";
+		pg_prepare($conn, "validate_measure_type", $sql);
+		$result = pg_execute($conn, "validate_measure_type", array($this->measure_type_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
+		return ($ret);
+	}
 }

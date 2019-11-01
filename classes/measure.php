@@ -112,6 +112,63 @@ class measure
         header("Location: " . $url);            
 	}
 
+	public function update_measure() {
+        global $conn;
+        $application = new application;
+        $operation = "U";
+		$operation_date = $application->get_operation_date();
+
+		$sql = "INSERT INTO measures_oplog (
+			measure_sid,
+			measure_type_id,
+			geographical_area_id,
+			goods_nomenclature_item_id,
+			validity_start_date,
+			validity_end_date,
+			measure_generating_regulation_role,
+			measure_generating_regulation_id,
+			justification_regulation_role,
+			justification_regulation_id,
+			stopped_flag,
+			geographical_area_sid,
+			goods_nomenclature_sid,
+			ordernumber,
+			additional_code_type_id,
+			additional_code_id,
+			additional_code_sid,
+			reduction_indicator,
+			export_refund_nomenclature_sid, operation, operation_date)
+		VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)";
+
+		pg_prepare($conn, "measure_update", $sql);
+		pg_execute($conn, "measure_update", array(
+			$this->measure_sid,
+			$this->measure_type_id,
+			$this->geographical_area_id,
+			$this->goods_nomenclature_item_id,
+			$this->validity_start_date,
+			$this->validity_end_date,
+			$this->measure_generating_regulation_role,
+			$this->measure_generating_regulation_id,
+			$this->justification_regulation_role,
+			$this->justification_regulation_id,
+			$this->stopped_flag,
+			$this->geographical_area_sid,
+			$this->goods_nomenclature_sid,
+			$this->ordernumber,
+			$this->additional_code_type_id,
+			$this->additional_code_id ,
+			$this->additional_code_sid,
+			$this->reduction_indicator,
+			$this->export_refund_nomenclature_sid,
+			$operation, $operation_date
+		));
+
+		$url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        header("Location: " . $url);            
+	}
+
 	public function get_new_measure_sid() {
 		global $conn;
 		$sql = "select max(measure_sid) from measures";
@@ -122,9 +179,6 @@ class measure
 		}
 	}
 
-	public function update_measure() {
-
-	}
 	/* END MEASURE FUNCTIONS */
 
 	/* BEGIN MEASURE COMPONENT FUNCTIONS */
@@ -299,6 +353,7 @@ class measure
 	}
 
 	public function delete_measure_components() {
+		h1 ("Deleting measure components");
 		global $conn;
         $application = new application;
         $operation = "D";
@@ -317,6 +372,67 @@ class measure
 			$measure_component->duty_amount, $measure_component->monetary_unit_code,
 			$measure_component->measurement_unit_code, $measure_component->measurement_unit_qualifier_code, $operation, $operation_date));
 			$i += 1;
+		}
+	}
+
+	public function delete_measure() {
+		global $conn;
+        $application = new application;
+        $operation = "D";
+		$operation_date = $application->get_operation_date();
+		$i = 0;
+
+		$sql = "insert into measures_oplog (
+			measure_sid, measure_type_id, geographical_area_id, goods_nomenclature_item_id,
+			validity_start_date, validity_end_date, measure_generating_regulation_role, measure_generating_regulation_id,
+			justification_regulation_role, justification_regulation_id, stopped_flag, geographical_area_sid,
+			goods_nomenclature_sid, ordernumber, additional_code_type_id, additional_code_id,
+			additional_code_sid,
+			reduction_indicator,
+			export_refund_nomenclature_sid,
+			operation,
+			operation_date
+		)
+		select
+			measure_sid,
+			measure_type_id,
+			geographical_area_id,
+			goods_nomenclature_item_id,
+			validity_start_date,
+			validity_end_date,
+			measure_generating_regulation_role,
+			measure_generating_regulation_id,
+			justification_regulation_role,
+			justification_regulation_id,
+			stopped_flag,
+			geographical_area_sid,
+			goods_nomenclature_sid,
+			ordernumber,
+			additional_code_type_id,
+			additional_code_id,
+			additional_code_sid,
+			reduction_indicator,
+			export_refund_nomenclature_sid,
+			'D',
+			'" . $operation_date . "'
+		from measures_oplog where measure_sid=$1 order by oid desc limit 1;";
+
+		$query_name = "measure_delete";
+
+		pg_prepare($conn, $query_name, $sql);
+		pg_execute($conn, $query_name, array($this->measure_sid));
+	}
+
+	public function get_goods_nomenclature_item_id() {
+		global $conn;
+		$sql = "select goods_nomenclature_item_id, geographical_area_id from measures where measure_sid = $1";
+		pg_prepare($conn, "get_goods_nomenclature_item_id", $sql);
+		$result = pg_execute($conn, "get_goods_nomenclature_item_id", array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+            $row = pg_fetch_row($result);
+			$this->goods_nomenclature_item_id	= $row[0];
+			$this->geographical_area_id			= $row[1];
 		}
 	}
 
@@ -668,26 +784,74 @@ class measure
 		$this->mega_string = $s;
 	}
 
-	
+	function populate_from_db() {
+		global $conn;
+		$sql = "select measure_type_id, geographical_area_id, goods_nomenclature_item_id,
+		validity_start_date, validity_end_date, measure_generating_regulation_role, measure_generating_regulation_id,
+		justification_regulation_id, justification_regulation_role, stopped_flag, ordernumber,
+		additional_code_type_id, additional_code_id, reduction_indicator
+		from measures where measure_sid = $1";
+		$query_name = "get_measure_" . $this->measure_sid;
+		pg_prepare($conn, $query_name, $sql);
+		$result = pg_execute($conn, $query_name, array($this->measure_sid));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$row = pg_fetch_row($result);
+			$this->measure_type_id						= $row[0];
+			$this->geographical_area_id					= $row[1];
+			$this->goods_nomenclature_item_id			= $row[2];
+			$this->validity_start_date					= $row[3];
+			$this->validity_end_date					= $row[4];
+			$this->measure_generating_regulation_role	= $row[5];
+			$this->measure_generating_regulation_id		= $row[6];
+			$this->justification_regulation_id			= $row[7];
+			$this->justification_regulation_role		= $row[8];
+			$this->stopped_flag							= $row[9];
+			$this->ordernumber							= $row[10];
+			$this->additional_code_type_id				= $row[11];
+			$this->additional_code_id					= $row[12];
+			$this->reduction_indicator					= $row[13];
+
+			if ($this->validity_start_date != Null) {
+				$this->validity_start_day = date('d', strtotime($this->validity_start_date));
+				$this->validity_start_month = date('m', strtotime($this->validity_start_date));
+				$this->validity_start_year = date('Y', strtotime($this->validity_start_date));
+			} else {
+				$this->validity_start_day = "";
+				$this->validity_start_month = "";
+				$this->validity_start_year = "";
+			}
+			
+			if ($this->validity_end_date != Null) {
+				$this->validity_end_day = date('d', strtotime($this->validity_end_date));
+				$this->validity_end_month = date('m', strtotime($this->validity_end_date));
+				$this->validity_end_year = date('Y', strtotime($this->validity_end_date));
+			} else {
+				$this->validity_end_day = "";
+				$this->validity_end_month = "";
+				$this->validity_end_year = "";
+			}
+			$this->heading = "Edit measure " . $this->measure_sid;
+		}
+	}
+
 	function populate_from_cookies() {
-		$this->measure_heading						= "Create new measure";
-		$this->measure_sid							= get_cookie("measure_sid");
-		/*
-		$this->validity_start_day					= get_cookie("measure_type_validity_start_day");
-		$this->validity_start_month					= get_cookie("measure_type_validity_start_month");
-		$this->validity_start_year					= get_cookie("measure_type_validity_start_year");
-		$this->validity_end_day						= get_cookie("measure_type_validity_end_day");
-		$this->validity_end_month					= get_cookie("measure_type_validity_end_month");
-		$this->validity_end_year					= get_cookie("measure_type_validity_end_year");
-		$this->description							= get_cookie("measure_type_description");
-		$this->trade_movement_code					= get_cookie("measure_type_trade_movement_code");
-		$this->priority_code						= get_cookie("measure_type_priority_code");
-		$this->origin_dest_code						= get_cookie("measure_type_origin_dest_code");
-		$this->measure_component_applicable_code	= get_cookie("measure_type_measure_component_applicable_code");
-		$this->order_number_capture_code			= get_cookie("measure_type_order_number_capture_code");
-		$this->measure_type_series_id				= get_cookie("measure_type_measure_type_series_id");
-		$this->disable_measure_type_id_field		= "";
-		*/
+		$this->heading							= "Create new measure";
+		$this->measure_sid						= get_cookie("measure_sid");
+		$this->validity_start_day				= get_cookie("measure_type_validity_start_day");
+		$this->validity_start_month				= get_cookie("measure_type_validity_start_month");
+		$this->validity_start_year				= get_cookie("measure_type_validity_start_year");
+		$this->validity_end_day					= get_cookie("measure_type_validity_end_day");
+		$this->validity_end_month				= get_cookie("measure_type_validity_end_month");
+		$this->validity_end_year				= get_cookie("measure_type_validity_end_year");
+
+		$this->measure_generating_regulation_id	= get_cookie("measure_generating_regulation_id");
+		$this->measure_type_id					= get_cookie("measure_type_id");
+		$this->goods_nomenclature_item_id		= get_cookie("goods_nomenclature_item_id");
+		$this->additional_code_type_id			= get_cookie("additional_code_type_id");
+		$this->additional_code_id				= get_cookie("additional_code_id");
+		$this->geographical_area_id				= get_cookie("geographical_area_id");
+		$this->ordernumber						= get_cookie("ordernumber");
 	}
 
 	public function get_siv_specific(){

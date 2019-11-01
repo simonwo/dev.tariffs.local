@@ -7,7 +7,7 @@
 					<oub:record.code>370</oub:record.code>
 					<oub:subrecord.code>00</oub:subrecord.code>
 					<oub:record.sequence.number>[RECORD_SEQUENCE_NUMBER]</oub:record.sequence.number>
-					<oub:update.type>3</oub:update.type>
+					<oub:update.type>[OPERATION]</oub:update.type>
 					<oub:quota.definition>
 						<oub:quota.definition.sid>[QUOTA_DEFINITION_SID]</oub:quota.definition.sid>
 						<oub:quota.order.number.id>[QUOTA_ORDER_NUMBER_ID]</oub:quota.order.number.id>

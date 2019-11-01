@@ -165,6 +165,27 @@ class base_regulation
         setcookie("geographical_area_validity_start_month", "", time() + (86400 * 30), "/");
         setcookie("geographical_area_validity_start_year", "", time() + (86400 * 30), "/");
         setcookie("geographical_area_description", "", time() + (86400 * 30), "/");
-    }
+	}
+	
+	function validate() {
+		global $conn;
 
+		$this->base_regulation_id = trim($this->base_regulation_id);
+		if (strlen($this->base_regulation_id) != 8 ) {
+			$ret = false;
+			return $ret;
+		}
+
+		$sql = "select base_regulation_id from base_regulations where base_regulation_id = $1
+		and validity_end_date is null;";
+		pg_prepare($conn, "validate_base_regulation", $sql);
+		$result = pg_execute($conn, "validate_base_regulation", array($this->base_regulation_id));
+		$row_count = pg_num_rows($result);
+		if (($result) && ($row_count > 0)) {
+			$ret = true;
+		} else {
+			$ret = false;
+		}
+		return ($ret);
+	}
 }

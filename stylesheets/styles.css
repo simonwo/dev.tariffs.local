@@ -1,3 +1,28 @@
+.note_to_self {
+	margin-bottom:1em;
+	font-family: "nta",Arial,sans-serif !important;
+	-moz-osx-font-smoothing: grayscale;
+	background-color:#e22;
+	padding:1em;
+	color:#fff;
+	float:none;
+	display:block;
+	clear:both;
+}
+ul.govuk-tabs__list compact {
+	max-width:100% !important;
+}
+
+.govuk-tabs__list-item--selected {
+	background-color:#000 !important;
+}
+span.inline-message {
+	padding-left:1em;
+	font-family: "nta",Arial,sans-serif !important;
+	-moz-osx-font-smoothing: grayscale;
+	color:#6f777b;
+
+}
 div.govuk-tabs ul.compact li.govuk-tabs__list-item {
 	xpadding:1px !important;
 }
@@ -373,6 +398,9 @@ td.warning {
 td.nopad, th.nopad {
 	padding-left:0px !important;
 	padding-right:0px !important;
+}
+.panel--confirmation a {
+	color:#fff !important;
 }
 .panel--confirmation {
 	font-family: "nta",Arial,sans-serif !important;

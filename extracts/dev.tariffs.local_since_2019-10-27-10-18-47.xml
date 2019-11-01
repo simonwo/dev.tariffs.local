@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:envelope xmlns="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" xmlns:env="urn:publicid:-:DGTAXUD:GENERAL:ENVELOPE:1.0" id="200000000000000">
+	<!-- Start measure component -->
+	<env:transaction id="500000">
+		<env:app.message id="1">
+			<oub:transmission xmlns:oub="urn:publicid:-:DGTAXUD:TARIC:MESSAGE:1.0" xmlns:env="urn:publicid:-:DGTAXUD:GENERAL:ENVELOPE:1.0">
+				<oub:record>
+					<oub:transaction.id>500000</oub:transaction.id>
+					<oub:record.code>430</oub:record.code>
+					<oub:subrecord.code>05</oub:subrecord.code>
+					<oub:record.sequence.number>1</oub:record.sequence.number>
+					<oub:update.type>1</oub:update.type>
+					<oub:measure.component>
+						<oub:measure.sid>5097253</oub:measure.sid>
+						<oub:duty.expression.id>01</oub:duty.expression.id>
+						<oub:duty.amount>3.3</oub:duty.amount>
+					</oub:measure.component>
+				</oub:record>
+			</oub:transmission>
+		</env:app.message>
+	</env:transaction>
+	<!-- End measure component -->
+</env:envelope>

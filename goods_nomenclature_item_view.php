@@ -3,7 +3,7 @@
 	require ("includes/db.php");
 
 	$goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
-	$geographical_area_id       = get_querystring("geographical_area_id");
+	$geographical_area_id       = strtoupper(get_querystring("geographical_area_id"));
 	$measure_type_id            = get_querystring("measure_type_id");
 	$productline_suffix         = get_querystring("productline_suffix");
 	$sort_order					= get_querystring("so");
@@ -82,36 +82,36 @@
 		<p>The table below shows the core details of this commodity code</p>
 		<table class="govuk-table" cellspacing="0">
 			<tr class="govuk-table__row">
-				<th class="govuk-table__header" style="width:30%">Item</th>
+				<th class="govuk-table__header nopad" style="width:30%">Item</th>
 				<th class="govuk-table__header" style="width:70%">Value</th>
 			</tr>
 
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Commodity code</td>
+					<td class="govuk-table__cell nopad">Commodity code</td>
 					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> ( <?=format_commodity_code($goods_nomenclature_item_id)?> )</td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">SID</td>
+					<td class="govuk-table__cell nopad">SID</td>
 					<td class="govuk-table__cell b"><?=$goods_nomenclature_sid?></td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Product line suffix</td>
+					<td class="govuk-table__cell nopad">Product line suffix</td>
 					<td class="govuk-table__cell b"><?=$productline_suffix?></td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Description</td>
+					<td class="govuk-table__cell nopad">Description</td>
 					<td class="govuk-table__cell"><?=$description?></td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Friendly description</td>
+					<td class="govuk-table__cell nopad">Friendly description</td>
 					<td class="govuk-table__cell"><?=$friendly_description?></td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Validity start date</td>
+					<td class="govuk-table__cell nopad">Validity start date</td>
 					<td class="govuk-table__cell"><?=$validity_start_date?></td>
 				</tr>
 				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">Validity end date</td>
+					<td class="govuk-table__cell nopad">Validity end date</td>
 					<td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
 				</tr>
 			</table>
@@ -122,7 +122,7 @@
 			that use a product line suffix that is not "80". These are structural elements only and cannot be declared against.</p>
 			<table class="govuk-table" cellspacing="0">
 				<tr class="govuk-table__row">
-					<th style="width:10%" class="govuk-table__header">Commodity</th>
+					<th style="width:10%" class="govuk-table__header nopad">Commodity</th>
 					<th style="width:6%" class="govuk-table__header c">Suffix</th>
 					<th style="width:6%" class="govuk-table__header c">Indents</th>
 					<th style="width:73%" class="govuk-table__header">Description</th>
@@ -156,7 +156,7 @@
 		}
 ?>
 				<tr class="govuk-table__row <?=$suffix_class?>">
-					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id)?></a></td>
+					<td class="govuk-table__cell nopad"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix?></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->number_indents + 1?></td>
 					<td class="govuk-table__cell <?=$class?>"><?=str_replace("|", " ", $obj_goods_nomenclature_item->ar_hierarchies[$i]->description)?></td>
