@@ -78,9 +78,9 @@
 						<a id="context_switcher_fta" href="#"><span id="show_fta">fta</span></a>&nbsp;
 <?php
 	}
-	if (strpos($my_url, "remedies.") === False) {
+	if (strpos($my_url, "load.") === False) {
 ?>						
-						<a id="context_switcher_remedies" href="#"><span id="show_remedies">remedies</span></a>&nbsp;
+						<a id="context_switcher_load" href="#"><span id="show_load">load</span></a>&nbsp;
 <?php
 	}
 ?>					

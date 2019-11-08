@@ -300,6 +300,30 @@
 <!-- Measure conditions //-->
 	<h2 style="margin-top:0px">Measure conditions</h2>
 <?php
+	// Get measure condition components
+	$sql = "select mcc.measure_condition_sid, mcc.duty_expression_id, mcc.duty_amount, mcc.monetary_unit_code,
+	mcc.measurement_unit_code, mcc.measurement_unit_qualifier_code
+	from measure_conditions mc, measure_condition_components mcc
+	where mc.measure_condition_sid = mcc.measure_condition_sid
+	and measure_sid = " . $measure_sid . " order by mc.component_sequence_number, mcc.duty_expression_id;";
+
+	$result = pg_query($conn, $sql);
+	$row_count = pg_num_rows($result);
+	$measure_condition_components = array();
+	if (($result) && ($row_count > 0)) {
+		while ($row = pg_fetch_array($result)) {
+			$mcc = new measure_condition_component();
+			$mcc->measure_condition_sid              = $row['measure_condition_sid'];
+			$mcc->duty_expression_id              	= $row['duty_expression_id'];
+			$mcc->duty_amount              			= $row['duty_amount'];
+			$mcc->monetary_unit_code              	= $row['monetary_unit_code'];
+			$mcc->measurement_unit_code              = $row['measurement_unit_code'];
+			$mcc->measurement_unit_qualifier_code	= $row['measurement_unit_qualifier_code'];
+			array_push($measure_condition_components, $mcc);
+		}
+	}
+
+	
 	$sql = "SELECT mc.measure_condition_sid, mc.condition_code, mc.component_sequence_number, mc.condition_duty_amount,
 	mc.condition_monetary_unit_code, mc.condition_measurement_unit_code, mc.condition_measurement_unit_qualifier_code,
 	mc.action_code, mc.certificate_type_code, mc.certificate_code, mccd.description as condition_code_description, mad.description as action_code_description
@@ -314,15 +338,16 @@
 	<p class="medium">The following conditions apply to this measure.</p>
 	<table cellspacing="0" class="govuk-table">
 		<tr class="govuk-table__row" valign="bottom">
-			<th class="govuk-table__header nopad" style="width:7%">SID</th>
-			<th class="govuk-table__header" style="width:18%">Condition code</th>
-			<th class="govuk-table__header" style="width:6%">Seq</th>
-			<th class="govuk-table__header c" style="width:10%">Duty amount</th>
-			<th class="govuk-table__header c" style="width:10%">Monetary unit code</th>
-			<th class="govuk-table__header c" style="width:12%">Measurement unit code / qualifier code</th>
-			<th class="govuk-table__header" style="width:16%">Action code</th>
-			<th class="govuk-table__header" style="width:12%">Certificate code</th>
-			<th class="govuk-table__header" style="width:8%">Actions</th>
+			<th class="govuk-table__header nopad small" style="width:7%">SID</th>
+			<th class="govuk-table__header small" style="width:12%">Condition code</th>
+			<th class="govuk-table__header c small" style="width:6%">Seq</th>
+			<th class="govuk-table__header c small" style="width:10%">Duty amount</th>
+			<th class="govuk-table__header c small" style="width:10%">Monetary unit</th>
+			<th class="govuk-table__header c small" style="width:12%">Measurement unit / qualifier</th>
+			<th class="govuk-table__header small" style="width:12%">Action code</th>
+			<th class="govuk-table__header small" style="width:9%">Certificate code</th>
+			<th class="govuk-table__header small" style="width:14%">Components</th>
+			<th class="govuk-table__header small" style="width:8%">Actions</th>
 		</tr>
 
 <?php
@@ -330,10 +355,10 @@
 			$measure_condition_sid              = $row['measure_condition_sid'];
 			$condition_code                     = $row['condition_code'];
 			$component_sequence_number          = $row['component_sequence_number'];
-			$duty_amount                        = $row['condition_duty_amount'];
-			$monetary_unit_code                 = $row['condition_monetary_unit_code'];
-			$measurement_unit_code              = $row['condition_measurement_unit_code'];
-			$measurement_unit_qualifier_code    = $row['condition_measurement_unit_qualifier_code'];
+			$condition_duty_amount                        = $row['condition_duty_amount'];
+			$condition_monetary_unit_code                 = $row['condition_monetary_unit_code'];
+			$condition_measurement_unit_code              = $row['condition_measurement_unit_code'];
+			$condition_measurement_unit_qualifier_code    = $row['condition_measurement_unit_qualifier_code'];
 			$action_code                        = $row['action_code'];
 			$certificate_type_code              = $row['certificate_type_code'];
 			$certificate_code                   = $row['certificate_code'];
@@ -350,29 +375,29 @@
 			}
 ?>
 		<tr class="govuk-table__row">
-			<td class="govuk-table__cell nopad small"><?=$measure_condition_sid?></td>
-			<td class="govuk-table__cell small"><?=$condition_code_show?></td>
-			<td class="govuk-table__cell nopad c small"><?=$component_sequence_number?></td>
-			<td class="govuk-table__cell c small"><?=duty_format($duty_amount)?></td>
-			<td class="govuk-table__cell c small"><?=$monetary_unit_code?></td>
-			<td class="govuk-table__cell c small"><?=$measurement_unit_code?> <?=$measurement_unit_qualifier_code?></td>
-			<td class="govuk-table__cell small"><?=$action_code_show?></td>
+			<td class="govuk-table__cell nopad vsmall"><?=$measure_condition_sid?></td>
+			<td class="govuk-table__cell vsmall"><?=$condition_code_show?></td>
+			<td class="govuk-table__cell nopad c vsmall"><?=$component_sequence_number?></td>
+			<td class="govuk-table__cell c vsmall"><?=duty_format($condition_duty_amount)?></td>
+			<td class="govuk-table__cell c vsmall"><?=$condition_monetary_unit_code?></td>
+			<td class="govuk-table__cell c vsmall"><?=$condition_measurement_unit_code?> <?=$condition_measurement_unit_qualifier_code?></td>
+			<td class="govuk-table__cell vsmall"><?=$action_code_show?></td>
 <?php
 	if ($certificate_type_code != "") {
 ?>		
-			<td class="govuk-table__cell small"><a href="certificate_view.html?certificate_type_code=<?=$certificate_type_code?>&certificate_code=<?=$certificate_code?>"><?=$certificate_type_code?><?=$certificate_code?></a></td>
+			<td class="govuk-table__cell vsmall"><a href="certificate_view.html?certificate_type_code=<?=$certificate_type_code?>&certificate_code=<?=$certificate_code?>"><?=$certificate_type_code?><?=$certificate_code?></a></td>
 <?php
 	} else {
 ?>		
-			<td class="govuk-table__cell small">&nbsp;</td>
+			<td class="govuk-table__cell vsmall">&nbsp;</td>
 <?php
 	}
 ?>
-			<td class="govuk-table__cell small">
-				Actions here
+			<td class="govuk-table__cell vsmall"><?=get_condition_components($measure_condition_components, $measure_condition_sid)?></td>
+			<td class="govuk-table__cell vsmall">
+				<!--Actions here//-->
 			</td>
 		</tr>
-
 <?php
 		}
 ?>
@@ -628,5 +653,15 @@
 </div>
 
 <?php
-	require ("includes/footer.php")
+	require ("includes/footer.php");
+	function get_condition_components($measure_condition_components, $measure_condition_sid) {
+		$s = "";
+		foreach ($measure_condition_components as $mcc) {
+			if ($mcc->measure_condition_sid == $measure_condition_sid) {
+				$mcc->get_duty_string();
+				$s .= $mcc->duty_string . " ";
+			}
+		}
+		return ($s);
+	}
 ?>

@@ -115,6 +115,13 @@
 					<td class="govuk-table__cell"><?=short_date($validity_end_date)?></td>
 				</tr>
 			</table>
+			<form action="/actions/goods_nomenclature_actions.html" method="get">
+				<input type="hidden" name="phase" value="goods_nomenclature_item_edit" />
+				<input type="hidden" name="goods_nomenclature_sid" value="<?=$goods_nomenclature_sid?>" />
+				<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />
+				<input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
+				<button type="submit" class="govuk-button small")>Edit this commodity code</button>
+			</form>
 			<p class="back_to_top"><a href="#top">Back to top</a></p>
 
 			<h2 id="hierarchy">Position in hierarchy</h2>
