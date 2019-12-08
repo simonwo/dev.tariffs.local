@@ -1,9 +1,20 @@
 <?php
     ini_set('max_execution_time', 1800); // 30 minutes
-    //$write_to_screen = true; // false;
+    $write_to_screen = true; // false;
     $write_to_screen = false;
     require ("includes/db.php");
     $scope = get_querystring("scope") . "";
+    $day = get_querystring("day") . "";
+    $month = get_querystring("month") . "";
+    $year = get_querystring("year") . "";
+    $snapshot_date = to_date_string($day, $month, $year);
+    $range = get_querystring("range") . "";
+    if ($range == "" ) {
+        $range = "%";
+    } else {
+        $range .= "%";
+    }
+
     if ($write_to_screen == false) {
         header("Content-type: text/csv");
         header("Content-Disposition: attachment; filename=" . $scope . ".csv");
@@ -24,9 +35,10 @@
         $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id,
         mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code,
         mc.measurement_unit_qualifier_code, m.geographical_area_id
-        from measures m, measure_components mc
-        where m.measure_sid = mc.measure_sid
-        and m.validity_start_date = '2019-11-01'
+        from ml.measures_real_end_dates m left outer join measure_components mc
+        on m.measure_sid = mc.measure_sid
+        where m.validity_start_date <= '" . $snapshot_date . "'
+        and (m.validity_end_date is null or m.validity_end_date >= '" . $snapshot_date . "')
         and measure_type_id in ('103', '105')
         order by m.goods_nomenclature_item_id, mc.duty_expression_id";
     }
@@ -36,33 +48,40 @@
         $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id,
         mc.duty_expression_id, mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code,
         mc.measurement_unit_qualifier_code, m.geographical_area_id
-        from measures m, measure_components mc
-        where m.measure_sid = mc.measure_sid
-        and m.validity_start_date = '2019-11-01'
+        from ml.measures_real_end_dates m left outer join measure_components mc
+        on m.measure_sid = mc.measure_sid
+        where m.validity_start_date <= '" . $snapshot_date . "'
+        and (m.validity_end_date is null or m.validity_end_date >= '" . $snapshot_date . "')
         and measure_type_id in ('142', '145')
         and geographical_area_id = '" . $scope . "'
         order by m.goods_nomenclature_item_id, mc.duty_expression_id
         ";
     }
+    echo($sql);
+    die();
 
-    
     $result = pg_query($conn, $sql);
     $duties = array();
 	if ($result) {
         while ($row = pg_fetch_array($result)) {
             $duty = new duty();
             $duty->measure_sid                      = $row['measure_sid'];
-            $duty->commodity_code                   = $row['goods_nomenclature_item_id'];
+            $duty->goods_nomenclature_item_id       = $row['goods_nomenclature_item_id'];
             $duty->measure_type_id                  = $row['measure_type_id'];
             $duty->duty_expression_id               = $row['duty_expression_id'];
             $duty->duty_amount                      = $row['duty_amount'];
             $duty->monetary_unit_code               = $row['monetary_unit_code'];
             $duty->measurement_unit_code            = $row['measurement_unit_code'];
             $duty->measurement_unit_qualifier_code  = $row['measurement_unit_qualifier_code'];
+            if ($duty->duty_expression_id == null) {
+                $duty->entry_price_applies              = true;
+                $duty->duty_string = "Entry price";
+                h1 ("EPS");
+            } else {
+                $duty->get_duty_string();
+            }
             $duty->geographical_area_id             = $row['geographical_area_id'];
             
-            $duty->get_duty_string();
-
             array_push($duties, $duty);
         }
     }
@@ -82,10 +101,10 @@
         }
         if ($matched == false) {
             $measure = new measure();
-            $measure->measure_sid           = $duty->measure_sid;
-            $measure->commodity_code        = $duty->commodity_code;
-            $measure->measure_type_id       = $duty->measure_type_id;
-            $measure->geographical_area_id  = $duty->geographical_area_id;
+            $measure->measure_sid                   = $duty->measure_sid;
+            $measure->goods_nomenclature_item_id    = $duty->goods_nomenclature_item_id;
+            $measure->measure_type_id               = $duty->measure_type_id;
+            $measure->geographical_area_id          = $duty->geographical_area_id;
             array_push($measure->duty_list, $duty);
             array_push($measures, $measure);
         }
@@ -102,7 +121,7 @@
     from measures m, measure_excluded_geographical_areas mega
     where m.measure_sid = mega.measure_sid 
     and measure_type_id in ('142', '145')
-    and m.validity_start_date = '2019-11-01'
+    and m.validity_start_date = '" . $snapshot_date . "'
     and geographical_area_id = '" . $scope . "'
     order by m.goods_nomenclature_item_id, mega.excluded_geographical_area";
     $result = pg_query($conn, $sql);
@@ -132,7 +151,7 @@
 // Next - SQL to get the commodity codes
     $sql = "select goods_nomenclature_item_id, producline_suffix, number_indents,
     description, leaf, significant_digits, validity_start_date, validity_end_date
-    from ml.goods_nomenclature_export_new ('%', '" . $critical_date . "')
+    from ml.goods_nomenclature_export_new ('" . $range . "', '" . $snapshot_date . "')
     order by goods_nomenclature_item_id, producline_suffix";
 
     $result = pg_query($conn, $sql);
@@ -162,13 +181,14 @@
         foreach ($commodities as $commodity) {
             //$commodity->geographical_area_id = "";
             //$commodity->mega_string = "";
-            if ($measure->commodity_code == $commodity->goods_nomenclature_item_id) {
+            if ($measure->goods_nomenclature_item_id == $commodity->goods_nomenclature_item_id) {
                 if ($commodity->productline_suffix == "80") {
                     array_push($commodity->measure_list, $measure);
                     $commodity->measure_sid = $measure->measure_sid;
                     $commodity->measure_type_id = $measure->measure_type_id;
                     $commodity->geographical_area_id = $measure->geographical_area_id;
                     $commodity->mega_string = $measure->mega_string;
+                    $commodity->get_measure_type_description();
                     $commodity->assigned = true;
                     break;
                 }
@@ -208,7 +228,7 @@
     }
 
     if (count($commodities) > 0) {
-        echo "Commodity code,Suffix,Indent,Description,End-line?,Assigned,Measure type,Origin,Origin exclusions,Duties";
+        echo "Commodity code,Suffix,Indent,End-line?,Description,Assigned,Measure type,Origin,Origin exclusions,Duties";
         echo ($delimiter);
         foreach ($commodities as $commodity) {
             $match_class = "";
@@ -227,10 +247,10 @@
             echo ("'" . $commodity->goods_nomenclature_item_id . "',");
             echo ("'" . $commodity->productline_suffix . "',");
             echo ($number_indents_real . ",");
+            echo ("'" . yn($commodity->leaf) . "',");
             echo ("'" . $commodity->format_description2() . "',");
-            echo ("'" . yn2($commodity->leaf) . "',");
             echo ("'" . $commodity->assigned_string . "',");
-            echo ("'" . $commodity->measure_type_id . "',");
+            echo ("'" . $commodity->measure_type_id . $commodity->measure_type_desc . "',");
             //echo ("'" . short_date($commodity->validity_start_date) . "',");
             //echo ("'" . short_date($commodity->validity_end_date) . "',");
             echo ("'" . $commodity->geographical_area_id . "',");

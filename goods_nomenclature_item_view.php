@@ -55,6 +55,9 @@
 				$productline_suffix         = $row['productline_suffix'];
 				$description                = $row['description'];
 				$friendly_description       = $row['friendly_description'];
+				if (substr($goods_nomenclature_item_id, -2) != "00") {
+					$friendly_description .= " : " . $row['description'];
+				}
 				$validity_start_date        = short_date($row['validity_start_date']);
 				$validity_end_date          = $row['validity_end_date'];
 				$validity_end_date2         = short_date($validity_end_date);
@@ -88,7 +91,7 @@
 
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell nopad">Commodity code</td>
-					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> ( <?=format_commodity_code($goods_nomenclature_item_id)?> )</td>
+					<td class="govuk-table__cell b"><?=$goods_nomenclature_item_id?> ( <?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?> )</td>
 				</tr>
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell nopad">SID</td>
@@ -163,7 +166,7 @@
 		}
 ?>
 				<tr class="govuk-table__row <?=$suffix_class?>">
-					<td class="govuk-table__cell nopad"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id)?></a></td>
+					<td class="govuk-table__cell nopad"><a class="nodecorate" href="<?=$url?>"><?=format_goods_nomenclature_item_id($obj_goods_nomenclature_item->ar_hierarchies[$i]->goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix?></td>
 					<td class="govuk-table__cell c"><?=$obj_goods_nomenclature_item->ar_hierarchies[$i]->number_indents + 1?></td>
 					<td class="govuk-table__cell <?=$class?>"><?=str_replace("|", " ", $obj_goods_nomenclature_item->ar_hierarchies[$i]->description)?></td>
@@ -298,7 +301,7 @@ nomenclature code from which the new code originated.</p>
 			$description       						= $row['description'];
 ?>
 			<tr class="<?=$rowclass?>">
-				<td class="govuk-table__cell" class="nodecorate"><?=format_commodity_code($derived_goods_nomenclature_item_id)?></td>
+				<td class="govuk-table__cell" class="nodecorate"><?=format_goods_nomenclature_item_id($derived_goods_nomenclature_item_id)?></td>
 				<td class="govuk-table__cell c"><?=$derived_productline_suffix?></td>
 				<td class="govuk-table__cell"><?=$description?></td>
 			</tr>
@@ -496,7 +499,7 @@ nomenclature code which supersedes it.</p>
 ?>
 				<tr class="<?=$rowclass?>">
 					<td class="govuk-table__cell nopad vsmall"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="<?=$url?>"><?=format_commodity_code($goods_nomenclature_item_ix)?></a></td>
+					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="<?=$url?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_ix)?></a></td>
 					<td class="govuk-table__cell vsmall"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?> <?=$measure_type_description?></a></td>
 					<td class="govuk-table__cell vsmall"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_ix?>"><?=$geographical_area_ix?>&nbsp;<?=$geo_description?></a></td>
 					<td class="govuk-table__cell vsmall c"><?=$additional_code_type_id?><?=$additional_code_id?></td>

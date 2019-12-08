@@ -432,7 +432,7 @@
 				<td class="govuk-table__cell small nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
 				<td class="govuk-table__cell small"><a href="measure_type_view.html?measure_type_id=<?=$measure_type_id?>"><?=$measure_type_id?>&nbsp;<?=$measure_type_description?></a></td>
 				<td class="govuk-table__cell small"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?>&nbsp;<?=$geographical_area_description?></a></td>
-				<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
+				<td class="govuk-table__cell small"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>&nbsp;[<?=$goods_nomenclature_sid?>]</td>
 				<td class="govuk-table__cell small" nowrap><?=$validity_start_date?></td>
 				<td class="govuk-table__cell small" nowrap><?=$validity_end_date?></td>
 				<td class="govuk-table__cell small r"><a href="regulation_view.html?base_regulation_id=<?=$regulation_id_full?>"><?=$regulation_id_full?></a></td>
@@ -495,7 +495,7 @@
 			$commodity_url = "/goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_id
 ?>
 			<tr class="govuk-table__row">
-				<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+				<td class="govuk-table__cell small <?=$cellclass?>"><a class="nodecorate" href="<?=$commodity_url?>" data-lity data-lity-target="<?=$commodity_url?>?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a></td>
 				<td class="govuk-table__cell small <?=$cellclass?>"><?=$description?></td>
 				<td class="govuk-table__cell small <?=$cellclass?>"><span style="padding-right:1em"><?=$friendly?></span><a target="_blank" href="https://www.tariffnumber.com/2019/<?=$goods_nomenclature_item_id2?>">View</a></td>
 			</tr>

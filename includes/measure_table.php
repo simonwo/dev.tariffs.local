@@ -316,13 +316,13 @@
 		if ($pos != 0) {
 	?>
 						<td class="govuk-table__cell vsmall" nowrap>
-							<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$m->goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>
+							<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$m->goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>
 						</td>
 	<?php
 		} else {
 	?>
 						<td class="govuk-table__cell vsmall" nowrap class="nodecorate">
-							<?=format_commodity_code($goods_nomenclature_item_id)?>
+							<?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?>
 						</td>
 	<?php
 		}

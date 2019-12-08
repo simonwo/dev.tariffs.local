@@ -16,6 +16,7 @@ $(document).ready(function() {
 	common_url	= common_url.replace("fta.",		"common.");
 	common_url	= common_url.replace("build.",		"common.");
 	common_url	= common_url.replace("load.",		"common.");
+	common_url	= common_url.replace("national.",	"common.");
 
 	dev_url			= common_url.replace("common.", "dev.");
 	staging_url 	= common_url.replace("common.", "staging.");
@@ -23,13 +24,15 @@ $(document).ready(function() {
 	fta_url			= common_url.replace("common.", "fta.");
 	build_url		= common_url.replace("common.", "build.");
 	load_url		= common_url.replace("common.", "load.");
+	national_url	= common_url.replace("common.", "national.");
 
-	$("#context_switcher_dev").attr("href", 	dev_url);
-	$("#context_switcher_staging").attr("href", staging_url);
-	$("#context_switcher_eu").attr("href", 		eu_url);
-	$("#context_switcher_fta").attr("href", 	fta_url);
-	$("#context_switcher_build").attr("href", 	build_url);
-	$("#context_switcher_load").attr("href", 	load_url);
+	$("#context_switcher_dev").attr("href", 		dev_url);
+	$("#context_switcher_staging").attr("href", 	staging_url);
+	$("#context_switcher_eu").attr("href", 			eu_url);
+	$("#context_switcher_fta").attr("href", 		fta_url);
+	$("#context_switcher_build").attr("href", 		build_url);
+	$("#context_switcher_load").attr("href", 		load_url);
+	$("#context_switcher_national").attr("href",	national_url);
 
 
 // Scripts to handle the selection of the measure origin sections

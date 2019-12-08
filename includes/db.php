@@ -3,6 +3,7 @@ require ("p.php");
 $http_host = strtolower($_SERVER["HTTP_HOST"]);
 date_default_timezone_set("Europe/London");
 require (dirname(__FILE__) . "../../classes/application.php");
+require (dirname(__FILE__) . "../../classes/section.php");
 require (dirname(__FILE__) . "../../classes/error_handler.php");
 require (dirname(__FILE__) . "../../classes/duty_expression.php");
 require (dirname(__FILE__) . "../../classes/measure_type_series.php");
@@ -38,6 +39,7 @@ require (dirname(__FILE__) . "../../classes/measure_excluded_geographical_area.p
 require (dirname(__FILE__) . "../../classes/footnote_association_measure.php");
 require (dirname(__FILE__) . "../../classes/measure_condition_code.php");
 require (dirname(__FILE__) . "../../classes/measure_action_code.php");
+require (dirname(__FILE__) . "../../classes/snapshot.php");
 
 /* Extract classes */
 require (dirname(__FILE__) . "../../classes/extract.php");
@@ -67,7 +69,8 @@ if(isset($_COOKIE["showing"])) {
 	$scope = "Now";
 }
 
-$critical_date = "2019-11-01";
+$critical_date			= "2020-01-31";
+$critical_date_plus_one	= "2020-02-01";
 
 $msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
@@ -388,7 +391,7 @@ function get_measure($measure_sid) {
 			$measurement_unit_qualifier_description = $row['measurement_unit_qualifier_description'];
 
 			// These may need to be populated later
-			$commodity_code = "";
+			$goods_nomenclature_item_id = "";
 			$additional_code_type_id = "";
 			$additional_code_id = "";
 			$measure_type_id = "";
@@ -398,7 +401,7 @@ function get_measure($measure_sid) {
 			$validity_end_date = "";
 			
 			$d = new duty;
-			$d->set_properties($commodity_code, $additional_code_type_id, $additional_code_id, $measure_type_id,
+			$d->set_properties($goods_nomenclature_item_id, $additional_code_type_id, $additional_code_id, $measure_type_id,
 			$duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code, $measure_sid,
 			$quota_order_number_id, $geographical_area_id, $validity_start_date, $validity_end_date);
 
@@ -448,6 +451,11 @@ function xml_count($id, $display, $xpath, $xml) {
 }
 function pre($data) {
 	print '<pre>' . print_r($data, true) . '</pre>';
+}
+
+function prend($data) {
+	print '<pre>' . print_r($data, true) . '</pre>';
+	die();
 }
 
 function prex($data) {
@@ -502,6 +510,15 @@ function short_date($s) {
 	return ($s2);
 }
 
+function short_date_rev($s) {
+	if ($s == "") {
+		$s2 = "-";
+	} else {
+		$s2 = date("Y-m-d", strtotime($s));
+	}
+	return ($s2);
+}
+
 function xml_date($s) {
 	if ($s == "") {
 		$s2 = "";
@@ -529,7 +546,7 @@ function vshort_date($s) {
 	return ($s2);
 }
 
-function standardise_commodity_code($goods_nomenclature_item_id) {
+function standardise_goods_nomenclature_item_id($goods_nomenclature_item_id) {
 	$goods_nomenclature_item_id = str_replace(" ", "", $goods_nomenclature_item_id);
 	if (strlen($goods_nomenclature_item_id) < 10) {
 		$goods_nomenclature_item_id .= str_repeat("0", 10 - strlen($goods_nomenclature_item_id));
@@ -537,7 +554,7 @@ function standardise_commodity_code($goods_nomenclature_item_id) {
 	return ($goods_nomenclature_item_id);
 }
 
-function format_commodity_code($s) {
+function format_goods_nomenclature_item_id($s) {
 	if (strlen($s) == 10) {
 		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad green'>" . substr($s, 6, 4) . "</span>";
 		$s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad blue'>" . substr($s, 6, 2) . "</span><span class='rpad green'>" . substr($s, 8, 2) . "</span>";

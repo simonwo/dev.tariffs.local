@@ -68,7 +68,7 @@
 		$measure_end_month					= get_querystring("measure_end_month");
 		$measure_end_year					= get_querystring("measure_end_year");
 		$measure_type_id					= get_querystring("measure_type_id");
-		$goods_nomenclature_item_id			= standardise_commodity_code(get_querystring("goods_nomenclature_item_id"));
+		$goods_nomenclature_item_id			= standardise_goods_nomenclature_item_id(get_querystring("goods_nomenclature_item_id"));
 		$additional_code					= trim(get_querystring("additional_code"));
 		$geographical_area_id				= get_querystring("geographical_area_id");
 		$ordernumber						= get_querystring("ordernumber");
@@ -325,7 +325,7 @@
 		}
 
 		// Perform validation on the goods nomenclature
-		$goods_nomenclature_item_id						= standardise_commodity_code($goods_nomenclature_item_id);
+		$goods_nomenclature_item_id						= standardise_goods_nomenclature_item_id($goods_nomenclature_item_id);
 		$goods_nomenclature								= new goods_nomenclature();
 		$goods_nomenclature->goods_nomenclature_item_id	= $goods_nomenclature_item_id;
 		$goods_nomenclature_sid							= $goods_nomenclature->get_goods_nomenclature_sid();
@@ -582,7 +582,7 @@
 		$base_regulation_id			= get_querystring("base_regulation_id");
 
 		if ($goods_nomenclature_item_id != "") {
-			$goods_nomenclature_item_id = standardise_commodity_code($goods_nomenclature_item_id);
+			$goods_nomenclature_item_id = standardise_goods_nomenclature_item_id($goods_nomenclature_item_id);
 		}
 		
 		if ($measure_sid != "") {

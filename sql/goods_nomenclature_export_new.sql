@@ -1,11 +1,6 @@
 CREATE OR REPLACE FUNCTION ml.goods_nomenclature_export_new(pchapter text, key_date character varying)
-RETURNS TABLE(goods_nomenclature_sid integer, goods_nomenclature_item_id character varying, producline_suffix character varying,
-validity_start_date timestamp without time zone, validity_end_date timestamp without time zone, description text, number_indents integer,
-/*
-goods_nomenclature_description_period_sid integer, desc_validity_start_date timestamp without time zone, desc_validity_end_date timestamp without time zone, nice_description text,
-*/
-chapter text, node text, leaf text, significant_digits integer)
-LANGUAGE plpgsql
+ RETURNS TABLE(goods_nomenclature_sid integer, goods_nomenclature_item_id character varying, producline_suffix character varying, validity_start_date timestamp without time zone, validity_end_date timestamp without time zone, description text, number_indents integer, chapter text, node text, leaf text, significant_digits integer)
+ LANGUAGE plpgsql
 AS $function$
 
 #variable_conflict use_column

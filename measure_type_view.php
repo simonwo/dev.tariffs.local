@@ -286,7 +286,7 @@
 ?>
 			<tr class="govuk-table__row <?=$rowclass?>">
 				<td class="govuk-table__cell nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-				<td class="govuk-table__cell"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+				<td class="govuk-table__cell"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a></td>
 				<td class="govuk-table__cell c"><?=$additional_code_show?></td>
 				<td class="govuk-table__cell c"><a href="geographical_area_view.html?geographical_area_id=<?=$geographical_area_id?>"><?=$geographical_area_id?></a></td>
 				<td class="govuk-table__cell"><?=$validity_start_date?></td>

@@ -83,7 +83,12 @@
 						<a id="context_switcher_load" href="#"><span id="show_load">load</span></a>&nbsp;
 <?php
 	}
-?>					
+	if (strpos($my_url, "national.") === False) {
+		?>						
+								<a id="context_switcher_national" href="#"><span id="show_national">ntnl</span></a>&nbsp;
+<?php
+	}
+?>
 
 					</div>
 					<div class="options">

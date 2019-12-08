@@ -120,7 +120,7 @@
 			<td class="govuk-table__cell nopad">Goods nomenclature item ID</td>
 			<td class="govuk-table__cell">
 				<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
-					<?=format_commodity_code($goods_nomenclature_item_id)?>
+					<?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?>
 				</a>
 				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)
 			</td>
@@ -624,7 +624,7 @@
 			<tr class="govuk-table__row">
 				<td class="govuk-table__cell nopad small"><?=$measure_type_id?></td>
 				<td class="govuk-table__cell small"><?=$geographical_area_id?></td>
-				<td class="govuk-table__cell small"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=80"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+				<td class="govuk-table__cell small"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=80"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a></td>
 				<td class="govuk-table__cell small"><?=short_date($validity_start_date)?></td>
 				<td class="govuk-table__cell small"><?=short_date($validity_end_date)?></td>
 				<td class="govuk-table__cell small"><?=$measure_generating_regulation_id?></td>

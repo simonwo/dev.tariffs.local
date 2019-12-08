@@ -26,7 +26,8 @@
     <table cellspacing="0" class="govuk-table">
             <tr class="govuk-table__row">
                 <th class="govuk-table__header" style="width:15%">Section</th>
-                <th class="govuk-table__header" style="width:85%">Description</th>
+                <th class="govuk-table__header" style="width:65%">Description</th>
+                <th class="govuk-table__header r" style="width:20%">Extract</th>
             </tr>
 
 <?php
@@ -41,8 +42,14 @@
             $description                = title_case($row['description']);
 ?>
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__cell"><a class="nodecorate" href="subheading.html?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+                    <td class="govuk-table__cell"><a class="nodecorate" href="subheading.html?section_id=<?=$section_id?>&chapter_id=<?=$goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a></td>
                     <td class="govuk-table__cell"><?=$description?></td>
+                    <td class="govuk-table__cell r">
+                        <a target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?=substr($goods_nomenclature_item_id, 0, 2)?>&depth=4">HS4</a>&nbsp;&nbsp;&nbsp;
+                        <a target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?=substr($goods_nomenclature_item_id, 0, 2)?>&depth=6">HS6</a>&nbsp;&nbsp;&nbsp;
+                        <a target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?=substr($goods_nomenclature_item_id, 0, 2)?>&depth=8">CN8</a>&nbsp;&nbsp;
+                        <a target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?=substr($goods_nomenclature_item_id, 0, 2)?>">CN10</a>
+                    </td>
                 </tr>
 <?php
         }

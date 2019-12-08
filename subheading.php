@@ -51,7 +51,7 @@
 ?>
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
-                        <a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>
+                        <a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>&productline_suffix=<?=$productline_suffix?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>
                     </td>
                     <td class="govuk-table__cell c"><?=$productline_suffix?></td>
                     <td class="govuk-table__cell c"><?=$number_indents?></td>

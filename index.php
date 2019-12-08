@@ -89,6 +89,11 @@
 						<li><a href="/footnote_type_create_edit.html">Create footnote type</a></li>
 					</ul>
 
+					<h2 class="small">Audit</h2>
+					<ul class="main-menu">
+						<li><a href="/audit_form.html">View audit trail</a></li>
+					</ul>
+
 				</div>
 
 
@@ -112,16 +117,8 @@
 
 <?php        
 	}
-?>    
-<!--
-					<h2 class="small">Monetary exchange rates</h2>
-					<ul class="main-menu">
-						<li><a href="/monetary_exchange_rates.html">Monetary exchange rates</a></li>
-						<li><a href="/monetary_exchange_rate_create_edit.html">Create new monetary exchange rate</a></li>
-					</ul>
-//-->					
-
-					<h2 class="small">Reference data</h2>
+?>
+<h2 class="small">Reference data</h2>
 					<ul class="main-menu">
 						<li><a href="/measurement_units.html">Measurement units</a></li>
 						<li><a href="/measurement_unit_qualifiers.html">Measurement unit qualifiers</a></li>
@@ -129,13 +126,13 @@
 						<li><a href="/measure_type_series.html">Measure type series</a></li>
 					</ul>
 
-<!--
-					<h2 class="small">Backup and restore</h2>
+					<h2 class="small">Workbaskets</h2>
 					<ul class="main-menu">
-						<li><a href="/backup.html">Backup database</a></li>
-						<li><a href="#">Restore database</a></li>
+						<li><a href="/reassign_workbasket.html">Reassign workbasket</a></li>
 					</ul>
-//-->
+
+
+
 				</div>
 			<div class="clearer"><!--&nbsp;//--></div>
 		</div>

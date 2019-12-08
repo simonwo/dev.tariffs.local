@@ -7,14 +7,16 @@ class duty
 		$this->measure_sid		        = 0;
 		$this->geographical_area_id	    = "";
 		$this->additional_code_id	    = "";
-		$this->additional_code_type_id  = "";
+        $this->additional_code_type_id  = "";
+        $this->entry_price_string       = "";
+        $this->entry_price_applied      = false;
 	}
 
-    public function set_properties($commodity_code, $additional_code_type_id, $additional_code_id, $measure_type_id,
+    public function set_properties($goods_nomenclature_item_id, $additional_code_type_id, $additional_code_id, $measure_type_id,
     $duty_expression_id, $duty_amount, $monetary_unit_code, $measurement_unit_code, $measurement_unit_qualifier_code, $measure_sid,
 	$quota_order_number_id, $geographical_area_id, $validity_start_date, $validity_end_date) {
 
-		$this->commodity_code					= $commodity_code;
+		$this->goods_nomenclature_item_id   	= $goods_nomenclature_item_id;
 		$this->additional_code_type_id			= $additional_code_type_id;
 		$this->additional_code_id				= $additional_code_id;
 		$this->measure_type_id				    = $measure_type_id;

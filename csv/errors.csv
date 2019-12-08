@@ -29,3 +29,7 @@
 "sub_quota_order_number_id", "Invalid child order number", "sub_quota_order_number_id"
 "workbasket_name", "Invalid workbasket name", "workbasket_name"
 "goods_nomenclature_item_id", "Invalid goods classification code", "goods_nomenclature_item_id"
+"snapshot_date_start","Please enter a valid snapshot start date","snapshot_date_start"
+"snapshot_date_end","Please enter a valid snapshot end date","snapshot_date_start"
+"commodity_range","Please enter a valid commodity range","commodity_range"
+"scope","Please enter a valid scope","scope"

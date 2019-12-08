@@ -1,8 +1,9 @@
 <?php
     require (dirname(__FILE__) . "../../includes/db.php");
     $phase = get_formvar("phase");
-    echo ($phase);
-    #exit();
+    pre($_REQUEST);
+    //exit();
+
     if ($phase == "goods_nomenclature_item_view") {
         get_formvars_goods_nomenclature_item_view();
 
@@ -13,14 +14,38 @@
         get_formvars_goods_nomenclature_item_view_filter();
 
     } elseif ($phase == "goods_nomenclature_description_delete") {
-            get_formvars_goods_nomenclature_description_delete();
+        get_formvars_goods_nomenclature_description_delete();
 
-        } elseif ($phase == "goods_nomenclature_update_description") {
+    } elseif ($phase == "goods_nomenclature_update_description") {
         get_formvars_goods_nomenclature_update_description();
         exit();
+    } elseif ($phase == "goods_nomenclature_edit") {
+        get_formvars_goods_nomenclature_edit();
+        exit();
     }
-
+    
     function get_formvars_goods_nomenclature_edit() {
+        $action = get_querystring("action");
+        h1 ($action);
+        switch ($action) {
+            case "add":
+                $url  = "/goods_nomenclature_create.html";
+                header("Location: " . $url);
+                break;
+            case "dates":
+                $url  = "/goods_nomenclature_dates.html";
+                header("Location: " . $url);
+                break;
+            case "delete":
+                $url  = "/goods_nomenclature_delete.html";
+                header("Location: " . $url);
+                break;
+        }
+        #exit();
+    
+    }
+    
+    function xget_formvars_goods_nomenclature_edit() {
         $goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
         $goods_nomenclature_sid = get_querystring("goods_nomenclature_item_id");
         $productline_suffix = get_querystring("productline_suffix");

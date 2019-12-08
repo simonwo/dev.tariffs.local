@@ -33,12 +33,14 @@
 
 
 <?php
-	$sql = "SELECT 'Base' as regulation_type, b.base_regulation_id as regulation_id, b.information_text, b.regulation_group_id,
+	$sql = "SELECT 'Base' as regulation_type, b.base_regulation_id as regulation_id, b.base_regulation_role as regulation_role,
+	b.information_text, b.regulation_group_id,
 	rgd.description as regulation_group_description, b.validity_start_date, b.validity_end_date, b.effective_end_date
 	FROM base_regulations b, regulation_group_descriptions rgd WHERE b.regulation_group_id = rgd.regulation_group_id
 	AND base_regulation_id LIKE '" . $regulation_id . "%' 
 	UNION
-	SELECT 'Modification' as regulation_type, m.modification_regulation_id as regulation_id, m.information_text, b.regulation_group_id,
+	SELECT 'Modification' as regulation_type, m.modification_regulation_id as regulation_id, m.modification_regulation_role as regulation_role,
+	m.information_text, b.regulation_group_id,
 	rgd.description, m.validity_start_date, m.validity_end_date, m.effective_end_date
 	FROM modification_regulations m, base_regulations b, regulation_group_descriptions rgd
 	WHERE m.base_regulation_id = b.base_regulation_id
@@ -58,7 +60,8 @@
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" style="width:12%">Regulation&nbsp;ID</th>
 					<th class="govuk-table__header" style="width:8%">Type</th>
-					<th class="govuk-table__header" style="width:36%">Information text</th>
+					<th class="govuk-table__header" style="width:8%">Role</th>
+					<th class="govuk-table__header" style="width:26%">Information text</th>
 					<th class="govuk-table__header" style="width:20%">Regulation group</th>
 					<th class="govuk-table__header" style="width:8%">Start</th>
 					<th class="govuk-table__header" style="width:8%">End</th>
@@ -68,6 +71,7 @@
 			while ($row = pg_fetch_array($result)) {
 				$regulation_type				= $row['regulation_type'];
 				$regulation_idx					= $row['regulation_id'];
+				$regulation_role				= $row['regulation_role'];
 				$information_text				= $row['information_text'];
 				$array = explode("|", $information_text);
 				if (count($array) == 3) {
@@ -84,6 +88,7 @@
 				<tr class="govuk-table__row">
 					<td class="govuk-table__cell"><?=$regulation_idx?></td>
 					<td class="govuk-table__cell"><?=$regulation_type?></td>
+					<td class="govuk-table__cell"><?=$regulation_role?></td>
 					<td class="govuk-table__cell"><?=$information_text?></td>
 					<td class="govuk-table__cell"><?=$regulation_group_id?> - <?=$regulation_group_description?></td>
 					<td class="govuk-table__cell"><?=short_date($validity_start_date)?></td>
@@ -328,7 +333,7 @@
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
 					<td class="govuk-table__cell vsmall nopad"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a>&nbsp;&nbsp;&nbsp;&nbsp;[<?=$measure->goods_nomenclature_sid?>]</td>
+					<td class="govuk-table__cell vsmall"><a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>&nbsp;&nbsp;&nbsp;&nbsp;[<?=$measure->goods_nomenclature_sid?>]</td>
 					<td class="govuk-table__cell vsmall"><?=$my_add_code?></td>
 					<td class="govuk-table__cell vsmall c"><?=$validity_start_date?></td>
 					<td class="govuk-table__cell vsmall c"><?=$validity_end_date?></td>

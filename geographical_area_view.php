@@ -442,7 +442,7 @@
 ?>
 				<tr class="govuk-table__row <?=$rowclass?>">
 					<td class="govuk-table__cell"><a href="measure_view.html?measure_sid=<?=$measure_sid?>"><?=$measure_sid?></a></td>
-					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>"><?=format_commodity_code($goods_nomenclature_item_id)?></a></td>
+					<td class="govuk-table__cell"><a class="nodecorate" href="<?=$commodity_url?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_start_date?></td>
 					<td class="govuk-table__cell" nowrap><?=$validity_end_date?></td>
 					<td class="govuk-table__cell"><?=$geographical_area_id?> (<?=$geographical_area_description?>)</td>

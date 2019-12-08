@@ -1,3 +1,50 @@
+.secondary-button {
+	   padding: 0.4em 0.8em;
+	display: inline-block;
+	font-family:"nta", Arial, sans-serif;text-transform:none;font-size:16px;
+
+}
+.govuk-details__summary-text, .govuk-inset-text {
+	font-size:16px;
+}
+.govuk-details__text  {
+	font-size:16px;
+}
+.govuk-details {
+	margin-bottom:0.5em !important;font-size:16px;
+}
+.govuk-box-highlight{margin:1em 0;padding:2em 1em;color:#fff;background:#28a197;text-align:center}
+.heading-xlarge{font-family:"nta", Arial, sans-serif;font-weight:700;text-transform:none;font-size:32px;line-height:1.09375;display:block;margin-top:0.46875em;margin-bottom:0.9375em}
+@media (min-width: 641px){.heading-xlarge{font-size:48px;line-height:1.0416666667}
+}
+@media (min-width: 641px){.heading-xlarge{margin-top:0.625em;margin-bottom:1.25em}
+}
+.heading-xlarge .heading-secondary{font-family:"nta", Arial, sans-serif;font-weight:400;text-transform:none;font-size:20px;line-height:1.1111111111;display:block;padding-top:8px;padding-bottom:7px;display:block;color:#6f777b}
+@media (min-width: 641px){.heading-xlarge .heading-secondary{font-size:27px;line-height:1.1111111111}
+}
+@media (min-width: 641px){.heading-xlarge .heading-secondary{padding-top:4px;padding-bottom:6px}
+}
+.heading-large{font-family:"nta", Arial, sans-serif;font-weight:700;text-transform:none;font-size:24px;line-height:1.0416666667;display:block;margin-top:1.0416666667em;margin-bottom:0.4166666667em;max-width:100% !important}
+@media (min-width: 641px){.heading-large{font-size:36px;line-height:1.1111111111}
+}
+@media (min-width: 641px){.heading-large{margin-top:1.25em;margin-bottom:0.5555555556em}
+}
+.heading-large .heading-secondary{font-family:"nta", Arial, sans-serif;font-weight:400;text-transform:none;font-size:18px;line-height:1.2;display:block;padding-top:9px;padding-bottom:6px;display:block;color:#6f777b}
+@media (min-width: 641px){.heading-large .heading-secondary{font-size:24px;line-height:1.25}
+}
+@media (min-width: 641px){.heading-large .heading-secondary{padding-top:6px;padding-bottom:4px}
+}
+.heading-medium{font-family:"nta", Arial, sans-serif;font-weight:700;text-transform:none;font-size:18px;line-height:1.2;display:block;margin-top:1.25em;margin-bottom:0.5em}
+@media (min-width: 641px){.heading-medium{font-size:24px;line-height:1.25}
+}
+@media (min-width: 641px){.heading-medium{margin-top:1.875em;margin-bottom:0.8333333333em}
+}
+.heading-small{font-family:"nta", Arial, sans-serif;font-weight:700;text-transform:none;font-size:16px;line-height:1.25;display:block;margin-top:0.625em;margin-bottom:0.3125em}
+@media (min-width: 641px){.heading-small{font-size:19px;line-height:1.3157894737}
+}
+@media (min-width: 641px){.heading-small{margin-top:1.0526315789em}
+}
+
 .note_to_self {
 	margin-bottom:1em;
 	font-family: "nta",Arial,sans-serif !important;

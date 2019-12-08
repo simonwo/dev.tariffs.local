@@ -162,7 +162,7 @@ $( document ).ready(function() {
 <?php
 	foreach ($lookup_list as $item) {
 		foreach ($measure_list as $m) {
-			if ($m->commodity_code == $item) {
+			if ($m->goods_nomenclature_item_id == $item) {
 ?>
 	$("span#commodity_<?=$item?>").text("<?=$m->combined_duty?>");
 <?php

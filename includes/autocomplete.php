@@ -33,9 +33,6 @@ if($query->num_rows > 0){
 // Return results as json encoded array 
 echo json_encode($my_data); 
 
-
-
-
 $sql = "SELECT m.additional_code_type_id, m.additional_code_id, m.measure_type_id,
 			mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
 			FROM /* measures */ ml.measures_real_end_dates m, measure_components mc WHERE m.measure_sid = mc.measure_sid ";
