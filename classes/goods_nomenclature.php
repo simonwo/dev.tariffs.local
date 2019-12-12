@@ -6,6 +6,8 @@ class goods_nomenclature
 	public $goods_nomenclature_sid		= Null;
 	public $productline_suffix			= "";
 	public $measure_type_desc			= "";
+	public $node						= "";
+	public $friendly_description		= "";
 
 	public function __construct() {
 		$this->measure_list				= array();

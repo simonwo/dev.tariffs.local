@@ -85,15 +85,20 @@ class snapshot
         $commodity_index = 0;
         foreach ($this->commodities as $commodity) {
             $commodity_index += 1;
-            if ($commodity->productline_suffix == "80") {
+            if (($commodity->productline_suffix == "80") and ($commodity->significant_digits < 10)) {
                 if (count($commodity->measure_list) == 0) {
                     if ($commodity->combined_duty == "") {
                         $commodity->combined_duty = "n/a";
                     }
+                    $description = $this->filter_for_json($commodity->description);
+                    $friendly_description = $this->filter_for_json($commodity->friendly_description);
                     echo ('  {' . $this->delimiter);
-                    echo ('    "commodityCode": "' . $commodity->node . '",' . $this->delimiter);
-                    echo ('    "label": "' . $this->filter_for_json($commodity->description) . '",' . $this->delimiter);
-                    echo ('    "Tariff": "' . $commodity->combined_duty . '"' . $this->delimiter);
+                    echo ('    "text_unfriend": "' . $commodity->node . ' - ' . $description . '",' . $this->delimiter);
+                    echo ('    "text_friendly": "' . $commodity->node . ' - ' . $friendly_description . '",' . $this->delimiter);
+                        # echo ('    "commodityCode": "' . $commodity->node . '",' . $this->delimiter);
+                    # echo ('    "label": "' . $description . '",' . $this->delimiter);
+                    echo ('    "bound": "' . $commodity->combined_duty . '"' . $this->delimiter);
+                    //echo ('    "sig_dig": "' . $commodity->significant_digits . '"' . $this->delimiter);
                     if ($commodity_index == $commodity_count) {
                         echo ('  }' . $this->delimiter);
                     } else {
@@ -417,6 +422,7 @@ class snapshot
                 $commodity->description                 = $row['description'];
                 $commodity->leaf                        = yn($row['leaf']);
                 $commodity->significant_digits          = $row['significant_digits'];
+                $commodity->node                        = $row['node'];
                 $commodity->validity_start_date         = $row['validity_start_date'];
                 $commodity->validity_end_date           = $row['validity_end_date'];
                 $commodity->node                        = $row['node'];
@@ -424,6 +430,27 @@ class snapshot
                     $commodity->number_indents += 1;
                 }
                 array_push($this->commodities, $commodity);
+            }
+        }
+
+        // Then get the friendly names
+        $sql = "select goods_nomenclature_item_id, node, description from ml.commodity_friendly_names order by 1";
+        $result = pg_query($conn, $sql);
+        $this->friendly_names = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $this->friendly_names[$row['node']] = $row['description'];
+            }
+        }
+
+        // Assign the friendlies to the commodities
+        foreach ($this->commodities as $commodity) {
+            if ($commodity->significant_digits < 10) {
+                if ($commodity->goods_nomenclature_item_id <= "0980000000") {
+                    $commodity->friendly_description = $this->friendly_names[$commodity->node];
+                } else {
+                    $commodity->friendly_description = $commodity->description;
+                }
             }
         }
 
