@@ -30,6 +30,7 @@ class measure
 		$this->validity_start_date					= "";
 		$this->validity_end_date					= "";
 		$this->entry_price_string					= "";
+		$this->perceived_value						= 0;
 
 		$this->measure_components_xml = "";
 		$this->measure_excluded_geographical_areas_xml = "";
@@ -875,6 +876,13 @@ class measure
 			array_push($this->measure_type_list, $d->measure_type_id);
 			array_push($this->measure_list, $d->measure_sid);
 			array_push($this->additional_code_list, $d->additional_code_id);
+			try {
+				$this->perceived_value += $d->perceived_value;
+			} catch (Exception $e) {
+				h1 ($this->goods_nomenclature_item_id);
+				die();
+				var_dump($this->goods_nomenclature_item_id . ":" . $e->getMessage());
+			}
 		}
 
 		$measure_type_list_unique    = set($this->measure_type_list);

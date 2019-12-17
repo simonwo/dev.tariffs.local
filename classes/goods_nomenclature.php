@@ -8,6 +8,8 @@ class goods_nomenclature
 	public $measure_type_desc			= "";
 	public $node						= "";
 	public $friendly_description		= "";
+	public $highest						= 0;
+	public $avg							= 0;
 
 	public function __construct() {
 		$this->measure_list				= array();

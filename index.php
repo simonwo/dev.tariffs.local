@@ -107,7 +107,7 @@
 
 					
 <?php
-	if ((strpos($http_host, "build") > -1) || (strpos($http_host, "dev") > -1)) {
+	if (strpos($http_host, "dev") > -1) {
 ?>
 					<h2 class="small">Data extract</h2>
 					<ul class="main-menu">

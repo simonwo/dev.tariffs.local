@@ -58,11 +58,6 @@
 						<a id="context_switcher_dev" href="#"><span id="show_dev">dev</span></a>&nbsp;
 <?php
 	}
-	if (strpos($my_url, "build.") === False) {
-?>						
-						<a id="context_switcher_build" href="#"><span id="show_build">build</span></a>&nbsp;
-<?php
-	}
 	if (strpos($my_url, "staging.") === False) {
 ?>						
 						<a id="context_switcher_staging" href="#"><span id="show_staging">staging</span></a>&nbsp;
@@ -73,11 +68,6 @@
 						<a id="context_switcher_eu" href="#"><span id="show_eu">eu</span></a>&nbsp;
 <?php
 	}
-	if (strpos($my_url, "fta.") === False) {
-?>						
-						<a id="context_switcher_fta" href="#"><span id="show_fta">fta</span></a>&nbsp;
-<?php
-	}
 	if (strpos($my_url, "load.") === False) {
 ?>						
 						<a id="context_switcher_load" href="#"><span id="show_load">load</span></a>&nbsp;
@@ -85,7 +75,7 @@
 	}
 	if (strpos($my_url, "national.") === False) {
 		?>						
-								<a id="context_switcher_national" href="#"><span id="show_national">ntnl</span></a>&nbsp;
+								<a id="context_switcher_national" href="#"><span id="show_national">national</span></a>&nbsp;
 <?php
 	}
 ?>

@@ -64,7 +64,7 @@
 
 <?php
 	$sql = "select distinct on (m.measure_type_id)
-	m.measure_type_id, m.geographical_area_id, m.goods_nomenclature_item_id, m.validity_start_date,
+	m.measure_type_id, m.geographical_area_id, m.goods_nomenclature_item_id, m.goods_nomenclature_sid, m.validity_start_date,
 	m.validity_end_date, measure_generating_regulation_role, measure_generating_regulation_id,
 	justification_regulation_role, justification_regulation_id, stopped_flag, ordernumber,
 	additional_code_type_id, additional_code_id, reduction_indicator, mtd.description as measure_type_description,
@@ -90,6 +90,7 @@
 			$measure_type_id                        = $row['measure_type_id'];
 			$geographical_area_id                   = $row['geographical_area_id'];
 			$goods_nomenclature_item_id             = $row['goods_nomenclature_item_id'];
+			$goods_nomenclature_sid             	= $row['goods_nomenclature_sid'];
 			$validity_start_date                    = $row['validity_start_date'];
 			$validity_end_date                      = $row['validity_end_date'];
 			$measure_generating_regulation_role     = $row['measure_generating_regulation_role'];
@@ -121,7 +122,7 @@
 			<td class="govuk-table__cell">
 				<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">
 					<?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?>
-				</a>
+				</a> with SID <?=$goods_nomenclature_sid?>
 				(dated <?=short_date($commodity_start_date)?> to <?=short_date($commodity_end_date)?>)
 			</td>
 		</tr>

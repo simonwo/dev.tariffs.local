@@ -10,6 +10,7 @@ class duty
         $this->additional_code_type_id  = "";
         $this->entry_price_string       = "";
         $this->entry_price_applied      = false;
+        $this->perceived_value          = 0;
 	}
 
     public function set_properties($goods_nomenclature_item_id, $additional_code_type_id, $additional_code_id, $measure_type_id,
@@ -45,8 +46,8 @@ class duty
 		
 		#if $this->duty_expression_id in ('12', '13', '14', '21', '23', '25', '27', '29'):
 		#	$this->duty_string = ""
-		#	return
-
+        #	return
+        
         $this->duty_string = "";
         $duty_amount = number_format($this->duty_amount, 3);
         
@@ -55,7 +56,9 @@ class duty
                 // Do stuff
                 if ($this->monetary_unit_code == "") {
                     $this->duty_string .= $duty_amount . "%";
+                    $this->perceived_value = 100000 * $duty_amount;
                 } else {
+                    $this->perceived_value = $duty_amount;
                     $this->duty_string .= $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
@@ -71,7 +74,9 @@ class duty
                 // Do stuff
 			    if ($this->monetary_unit_code == "") {
                     $this->duty_string .= " + " . $duty_amount . "%";
+                    $this->perceived_value = 100000 * $duty_amount;
                 } else {
+                    $this->perceived_value = $duty_amount;
                     $this->duty_string .= " + " . $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
@@ -83,8 +88,10 @@ class duty
                 break;
             case "12":
     			$this->duty_string .= " + AC";
-                break;
+                $this->perceived_value = 0;
+            break;
             case "15":
+                $this->perceived_value = 0;
                 // Do stuff
                 if ($this->monetary_unit_code == "") {
                     $this->duty_string .= "MIN " . $duty_amount . "%";
@@ -102,6 +109,7 @@ class duty
             case "17":
             case "35":
                 // Do stuff
+                $this->perceived_value = 0;
                 if ($this->monetary_unit_code == "") {
                     $this->duty_string .= "MAX " . $duty_amount . "%";
                 } else {
@@ -116,18 +124,23 @@ class duty
                 break;
             case "21":
     			$this->duty_string .= " + SD";
+                $this->perceived_value = 0;
                 break;
             case "27":
     			$this->duty_string .= " + FD";
+                $this->perceived_value = 0;
                 break;
             case "25":
     			$this->duty_string .= " + SD (reduced)";
+                $this->perceived_value = 0;
                 break;
             case "29":
     			$this->duty_string .= " + FD (reduced)";
+                $this->perceived_value = 0;
                 break;
             case "14":
     			$this->duty_string .= " + AC (reduced)";
+                $this->perceived_value = 0;
                 break;
         }
     }

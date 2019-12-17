@@ -175,12 +175,16 @@
                 if ($number_indents_real == -1) {
                     $number_indents_real = 0;
                 }
+                $match_class = "";
                 if ($commodity->assigned == true) {
                     $match_class = " assigned";
-                } else {
-                    $match_class = "";
                 }
-                if (count($commodity->measure_list) == 0) {
+                elseif ($scope == "mfn") {
+                    if (($commodity->leaf == 1) && ($commodity->combined_duty == "")) {
+                        $match_class = " match_error";
+                    }
+                }
+            if (count($commodity->measure_list) == 0) {
                     // Just show the commodity
 ?>
     <tr class="govuk-table__row<?=$match_class?>" valign="top">

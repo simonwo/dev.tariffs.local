@@ -79,8 +79,8 @@ class snapshot
 
     private function simple_write_json() {
         ob_start();
+        $pairs = array();
         
-        echo ("[" . $this->delimiter);
         $commodity_count = count($this->commodities);
         $commodity_index = 0;
         foreach ($this->commodities as $commodity) {
@@ -90,43 +90,118 @@ class snapshot
                     if ($commodity->combined_duty == "") {
                         $commodity->combined_duty = "n/a";
                     }
-                    $description = $this->filter_for_json($commodity->description);
-                    $friendly_description = $this->filter_for_json($commodity->friendly_description);
-                    echo ('  {' . $this->delimiter);
-                    echo ('    "text_unfriend": "' . $commodity->node . ' - ' . $description . '",' . $this->delimiter);
-                    echo ('    "text_friendly": "' . $commodity->node . ' - ' . $friendly_description . '",' . $this->delimiter);
-                        # echo ('    "commodityCode": "' . $commodity->node . '",' . $this->delimiter);
-                    # echo ('    "label": "' . $description . '",' . $this->delimiter);
-                    echo ('    "bound": "' . $commodity->combined_duty . '"' . $this->delimiter);
-                    //echo ('    "sig_dig": "' . $commodity->significant_digits . '"' . $this->delimiter);
-                    if ($commodity_index == $commodity_count) {
-                        echo ('  }' . $this->delimiter);
-                    } else {
-                        echo ('  },' . $this->delimiter);
+
+                    if ($commodity->significant_digits == 8) {
+                        if ($commodity->combined_duty == "n/a") {
+                            if ($commodity->leaf == "Y") {
+                                $commodity->combined_duty = "leaf - no third country duty";
+                            } else {
+                                $commodity->combined_duty = "not leaf - lookup required";
+                                $duty_list = array();
+                                $duty_string_list = array();
+                                for ($i = $commodity_index; $i < $commodity_count; $i++) {
+                                    $next_commodity = $this->commodities[$i];
+                                    // Stop if the indent is less than or equal to the current indent
+                                    if ($next_commodity->number_indents <= $commodity->number_indents) {
+                                        break;
+                                    }
+
+                                    // Loop through the child codes of the CN8 and create an array of their duty strings and perceived values
+                                    if (count($next_commodity->measure_list) > 0){
+                                        if ($next_commodity->measure_list[0]->combined_duty != "") {
+                                            $temp_duty = new temp_object();
+                                            $temp_duty->perceived_value = $next_commodity->measure_list[0]->perceived_value;
+                                            $temp_duty->duty_string = $next_commodity->measure_list[0]->combined_duty;
+                                            array_push($duty_list, $temp_duty);
+                                            array_push($duty_string_list, $next_commodity->measure_list[0]->combined_duty);
+                                        }
+                                    }
+                                }
+                                $duty_count = count($duty_list);
+                                $duty_set = php_set($duty_string_list);
+
+                                if (count($duty_set) > 1) {
+                                    $commodity->highest_duty_string = "";
+                                    $commodity->highest_perceived_value = 0;
+                                    for ($i = 0; $i < $duty_count; $i++) {
+                                        $my_duty = $duty_list[$i];
+                                        if ($my_duty->perceived_value > $commodity->highest_perceived_value) {
+                                            $commodity->highest_perceived_value = $my_duty->perceived_value;
+                                            $commodity->highest_duty_string = $my_duty->duty_string;
+                                        }
+                                    }
+                                    $commodity->combined_duty = "" . $commodity->highest_duty_string . " (max value)";
+
+                                } else {
+                                    if ($duty_count > 0) {
+                                        $commodity->combined_duty = $duty_list[0]->duty_string . " (all child values are the same)";
+                                    } else {
+                                        $commodity->combined_duty = "An error has occurred";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if ($commodity->combined_duty != "leaf - no third country duty") {
+                        $description = $this->filter_for_json($commodity->description);
+                        $friendly_description = $this->filter_for_json($commodity->friendly_description);
+                        $pair = new temp_object();
+                        $pair->commodity_description = $commodity->node . ' - ' . $friendly_description;
+                        $pair->duty_string = $commodity->combined_duty;
+                        array_push($pairs, $pair);
                     }
                 } else {
+                    $description = $this->filter_for_json($commodity->description);
+                    $friendly_description = $this->filter_for_json($commodity->friendly_description);
                     $measure_count = count($commodity->measure_list);
                     $measure_index = 0;
                     foreach ($commodity->measure_list as $measure) {
                         $measure_index += 1;
-                        echo ('  {' . $this->delimiter);
-                        echo ('    "commodityCode": "' . $commodity->node . '",' . $this->delimiter);
-                        echo ('    "label": "' . $this->filter_for_json($commodity->description) . '",' . $this->delimiter);
-                        echo ('    "Tariff": "' . $measure->combined_duty . '"' . $this->delimiter);
-                        if (($commodity_index == $commodity_count) && ($measure_index == $measure_count)) {
-                            echo ('  }' . $this->delimiter);
-                        } else {
-                            echo ('  },' . $this->delimiter);
-                        }
+                        $pair = new temp_object();
+                        $pair->commodity_description = $commodity->node . ' - ' . $friendly_description;
+                        $pair->duty_string = $measure->combined_duty;
+                        array_push($pairs, $pair);
+
                     }
                 }
             }
             ob_flush();
             flush();
         }
-        echo ("]");
+        $pair_count = count($pairs);
+        $pair_index = 0;
+        if ($pair_count > 0) {
+            echo ("[" . $this->delimiter);
+            foreach ($pairs as $pair) {
+                $pair_index += 1;
+                echo ('  {' . $this->delimiter);
+                echo ('    "text": "' . $pair->commodity_description . '",' . $this->delimiter);
+                echo ('    "bound": "' . $pair->duty_string . '"' . $this->delimiter);
+                if ($pair_index == $pair_count) {
+                    echo ('  }' . $this->delimiter);
+                } else {
+                    echo ('  },' . $this->delimiter);
+                }
+            }
+            echo ("]" . $this->delimiter);
+        }
         echo($this->end_string);
         die();
+    }
+
+    private function get_advalorem($s) {
+        $pos = strpos($s, "%");
+        $pos2 = strpos($s, "% vol/hl");
+        
+        if (($pos == false) || ($pos != false)) {
+            //h1 ($s . "not found");
+            //die();
+            return (0);
+        } else {
+            $part = trim(substr($s, 0, $pos));
+            return ($part);
+        }
+
     }
 
     private function filter_for_json($s) {
@@ -434,25 +509,30 @@ class snapshot
         }
 
         // Then get the friendly names
-        $sql = "select goods_nomenclature_item_id, node, description from ml.commodity_friendly_names order by 1";
+        //h1 ("My friendlies");
+        $sql = "select goods_nomenclature_item_id, node, description from ml.commodity_friendly_names where node like '" . $this->range . "%' order by 1";
         $result = pg_query($conn, $sql);
         $this->friendly_names = array();
         if ($result) {
             while ($row = pg_fetch_array($result)) {
                 $this->friendly_names[$row['node']] = $row['description'];
+                //h2 ($row['node'] . ":" . $row['description']);
             }
         }
 
         // Assign the friendlies to the commodities
+        //h1 ("My commodities");
         foreach ($this->commodities as $commodity) {
             if ($commodity->significant_digits < 10) {
-                if ($commodity->goods_nomenclature_item_id <= "0980000000") {
+                if ($commodity->goods_nomenclature_item_id <= "9800000000") {
                     $commodity->friendly_description = $this->friendly_names[$commodity->node];
                 } else {
                     $commodity->friendly_description = $commodity->description;
                 }
             }
+            //h2 ($commodity->node . ":" .$commodity->friendly_description);
         }
+        //die();
 
         // Finally, assign the measures to the commodities
         foreach ($measures as $measure) {
@@ -492,4 +572,10 @@ class snapshot
             }
         }
     }
+}
+
+class temp_object {
+    public $perceived_value = 0;
+    public $commodity_description = "";
+    public $duty_string = "";
 }

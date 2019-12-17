@@ -496,6 +496,14 @@ function h1($s) {
 	echo ("<h1>" . $s . "</h1>");
 }
 
+function h2($s) {
+	echo ("<h2>" . $s . "</h2>");
+}
+
+function h3($s) {
+	echo ("<h3>" . $s . "</h3>");
+}
+
 function q($s) {
 	echo ("<p>" . $s . "</p>");
 	exit();
@@ -619,5 +627,7 @@ function get_operation($s) {
 	return ($s2);
 }
 
-
+function php_set($data) {
+	return array_map("unserialize", array_unique(array_map("serialize", $data)));
+}
 ?>
