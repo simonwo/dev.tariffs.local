@@ -19,15 +19,45 @@ class measure_condition
 
 	function populate_from_cookies() {
 		$this->heading          		= "Add measure condition";
-        $this->validity_start_day		= get_cookie("base_regulation_validity_start_day");
-        $this->validity_start_month		= get_cookie("base_regulation_validity_start_month");
-        $this->validity_start_year		= get_cookie("base_regulation_validity_start_year");
+        $this->validity_start_date_day		= get_cookie("base_regulation_validity_start_date_day");
+        $this->validity_start_date_month		= get_cookie("base_regulation_validity_start_date_month");
+        $this->validity_start_date_year		= get_cookie("base_regulation_validity_start_date_year");
         $this->base_regulation_id		= strtoupper(get_cookie("base_regulation_base_regulation_id"));
         $this->information_text_name	= get_cookie("base_regulation_information_text_name");
         $this->information_text_url		= get_cookie("base_regulation_information_text_url");
         $this->information_text_primary	= get_cookie("base_regulation_information_text_primary");
         $this->regulation_group_id		= get_cookie("base_regulation_regulation_group_id");
 	}
+
+	public function get_condition_string() {
+		$duty_list = explode(",", $this->duties);
+		$m = new measure();
+		foreach ($duty_list as $duty) {
+			if ($duty != "") {
+				$parts = explode("|", $duty);
+				$mc = new duty();
+				$mc->measure_type_id = "n/a";
+				$mc->duty_expression_id = $parts[0];
+				$mc->duty_amount = $parts[1];
+				$mc->monetary_unit_code = $parts[2];
+				$mc->measurement_unit_code = $parts[3];
+				$mc->measurement_unit_qualifier_code = $parts[4];
+				$mc->get_duty_string();
+				array_push($m->duty_list, $mc);
+	
+			}
+		}
+		$m->combine_duties();
+		$this->condition_string = $m->combined_duty;
+	}
+
+	/*
+	mcc.duty_expression_id || '|' ||
+            coalesce (mcc.duty_amount::text, '') || '|' ||
+            coalesce (mcc.monetary_unit_code, '') || '|' ||
+            coalesce (mcc.measurement_unit_code, '') || '|' ||
+			coalesce (mcc.measurement_unit_qualifier_code, ''),
+	*/
 
 	function get_next_measure_condition_sid() {
 		global $conn;
