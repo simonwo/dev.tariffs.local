@@ -29,11 +29,6 @@ class additional_code
         $this->additional_code_type_id = strtoupper(get_formvar("additional_code_type_id", "", True));
         $this->additional_code = strtoupper(get_formvar("additional_code", "", True));
 
-        /*
-        pre ($_REQUEST);
-        h1 ($this->additional_code);
-        die();
-        */
         $this->description = get_formvar("description", "", True);
 
         $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);

@@ -33,7 +33,7 @@ $(document).ready(function () {
         }
     });
     console.log("After");
-    
+
     /* Start regulations typeahead */
     var regulations = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -115,14 +115,18 @@ $(document).ready(function () {
             cache: true
         }
     });
-
+    
     $('#footnote').typeahead(null, {
         name: 'footnotes_bloodhound',
         source: footnotes_bloodhound,
-        limit: 20,
+        limit: 20
+    });
+    $('#measure_footnote_id').typeahead(null, {
+        name: 'footnotes_bloodhound',
+        source: footnotes_bloodhound,
+        limit: 20
     });
     /* End footnotes typeahead */
-
 
 
     /* Start certificates typeahead */
@@ -430,11 +434,12 @@ $(document).ready(function () {
         console.log(measure_action_codes_json);
     });
 
-    $(".reference_duty_group").hide();
+    $(".reference_price_group").hide();
     $(".certificate_group").hide();
     $(".action_code_group").hide();
     //$(".complementary_condition_group").hide();
-    $(".applicable_duty_group").hide();
+    $(".applicable_duty").hide();
+    $(".applicable_duty_permutation").hide();
     // END - On load activities for the measure condition blocks
 
 
@@ -448,27 +453,26 @@ $(document).ready(function () {
             }
         });
 
-        // Populate the hint text
-        hint = $(this).parent().find('.govuk-hint');
-        hint_text = "";
-
         // Show or hide the measure components (applicable duty) field
-        condition_mechanic_applicable_duty = $(this).parent().parent().parent().find('.condition_mechanic_applicable_duty').parent();
-        console.log(condition_mechanic_applicable_duty);
         if (show_components == 0) {
-            condition_mechanic_applicable_duty.hide();
-            hint_text += "The applicable duty field is not relevant to this action code, so it has been hidden.";
+            $(".applicable_duty_permutation").hide();
+            $(".applicable_duty").hide();
         } else {
-            condition_mechanic_applicable_duty.show();
+            $(".applicable_duty_permutation").show();
         }
 
-        // Show or hide the hint text
-        if (hint_text == "") {
-            hint.hide();
-        } else {
-            hint.text(hint_text);
-            hint.hide();
-        }
+
+        $("input[name='applicable_duty_permutation']").change(function () {
+            //alert($(this).val());
+            switch (parseInt($(this).val())) {
+                case 0:
+                    $(".applicable_duty").show();
+                    break;
+                case 1:
+                    $(".applicable_duty").hide();
+                    break
+            }
+        });
 
     });
     // END - Activities to perform when the user changes the selection in the measure action (condition dialog)
@@ -527,13 +531,13 @@ $(document).ready(function () {
         condition_mechanic_action_code_control.val("0");
 
         // Show or hide the reference duty field
-        condition_mechanic_reference_duty_group = $(this).parent().parent().parent().find('.reference_duty_group');
-        condition_mechanic_reference_duty_field = $(this).parent().parent().parent().find('.reference_duty_group .condition_mechanic_reference_duty');
+        condition_mechanic_reference_price_group = $(this).parent().parent().parent().find('.reference_price_group');
+        condition_mechanic_reference_duty_field = $(this).parent().parent().parent().find('.reference_price_group .condition_mechanic_reference_duty');
         if (show_reference_price == 0) {
-            condition_mechanic_reference_duty_group.hide();
+            condition_mechanic_reference_price_group.hide();
             hint_text += "The reference duty field is not relevant to this condition code, so it has been hidden. ";
         } else {
-            condition_mechanic_reference_duty_group.show();
+            condition_mechanic_reference_price_group.show();
         }
         condition_mechanic_reference_duty_field.val("");
 

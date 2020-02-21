@@ -64,7 +64,6 @@ class geographical_area
 		if ($result) {
 			while ($row = pg_fetch_array($result)) {
 				$this->validity_start_date  	= $row['validity_start_date'];
-				h1 ($this->validity_start_date);
 			}
 		}
 
@@ -165,12 +164,6 @@ class geographical_area
 
 		$sql = "INSERT INTO geographical_area_memberships_oplog (geographical_area_group_sid, geographical_area_sid, 
 		validity_start_date, operation, operation_date) VALUES ($1, $2, $3, $4, $5);";
-		#h1 ($geographical_area_group_sid);
-		#h1 ($geographical_area_id);
-		#h1 ($geographical_area_sid);
-		#h1 ($validity_start_date);
-		#h1 ($sql);
-		#exit();
 
 		pg_prepare($conn, "geographical_area_add_member", $sql);
 		pg_execute($conn, "geographical_area_add_member", array($geographical_area_group_sid, $geographical_area_sid,

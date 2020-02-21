@@ -38,7 +38,7 @@ require("../includes/metadata.php");
         <?php
         require("../includes/phase_banner.php");
         $control_content = array();
-        new data_entry_form($control_content, $measure_activity, $left_nav = "");
+        new data_entry_form($control_content, $measure_activity, $left_nav = "", "measure_activity_actions.php");
         ?>
     </div>
     <?php

@@ -13,8 +13,9 @@ class radio_control
     public $disabled_on_edit = "";
     public $disabled_text = "";
     public $show_hint = false;
+    public $group_class = "";
 
-    public function __construct($label, $label_style, $hint_text, $control_name, $dataset, $selected, $radio_control_style, $required, $disabled_on_edit, $custom_errors = "")
+    public function __construct($label, $label_style, $hint_text, $control_name, $dataset, $selected, $radio_control_style, $required, $disabled_on_edit, $custom_errors = "", $group_class = "")
     {
         global $application;
 
@@ -45,6 +46,7 @@ class radio_control
         $this->selected = $selected;
         $this->radio_control_style = $radio_control_style;
         $this->required  = to_required_string($required);
+        $this->group_class  = $group_class;
         $this->display();
     }
 
@@ -66,9 +68,9 @@ class radio_control
         //prend ($this->error_key);
 ?>
         <!-- Start radio control <?= $this->control_name ?> //-->
-        <div id="heading_<?= $this->control_name ?>" class="govuk-form-group <?= $error_handler->get_error($this->error_key); ?>">
+        <div id="heading_<?= $this->control_name ?>" class="govuk-form-group <?= $this->group_class ?> <?= $error_handler->get_error($this->error_key); ?>">
             <fieldset class="govuk-fieldset" aria-describedby="<?= $this->hint_name ?>">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                <legend class="govuk-fieldset__legend <?= $this->label_style ?>">
                     <h1 class="govuk-fieldset__heading"><?= $this->label ?></h1>
                 </legend>
                 <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
@@ -77,6 +79,7 @@ class radio_control
                     <?php
                     foreach ($this->dataset as $dataitem) {
                         $control_id = $this->control_name . "_" . $dataitem->id;
+                        //h1 (strval($dataitem->id) . strval($this->selected));
                         if (strval($dataitem->id) == strval($this->selected)) {
                             $checked_string = ' checked="checked"';
                         } else {

@@ -42,17 +42,6 @@ class input_control
 
         $this->required = to_required_string($required);
 
-        // Get the default value - this may be needed again
-        /*
-        if ($application->mode == "insert") {
-            $this->default = $default_on_insert;
-        } else {
-            $this->default = $default;
-        }
-        if ($default == "") {
-            $default = $this->object->{$this->control_name};
-        }
-        */
         $this->default = $default;
 
         $this->disabled_on_edit = $disabled_on_edit;
@@ -70,8 +59,6 @@ class input_control
             $this->disabled_text = " disabled";
             $this->hint_text .= " The primary key is not editable.";
         }
-
-        //pre ($this);
 
         $this->display();
     }

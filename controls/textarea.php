@@ -12,9 +12,9 @@ class textarea_control
     public $pattern = "";
     public $required = "";
     public $error_key = "";
+    public $group_class = "";
 
-
-    public function __construct($label, $label_style, $hint_text, $control_name, $rows, $maxlength, $required, $default, $error_key)
+    public function __construct($label, $label_style, $hint_text, $control_name, $rows, $maxlength, $required, $default, $error_key, $group_class = "")
     {
         $this->label  = $label;
         $this->label_style  = $label_style;
@@ -25,6 +25,7 @@ class textarea_control
         $this->required  = to_required_string($required);
         $this->default  = $default;
         $this->error_key  = $error_key;
+        $this->group_class  = $group_class;
 
         $this->display();
     }
@@ -36,7 +37,7 @@ class textarea_control
         $this->hint_name2 = $this->control_name . "-info";
 ?>
         <!-- Start text area control <?= $this->control_name ?> //-->
-        <div id="heading_<?= $this->control_name ?>" class="govuk-form-group">
+        <div id="heading_<?= $this->control_name ?>" class="govuk-form-group <?= $this->group_class ?>">
             <label class="<?= $this->label_style ?>" for="<?= $this->control_name ?>"><?= $this->label ?></label>
             <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
             <textarea <?= $this->required ?> maxlength="<?= $this->maxlength ?>" class="govuk-textarea" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name ?>"><?= $this->default ?></textarea>

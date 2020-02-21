@@ -42,6 +42,7 @@ if ($application->tariff_object != "") {
     <link href="/css/application.css" rel="stylesheet" />
     <!--<![endif]-->
     <script src="/js/jquery-3.4.1.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
     <script src="/js/js.cookie.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
     <link href="/css/select2.css" rel="stylesheet" />

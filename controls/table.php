@@ -5,16 +5,19 @@ class table_control
     public $dataset = Null;
     public $custom_no_results_message = "";
 
-    public function __construct($dataset, $override_object = "", $custom_no_results_message = "")
+    public function __construct($dataset, $override_object = "", $custom_no_results_message = "", $group_by = "")
     {
         global $application;
         $this->dataset = $dataset;
         $this->custom_no_results_message = $custom_no_results_message;
+        $this->group_by = $group_by;
+
         if ($override_object == "") {
             $this->columns = $application->data[$application->tariff_object]["columns"];
         } else {
             $this->columns = $application->data[$override_object]["columns"];
         }
+
         $this->display();
     }
 
@@ -79,7 +82,6 @@ class table_control
                             $tooltip_control = "tip_" . $column_name2;
                             $described_by = ' aria-describedby="' . $tooltip_control . '"';
                             $tooltip_content = '<span id="' . $tooltip_control . '" class="tooltip govuk-visually-hidden" role="tooltip" aria-hidden="true">' . $tooltip . '</span>';
-                            //h1 ($tooltip_content);
                         } else {
                             $tooltip_control = "";
                             $described_by = "";
@@ -92,7 +94,25 @@ class table_control
             </thead>
             <tbody class="govuk-table__body">
                 <?php
+                $last_group = "random_term";
+                $column_count = count($this->columns);
                 foreach ($this->dataset as $data_item) {
+                    if ($this->group_by != "") {
+                        foreach ($this->columns as $column) {
+                            $data_column = $column["data_column"];
+                            if ($data_column == $this->group_by) {
+                                if ($data_item->{$data_column} != "") {
+                                    if ($last_group != $data_item->{$data_column}) {
+                                        echo ("<tr>");
+                                        echo ("<td colspan='" . $column_count . "' class='govuk-table__cell table_group_head table_indent'>" . $data_item->{$data_column} . "</td>");
+                                        echo ("</tr>");
+                                    }
+                                }
+                                $last_group = $data_item->{$data_column};
+                                break;
+                            }
+                        }
+                    }
                 ?>
                     <tr class="govuk-table__row">
                         <?php
@@ -129,14 +149,14 @@ class table_control
                                     break;
                                 case "link_geographical_area_id":
                                     echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
-                                    break;    
+                                    break;
                                 case "link_additional_code":
                                     echo ('<a class="govuk-link" href="/additional_codes/view.html?mode=view&additional_code_sid=' . $data_item->additional_code_sid . '">' . $data_item->{$data_column} . "</a>");
-                                    break;    
+                                    break;
                                 case "ordernumber":
                                 case "quota_order_number_id":
                                     echo ('<a class="govuk-link" href="/quotas/view.html?mode=view&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
-                                    break;    
+                                    break;
                                 case "commodity":
                                     echo ('<a class="nodecorate" href="/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $data_item->{$data_column} . '">' . format_goods_nomenclature_item_id($data_item->{$data_column}) . "</a>");
                                     break;
@@ -148,7 +168,6 @@ class table_control
                                     break;
                             }
                             echo ('</td>');
-                            
                         }
                         ?>
                     </tr>

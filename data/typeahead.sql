@@ -658,8 +658,7 @@ LIMIT 5;
 select * from goods_nomenclature_descriptions gnd
 where description is not null
 and description like '%<p%'
-order by length(description) desc limit 500;ggq
-
+order by length(description) desc limit 500;
 
 
 select mts.measure_type_series_id, mtsd.description,
@@ -1852,3 +1851,51 @@ select mt.measure_type_id, mtd.description, mt.measure_type_series_id
 from measure_types mt, measure_type_descriptions mtd 
 where mt.measure_type_id = mtd.measure_type_id 
 order by 3, 1 
+
+
+
+select ma.measure_type_id, duties_same_for_all_commodities, mt.order_number_capture_code, certificate_list, activity_name
+from measure_activities ma, measure_types mt
+where measure_activity_sid = 107
+and ma.measure_type_id = mt.measure_type_id;
+
+select * from measure_types where measure_component_applicable_code = 2
+
+select m.measure_generating_regulation_id, count(*)
+from ml.measures_real_end_dates m
+where measure_type_id = '552'
+and goods_nomenclature_item_id = '8541409041'
+group by measure_generating_regulation_id
+order by 2 desc;
+
+
+select *
+from ml.measures_real_end_dates m
+where measure_type_id = '552'
+and goods_nomenclature_item_id = '8541409041'
+order by goods_nomenclature_item_id, additional_code_type_id, additional_code_id, validity_start_date ;
+
+
+select m.measure_sid, goods_nomenclature_item_id, (additional_code_type_id || additional_code_id) as add_code, validity_start_date, 
+string_agg(mc.duty_amount::text, ' : ')
+from measures m left outer join measure_components mc on m.measure_sid = mc.measure_sid 
+and measure_generating_regulation_id = 'R1715700'
+and goods_nomenclature_item_id = '8541409041'
+group by m.measure_sid, goods_nomenclature_item_id, additional_code_type_id, additional_code_id, validity_start_date
+order by goods_nomenclature_item_id, additional_code_type_id, additional_code_id;
+
+
+select mac.measure_activity_condition_sid, mac.condition_code, mcd.description as condition_code_description, component_sequence_number,
+/*
+condition_duty_amount, condition_monetary_unit_code, condition_measurement_unit_code,
+condition_measurement_unit_qualifier_code, mac.action_code, mad.description as action_code_description,
+certificate_type_code || certificate_code as code, certificate_type_code, certificate_code, mac.applicable_duty, mac.applicable_duty_permutation, */
+   
+   COUNT (*) OVER (PARTITION BY mac.condition_code) my_count 
+   
+from measure_activity_conditions mac, measure_action_descriptions mad, measure_condition_code_descriptions mcd
+where mac.action_code = mad.action_code
+and mac.condition_code = mcd.condition_code
+and measure_activity_sid = 107
+order by condition_code, mac.component_sequence_number;
+

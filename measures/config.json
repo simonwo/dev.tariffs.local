@@ -13,15 +13,15 @@
             },
             {
                 "url": "/measures/create_edit_permutations.html",
-                "text": "Permutations"
+                "text": "Commodities and additional codes"
+            },
+            {
+                "url": "/measures/create_edit_conditions.html",
+                "text": "Conditions"
             },
             {
                 "url": "/measures/create_edit_duties.html",
                 "text": "Duties"
-            },
-            {
-                "url": "/measures/create_edit_conditions.html",
-                "text": "Measure conditions"
             },
             {
                 "url": "/measures/create_edit_footnotes.html",
@@ -126,7 +126,6 @@
                     "caption": "Conditions",
                     "edit_text": "",
                     "edit_url": ""
-
                 },
                 {
                     "control_type": "misc_data_table_control",
@@ -135,7 +134,6 @@
                     "caption": "Footnotes",
                     "edit_text": "Add footnote",
                     "edit_url": "www.google.com"
-
                 },
                 {
                     "control_type": "misc_data_table_control",
@@ -144,7 +142,6 @@
                     "caption": "Geographical exclusions",
                     "edit_text": "",
                     "edit_url": ""
-
                 },
                 {
                     "control_type": "version_control",
@@ -153,7 +150,6 @@
                     "caption": "Version control",
                     "edit_text": "",
                     "edit_url": ""
-
                 }
             ]
         },
@@ -247,8 +243,8 @@
                 "column_name": "Conditions",
                 "data_column": "conditions",
                 "sort_field": "",
-                "tooltip": "",
-                "align": ""
+                "tooltip": "<span class='condition'>Condition code</span><br /><span class='reference'>Reference price</span><br /><span class='certificate'>Certificate code</span><br /><span class='action'>Action code</span><br /><span class=''>Applicable duty</span>",
+                "align": "s"
             },
             {
                 "column_name": "Footnotes",
@@ -291,7 +287,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.<br /><br />This activity will be added to workbasket {workbasket_name} and to activity {activity_name}."
+                "text": "Please use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.<br /><br /><span class='highlighted_text'>This activity will be added to workbasket {workbasket_name}</span>."
             },
             {
                 "control_type": "error_block"
@@ -406,7 +402,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please enter the basic shared data for these measures.<br /><br /><span class='highlighted_text'>This activity will be added to workbasket {workbasket_name} and to activity {activity_name}</span>."
+                "text": "Please enter the basic shared data for these measures.<br /><br /><span class='inset_1'>Workbasket:</span><span class='highlighted_text inset_2'>{workbasket_name}</span><span class='inset_1'>Activity:</span><span class='highlighted_text inset_2'>{activity_name}</span>"
             },
             {
                 "control_type": "error_block"
@@ -554,18 +550,18 @@
     "measures_permutations": {
         "config": {
             "title": "Measures",
-            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "inset": "",
             "freetext_fields": "ordernumber|description",
             "default_sort_fields": "ordernumber",
             "object_name": "Measures",
-            "title_create": "New measures - permutations",
+            "title_create": "New measures - commodities and additional codes",
             "title_edit": "Edit quota",
             "description_keys": "",
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
-                "submit_button_text_create": "Continue to enter duties",
-                "submit_button_text_edit": "Continue to enter duties",
+                "submit_button_text_create": "Continue to enter conditions",
+                "submit_button_text_edit": "Continue to enter conditions",
                 "save_progress_button_text": "Save progress",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
@@ -575,7 +571,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Use this form to select the commodity codes and additional codes which will be used in the creation of these measures. The additional code field is to be used primarily for the creation of Trade Remedies (anti-dumping and anti-subsidy measures).<br /><br />This activity will be added to workbasket {workbasket_name} and to activity {activity_name}."
+                "text": "Use this form to select the commodity codes and additional codes which will be used in the creation of these measures. The additional code field is to be used primarily for the creation of Trade Remedies (anti-dumping and anti-subsidy measures).<br /><br /><span class='inset_1'>Workbasket:</span><span class='highlighted_text inset_2'>{workbasket_name}</span><span class='inset_1'>Activity:</span><span class='highlighted_text inset_2'>{activity_name}</span>"
             },
             {
                 "control_type": "error_block"
@@ -600,14 +596,15 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "Type or paste a list of 4-digit additional codes into the box below. Separate individual codes with a space, tab or line break. If you need to enter a trade remedies residual code (e.g. C999, then please enter it in this box and it will be pre-selected on the following screen.",
                 "control_name": "additional_codes",
-                "rows": 8,
+                "rows": 12,
                 "pattern": "[0-4]{10}",
                 "maxlength": null,
                 "required": true,
-                "default": ""
+                "default": "",
+                "group_class": "additional_codes_group"
             },
             {
-                "control_type": "radio_control",
+                "control_type": "xradio_control",
                 "label": "Will the applicable duties be the same for all commodities?",
                 "label_style": "govuk-fieldset__legend--m",
                 "hint_text": "If all combinations of commodity codes and additional codes will have the precise same duties, please select&nbsp;'Yes'. Otherwise, please select&nbsp;'No' and modify the duties on the following screen.",
@@ -617,14 +614,15 @@
                 "default": "1",
                 "radio_control_style": "inline",
                 "required": true,
-                "disabled_on_edit": true
+                "disabled_on_edit": true,
+                "group_class": "suited_for_duties"
             },
             {
-                "control_type": "input_control",
+                "control_type": "xinput_control",
                 "label": "Enter certificate list",
                 "label_style": "govuk-label--m",
                 "hint_text": "If the duties are dependent on the certification provided, please enter up to two certificates in the box below, separated by commas if required. If the user puts anything in here, the system will create conditions of condition code 'A' if it is a trade remedy. So what do we do on the conditions page??",
-                "control_name": "certificates",
+                "control_name": "certificate_list",
                 "control_style": "govuk-input--width-30 xcertificate",
                 "size": 255,
                 "maxlength": 255,
@@ -633,12 +631,7 @@
                 "default": "",
                 "disabled_on_edit": true,
                 "custom_errors": "",
-                "group_class": "trade_remedies"
-            },
-            {
-                "control_type": "warning_control",
-                "control_scope": "",
-                "text": "The duties form should not show at all if the measure is not a duty-type form. Should only show if the measure is in types: "
+                "group_class": "suited_for_duties"
             },
             {
                 "control_type": "hidden_control",
@@ -649,7 +642,7 @@
                 "control_type": "button_cluster_control"
             },
             {
-                "control_type": "include_control",
+                "control_type": "xinclude_control",
                 "control_scope": "",
                 "path": "/measures/includes/duty_notes.html"
             }
@@ -745,8 +738,8 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
-                "submit_button_text_create": "Continue to apply measure conditions",
-                "submit_button_text_edit": "Continue to apply measure conditions",
+                "submit_button_text_create": "Continue to apply footnotes",
+                "submit_button_text_edit": "Continue to apply footnotes",
                 "save_progress_button_text": "Save progress",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
@@ -754,15 +747,7 @@
         },
         "form": [
             {
-                "control_type": "inset_control",
-                "control_scope": "",
-                "text": "Use this form to enter the duties that will apply to the measures for the previously selected commodity codes.<br /><br />This activity will be added to workbasket {workbasket_name} and to activity {activity_name}."
-            },
-            {
-                "control_type": "error_block"
-            },
-            {
-                "control_type": "input_control",
+                "control_type": "xinput_control",
                 "label": "Enter certificate",
                 "label_style": "govuk-label--m",
                 "hint_text": "If there is a certificate required for importers to take advantage of reduced anti-dumping or anti-subsidy duties, then please specify that certificate here.",
@@ -778,7 +763,7 @@
                 "group_class": "trade_remedies"
             },
             {
-                "control_type": "input_control",
+                "control_type": "xinput_control",
                 "label": "Duty without certificate",
                 "label_style": "govuk-label--m",
                 "hint_text": "DON'T FORGET ABOUT THE RESIDUAL 999 CODE. Please enter the duties that will be applicable if the document is not provided. Please only use this feature if the duty is common across all impacted measures.",
@@ -794,7 +779,7 @@
                 "group_class": "trade_remedies"
             },
             {
-                "control_type": "input_control",
+                "control_type": "xinput_control",
                 "label": "Additional code for 'all other companies'",
                 "label_style": "govuk-label--m",
                 "hint_text": "Pre-populate this with a 999 if they have used on the previous screen",
@@ -813,6 +798,11 @@
                 "control_type": "include_control",
                 "control_scope": "",
                 "path": "/measures/includes/duty_prototype.php"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "duties"
             },
             {
                 "control_type": "button_cluster_control"
@@ -899,7 +889,7 @@
     "measures_conditions": {
         "config": {
             "title": "Measures",
-            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "inset": "",
             "freetext_fields": "ordernumber|description",
             "default_sort_fields": "ordernumber",
             "object_name": "Measures",
@@ -909,8 +899,8 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
-                "submit_button_text_create": "Continue to apply footnotes",
-                "submit_button_text_edit": "Continue to apply footnotes",
+                "submit_button_text_create": "Continue to enter duties",
+                "submit_button_text_edit": "Continue to enter duties",
                 "save_progress_button_text": "Save progress",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
@@ -918,12 +908,9 @@
         },
         "form": [
             {
-                "control_type": "xinset_control",
+                "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Use this form to add one or more conditions to these measures."
-            },
-            {
-                "control_type": "error_block"
+                "text": "Use this form to add one or more conditions to the measures that you are creating."
             },
             {
                 "control_type": "include_control",
@@ -931,7 +918,18 @@
                 "path": "/measures/includes/condition_prototype.php"
             },
             {
+                "control_type": "start_form"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "conditions"
+            },
+            {
                 "control_type": "button_cluster_control"
+            },
+            {
+                "control_type": "end_form"
             }
         ]
     },
@@ -959,7 +957,7 @@
             {
                 "control_type": "xinset_control",
                 "control_scope": "",
-                "text": "Use this form to add one or more footnotes to these measures. Footnotes are not required for measures, so you can add footnotes at a later date if required.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to add one or more footnotes to these measures. Footnotes are not required for measures, so you can add footnotes at a later date if required.<br /><br />This activity will be added to workbasket {workbasket_name}</span>."
             },
             {
                 "control_type": "error_block"
@@ -970,7 +968,18 @@
                 "path": "/measures/includes/footnote_prototype.php"
             },
             {
+                "control_type": "start_form"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "footnotes"
+            },
+            {
                 "control_type": "button_cluster_control"
+            },
+            {
+                "control_type": "end_form"
             }
         ]
     },
@@ -1002,25 +1011,25 @@
                 "data_column": "delete_action",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "nw"
+                "align": "nw r"
             }
         ]
     },
     "condition_table": {
         "columns": [
             {
-                "column_name": "#",
-                "data_column": "component_sequence_number",
-                "sort_field": "",
-                "tooltip": "Component sequence number",
-                "align": ""
-            },
-            {
                 "column_name": "Condition code",
                 "data_column": "condition_code",
                 "sort_field": "",
                 "tooltip": "",
-                "align": ""
+                "align": "hanging table_indent"
+            },
+            {
+                "column_name": "Sequence",
+                "data_column": "component_sequence_number",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "c"
             },
             {
                 "column_name": "Certificate",
@@ -1034,21 +1043,28 @@
                 "data_column": "reference_price",
                 "sort_field": "",
                 "tooltip": "",
-                "align": ""
+                "align": "nw"
             },
             {
                 "column_name": "Action code",
                 "data_column": "action_code",
                 "sort_field": "",
                 "tooltip": "",
-                "align": ""
+                "align": "hanging2"
+            },
+            {
+                "column_name": "Duty",
+                "data_column": "applicable_duty",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "nw"
             },
             {
                 "column_name": "Actions",
                 "data_column": "action_string",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "nw"
+                "align": "nw r"
             }
         ]
     }

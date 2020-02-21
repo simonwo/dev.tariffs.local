@@ -36,7 +36,7 @@
             <!-- End condition code //-->
 
             <!-- Start reference price //-->
-            <div class="govuk-form-group reference_duty_group">
+            <div class="govuk-form-group reference_price_group">
                 <label class="govuk-label for reference_price" for="reference_price_1">Enter the reference price (where applicable)</label>
                 <input class="govuk-input govuk-input--width-30 condition_mechanic_reference_duty duty" id="reference_price_1" name="reference_price_1" type="text" value="">
             </div>

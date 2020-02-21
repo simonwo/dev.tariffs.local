@@ -7,7 +7,6 @@ $error_handler = new error_handler();
 $submitted = intval(get_formvar("submitted"));
 $application->get_measure_type_combinations();
 if ($submitted == 1) {
-    h1 ($submitted);
     $measure_type_series = new measure_type_series();
     $measure_type_series->validate_form();
 } else {

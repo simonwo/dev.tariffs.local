@@ -16,6 +16,7 @@ class measure_condition
 	public $action_code       							= Null;
 	public $certificate_type_code       				= Null;
 	public $certificate_code       						= Null;
+	public $reference_price_string = "";
 
 	function populate_from_cookies() {
 		$this->heading          		= "Add measure condition";
@@ -51,6 +52,27 @@ class measure_condition
 		$this->condition_string = $m->combined_duty;
 	}
 
+
+	public function get_reference_price_string() {
+		//prend ($this);
+		if ($this->condition_duty_amount == "") {
+			$this->reference_price_string = "";
+		} else {
+			$s = "";
+			$s .= $this->condition_duty_amount;
+			if ($this->condition_monetary_unit_code != "") {
+				$s .= "&nbsp;" . $this->condition_monetary_unit_code;
+			}
+			if ($this->condition_measurement_unit_code != "") {
+				$s .= "&nbsp;" . $this->condition_measurement_unit_code;
+			}
+			if ($this->condition_measurement_unit_qualifier_code != "") {
+				$s .= "&nbsp;" . $this->condition_measurement_unit_qualifier_code;
+			}
+			$this->reference_price_string = $s;
+		}
+	}
+
 	/*
 	mcc.duty_expression_id || '|' ||
             coalesce (mcc.duty_amount::text, '') || '|' ||
@@ -73,7 +95,6 @@ class measure_condition
         $operation = "C";
 		$operation_date = $application->get_operation_date();
 		$this->measure_condition_sid = $this->get_next_measure_condition_sid();
-		h1 ($this->measure_condition_sid);
 		$sql = "INSERT INTO measure_conditions_oplog
 		(measure_condition_sid, measure_sid, condition_code, component_sequence_number, condition_duty_amount,
 		condition_monetary_unit_code, condition_measurement_unit_code,

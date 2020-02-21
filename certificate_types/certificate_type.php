@@ -20,7 +20,6 @@ class certificate_type
         if (empty($_GET)) {
             $this->clear_cookies();
         } elseif ($application->mode == "insert") {
-            h1($application->mode);
             $this->populate_from_cookies();
         } else {
             if (empty($error_handler->error_string)) {

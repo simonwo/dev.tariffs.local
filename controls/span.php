@@ -13,7 +13,6 @@ class span_control
         $this->control_scope = $control_scope;
         $this->control_name = $control_name;
         $this->suppress_control = false;
-        //h1 ($this->control_name);
 
         $this->display();
     }

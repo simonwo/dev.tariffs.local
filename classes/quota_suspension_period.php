@@ -27,8 +27,7 @@ class quota_suspension_period
         $operation = "C";
         $operation_date = $application->get_operation_date();
 		$this->footnote_description_period_sid  = $application->get_next_footnote_description_period();
-		#h1 ($this->footnote_description_period_sid);
-		#exit();
+
 		if ($this->validity_start_date == "") {
 			$this->validity_start_date = Null;
 		}

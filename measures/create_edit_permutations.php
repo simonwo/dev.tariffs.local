@@ -6,21 +6,23 @@ $application->get_duties_same_for_all_commodities();
 
 $error_handler = new error_handler();
 
-$submitted = intval(get_formvar("submitted"));
-if ($submitted == 1) {
-    $measure_activity = new measure_activity();
-    $measure_activity->validate_form_commodities();
-} else {
-    $measure_activity = new measure_activity();
-    $measure_activity->get_sid();
-    $measure_activity->populate_commodity_form();
-}
+$measure_activity = new measure_activity();
+$measure_activity->get_sid();
+$measure_activity->populate_permutations_form();
 ?>
-
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <?php
 require("../includes/metadata.php");
+if ($measure_activity->suppress_additional_codes_field == true) {
+?>
+    <script>
+        $(document).ready(function() {
+            $(".additional_codes_group").hide();
+        });
+    </script>
+<?php
+}
 ?>
 
 <body class="govuk-template__body">
@@ -29,6 +31,16 @@ require("../includes/metadata.php");
     ?>
     <div class="govuk-width-container">
         <?php
+        if (intval($measure_activity->measure_component_applicable_code) == 2) {
+        ?>
+            <script>
+                $(document).ready(function() {
+                    $(".suited_for_duties").hide();
+                });
+            </script>
+        <?php
+        }
+
         require("../includes/phase_banner.php");
         $control_content = array();
         $control_content["duties_same_for_all_commodities"] = $application->duties_same_for_all_commodities;

@@ -92,6 +92,14 @@ class data_entry_form
     private function display()
     {
         global $application, $error_handler;
+        $my_control_content = $application->data[$application->tariff_object]["form"];
+        foreach ($my_control_content as $item) {
+            if (in_array($item["control_type"], array("start_form", "end_form"))) {
+                $this->show_form = false;
+            } else {
+                $this->show_form = true;
+            }
+        }
 ?>
         <!-- Start breadcrumbs //-->
         <div class="govuk-breadcrumbs">
@@ -122,12 +130,17 @@ class data_entry_form
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl"><?= $this->page_title ?></h1>
                     <!-- End main title //-->
-                    <form action="<?= $this->action ?>" class="data_entry_form" method="post" <?= $this->validate_string ?>>
+                    <?php
+                    if ($this->show_form) {
+                    ?>
+                        <form action="<?= $this->action ?>" class="data_entry_form" method="post" <?= $this->validate_string ?>>
+                        <?php
+                    }
+                        ?>
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-full">
                                 <?php
                                 new mode_control();
-                                $my_control_content = $application->data[$application->tariff_object]["form"];
                                 $config = $application->data[$application->tariff_object]["config"];
 
                                 $i = 0;
@@ -190,8 +203,6 @@ class data_entry_form
                                         $control_class = "";
                                     }
 
-                                    //h1 ($item["control_name"] . $item["required"]);
-
 
                                     switch ($control_type) {
                                         case "detail_table_control":
@@ -238,6 +249,7 @@ class data_entry_form
                                                 $control_scope = $control_scope,
                                                 $caption = $item["caption"],
                                                 $dataset = $this->control_content[$control_name],
+                                                $application_code_description = "",
                                                 $description_keys = $config["description_keys"]
                                             );
                                             break;
@@ -269,6 +281,10 @@ class data_entry_form
                                                 $control_name = $control_name
                                             );
                                             break;
+                                        case "start_form":
+                                            echo ('<form action="' . $this->action . '" class="data_entry_form" method="post" ' . $this->validate_string . '>');
+                                            break;
+
                                         case "hidden_control":
                                             new hidden_control(
                                                 $control_name = $item["control_name"],
@@ -324,7 +340,9 @@ class data_entry_form
                                                 $required = $item["required"],
                                                 $default = $this->object->{$item["control_name"]},
                                                 $pattern = $pattern,
-                                                $control_scope = $control_scope
+                                                $control_scope = $control_scope,
+                                                $custom_errors,
+                                                $group_class
                                             );
                                             break;
                                         case "date_picker_control":
@@ -350,7 +368,7 @@ class data_entry_form
                                                 $required = $item["required"]
                                             );
                                             break;
-    
+
                                         case "select_control":
                                             new select_control(
                                                 $label = $item["label"],
@@ -380,14 +398,16 @@ class data_entry_form
                                                 $selected = $this->object->{$item["control_name"]},
                                                 $radio_control_style = $item["radio_control_style"],
                                                 $required = $item["required"],
-                                                $disabled_on_edit = $disabled_on_edit
+                                                $disabled_on_edit = $disabled_on_edit,
+                                                $custom_errors,
+                                                $group_class
                                             );
                                             break;
                                     }
                                 }
                                 ?>
                             </div>
-                    </form>
+                        </form>
                 </div>
             </div>
             </div>

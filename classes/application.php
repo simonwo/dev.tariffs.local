@@ -33,6 +33,7 @@ class application
     public $mode = "";
     public $row_count = 0;
     public $session = null;
+    public $conditional_duty_application_options = array();
 
     public function __construct()
     {
@@ -2175,8 +2176,9 @@ class application
         $measure_generating_regulation_id = get_formvar("measure_generating_regulation_id");
         if (strlen($measure_generating_regulation_id) > 2) {
             if ($measure_generating_regulation_id_operator == "starts_with") {
+                $len = strlen($measure_generating_regulation_id);
                 $measure_generating_regulation_id = get_before_hyphen($measure_generating_regulation_id);
-                $clause .= " and measure_generating_regulation_id like '" . $measure_generating_regulation_id . "%' ";
+                $clause .= " and left(measure_generating_regulation_id, " . $len . ") = '" . $measure_generating_regulation_id . "' ";
             } elseif ($measure_generating_regulation_id_operator == "is_one_of") {
                 $measure_generating_regulation_id = standardise_form_string($measure_generating_regulation_id);
                 $measure_generating_regulation_id_clause = "";
@@ -2213,7 +2215,6 @@ class application
             $measure_type_id_clause .= ")";
             $clause .= $measure_type_id_clause;
         }
-        //h1 ($measure_type_id);
 
         // Get geography field
         $geographical_area_id = strtoupper(standardise_form_string(get_formvar("geographical_area_id")));
@@ -2352,6 +2353,7 @@ class application
                     $mc->action_code = $row['action_code'];
                     $mc->action_code_description = $row['action_code_description'];
                     $mc->duties = $row['duties'];
+                    $mc->get_reference_price_string();
                     $mc->get_condition_string();
 
                     array_push($condition_list, $mc);
@@ -2376,13 +2378,34 @@ class application
                     $f->measure_sid = $row['measure_sid'];
                     $f->footnote_type_id = $row['footnote_type_id'];
                     $f->footnote_id = $row['footnote_id'];
-                    $f->footnote = $f->footnote_type_id . $f->footnote_id;
                     array_push($temp, $f);
                 }
                 $footnote_list = $temp;
             }
         }
 
+        // Get the geo exclusions
+        $sql_exclusions = "select mega.excluded_geographical_area, mega.geographical_area_sid, m.measure_sid
+        from measure_excluded_geographical_areas mega, measures m
+        where mega.measure_sid = m.measure_sid  ";
+        $sql_exclusions .= $clause;
+
+        $exclusion_list = array();
+
+        $result = pg_query($conn, $sql_exclusions);
+        $temp = array();
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $ex = new measure_excluded_geographical_area;
+                    $ex->measure_sid = $row['measure_sid'];
+                    $ex->excluded_geographical_area = $row['excluded_geographical_area'];
+                    $ex->geographical_area_sid = $row['geographical_area_sid'];
+                    array_push($temp, $ex);
+                }
+                $exclusion_list = $temp;
+            }
+        }
 
         // Get the measures
         $result = pg_query($conn, $sql);
@@ -2431,7 +2454,7 @@ class application
             $measure->duties = $measure->combined_duty;
         }
 
-        // Apply the footnotes to the measures
+        // Apply the footnotes to the measure
         foreach ($footnote_list as $f) {
             foreach ($this->measures as $measure) {
                 if ($measure->measure_sid == $f->measure_sid) {
@@ -2444,6 +2467,22 @@ class application
         foreach ($this->measures as $measure) {
             $measure->combine_footnotes();
             $measure->footnotes = $measure->combined_footnotes;
+        }
+
+
+        // Apply the exclusions to the measures
+        foreach ($exclusion_list as $ex) {
+            foreach ($this->measures as $measure) {
+                if ($measure->measure_sid == $ex->measure_sid) {
+                    array_push($measure->exclusion_list, $ex);
+                    break;
+                }
+            }
+        }
+
+        foreach ($this->measures as $measure) {
+            $measure->combine_exclusions();
+            $measure->exclusions = $measure->combined_exclusions;
         }
 
         // Apply the conditions to the measures
@@ -2460,5 +2499,12 @@ class application
             $measure->combine_conditions();
             $measure->conditions = $measure->combined_conditions;
         }
+    }
+
+    public function get_conditional_duty_application_options() {
+        $this->conditional_duty_application_options = array();
+        array_push($this->conditional_duty_application_options, new simple_object("0", "Common to all permutations", "Common to all permutations", "The duty specified below will be common to all specified permutations."));
+        array_push($this->conditional_duty_application_options, new simple_object("1", "Different per permutation", "Different per permutation", "Duties will vary depending on the permutation specified on the previous screen."));
+
     }
 }

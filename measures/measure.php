@@ -60,6 +60,7 @@ class measure
         $this->footnote_association_measures_xml = "";
         $this->footnote_list = array();
         $this->condition_list = array();
+        $this->exclusion_list = array();
     }
 
     public function get_parameters($description = false)
@@ -1220,20 +1221,48 @@ class measure
     {
         $this->combined_conditions = "";
         $index = 0;
+        //pre ($this->condition_list);
         foreach ($this->condition_list as $c) {
             $index++;
             $title = "Condition of type " . $c->condition_code . " - " . $c->condition_code_description . "\n\n";
             if (strlen($c->certificate_type_code) == 1) {
                 $title .= "On presentation of certificate " . $c->certificate_type_code . $c->certificate_code . ", ";
             } else {
-                $title .= "On presentation of no certificate, ";
+                if (in_array($c->condition_code, array('A', 'B', 'C', 'H', 'Q', 'Y', 'Z'))) {
+                    $title .= "On presentation of no certificate, ";
+                }
             }
-            $title .= " perform action " . $c->action_code . " - " . $c->action_code_description . "\n\n";
-            $title .= "Applicable duty is " . $c->condition_string;
-            //$c->description = '<span class="tip" title="' . $title . '">' . $c->condition_code . $c->component_sequence_number . '&nbsp;' . $c->certificate_type_code . $c->certificate_code . ' (' . $c->condition_string . ')</span><br />';
-            $c->description = '<abbr class="tip" title="' . $title . '">' . $c->condition_code . $c->component_sequence_number . '&nbsp;' . $c->certificate_type_code . $c->certificate_code . '&nbsp;' . $c->action_code; //  . '</abbr>';
+            if ($c->reference_price_string != "") {
+                $title .= "If reference price > " . $c->reference_price_string . ",";
+            }
+            $title .= " perform action " . $c->action_code . " - " . $c->action_code_description;
+            // Add in the applicable duty string
+            if ($c->condition_string != "") {
+                $title .= "\n\nApplicable duty is " . $c->condition_string;
+            }
+
+            /* ===========================================
+            The content that is presented on screen
+            =========================================== */
+            // Work out the core description: the condition code and the sequence number
+            $c->description = '<abbr class="tip" title="' . $title . '"><span class="condition_code">' . $c->condition_code . $c->component_sequence_number . '</span>&nbsp;';
+            
+            // Then add in the certificate, if present
+            if ($c->certificate_type_code != "") {
+                $c->description .= "<span class='condition_certificate'>" . $c->certificate_type_code . $c->certificate_code . '</span>&nbsp;';
+            }
+
+            // The add in the reference price, if present
+            if ($c->reference_price_string != '') {
+                $c->description .= "&nbsp;<span class='condition_reference'>(>&nbsp;" . str_replace(" ", "&nbsp;", $c->reference_price_string) . ")</span>&nbsp;";
+            }
+
+            // Then add in the action code
+            $c->description .= "<span class='condition_action'>" . $c->action_code . "</span>";
+
+            // The add in the applicable duties
             if ($c->condition_string != '') {
-                $c->description .= "&nbsp;-&nbsp;" . $c->condition_string;
+                $c->description .= "&nbsp;-&nbsp;" . str_replace(" ", "&nbsp;", $c->condition_string);
             }
             $c->description .= '</abbr>';
             $c->description = str_replace("&nbsp;&nbsp;", "&nbsp;", $c->description);
@@ -1248,11 +1277,23 @@ class measure
         $this->combined_footnotes = "";
         foreach ($this->footnote_list as $f) {
             $f->footnote_url = "/footnotes/view.html?mode=view&footnote_type_id=" . $f->footnote_type_id . "&footnote_id=" . $f->footnote_id;
-            $f->footnote_link = '<a class="govuk-link" href="' . $f->footnote_url . '">' . $f->footnote . '</a>';
+            $f->footnote_link = '<a class="govuk-link" href="' . $f->footnote_url . '">' . $f->footnote_type_id . $f->footnote_id . '</a>';
             $this->combined_footnotes .= $f->footnote_link . ", ";
         }
         $this->combined_footnotes = trim($this->combined_footnotes);
         $this->combined_footnotes = trim($this->combined_footnotes, ",");
+    }
+
+    public function combine_exclusions()
+    {
+        $this->combined_exclusions = "";
+        foreach ($this->exclusion_list as $ex) {
+            $ex->url = "/geographical_areas/view.html?mode=view&geographical_area_id=" . $ex->excluded_geographical_area . "&geographical_area_sid=" . $ex->geographical_area_sid;
+            $ex->link = '<a class="govuk-link" href="' . $ex->url . '">' . $ex->excluded_geographical_area . '</a>';
+            $this->combined_exclusions .= $ex->link . ", ";
+        }
+        $this->combined_exclusions = trim($this->combined_exclusions);
+        $this->combined_exclusions = trim($this->combined_exclusions, ",");
     }
 
     public function combine_duties()

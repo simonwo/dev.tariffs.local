@@ -2,9 +2,9 @@
     <div class="govuk-grid-column-full">
         <?php
         global $measure_activity;
-        new table_control($measure_activity->footnote_list, "footnote_table", "<p class='govuk-body' style='margin-top:2em;margin-bottom:2em'>There are currently no footnotes assigned to the current measure(s).</p>");
+        new table_control($measure_activity->footnote_list, "footnote_table", "<p class='govuk-body' style='margin-top:2em;margin-bottom:2em'>There are currently no footnotes assigned to the current measure(s).</p>", "");
         ?>
-        <form>
+        <form action="measure_activity_actions.php" class="data_entry_form" method="post" novalidate>
             <?php
             new input_control(
                 $label = "Add a footnote",
@@ -21,6 +21,11 @@
                 $disabled_on_edit = false,
                 $custom_errors = ""
             );
+            new hidden_control(
+                $control_name = "action",
+                $value = "add_footnote"
+            );
+
             new button_control("Add footnote", "add_footnote", "secondary", true, "");
             ?>
         </form>

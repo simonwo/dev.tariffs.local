@@ -571,7 +571,6 @@ class geographical_area
         global $conn;
         $errors = array();
         # First, check for items that start at the exact same start date, which is the real fail
-        #h1 ($this->validity_start_date . $this->validity_end_date);
         $sql = "SELECT * FROM quota_definitions WHERE quota_order_number_id = $1 AND validity_start_date = $2";
         pg_prepare($conn, "quota_definition_conflict_check", $sql);
         $result = pg_execute($conn, "quota_definition_conflict_check", array($this->quota_order_number_id, $this->validity_start_date));

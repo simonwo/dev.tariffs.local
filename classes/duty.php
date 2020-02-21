@@ -87,7 +87,6 @@ class duty
                 }
             }
         }
-        //h1($valid);
         $this->validity = $valid;
 
         return (true);

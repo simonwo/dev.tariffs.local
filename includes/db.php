@@ -350,8 +350,8 @@ function get_before_hyphen($s)
 {
     $s = trim($s);
     $hyphen_pos = strpos($s, "-");
-    if ($hyphen_pos !== -1) {
-        $s = trim(substr($s, 0, $hyphen_pos - 1));
+    if ($hyphen_pos !== false) {
+        $s = trim(substr($s, 0, $hyphen_pos));
     }
     return ($s);
 }

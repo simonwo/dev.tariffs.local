@@ -49,11 +49,6 @@ class certificate
         $this->certificate_type_code = strtoupper(get_formvar("certificate_type_code", "", True));
         $this->certificate_code = strtoupper(get_formvar("certificate_code", "", True));
         
-        /*
-        pre ($_REQUEST);
-        h1 ($this->additional_code);
-        die();
-        */
         $this->description = get_formvar("description", "", True);
 
         $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
@@ -665,7 +660,7 @@ class certificate
         WHERE c.certificate_code = cd.certificate_code
         and c.certificate_type_code = ctd.certificate_type_code 
         AND c.certificate_type_code = $1 AND c.certificate_code = $2";
-        //h1 ($sql);
+
         pg_prepare($conn, "get_certificate", $sql);
         $result = pg_execute($conn, "get_certificate", array($this->certificate_type_code, $this->certificate_code));
 

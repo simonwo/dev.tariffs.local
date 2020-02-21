@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '2048M');
 require(dirname(__FILE__) . "../../includes/db.php");
 $application = new application;
 $application->init("measures");
@@ -245,6 +246,7 @@ require("../includes/metadata.php");
                         <!-- End end date row //-->
 
                         <!-- Start creation date row //-->
+                        <!--
                         <div class="complex_search_row">
                             <div class="govuk-grid-column-two-thirds nopad">
                                 <div class="complex_search_form complex_search_form_column1">
@@ -266,6 +268,7 @@ require("../includes/metadata.php");
                                 </div>
                             </div>
                         </div>
+                        //-->
 
                         <!-- End creation    date row //-->
 

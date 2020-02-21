@@ -13,8 +13,9 @@ class character_count_control
     public $pattern = "";
     public $required = "";
     public $error_key = "";
+    public $group_class = "";
 
-    public function __construct($label, $label_style, $hint_text, $control_name, $rows, $maxlength, $required, $default, $pattern, $control_scope = "", $custom_errors = "")
+    public function __construct($label, $label_style, $hint_text, $control_name, $rows, $maxlength, $required, $default, $pattern, $control_scope = "", $custom_errors = "", $group_class = "")
     {
         $this->label = $label;
         $this->label_style = $label_style;
@@ -41,6 +42,7 @@ class character_count_control
 
         // Get pattern string
         $this->pattern = $pattern;
+        $this->group_class  = $group_class;
 
         $this->display();
     }
@@ -59,7 +61,7 @@ class character_count_control
             if ($this->maxlength == null) {
 ?>
                 <!-- Start text area control <?= $this->control_name ?> //-->
-                <div id="heading_<?= $this->control_name ?>" class="govuk-form-group">
+                <div id="heading_<?= $this->control_name ?>" class="govuk-form-group <?= $this->group_class ?>">
                     <label class="<?= $this->label_style ?>" for="<?= $this->control_name ?>"><?= $this->label ?></label>
                     <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
                     <textarea pattern="<?= $this->pattern?>" <?= $this->required ?> maxlength="<?= $this->maxlength ?>" class="govuk-textarea" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name ?>"><?= $this->default ?></textarea>
