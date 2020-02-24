@@ -40,7 +40,7 @@ require("../includes/metadata.php");
         <!-- End breadcrumbs //-->
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-four-fifths">
+                <div class="govuk-grid-column-full">
 
                     <?php
                     new title_control("", "", "", "Find and edit commodity codes");
@@ -50,7 +50,7 @@ require("../includes/metadata.php");
                     require("commodity_search.php");
                     require("commodity_nav.php");
                     ?>
-                    <table cellspacing="0" class="govuk-table govuk-table--m sticky">
+                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col" style="width:10%">Code</th>
                             <th class="govuk-table__header" scope="col" style="width:75%">Description</th>
@@ -91,7 +91,7 @@ require("../includes/metadata.php");
                                     </td>
                                     <td class="govuk-table__cell c"><?= $heading->productline_suffix_display() ?></td>
                                     <td class="govuk-table__cell c"><?= $heading->number_indents ?></td>
-                                    <td class="govuk-table__cell r" nowrap><a href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$heading->goods_nomenclature_item_id?>&productline_suffix=<?=$heading->productline_suffix?>">View / edit</a></td>
+                                    <td class="govuk-table__cell r" nowrap><a class="govuk-link" href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$heading->goods_nomenclature_item_id?>&productline_suffix=<?=$heading->productline_suffix?>">View / edit</a></td>
                                 </tr>
                         <?php
                             }

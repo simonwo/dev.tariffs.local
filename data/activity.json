@@ -1,0 +1,144 @@
+{
+    "data": [
+        {
+            "commodity_code": "0306330000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "1207501000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "1512190000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "2008975100",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "2009491111",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "5802190000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "7207110000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "8413910000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "8430610000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "9608101000",
+            "additional_code": "B259",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "0306330000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "1207501000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "1512190000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "2008975100",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "2009491111",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "5802190000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "7207110000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "8413910000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "8430610000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        },
+        {
+            "commodity_code": "9608101000",
+            "additional_code": "C233",
+            "duty_001": "test",
+            "duty_002": "test1",
+            "duty_003": "test2"
+        }
+    ]
+}

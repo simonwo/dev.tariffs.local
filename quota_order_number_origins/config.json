@@ -1,0 +1,125 @@
+{
+    "quota_order_number_origins": {
+        "config": {
+            "title": "Create or edit quota definition",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "",
+            "object_name": "Quotas",
+            "override_root": "/quotas/",
+            "title_create": "Create origin for quota {quota_order_number_id}",
+            "title_edit": "Edit origin for quota {quota_order_number_id}",
+            "url_edit": "",
+            "title_view": "Quota {quota_order_number_id}",
+            "description_keys": "quota_order_number_id",
+            "validate": false,
+            "breadcrumb_insert_text": "Quota {quota_order_number_id}",
+            "breadcrumb_insert_url": "/quotas/view.html?mode=view&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue to create measures",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "",
+                "info_text": "",
+                "cancel_button_text": "",
+                "cancel_button_href": ""
+            }
+        },
+        "view": {
+            "fields": [],
+            "controls": []
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Please use this form to create a new origin for quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Please use this form to update an existing origin for quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "suspension_period"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_id",
+                "value": "{quota_order_number_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_sid",
+                "value": "{quota_order_number_sid}"
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does this origin start?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "validity_start_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "control_scope": "update",
+                "label": "When does this origin end?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "validity_end_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "input_control",
+                "label": "Please type the origin",
+                "label_style": "govuk-label--m",
+                "hint_text": "Type into the box below to select the origin to be applied to this quota. If you select a country group, you will then be able to select individual countries to exclude.",
+                "control_name": "geographical_area_id",
+                "control_style": "govuk-input--width-40",
+                "size": 60,
+                "maxlength": 60,
+                "pattern": "[0-9.]",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": false,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "input_control",
+                "label": "Exclusions",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please enter one or more exclusions.",
+                "control_name": "geographical_area_exclusions",
+                "control_style": "govuk-input--width-40",
+                "size": 60,
+                "maxlength": 60,
+                "pattern": "",
+                "required": false,
+                "default": "",
+                "disabled_on_edit": false,
+                "group_class": "exclusions",
+                "custom_errors": ""
+            },
+            {
+                "control_type": "span_control",
+                "control_name": "selected_exclusions",
+                "control_scope": "",
+                "text": "Your selected geographical areas:",
+                "group_class": "exclusions"
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    }
+}

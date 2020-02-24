@@ -1,0 +1,131 @@
+{
+    "quota_associations": {
+        "config": {
+            "title": "Create or edit quota quota association",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "",
+            "object_name": "Quotas",
+            "override_root": "/quotas/",
+            "title_create": "Create quota association on quota {quota_order_number_id}",
+            "title_edit": "Edit quota association on quota {quota_order_number_id}",
+            "url_edit": "",
+            "title_view": "Quota {quota_order_number_id}",
+            "description_keys": "quota_order_number_id",
+            "validate": false,
+            "breadcrumb_insert_text": "Quota {quota_order_number_id}",
+            "breadcrumb_insert_url": "/quotas/view.html?mode=view&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Add to workbasket",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "",
+                "info_text": "",
+                "cancel_button_text": "",
+                "cancel_button_href": ""
+            }
+        },
+        "view": {
+            "fields": [],
+            "controls": []
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Please use this form to create a new quota association with this quota {quota_order_number_id} as the main (parent) quota.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Please use this form to update an existing quota association.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "quota_association"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_id",
+                "value": "{quota_order_number_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_sid",
+                "value": "{quota_order_number_sid}"
+            },
+            {
+                "control_type": "select_control",
+                "label": "Select the quota definition period to associate",
+                "label_style": "govuk-label--m",
+                "hint_text": "This is the quota definition to which the quota quota association will be assigned. This list only includes future and current definition periods.",
+                "control_name": "quota_definition_sid",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a quota definition period -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "input_control",
+                "label": "Enter the ID of the sub (child) quota",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please enter the 6-digit order number for the sub quota.",
+                "control_name": "sub_quota_order_number_id",
+                "control_style": "govuk-input--width-10",
+                "size": 60,
+                "maxlength": 60,
+                "pattern": "[0-9]",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": false,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "xbutton_control",
+                "text": "Select sub quota definition period",
+                "name": "select_sub_quota_definition",
+                "type": "secondary",
+                "include_submitted": false,
+                "link_href": ""
+            },
+            {
+                "control_type": "radio_control",
+                "label": "What is the relation type for this quota association?",
+                "label_style": "govuk-fieldset__legend--m",
+                "hint_text": "",
+                "control_name": "relation_type",
+                "dataset": "",
+                "selected": "",
+                "radio_control_style": "stacked_detail",
+                "required": true,
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "input_control",
+                "label": "What is the coefficient?",
+                "label_style": "govuk-label--m",
+                "hint_text": "The coefficient determines the relative amounts by which the two quotas will be decremented when traders draw down on the sub-quota. If you select a relation type of 'NM' in the relation type field (above), then the coefficient field will automatically be set to the value '1.00000'.<br /><br />Please enter up to 5 decimal places. ",
+                "control_name": "coefficient",
+                "control_style": "govuk-input--width-10",
+                "size": 10,
+                "maxlength": 10,
+                "pattern": "[0-9A-Z.]",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": false,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    }
+}

@@ -340,7 +340,7 @@ class measure_activity
     function validate_form_footnotes()
     {
         global $application;
-        $url = "./create_edit_confirmation.html?mode=" . $application->mode;
+        $url = "./create_edit_summary.html?mode=" . $application->mode;
         header("Location: " . $url);
     }
 
@@ -475,7 +475,12 @@ class measure_activity
 
     public function get_sid()
     {
-        $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+        $temp = get_querystring("measure_activity_sid");
+        if ($temp == "") {
+            $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+        } else {
+            $this->measure_activity_sid = $temp;
+        }
     }
 
     public function populate_permutations_form()
@@ -483,7 +488,7 @@ class measure_activity
         global $conn;
 
         // Get core measure data
-        $sql = "select ma.measure_type_id, duties_same_for_all_commodities, certificate_list, activity_name,
+        $sql = "select ma.measure_type_id, activity_name,
         mt.order_number_capture_code, mt.measure_component_applicable_code
         from measure_activities ma, measure_types mt
         where measure_activity_sid = $1
@@ -498,8 +503,6 @@ class measure_activity
             $row = pg_fetch_array($result);
             $this->measure_type_id = $row['measure_type_id'];
             $this->activity_name = $row['activity_name'];
-            $this->duties_same_for_all_commodities = $row['duties_same_for_all_commodities'];
-            $this->certificate_list = $row['certificate_list'];
             $this->activity_name = $row['activity_name'];
             $this->order_number_capture_code = $row['order_number_capture_code'];
             $this->measure_component_applicable_code = $row['measure_component_applicable_code'];
@@ -566,7 +569,7 @@ class measure_activity
     {
         global $conn;
 
-        $sql = "select ma.measure_type_id, duties_same_for_all_commodities, certificate_list, activity_name,
+        $sql = "select ma.measure_type_id, activity_name,
         mt.order_number_capture_code, mt.measure_component_applicable_code
         from measure_activities ma, measure_types mt
         where measure_activity_sid = $1
@@ -581,13 +584,10 @@ class measure_activity
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_array($result);
             $this->activity_name = $row['activity_name'];
-            $this->certificate_list = $row['certificate_list'];
             $this->measure_type_id = $row['measure_type_id'];
             $this->order_number_capture_code = $row['order_number_capture_code'];
             $this->measure_component_applicable_code = $row['measure_component_applicable_code'];
-            $this->duties_same_for_all_commodities = $row['duties_same_for_all_commodities'];
         }
-        //h1 ($this->measure_component_applicable_code);
 
         // Get commodity codes
         $sql = "select * from measure_activity_commodities where measure_activity_sid = $1 order by goods_nomenclature_item_id";
@@ -2106,4 +2106,117 @@ class measure_activity
 
         //die();
     }
+
+    function get_full_summary() {
+        global $conn;
+        $sql = "select activity_name, ma.validity_start_date, ma.validity_end_date, measure_generating_regulation_id, 
+        ma.measure_type_id, geographical_area_id, geographical_area_sid, information_text,
+        mtd.description as measure_type_description, ma.quota_order_number_id
+        from measure_activities ma, base_regulations br, measure_type_descriptions mtd
+        where ma.measure_generating_regulation_id = br.base_regulation_id
+        and ma.measure_type_id = mtd.measure_type_id
+        and measure_activity_sid = $1";
+        $query_name = "stmt1_" . $this->measure_activity_sid;
+        pg_prepare($conn, $query_name, $sql);
+        $result = pg_execute($conn, $query_name, array($this->measure_activity_sid));
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            $row = pg_fetch_row($result);
+            
+            $this->activity_name = $row[0];
+            $this->validity_start_date = $row[1];
+            $this->validity_end_date = $row[2];
+            $this->measure_generating_regulation_id = $row[3];
+            $this->measure_type_id = $row[4];
+            $this->geographical_area_id = $row[5];
+            $this->geographical_area_sid = $row[6];
+            $this->regulation_information_text = $row[7];
+            $this->measure_type_description = $row[8];
+            $this->quota_order_number_id = na($row[9]);
+        }
+
+        // Get commodities
+        $sql = "select * from measure_activity_commodities where measure_activity_sid = $1 order by goods_nomenclature_item_id";
+        $query_name = "stmt2_" . $this->measure_activity_sid;
+        pg_prepare($conn, $query_name, $sql);
+        $result = pg_execute($conn, $query_name, array($this->measure_activity_sid));
+        $row_count = pg_num_rows($result);
+        $this->commodity_code_list = array();
+        $this->commodity_codes = "";
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $gn = new goods_nomenclature;
+                $gn->goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
+                array_push($this->commodity_code_list, $gn);
+                $this->commodity_codes .= $gn->goods_nomenclature_item_id . "\n";
+            }
+        }
+        $this->commodity_codes = rtrim($this->commodity_codes);
+
+        // Get additional codes
+        $sql = "select additional_code_type_id || additional_code as additional_code from measure_activity_additional_codes
+        where measure_activity_sid = $1 order by additional_code_type_id, additional_code";
+        $query_name = "stmt3_" . $this->measure_activity_sid;
+        pg_prepare($conn, $query_name, $sql);
+        $result = pg_execute($conn, $query_name, array(
+            $this->measure_activity_sid
+        ));
+
+        $row_count = pg_num_rows($result);
+        $this->additional_code_list = array();
+        $this->additional_codes = "";
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $ac = new additional_code;
+                $ac->code = $row['additional_code'];
+                array_push($this->additional_code_list, $ac);
+                $this->additional_codes .= $ac->code . "\n";
+            }
+        }
+        $this->additional_codes = rtrim($this->additional_codes);
+
+        // Get conditions
+        $sql = "select mac.condition_code, component_sequence_number, mac.action_code, certificate_type_code, certificate_code,
+        applicable_duty, applicable_duty_permutation, reference_price, mcc.condition_code_type,
+        mad.abbreviation as action_abbreviation, ma.requires_duty
+        from measure_activity_conditions mac, measure_condition_codes mcc, measure_action_descriptions mad, measure_actions ma
+        where mac.condition_code = mcc.condition_code
+        and mac.action_code = mad.action_code
+        and mac.action_code = ma.action_code
+        and measure_activity_sid = $1
+        order by mac.condition_code, component_sequence_number;";
+        $query_name = "stmt4_" . $this->measure_activity_sid;
+        pg_prepare($conn, $query_name, $sql);
+        $result = pg_execute($conn, $query_name, array(
+            $this->measure_activity_sid
+        ));
+
+        $row_count = pg_num_rows($result);
+        $this->measure_conditions = array();
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $mc = new measure_condition;
+                $mc->condition_code = $row['condition_code'];
+                $mc->component_sequence_number = $row['component_sequence_number'];
+                $mc->action_code = $row['action_code'];
+                $mc->certificate_type_code = $row['certificate_type_code'];
+                $mc->certificate_code = $row['certificate_code'];
+                $mc->applicable_duty = $row['applicable_duty'];
+                $mc->applicable_duty_permutation = $row['applicable_duty_permutation'];
+                $mc->reference_price = $row['reference_price'];
+                $mc->condition_code_type = $row['condition_code_type'];
+                $mc->action_abbreviation = $row['action_abbreviation'];
+                $requires_duty = $row['requires_duty'];
+                if ($requires_duty == "t") {
+                    $mc->requires_duty = true;
+                } else {
+                    $mc->requires_duty = false;
+                }
+
+                array_push($this->measure_conditions, $mc);
+            }
+        }
+    }
+
+    
 }

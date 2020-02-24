@@ -5,12 +5,6 @@ class quota_association
 	public $workbasket_name				= "";
 	public $main_quota_order_number_id  = "";
 	public $sub_quota_order_number_id   = "";
-	public $blocking_period_start_day	= "";
-	public $blocking_period_start_month	= "";
-	public $blocking_period_start_year	= "";
-	public $blocking_period_end_day	= "";
-	public $blocking_period_end_month	= "";
-	public $blocking_period_end_year	= "";
 
     public function __construct() {
         // Construction code goes here

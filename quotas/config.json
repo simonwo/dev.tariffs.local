@@ -4,35 +4,35 @@
         "roll_forward": true,
         "links": [
             {
-                "url" : "/quotas/create_edit.html",
+                "url": "/quotas/create_edit.html",
                 "text": "Core data"
             },
             {
-                "url" : "/quotas/create_edit2.html",
+                "url": "/quotas/create_edit2.html",
                 "text": "Reference documents"
             },
             {
-                "url" : "/quotas/create_edit3.html",
+                "url": "/quotas/create_edit3.html",
                 "text": "Commodities"
             },
             {
-                "url" : "/quotas/create_edit4.html",
+                "url": "/quotas/create_edit4.html",
                 "text": "Duties"
             },
             {
-                "url" : "/quotas/create_edit5.html",
+                "url": "/quotas/create_edit5.html",
                 "text": "Measurements"
             },
             {
-                "url" : "/quotas/create_edit6.html",
+                "url": "/quotas/create_edit6.html",
                 "text": "Definitions"
             },
             {
-                "url" : "/quotas/create_edit7.html",
+                "url": "/quotas/create_edit7.html",
                 "text": "Volumes"
             },
             {
-                "url" : "/quotas/create_edit8.html",
+                "url": "/quotas/create_edit8.html",
                 "text": "Confirmation"
             }
         ]
@@ -41,12 +41,15 @@
         "config": {
             "title": "Find and edit a quota",
             "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
-            "freetext_fields": "ordernumber|description",
-            "default_sort_fields": "ordernumber",
+            "freetext_fields": "",
+            "default_sort_fields": "quota_order_number_id|validity_start_date desc",
             "object_name": "Quotas",
             "title_create": "Create quota - core data",
             "title_edit": "Edit quota",
-            "description_keys": "",
+            "xurl_edit": "./workwith.html?measure_sid={measure_sid}",
+            "url_edit": "willgohere",
+            "title_view": "Quota {quota_order_number_id}",
+            "description_keys": "quota_order_number_id",
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
@@ -58,16 +61,401 @@
                 "cancel_button_href": "./"
             }
         },
+        "view": {
+            "fields": [
+                {
+                    "label": "Order number",
+                    "value": "{quota_order_number_id}"
+                },
+                {
+                    "label": "SID",
+                    "value": "{quota_order_number_sid}"
+                },
+                {
+                    "label": "Description",
+                    "value": "{description}"
+                },
+                {
+                    "label": "Start date",
+                    "value": "{validity_start_date}"
+                },
+                {
+                    "label": "End date",
+                    "value": "{validity_end_date}"
+                },
+                {
+                    "label": "Category",
+                    "value": "{quota_category_description}"
+                },
+                {
+                    "label": "Scope",
+                    "value": "{quota_scope}"
+                },
+                {
+                    "label": "Staging",
+                    "value": "{quota_staging}"
+                }
+            ],
+            "controls": [
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "origins",
+                    "caption": "Origins",
+                    "intro_text": "The following origins are associated or have historcially been associated with this quota.",
+                    "edit_text": "Create a new origin",
+                    "edit_url": "/quota_order_number_origins/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+                    "fields": [
+                        {
+                            "label": "ID",
+                            "value": "geographical_area_id",
+                            "class": ""
+                        },
+                        {
+                            "label": "Description",
+                            "value": "description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Start",
+                            "value": "validity_start_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "End",
+                            "value": "validity_end_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Exclusions",
+                            "value": "exclusion_text",
+                            "class": ""
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        },
+                        {
+                            "label": "Actions",
+                            "value": "actions",
+                            "class": "r"
+                        }
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_definitions",
+                    "table_class": "govuk-table--m",
+                    "caption": "Definitions",
+                    "intro_text": "Quota definitions define the periods over which FCFS quotas are operable. A quota definition must have a start date and and end date as well as an initial volume. A brand new quota will typically be set to 'critical' for the first 3 years. The criticality threshold is almost always set to 90%.",
+                    "edit_text": "Create a new quota definition",
+                    "edit_url": "/quota_definitions/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+                    "fields": [
+                        {
+                            "label": "SID",
+                            "value": "quota_definition_sid",
+                            "class": ""
+                        },
+                        {
+                            "label": "Start",
+                            "value": "validity_start_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "End",
+                            "value": "validity_end_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Description",
+                            "value": "description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Initial volume",
+                            "value": "initial_volume_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Unit of measure",
+                            "value": "unit",
+                            "class": ""
+                        },
+                        {
+                            "label": "Critical state",
+                            "value": "critical_state",
+                            "class": "c"
+                        },
+                        {
+                            "label": "Criticality threshold",
+                            "value": "critical_threshold",
+                            "class": "c"
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        },
+                        {
+                            "label": "Actions",
+                            "value": "actions",
+                            "class": "r nw"
+                        }
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_commodities",
+                    "table_class": "govuk-table--m",
+                    "caption": "Commodities",
+                    "intro_text": "Lorem ipsum",
+                    "edit_text": "TBC",
+                    "edit_url": "/tbc",
+                    "fields": [
+                        {
+                            "label": "Commodity code",
+                            "value": "goods_nomenclature_item_id_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Description",
+                            "value": "description",
+                            "class": ""
+                        }
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_measures",
+                    "table_class": "govuk-table--m",
+                    "caption": "Measures",
+                    "intro_text": "The following measures have been set up against this quota order number.",
+                    "edit_text": "TBC",
+                    "edit_url": "/tbc",
+                    "fields": [
+                        {
+                            "label": "SID",
+                            "value": "measure_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Commodity code",
+                            "value": "goods_nomenclature_item_id_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Start date",
+                            "value": "validity_start_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "End date",
+                            "value": "validity_end_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Measure type",
+                            "value": "measure_type_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Regulation",
+                            "value": "regulation_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Origin",
+                            "value": "geographical_area_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        }
+                        
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_associations",
+                    "table_class": "govuk-table--s",
+                    "caption": "Associations",
+                    "intro_text": "A quota association is used as a mechanism in Taric to link together quotas in such a way that the drawing down on that quota by a trader will then have an impact on another.",
+                    "edit_text": "Create a new quota association",
+                    "edit_url": "/quota_associations/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+                    "fields": [
+                        {
+                            "label": "Main order number",
+                            "value": "main_quota_order_number_id_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Main origin",
+                            "value": "main_origin_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Main start",
+                            "value": "main_validity_start_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Main end",
+                            "value": "main_validity_end_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Main volume",
+                            "value": "main_initial_volume_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Coefficient",
+                            "value": "coefficient",
+                            "class": "grey c"
+                        },
+                        {
+                            "label": "Relation type",
+                            "value": "relation_type",
+                            "class": "grey c"
+                        },
+                        {
+                            "label": "Sub order number",
+                            "value": "sub_quota_order_number_id_string",
+                            "class": "pad"
+                        },
+                        {
+                            "label": "Sub origin",
+                            "value": "sub_origin_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Sub start",
+                            "value": "sub_validity_start_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Sub end",
+                            "value": "sub_validity_end_date",
+                            "class": ""
+                        },
+                        {
+                            "label": "Sub volume",
+                            "value": "sub_initial_volume_string",
+                            "class": ""
+                        },
+                        {
+                            "label": "Ratio",
+                            "value": "ratio",
+                            "class": "c"
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        },
+                        {
+                            "label": "Actions",
+                            "value": "actions",
+                            "class": "r nw"
+                        }
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_suspension_periods",
+                    "caption": "Suspension periods",
+                    "intro_text": "Quota suspensions are functions that are enabled in legal text to allow for First Come First Serve quotas to be made effectively unavailable to traders for a given period of time, for a number of reasons – these reasons are typically written into the initial legal text, such that there is no requirement to legislate to bring in the suspension.<br /><br />Please note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
+                    "edit_text": "Create a new suspension period",
+                    "edit_url": "/quota_suspension_periods/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+                    "fields": [
+                        {
+                            "label": "Suspension dates",
+                            "value": "suspension_dates",
+                            "class": "nw"
+                        },
+                        {
+                            "label": "Definition dates",
+                            "value": "definition_dates",
+                            "class": "nw"
+                        },
+                        {
+                            "label": "Description",
+                            "value": "description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        },
+                        {
+                            "label": "Actions",
+                            "value": "actions",
+                            "class": "r"
+                        }
+                    ]
+                },
+                {
+                    "control_type": "misc_data_table_control",
+                    "control_scope": "view",
+                    "control_name": "quota_blocking_periods",
+                    "caption": "Blocking periods",
+                    "intro_text": "Quota blocks are placed on quotas for a limited period of time to prevent allocations from being taken. They do not prevent declarations from being made against a quota. A quota blocking period usually coincides with the start of a definition period, though not always; for instance, a common blocking reason is to protect the re-opening of a quota after significant returns.<br /><br />Please note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
+                    "edit_text": "Create a new blocking period",
+                    "edit_url": "/quota_blocking_periods/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+                    "fields": [
+                        {
+                            "label": "Blocking dates",
+                            "value": "blocking_dates",
+                            "class": "nw"
+                        },
+                        {
+                            "label": "Definition dates",
+                            "value": "definition_dates",
+                            "class": "nw"
+                        },
+                        {
+                            "label": "Period type",
+                            "value": "blocking_period_type_description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Description",
+                            "value": "description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Status",
+                            "value": "status",
+                            "class": "nw c"
+                        },
+                        {
+                            "label": "Actions",
+                            "value": "actions",
+                            "class": "r"
+                        }
+                    ]
+                }
+            ]
+        },
         "form": [
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -185,51 +573,42 @@
                 "control_type": "button_cluster_control"
             }
         ],
-        "filters": [
-            {
-                "label": "Mechanism",
-                "form_value": "quota_mechanism",
-                "data_field": "is_licensed",
-                "data_type": "bool",
-                "truncate_at": 0,
-                "height": "0"
-            },
-            {
-                "label": "Measure type",
-                "form_value": "measure_type_id",
-                "data_field": "m.measure_type_id",
-                "data_type": "string",
-                "truncate_at": 0,
-                "height": "0"
-            },
-            {
-                "label": "Category",
-                "form_value": "quota_category",
-                "data_field": "quota_category",
-                "data_type": "string",
-                "truncate_at": 0,
-                "height": "0"
-            }
-        ],
+        "filters": [],
         "columns": [
             {
                 "column_name": "Order number",
-                "data_column": "ordernumber",
-                "sort_field": "m.ordernumber",
+                "data_column": "quota_order_number_id",
+                "sort_field": "quota_order_number_id",
                 "tooltip": "",
-                "align": ""
+                "align": "",
+                "treatment": "quota_order_number_id"
+            },
+            {
+                "column_name": "Origin",
+                "data_column": "geographical_area_ids",
+                "sort_field": "geographical_area_ids",
+                "tooltip": "",
+                "align": "",
+                "treatment": "link_geographical_area_id"
             },
             {
                 "column_name": "Description",
                 "data_column": "description",
-                "sort_field": "qon.description",
+                "sort_field": "description",
                 "tooltip": "",
                 "align": ""
             },
             {
-                "column_name": "Measure type",
-                "data_column": "measure_type_id",
-                "sort_field": "measure_type_id",
+                "column_name": "Start date",
+                "data_column": "validity_start_date",
+                "sort_field": "validity_start_date",
+                "tooltip": "This is the date on which quota order number was first introduced",
+                "align": ""
+            },
+            {
+                "column_name": "End date",
+                "data_column": "validity_end_date",
+                "sort_field": "validity_end_date",
                 "tooltip": "",
                 "align": ""
             },
@@ -237,29 +616,22 @@
                 "column_name": "Category",
                 "data_column": "quota_category",
                 "sort_field": "quota_category",
-                "tooltip": "Quotas come in three forms:<br /><br /><b>WTO</b> quotas, which are typically aligned to the whole world (Erga Omnes)<br /><br /><b>ATQs</b> or Autonomous Tariff Quotas, which are also aligned to the whole world, but specifically for goods that are to be materailly transformed into other goods<br /><br/><b>PRF</b> or preferential quotas which are usually part of formal trade agreements.",
+                "tooltip": "Quotas come in four forms:<br /><br /><b>WTO</b> quotas, which are typically aligned to the whole world (Erga Omnes)<br /><br /><b>ATQs</b> or Autonomous Tariff Quotas, which are also aligned to the whole world, but specifically for goods that are to be materailly transformed into other goods<br /><br/><b>PRF</b> or preferential quotas which are usually part of formal trade agreements.<br/><br/><b>SAF</b> or safeguard quotas which are in place to prevent damage to domestic industry from cheap goods from overseas.",
                 "align": ""
             },
             {
                 "column_name": "Mechanism",
                 "data_column": "mechanism",
-                "sort_field": "",
-                "tooltip": "",
+                "sort_field": "mechanism",
+                "tooltip": "Quotas are administered via two mechanisms:<br /><br /><b>FCFS</b> or First Come First Served quotas, which are managed by HMRC, or<br /><br /><b>Licensed</b> quotas, which are managed by the RPA.",
                 "align": ""
             },
             {
-                "column_name": "Start date",
-                "data_column": "validity_start_date",
-                "sort_field": "qon.validity_start_date",
-                "tooltip": "",
-                "align": ""
-            },
-            {
-                "column_name": "Actions",
-                "data_column": "actions",
-                "sort_field": "",
-                "tooltip": "",
-                "align": "r"
+                "column_name": "Origin&nbsp;quota&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",
+                "data_column": "origin_quota",
+                "sort_field": "origin_quota",
+                "tooltip": "Origin quotas allow for specific quantities of some products to receive preferential tariff treatment if the products meet certain conditions, for example a proof of origin can be provided to prove that the goods do in fact come from the specific country.",
+                "align": "c"
             }
         ]
     },
@@ -288,12 +660,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "While this information is not passed down to the border systems, it is required to enable the creation of reference documents for Trade Agreements. Please complete now or return later once the quotas have been set up.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "While this information is not passed down to the border systems, it is required to enable the creation of reference documents for Trade Agreements. Please complete now or return later once the quotas have been set up.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -380,12 +752,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to specify the commodities that will be included within this quota.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to specify the commodities that will be included within this quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -458,12 +830,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota. Most quotas use the same in-quota duties for all commodity codes. If this is the case, you can enter the duty once only and copy to all rows.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota. Most quotas use the same in-quota duties for all commodity codes. If this is the case, you can enter the duty once only and copy to all rows.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -503,12 +875,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to identify how the goods in this quota will be measured.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to identify how the goods in this quota will be measured.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -598,7 +970,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.v"
             },
             {
                 "control_type": "error_block"
@@ -708,12 +1080,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -753,12 +1125,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"

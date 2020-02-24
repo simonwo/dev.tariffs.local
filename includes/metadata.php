@@ -23,6 +23,7 @@ if ($application->tariff_object != "") {
 } else {
     $title = $application->name;
 }
+$title = parse_placeholders($title);
 ?>
 
 <head>
@@ -41,7 +42,10 @@ if ($application->tariff_object != "") {
     <link href="/css/govuk-frontend-3.4.0.min.css" rel="stylesheet" />
     <link href="/css/application.css" rel="stylesheet" />
     <!--<![endif]-->
+    <script src="/js/jquery-3.4.1.js"></script>
+    <!--
     <script src="/js/jquery-3.4.1.min.js"></script>
+    //-->
     <script src="/js/jquery-ui.min.js"></script>
     <script src="/js/js.cookie.js"></script>
     <script src="/js/typeahead.bundle.js"></script>
@@ -50,6 +54,7 @@ if ($application->tariff_object != "") {
     <script src="/js/application.js"></script>
     <script src="/js/date.format.js"></script>
     <script src="/js/cursor.js"></script>
+    <script src="/js/moment.js"></script>
 
 
     <!--[if IE 8]>

@@ -24,6 +24,8 @@ class table_control
     private function display()
     {
         global $application;
+
+        //prend (gettype($this->dataset));
         if (count($this->dataset) == 0) {
             if ($this->custom_no_results_message == "") {
 ?>
@@ -148,14 +150,31 @@ class table_control
                                     echo ('<a class="govuk-link" href="/regulations/view.html?mode=view&base_regulation=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "link_geographical_area_id":
-                                    echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
+                                    $geo = $data_item->{$data_column};
+                                    $geo_array = explode(",", $geo);
+                                    $geo_count = count($geo_array);
+                                    $index = 0;
+                                    foreach ($geo_array as $geo) {
+                                        $index ++;
+                                        echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . trim($geo) . '">' . trim($geo) . "</a>");
+                                        if ($index < $geo_count) {
+                                            echo (", ");
+                                        }
+                                    }
+
+                                    //echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "link_additional_code":
                                     echo ('<a class="govuk-link" href="/additional_codes/view.html?mode=view&additional_code_sid=' . $data_item->additional_code_sid . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "ordernumber":
                                 case "quota_order_number_id":
-                                    echo ('<a class="govuk-link" href="/quotas/view.html?mode=view&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
+                                    if (isset($data_item->quota_order_number_sid)) {
+                                        $sid = $data_item->quota_order_number_sid;
+                                    } else {
+                                        $sid = -1;
+                                    }
+                                    echo ('<a class="govuk-link mono" href="/quotas/view.html?mode=view&quota_order_number_sid=' . $sid . '&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "commodity":
                                     echo ('<a class="nodecorate" href="/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $data_item->{$data_column} . '">' . format_goods_nomenclature_item_id($data_item->{$data_column}) . "</a>");

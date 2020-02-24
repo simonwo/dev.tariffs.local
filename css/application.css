@@ -192,6 +192,8 @@ th[scope=col] {
 
 .c {
     text-align: center !important;
+    padding-left:10px !important;
+    padding-right:10px !important;
 }
 
 .r {
@@ -809,7 +811,7 @@ a.nodecorate:hover {
     text-decoration: underline;
 }
 
-.xapp-back-to-top {
+.app-back-to-top {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -844,6 +846,10 @@ form.data_entry_form span.govuk-hint, form.data_entry_form .govuk-inset-text, fo
     font-family: "Courier New";
     font-size: 16px;
     font-weight: bold;
+}
+.mono-s {
+    font-family: "Courier New";
+    font-size: 14px;
 }
 
 .commodity_check>span {
@@ -1379,7 +1385,7 @@ li.disabled {
     clear: both;
 }
 
-td.s {
+td.s, .s {
     font-size: 12px !important
 }
 
@@ -1423,4 +1429,35 @@ td.s {
 
 .table_indent {
     padding-left: 5px;
+}
+.normal {
+    font-weight: 400 !important;
+}
+.js-enabled .app-back-to-top--fixed {
+    position: fixed;
+    top: calc(100% - 50px);
+    bottom: auto;
+    left: auto;
+}
+
+.grey {
+    background-color: #f0f0f0 !important;
+    padding-left:5px !important;
+}
+
+.pad {
+    padding-left:5px !important;
+}
+
+
+a img.inline_icon {
+    position: relative;
+    top:5px;
+    margin-right:0.3em;
+}
+
+.status_image {
+    position:relative;
+    top:-1px;
+    xmargin-right:10px
 }

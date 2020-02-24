@@ -40,6 +40,7 @@ class select_control
         } else {
             $this->selected = $selected;
         }
+        $this->selected = $selected;
 
         $this->group_by = $group_by;
         if ($this->group_by == "") {
@@ -80,8 +81,12 @@ class select_control
             <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
             <?= $error_handler->display_error_message($this->error_key); ?>
             <select <?= $this->disabled_text ?> <?= $this->required ?> class="govuk-select <?= $this->control_class ?>" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>">
-                <option <?= $this->default_group ?> value="<?= $this->default_value ?>"><?= $this->default_string ?></option>
                 <?php
+                if (($this->default_value != "") && ($this->default_value != "")) {
+                    echo '<option ' . $this->default_group . ' value="' . $this->default_value . '">' . $this->default_string . '</option>';
+                }
+
+
                 $count = 0;
                 foreach ($this->dataset as $dataitem) {
 

@@ -1,0 +1,196 @@
+{
+    "quota_definitions": {
+        "config": {
+            "title": "Create or edit quota definition",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "quota_order_number_id|validity_start_date desc",
+            "object_name": "Quotas",
+            "override_root": "/quotas/",
+            "title_create": "Create definition on quota {quota_order_number_id}",
+            "title_duplicate": "Duplicate definition on quota {quota_order_number_id}",
+            "title_edit": "Edit definition on quota {quota_order_number_id}",
+            "url_edit": "",
+            "title_view": "Quota {quota_order_number_id}",
+            "description_keys": "quota_order_number_id",
+            "validate": false,
+            "breadcrumb_insert_text": "Quota {quota_order_number_id}",
+            "breadcrumb_insert_url": "/quotas/view.html?mode=view&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue to create measures",
+                "submit_button_text_edit": "Continue to create measures",
+                "save_progress_button_text": "",
+                "info_text": "",
+                "cancel_button_text": "",
+                "cancel_button_href": ""
+            }
+        },
+        "view": {
+            "fields": [],
+            "controls": []
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Please use this form to create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "duplicate",
+                "text": "This form has been pre-populated with the details of the definition period that you are copying. Please modify the details ... create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Please use this form to update an existing definition on quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "quota_definition"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_id",
+                "value": "{quota_order_number_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_definition_sid",
+                "control_scope": "update",
+                "value": "{quota_definition_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_sid",
+                "value": "{quota_order_number_sid}"
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does this definition start?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "validity_start_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does this definition end?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "validity_end_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "span_control",
+                "control_scope": "duplicate",
+                "text": "Click on a link below to add a quarter, 6 months or a year to both the start and end dates of the new definition.<br /><a class='govuk-link' id='quota_definition_add_year' href='#'>Add a year</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class='govuk-link' id='quota_definition_add_6_months' href='#'>Add 6 months</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a class='govuk-link' id='quota_definition_add_quarter' href='#'>Add a quarter</a>"
+            },
+            {
+                "control_type": "input_control",
+                "label": "What will the initial volume of this definition period be?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "initial_volume",
+                "control_style": "govuk-input--width-10",
+                "size": 20,
+                "maxlength": 20,
+                "pattern": "[0-9.]",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": false,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "select_control",
+                "label": "How will the quota balance(s) be measured?",
+                "label_style": "govuk-label--m",
+                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.",
+                "control_name": "measurement_unit_code",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a measurement unit code -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": false
+            },
+            {
+                "control_type": "select_control",
+                "label": "What is the measurement unit qualifier for this quota?",
+                "label_style": "govuk-label",
+                "hint_text": "",
+                "control_name": "measurement_unit_qualifier_code",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a measurement qualifier code -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": false
+            },
+            {
+                "control_type": "select_control",
+                "label": "What is the maximum precision for this quota?",
+                "label_style": "govuk-label--m",
+                "hint_text": "This is the maximum number of decimal places that a trader can enter on the SAD form in respect of the quantity being imported under this quota. Unless explicitly otherwise specified, the default value is set to '3' in the box below.",
+                "control_name": "maximum_precision",
+                "default_value": "Unspecified",
+                "default_string": "- Please select the maximum precision -",
+                "default": "3",
+                "selected": "3",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": false
+            },
+            {
+                "control_type": "input_control",
+                "label": "Criticality threshold",
+                "label_style": "govuk-label--m",
+                "hint_text": "The criticality threshold identifies the percentage of the quota that needs to be used up before the status of the quota is set to 'critical'. At that point, HMRC will take securities on any usage of this quota. This is in almost all cases set to 90.",
+                "control_name": "critical_threshold",
+                "control_style": "govuk-input govuk-input--width-3",
+                "size": 3,
+                "maxlength": 3,
+                "pattern": "[0-9]{1,3}",
+                "required": true,
+                "default": "90",
+                "disabled_on_edit": false,
+                "custom_errors": ""
+            },            {
+                "control_type": "character_count_control",
+                "label": "Please enter a description for this definition",
+                "label_style": "govuk-label--m",
+                "hint_text": "Optionally, enter a description / reason for this definition. This field is for informational purposes only.",
+                "control_name": "description",
+                "control_scope": "",
+                "rows": 5,
+                "maxlength": 500,
+                "required": true,
+                "default": ""
+            },
+            {
+                "control_type": "radio_control",
+                "label": "Would you like to create measures to match?",
+                "label_style": "govuk-fieldset__legend--m",
+                "hint_text": "",
+                "control_name": "create_measures",
+                "dataset": "",
+                "selected": "",
+                "radio_control_style": "stacked_detail",
+                "required": true,
+                "disabled_on_edit": false
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    }
+}

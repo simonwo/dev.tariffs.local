@@ -1,67 +1,68 @@
+<?php
+global $measure_activity;
+$measure_activity->measure_activity_sid = 110;
+//h1 ($measure_activity->measure_activity_sid);
+?>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-
-        <!--PQ Grid files-->
         <link rel="stylesheet" href="/css/pqgrid.min.css" />
-        <script src="/grid-2.4.1/pqgrid.min.js"></script>
-        <!--PQ Grid Office theme-->
+        <script src="/grid-2.4.1/pqgrid.dev.js"></script>
         <link rel="stylesheet" href="/css/themes/govuk/pqgrid.css" />
         <script>
-            $(function() {
-                var data = [{
-                        commodity_code: "0123456789",
-                        additional_code: "C233",
-                        duty_001: "4 EUR",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "4829475839",
-                        additional_code: "C234",
-                        duty_001: "14 EUR",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "2834649594",
-                        additional_code: "C237",
-                        duty_001: "12%",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "8362837497",
-                        additional_code: "B133",
-                        duty_001: "4 EUR",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "2909878278",
-                        additional_code: "C233",
-                        duty_001: "4 EUR",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "7657658765",
-                        additional_code: "C233",
-                        duty_001: "4 EUR",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    },
-                    {
-                        commodity_code: "0987654321",
-                        additional_code: "C233",
-                        duty_001: "10%",
-                        duty_002: "4 EUR",
-                        duty_003: "4 EUR"
-                    }
-                ]
+            url = '/api/v1/measure_activities/index.php?measure_activity_sid=<?= $measure_activity->measure_activity_sid ?>';
 
+            var text = "";
+            $.ajaxSetup({
+                async: false
+            });
+            $.getJSON(url, (data) => {
+                text = data;
+            });
+            $.ajaxSetup({
+                async: true
+            });
+
+            var count = text.data.length;
+            colModel = [];
+
+            if (count > 0) {
+                var prototype = text.data[0];
+                var non_editable_fields = ["commodity_code", "additional_code"];
+                column_count = Object.keys(prototype).length;
+                column_width = Math.floor(100 / column_count);
+                column_width_standard = column_width + "%";
+                column_width_last = (column_width - 1) + "%";
+
+                index = 0;
+                Object.keys(prototype).forEach(function(item) {
+                    index ++;
+                    title = fmt_title(item);
+                    var column = new Array();
+                    column["title"] = title;
+                    column["dataType"] = "string";
+                    column["dataIndx"] = item;
+                    if (index < column_count) {
+                        column["width"] = column_width_standard;
+                    } else {
+                        column["width"] = column_width_last;
+                    }
+                    
+                    if (non_editable_fields.indexOf(item) == -1) {
+                        column["editable"] = true;
+                    } else {
+                        column["editable"] = false;
+                    }
+
+                    colModel.push(column);
+                });
+            }
+
+            $(function() {
                 var obj = {
                     minWidth: 500,
                     height: 400,
+                    autofill: true,
+                    fillHandle: "both",
                     resizable: true,
                     scrollModel: {
                         autoFit: true
@@ -69,7 +70,7 @@
                     showTop: false,
                     showBottom: false,
                     numberCell: {
-                        show: true
+                        show: false
                     },
                     title: "",
                     collapsible: {
@@ -77,47 +78,26 @@
                         collapsed: false
                     },
                 };
-                obj.colModel = [{
-                        title: "Commodity",
-                        dataType: "string",
-                        dataIndx: "commodity_code",
-                        width: "15%",
-                        editable: false
-                    },
-                    {
-                        title: "Additional code",
-                        dataType: "string",
-                        dataIndx: "additional_code",
-                        width: "16",
-                        editable: false
-                    },
-                    {
-                        title: "F1 0.35 EUR WAT",
-                        dataType: "string",
-                        dataIndx: "duty_001",
-                        width: "23%"
-                    },
-                    {
-                        title: "F2 0.248 EUR WAT",
-                        dataType: "string",
-                        dataIndx: "duty_002",
-                        width: "23%"
-                    },
-                    {
-                        title: "F3 0 EUR WAT",
-                        dataType: "string",
-                        dataIndx: "duty_003",
-                        width: "23%"
-                    }
-                ]
-                
+                obj.colModel = colModel;
+
                 obj.dataModel = {
-                    data: data
+                    location: "remote",
+                    dataType: "jsonp",
+                    method: "GET",
+                    url: "/api/v1/measure_activities/index.php?measure_activity_sid=<?= $measure_activity->measure_activity_sid ?>",
+                    getData: function(dataJSON) {
+                        var data = dataJSON.data;
+                        return {
+                            curPage: dataJSON.curPage,
+                            totalRecords: dataJSON.totalRecords,
+                            data: data
+                        };
+                    }
                 };
 
                 var $grid = $("#grid_json").pqGrid(obj);
-                //$( "#grid_json" ).pqGrid( "option", "selectionModel", {type: 'row', mode: 'block'} );
-                //$( "#grid_json" ).pqGrid( "option", "selectionModel", {type: 'cell', mode: 'range'} );
+                //$("#grid_json").pqGrid("option", "height", '110%');
+
 
                 //bind width to select list.
                 $("#sl_width").change(function(evt) {

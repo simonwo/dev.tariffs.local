@@ -5,7 +5,6 @@ $application = new application;
 $application->init("measures_conditions");
 $application->get_conditional_duty_application_options();
 $error_handler = new error_handler();
-$submitted = intval(get_formvar("submitted"));
 $measure_activity = new measure_activity();
 $measure_activity->populate_conditions_form();
 ?>

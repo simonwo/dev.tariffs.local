@@ -73,7 +73,7 @@ class date_picker_control
                         <div class="govuk-date-input__item">
                             <div class="govuk-form-group">
                                 <label class="govuk-label govuk-date-input__label" for="<?= $this->control_name ?>_year">Year</label>
-                                <input value="<?= $this->year ?>"" <?= $this->required ?> class=" govuk-input govuk-date-input__input govuk-input--width-4" id="<?= $this->control_name ?>_year" name="<?= $this->control_name ?>_year" type="text" pattern="[0-9]{2,4}">
+                                <input value="<?= $this->year ?>" <?= $this->required ?> class=" govuk-input govuk-date-input__input govuk-input--width-4" id="<?= $this->control_name ?>_year" name="<?= $this->control_name ?>_year" type="text" pattern="[0-9]{2,4}">
                             </div>
                         </div>
                     </div>

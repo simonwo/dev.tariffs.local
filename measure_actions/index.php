@@ -61,7 +61,7 @@ $application->get_measure_actions();
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-full">
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl">View measure actions</h1>
                     <!-- End main title //-->
@@ -69,7 +69,8 @@ $application->get_measure_actions();
                     // Inset control
                     new inset_control(
                         $text = "Use this screen to view measure actions.  Measure actions cannot be modified, as doing so is likely
-                        to cause significant issues in CDS and other downstream systems. This screen is read-only."
+                        to cause significant issues in CDS and other downstream systems. This screen is read-only. PLease note - the abbreviation
+                        field is used in building conditions in the 'Create measures' function of this application."
                     );
 ?>
                     <div class="govuk-grid-row">
@@ -80,6 +81,7 @@ $application->get_measure_actions();
                                     <tr class="govuk-table__row">
                                         <th scope="col" class="govuk-table__header" nowrap>Measure action</th>
                                         <th scope="col" class="govuk-table__header">Description</th>
+                                        <th scope="col" class="govuk-table__header">Abbreviation</th>
                                         <th scope="col" class="govuk-table__header" nowrap>Start date</th>
                                         <th scope="col" class="govuk-table__header" nowrap>End date</th>
                                     </tr>
@@ -91,6 +93,7 @@ $application->get_measure_actions();
                                         <tr class="govuk-table__row">
                                             <td class="govuk-table__cell"><?= $measure_action->action_code ?></td>
                                             <td class="govuk-table__cell"><?= $measure_action->description ?></td>
+                                            <td class="govuk-table__cell"><?= $measure_action->abbreviation ?></td>
                                             <td class="govuk-table__cell"><?= $measure_action->validity_start_date ?></td>
                                             <td class="govuk-table__cell"><?= $measure_action->validity_end_date ?></td>
                                         </tr>

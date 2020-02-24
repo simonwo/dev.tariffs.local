@@ -30,7 +30,7 @@ require("../includes/metadata.php");
         <!-- End breadcrumbs //-->
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-four-fifths">
+                <div class="govuk-grid-column-full">
                     <?php
                     new title_control("", "", "", "Find and edit commodity codes");
                     ?>
@@ -38,7 +38,7 @@ require("../includes/metadata.php");
                     require("commodity_search.php");
                     ?>
 
-                    <table cellspacing="0" class="govuk-table govuk-table--m sticky">
+                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" style="width:5%" scope="col">Section</th>
                             <th class="govuk-table__header" style="width:8%" scope="col">Chapters</th>
@@ -87,7 +87,7 @@ require("../includes/metadata.php");
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><?= $section->numeral ?></td>
                                 <td class="govuk-table__cell"><?= $section->chapter_string ?></td>
-                                <td class="govuk-table__cell"><a href="chapter.html?section_id=<?= $section->section_id ?>"><?= $section->title ?></a></td>
+                                <td class="govuk-table__cell"><a class="govuk-link" href="chapter.html?section_id=<?= $section->section_id ?>"><?= $section->title ?></a></td>
                             </tr>
                         <?php
                         }
@@ -95,10 +95,10 @@ require("../includes/metadata.php");
                     </table>
 
                     <p class="govuk-body">Extract commodity tree:&nbsp;&nbsp;
-                        <a href="goods_nomenclature_extract.html?depth=4">HS4</a>&nbsp;
-                        <a href="goods_nomenclature_extract.html?depth=6">HS6</a>&nbsp;
-                        <a href="goods_nomenclature_extract.html?depth=8">CN8</a>&nbsp;
-                        <a href="goods_nomenclature_extract.html?depth=10">CN10</a>
+                        <a class="govuk-link" href="goods_nomenclature_extract.html?depth=4">HS4</a>&nbsp;
+                        <av href="goods_nomenclature_extract.html?depth=6">HS6</a>&nbsp;
+                        <a class="govuk-link" href="goods_nomenclature_extract.html?depth=8">CN8</a>&nbsp;
+                        <a class="govuk-link" href="goods_nomenclature_extract.html?depth=10">CN10</a>
                     </p>
                 </div>
             </div>

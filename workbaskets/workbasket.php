@@ -29,6 +29,27 @@ class workbasket
         return ($measure_sid);
     }
 
+    function populate() {
+        global $conn;
+        $sql = "select title, reason, user_id, status, created_at, last_status_change_at, last_update_by_id 
+        from workbaskets w where w.workbasket_id = $1;";
+        $stmt = "populate_workbasket_" . $this->workbasket_id;
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->workbasket_id
+        ));
+        if ($result) {
+            $row = pg_fetch_row($result);
+            $this->title = $row[0];
+            $this->reason = $row[1];
+            $this->user_id = $row[2];
+            $this->status = ucwords($row[3]);
+            $this->created_at = $row[4];
+            $this->last_status_change = $row[5];
+            $this->last_updated_by = $row[6];
+        }
+    }
+
     function reassign_workbasket()
     {
     }
@@ -92,7 +113,7 @@ class workbasket
                                 $field = pg_field_name($result, $i);
                                 echo ('<td class="govuk-table__cell">' . format_value($row, $field) . '</td>');
                             }
-                            $delete_url = "actions.php?action=delete_workbasket_item&id=" . $row->id;
+                            $delete_url = "workbasket_item_delete.php?action=delete_workbasket_item&id=" . $row->id;
                             echo ('<td class="govuk-table__cell r" nowrap>');
                             echo ('<a title="View or edit this item" href="' . $row->view_url . '"><img src="/assets/images/view.png" /></a>');
                             echo ('<a title="Delete this item" href="' . $delete_url . '"><img src="/assets/images/delete.png" /></a>');
@@ -314,9 +335,9 @@ class workbasket
     {
         global $conn;
         $sql = "select ma.activity_name, wi.sub_record_type, ma.validity_start_date, ma.validity_end_date,
-        ma.measure_generating_regulation_id, ma.commodity_list,
+        ma.measure_generating_regulation_id, /* ma.commodity_list, */
         wi.id, wi.record_id,
-        '/measures/measure_activity_review.html?mode=view&measure_activity_sid=' || wi.record_id as view_url
+        '/measures/create_edit_summary.html?mode=view&measure_activity_sid=' || wi.record_id as view_url
         from workbasket_items wi, measure_activities ma
         where wi.record_id = ma.measure_activity_sid 
         and wi.record_type = 'measure_activity'
@@ -327,6 +348,47 @@ class workbasket
             $this->workbasket_id
         ));
         $this->show_section("measure activities", $result);
+    }
+
+    public function workbasket_get_quota_suspension_periods()
+    {
+        global $conn;
+        $sql = "select wi.operation, qd.quota_order_number_id, qsp.suspension_start_date, qsp.suspension_end_date, qsp.description, wi.id, wi.record_id,
+        'test.html' as view_url
+        from workbasket_items wi, quota_suspension_periods qsp, quota_definitions qd
+        where wi.record_id = qsp.oid
+        and wi.record_type = 'quota_suspension_period'
+        and wi.workbasket_id = $1
+        and qsp.quota_definition_sid = qd.quota_definition_sid
+        and qsp.workbasket_id = $1
+        order by wi.created_at ";
+        $stmt = "workbasket_get_quota_suspension_periods_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->workbasket_id
+        ));
+        $this->show_section("quota suspension periods", $result);
+    }
+
+
+    public function workbasket_get_quota_blocking_periods()
+    {
+        global $conn;
+        $sql = "select wi.operation, qd.quota_order_number_id, qsp.blocking_start_date, qsp.blocking_end_date, qsp.description, wi.id, wi.record_id,
+        'test.html' as view_url
+        from workbasket_items wi, quota_blocking_periods qsp, quota_definitions qd
+        where wi.record_id = qsp.oid
+        and wi.record_type = 'quota_blocking_period'
+        and wi.workbasket_id = $1
+        and qsp.quota_definition_sid = qd.quota_definition_sid
+        and qsp.workbasket_id = $1
+        order by wi.created_at ";
+        $stmt = "workbasket_get_quota_blocking_periods_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->workbasket_id
+        ));
+        $this->show_section("quota blocking periods", $result);
     }
 
     public function insert_workbasket_item($oid, $record_type, $status, $operation, $operation_date)
@@ -346,13 +408,31 @@ class workbasket
         return ($id);
     }
 
+    public function get_workbasket_item($workbasket_item_id)
+    {
+        global $conn;
+        if (($workbasket_item_id == null) || ($workbasket_item_id == "")) {
+            return "";
+        }
+        $record_type = "";
+        $sql = "select record_id, record_type from workbasket_items wi where id = $1;";
+        pg_prepare($conn, "get_workbasket_item" . $workbasket_item_id, $sql);
+        $result = pg_execute($conn, "get_workbasket_item" . $workbasket_item_id, array(
+            $workbasket_item_id
+        ));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_row($result);
+            $record_type = $row[1];
+        }
+        return ($record_type);
+    }
+
     public function delete_workbasket_item($workbasket_item_id)
     {
         global $conn;
         if (($workbasket_item_id == null) || ($workbasket_item_id == "")) {
             return;
         }
-
         $sql = "select record_id, record_type from workbasket_items wi where id = $1;";
         pg_prepare($conn, "get_workbasket_item" . $workbasket_item_id, $sql);
         $result = pg_execute($conn, "get_workbasket_item" . $workbasket_item_id, array(
@@ -364,7 +444,21 @@ class workbasket
         } else {
             return;
         }
+        //h1end ("here " . $record_type);
         switch ($record_type) {
+            case "measure_activity":
+                $sql = "delete from measure_activity_additional_codes_oplog where measure_activity_sid = $1;";
+                db_execute($sql, array($workbasket_item_id));
+                $sql = "delete from measure_activity_footnotes_oplog where measure_activity_sid = $1;";
+                db_execute($sql, array($workbasket_item_id));
+                $sql = "delete from measure_activity_commodities_oplog where measure_activity_sid = $1;";
+                db_execute($sql, array($workbasket_item_id));
+                $sql = "delete from measure_activities_oplog where measure_activity_sid = $1;";
+                db_execute($sql, array($workbasket_item_id));
+                $sql = "delete from workbasket_items where id = $1;";
+                db_execute($sql, array($workbasket_item_id));
+                break;
+
             case "footnote_type":
                 $sql = "delete from footnote_types_oplog where workbasket_item_id = $1;";
                 db_execute($sql, array($workbasket_item_id));

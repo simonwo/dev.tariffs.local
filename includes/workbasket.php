@@ -33,6 +33,4 @@
         </tr>
     </tbody>
 </table>
-<!--
-<p class="govuk-body"><a class="govuk-link" href="#">View workbasket detail</a></p>
-//-->
+<p class="govuk-body"><a class="govuk-link" href="#">Edit workbasket detail</a></p>

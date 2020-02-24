@@ -8,6 +8,7 @@ class session
     public $email = "";
     public $workbasket = null;
     public $cookies_accepted = 0;
+    public $api = false;
 
     public function __construct()
     {
@@ -15,7 +16,9 @@ class session
             session_start();
         }
         $script_name = $_SERVER["SCRIPT_NAME"];
-        //h1 ($script_name);
+        if (strpos($script_name, 'api') !== false) {
+            $this->api = true;
+        }
 
         if (contains_string($script_name, "/measures/create") || contains_string($script_name, "measure_activity_actions")) {
             //echo ("not clearing");
@@ -34,10 +37,14 @@ class session
                 $this->name = $_SESSION["name"];
                 $this->permissions = $_SESSION["permissions"];
             } else {
-                $this->bounce_to_sign_in();
+                if (!$this->api) {
+                    $this->bounce_to_sign_in();
+                }
             }
         } else {
-            $this->bounce_to_sign_in();
+            if (!$this->api) {
+                $this->bounce_to_sign_in();
+            }
         }
 
         // Get the ID of the current workbasket
@@ -142,11 +149,11 @@ class session
 
     public function get_workbasket()
     {
-        //h1 ("getting workbasket");
         global $conn;
         $sql = "select title, reason, type, status, user_id, workbasket_id from workbaskets w where workbasket_id = $1;";
-        pg_prepare($conn, "get_workbasket", $sql);
-        $result = pg_execute($conn, "get_workbasket", array($_SESSION["workbasket_id"]));
+        $stmt = "get_workbasket_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($_SESSION["workbasket_id"]));
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_row($result);
@@ -179,7 +186,7 @@ class session
             $workbasket->status = $row[3];
             $workbasket->user_id = $row[4];
             $workbasket->workbasket_id = $row[5];
-            
+
             return ($workbasket);
         }
     }
@@ -212,7 +219,8 @@ class session
         header("Location: " . $url);
     }
 
-    public function withdraw_workbasket($workbasket_id) {
+    public function withdraw_workbasket($workbasket_id)
+    {
         global $conn;
         if ($workbasket_id == $_SESSION["workbasket_id"]) {
             $this->close_workbasket();

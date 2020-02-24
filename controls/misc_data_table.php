@@ -4,13 +4,16 @@ class misc_data_table_control
     // Class properties and methods go here
     public $control_name = "";
     public $caption = "";
+    public $intro_text = "";
     public $edit_text = "";
     public $edit_url = "";
+    public $table_class = "";
     public $dataset = array();
+    public $fields = array();
     public $description_keys = array();
     public $suppress_control = false;
 
-    public function __construct($control_name, $control_scope, $caption, $edit_text, $edit_url, $dataset, $description_keys)
+    public function __construct($control_name, $control_scope, $caption, $intro_text, $edit_text, $edit_url, $dataset, $description_keys, $table_class = "")
     {
         global $application;
         $this->control_name = $control_name;
@@ -23,6 +26,8 @@ class misc_data_table_control
         }
 
         $this->caption = $caption;
+        $this->intro_text = $intro_text;
+        $this->table_class = $table_class;
         $this->edit_text = $edit_text;
         $this->edit_url = $edit_url;
         $this->dataset = $dataset;
@@ -37,15 +42,90 @@ class misc_data_table_control
         }
         $this->querystring = rtrim($this->querystring, "&");
 
-        /*
-        $this->create_url = "/" . str_replace(" ", "_", $this->object_name) . "_descriptions/create_edit.html?" . $this->querystring;
-        $this->edit_url = "/" . str_replace(" ", "_", $this->object_name) . "_descriptions/create_edit.html?mode=update&" . $this->querystring;
-        */
+        preg_match_all('/{(.*?)}/', $this->caption, $matches);
+        foreach ($matches[1] as $match) {
+            if (isset($_GET[$match])) {
+                $this->caption = str_replace("{" . $match . "}", $_GET[$match], $this->caption);
+            } else {
+                $this->caption = str_replace("{" . $match . "}", "", $this->caption);
+            }
+        }
+        $this->caption = str_replace("{", "", $this->caption);
+        $this->caption = str_replace("}", "", $this->caption);
 
-        $this->display();
+        preg_match_all('/{(.*?)}/', $this->edit_url, $matches);
+        foreach ($matches[1] as $match) {
+            if (isset($_GET[$match])) {
+                $this->edit_url = str_replace("{" . $match . "}", $_GET[$match], $this->edit_url);
+            } else {
+                $this->edit_url = str_replace("{" . $match . "}", "", $this->edit_url);
+            }
+        }
+        $this->edit_url = str_replace("{", "", $this->edit_url);
+        $this->edit_url = str_replace("}", "", $this->edit_url);
+
+
+
+        if (gettype($this->dataset) == "array") {
+            $controls = $application->data[$application->tariff_object]["view"]["controls"];
+            foreach ($controls as $control) {
+                if ($control["control_name"] == $this->control_name) {
+                    $this->fields = $control["fields"];
+                    break;
+                }
+            }
+            $this->display_array();
+        } else {
+            $this->display_resource();
+        }
     }
 
-    private function display()
+    private function display_array()
+    {
+        echo ("<h2 class='govuk-heading-m'>" . $this->caption . "</h2>");
+        echo ("<p class='govuk-body'>" . $this->intro_text . "</p>");
+        if (count($this->fields) == 0) {
+            return;
+        }
+        if (count($this->dataset) == 0) {
+            echo ("<p class='govuk-body'>There are currently no " . strtolower($this->caption) . ".</p>");
+        } else {
+?>
+            <!-- Start array table //-->
+            <table class="govuk-table sticky <?= $this->table_class ?>" id="<?= $this->control_name ?>">
+                <!--<caption class="govuk-table__caption--m"><?= $this->caption ?> </caption>//-->
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <?php
+                        foreach ($this->fields as $field) {
+                            echo ('<th scope="col" class="govuk-table__header ' . $field["class"] . '">' . $field["label"] . '</th>');
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($this->dataset as $item) {
+                        echo ('<tr class="govuk-table__row">');
+                        foreach ($this->fields as $field) {
+                            echo ('<td class="govuk-table__cell ' . $field["class"] . '">' . format_array_value($item->{$field["value"]}, $field["value"]) . '</td>');
+                        }
+                        echo ('</tr>');
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <!-- End array table //-->
+            <?php
+        }
+        if (($this->edit_text != "") && ($this->edit_url != "")) {
+            echo ("<p class='govuk-body'><a class='govuk-link' href='" . $this->edit_url . "'><img class='inline_icon' src='/assets/images/new.png'/>" . $this->edit_text . "</a></p>");
+        }
+}
+
+
+
+    private function display_resource()
     {
         $data_found = false;
         if ($this->suppress_control == false) {
@@ -55,8 +135,8 @@ class misc_data_table_control
                     $data_found = true;
                     $field_count = pg_num_fields($this->dataset);
 
-?>
-                    <!-- Start version control //-->
+            ?>
+                    <!-- Start table //-->
                     <table class="govuk-table sticky" id="<?= $this->control_name ?>">
                         <caption class="govuk-table__caption--m"><?= $this->caption ?> </caption>
                         <thead class="govuk-table__head">
@@ -64,7 +144,7 @@ class misc_data_table_control
                                 <?php
                                 for ($i = 0; $i < $field_count; $i++) {
                                     $field = pg_field_name($this->dataset, $i);
-                                    echo ('<th  scope="col" class="govuk-table__header">' . format_field_name($field) . '</th>');
+                                    echo ('<th scope="col" class="govuk-table__header">' . format_field_name($field) . '</th>');
                                 }
                                 ?>
                             </tr>
@@ -82,8 +162,8 @@ class misc_data_table_control
                             ?>
                         </tbody>
                     </table>
-                    <!-- End version control //-->
-            <?php
+                    <!-- End table //-->
+<?php
                 }
             }
             if (!$data_found) {
@@ -91,56 +171,8 @@ class misc_data_table_control
                 echo ("<p class='govuk-body'>No data found</p>");
             }
             if (($this->edit_text != "") && ($this->edit_url != "")) {
-                //echo ("<p class='govuk-body'><a class='govuk-link' href='" . $this->edit_url . "'>" . $this->edit_text . "</a></p>");
+                echo ("<p class='govuk-body'><a class='govuk-link' href='" . $this->edit_url . "'>" . $this->edit_text . "</a></p>");
             }
-        }
-    }
-
-    private function display_old()
-    {
-        if ($this->suppress_control == false) {
-            ?>
-            <!-- Start detail table control //-->
-            <table class="govuk-table sticky" id="<?= $this->control_name ?>">
-                <caption class="govuk-table__caption--m"><?= $this->caption ?> </caption>
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Start&nbsp;date</th>
-                        <th scope="col" class="govuk-table__header">Description</th>
-                        <th scope="col" class="govuk-table__header r">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    <?php
-                    //pre ($this->dataset);
-                    $count = count($this->dataset);
-                    $index = 0;
-                    foreach ($this->dataset as $item) {
-                        $index += 1;
-                        $edit_url = $this->edit_url .= "&validity_start_date=" .  $item->validity_start_date;
-                    ?>
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><?= short_date($item->validity_start_date) ?></td>
-                            <td class="govuk-table__cell"><?= $item->description ?></td>
-                            <td class="govuk-table__cell r" nowrap>
-                                <?php
-                                if ($index != $count) {
-                                ?>
-                                    <a class="govuk-link" title="Delete this <?= $this->object_description ?>" href="<?= $this->delete_url ?>">Delete</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                                <?php
-                                }
-                                ?>
-                                <a class="govuk-link" title="Edit this <?= $this->object_description ?>" href="<?= $edit_url ?>">Edit</a>
-                            </td>
-                        </tr>
-                    <?php
-                    }
-                    ?>
-                </tbody>
-            </table>
-            <p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>">Create a new <?= strtolower($this->object_description) ?></a></p>
-            <!-- End detail table control //-->
-<?php
         }
     }
 }

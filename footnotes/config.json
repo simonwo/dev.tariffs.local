@@ -74,12 +74,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to create a new footnote. You can associate the footnote with commodity codes or measures once it has been created. <br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to create a new footnote. You can associate the footnote with commodity codes or measures once it has been created.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Use this form to edit an existing footnote, to <a class='govuk-link' href='#footnote_descriptions'>modify its description</a>, or to <a class='govuk-link' href='#footnote_assignments'>assign the footnote to commodity codes or measures</a>.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to edit an existing footnote, to <a class='govuk-link' href='#footnote_descriptions'>modify its description</a>, or to <a class='govuk-link' href='#footnote_assignments'>assign the footnote to commodity codes or measures</a>.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"

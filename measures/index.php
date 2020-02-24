@@ -3,11 +3,11 @@ ini_set('memory_limit', '2048M');
 require(dirname(__FILE__) . "../../includes/db.php");
 $application = new application;
 $application->init("measures");
+$application->get_filter_options();
 $submitted = intval(get_formvar("submitted"));
 if ($submitted == 1) {
     $application->get_measures();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -136,12 +136,12 @@ require("../includes/metadata.php");
                         <div class="complex_search_row">
                             <div class="govuk-grid-column-two-thirds nopad">
                                 <div class="complex_search_form complex_search_form_column1">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="measure_type_id">
                                         Measure type
                                     </label>
                                 </div>
                                 <div class="complex_search_form complex_search_form_column1a">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="measure_type_id">
                                         is
                                     </label>
                                 </div>
@@ -158,12 +158,12 @@ require("../includes/metadata.php");
                         <div class="complex_search_row">
                             <div class="govuk-grid-column-two-thirds nopad">
                                 <div class="complex_search_form complex_search_form_column1">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="geographical_area_id">
                                         Geography
                                     </label>
                                 </div>
                                 <div class="complex_search_form complex_search_form_column1a">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="geographical_area_id">
                                         is one of
                                     </label>
                                 </div>
@@ -174,16 +174,38 @@ require("../includes/metadata.php");
                         </div>
                         <!-- End origin row //-->
 
+
+                        <!-- Start order number row //-->
+                        <div class="complex_search_row">
+                            <div class="govuk-grid-column-two-thirds nopad">
+                                <div class="complex_search_form complex_search_form_column1">
+                                    <label class="govuk-label" for="ordernumber">
+                                        Quota order number
+                                    </label>
+                                </div>
+                                <div class="complex_search_form complex_search_form_column1a">
+                                    <label class="govuk-label" for="ordernumber">
+                                        is
+                                    </label>
+                                </div>
+                                <div class="complex_search_form complex_search_form_column2">
+                                    <input value="<?= get_formvar("ordernumber") ?>" size="50" maxlength="50" class="govuk-input" id="ordernumber" name="ordernumber" type="text" />
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End order number row //-->
+
+
                         <!-- Start footnotes row //-->
                         <div class="complex_search_row">
                             <div class="govuk-grid-column-two-thirds nopad">
                                 <div class="complex_search_form complex_search_form_column1">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="footnote">
                                         Footnote
                                     </label>
                                 </div>
                                 <div class="complex_search_form complex_search_form_column1a">
-                                    <label class="govuk-label" for="event-name">
+                                    <label class="govuk-label" for="footnote">
                                         is
                                     </label>
                                 </div>
@@ -244,33 +266,6 @@ require("../includes/metadata.php");
                             </div>
                         </div>
                         <!-- End end date row //-->
-
-                        <!-- Start creation date row //-->
-                        <!--
-                        <div class="complex_search_row">
-                            <div class="govuk-grid-column-two-thirds nopad">
-                                <div class="complex_search_form complex_search_form_column1">
-                                    <label class="govuk-label" for="creation_date_day">
-                                        Creation date
-                                    </label>
-                                </div>
-                                <div class="complex_search_form complex_search_form_column1a">
-                                    <select class="govuk-select" id="creation_date_operator" name="creation_date_operator">
-                                        <option value="is">is</option>
-                                        <option value="is after">is after</option>
-                                        <option value="is before">is before</option>
-                                    </select>
-                                </div>
-                                <div class="complex_search_form complex_search_form_column2">
-                                    <input size="2" maxlength="2" class="govuk-input govuk-date-input__input govuk-input--width-2" id="creation_date_day" name="creation_date_day" type="number" pattern="[0-9]*">
-                                    <input size="2" maxlength="2" class="govuk-input govuk-date-input__input govuk-input--width-2" id="creation_date_month" name="creation_date_month" type="number" pattern="[0-9]*">
-                                    <input size="4" maxlength="4" class="govuk-input govuk-date-input__input govuk-input--width-4" id="creation_date_year" name="creation_date_year" type="number" pattern="[0-9]*">
-                                </div>
-                            </div>
-                        </div>
-                        //-->
-
-                        <!-- End creation    date row //-->
 
                         <div class="govuk-!-margin-top-4">
                             <?php

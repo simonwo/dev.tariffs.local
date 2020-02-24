@@ -4,13 +4,17 @@ $application = new application;
 $application->init("workbaskets");
 $error_handler = new error_handler();
 $workbasket = new workbasket();
-$submitted = get_formvar("submitted");
-
-if ($submitted) {
-    if (isset($_POST["reassign_workbasket"])) {
-        $url = "reassign.html";
-        header("Location: " . $url);
-    }
+$workbasket->workbasket_id = get_querystring("workbasket_id");
+if (($workbasket->workbasket_id == "") || ($workbasket->workbasket_id == null)) {
+    $workbasket->workbasket_id = $application->session->workbasket->workbasket_id;
+}
+$workbasket->populate();
+if ($workbasket->workbasket_id == $application->session->workbasket->workbasket_id) {
+    $current = true;
+    $active = " (active)";
+} else {
+    $current = false;
+    $active = "";
 }
 
 ?>
@@ -37,7 +41,7 @@ require("../includes/metadata.php");
                     <a class="govuk-breadcrumbs__link" href="/">Home</a>
                 </li>
                 <li class="govuk-breadcrumbs__list-item">
-                    <a class="govuk-breadcrumbs__link" href="./">Workbaskets</a>
+                    <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
                 </li>
                 <li class="govuk-breadcrumbs__list-item" aria-current="page">My workbasket</li>
             </ol>
@@ -47,7 +51,7 @@ require("../includes/metadata.php");
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <!-- Start main title //-->
-                    <h1 class="govuk-heading-xl">Workbasket &quot;<?= $application->session->workbasket->title ?>&quot;</h1>
+                    <h1 class="govuk-heading-xl">Workbasket &quot;<?= $workbasket->title ?>&quot;</h1>
                     <!-- End main title //-->
 
                     <table class="govuk-table">
@@ -61,15 +65,15 @@ require("../includes/metadata.php");
                         <tbody class="govuk-table__body">
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header nopad" style="width:25%">Workbasket ID</th>
-                                <td class="govuk-table__cell" style="width:75%"><?= $application->session->workbasket->workbasket_id ?></td>
+                                <td class="govuk-table__cell" style="width:75%"><?= $workbasket->workbasket_id ?></td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header nopad" style="width:25%">Workbasket name</th>
-                                <td class="govuk-table__cell" style="width:75%"><?= $application->session->workbasket->title ?></td>
+                                <td class="govuk-table__cell" style="width:75%"><?= $workbasket->title ?></td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header nopad">Reason</th>
-                                <td class="govuk-table__cell"><?= $application->session->workbasket->reason ?></td>
+                                <td class="govuk-table__cell"><?= $workbasket->reason ?></td>
                             </tr>
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header nopad">User</th>
@@ -83,28 +87,54 @@ require("../includes/metadata.php");
                                 <th scope="row" class="govuk-table__header nopad">Last amended</th>
                                 <td class="govuk-table__cell">01 Jan 2020 09:39</td>
                             </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header nopad">Status</th>
+                                <td class="govuk-table__cell"><?= status_image($workbasket->status) ?><?= $workbasket->status ?><?= $active ?></td>
+                            </tr>
                         </tbody>
                     </table>
+                    <?php
 
-                    
+                    //pre($application->session);
+                    //pre($workbasket);
+
+                    if ($application->session->uid == $workbasket->user_id) {
+                        if (in_array($workbasket->status, array("In Progress", "Approval Rejected"))) {
+                    ?>
+                            <p class="govuk-body"><a class="govuk-link" href="edit_workbasket.html?workbasket_id=<?= $workbasket->workbasket_id ?>">Edit workbasket detail</a></p>
+                            <?php
+                            if ($current == false) {
+                            ?>
+                                <p class="govuk-body"><a class="govuk-link" title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=<?= $workbasket->workbasket_id ?>'>Open this workbasket</a></p>
+                            <?php
+                            }
+                            ?>
+
+                    <?php
+                        }
+                    }
+                    ?>
+
                     <h2 class="govuk-heading-m">Workbasket activities</h2>
                     <p class="govuk-body">This workbasket contains contains the following changes:</p>
                     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
-<?php
-$application->session->workbasket->workbasket_get_footnote_types();
-$application->session->workbasket->workbasket_get_certificate_types();
-$application->session->workbasket->workbasket_get_additional_code_types();
-$application->session->workbasket->workbasket_get_measure_types();
-$application->session->workbasket->workbasket_get_footnotes();
-$application->session->workbasket->workbasket_get_certificates();
-$application->session->workbasket->workbasket_get_additional_codes();
-$application->session->workbasket->workbasket_get_regulations();
-$application->session->workbasket->workbasket_get_geographical_areas();
-$application->session->workbasket->workbasket_get_measure_activities();
-?>
+                        <?php
+                        $workbasket->workbasket_get_footnote_types();
+                        $workbasket->workbasket_get_certificate_types();
+                        $workbasket->workbasket_get_additional_code_types();
+                        $workbasket->workbasket_get_measure_types();
+                        $workbasket->workbasket_get_footnotes();
+                        $workbasket->workbasket_get_certificates();
+                        $workbasket->workbasket_get_additional_codes();
+                        $workbasket->workbasket_get_regulations();
+                        $workbasket->workbasket_get_geographical_areas();
+                        $workbasket->workbasket_get_measure_activities();
+                        $workbasket->workbasket_get_quota_suspension_periods();
+                        $workbasket->workbasket_get_quota_blocking_periods();
+                        ?>
 
-<!-- Start accordion section - footnote associations with measures //-->
-<!--
+                        <!-- Start accordion section - footnote associations with measures //-->
+                        <!--
                         <div class="govuk-accordion__section ">
                             <div class="govuk-accordion__section-header">
                                 <h2 class="govuk-accordion__section-heading">
@@ -207,7 +237,7 @@ $application->session->workbasket->workbasket_get_measure_activities();
                         //-->
                         <!-- End accordion section - footnote associations with commodities //-->
 
-                        
+
 
                         <!-- Start accordion section - geographical areas //-->
                         <!--

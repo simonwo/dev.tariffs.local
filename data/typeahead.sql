@@ -1899,3 +1899,427 @@ and mac.condition_code = mcd.condition_code
 and measure_activity_sid = 107
 order by condition_code, mac.component_sequence_number;
 
+select distinct measure_type_id from additional_code_type_measure_types actmt 
+order by 1;
+
+select count(*) from additional_code_type_measure_types where measure_type_id = '696';
+
+select excluded_geographical_area, geographical_area_sid 
+from measure_excluded_geographical_areas mega, measures m
+where mega.measure_sid = m.measure_sid 
+and m.validity_start_date < '2020-02-01'
+order by m.validity_start_date desc 
+limit 100;
+
+
+select mega.excluded_geographical_area, mega.geographical_area_sid, m.measure_sid
+from measure_excluded_geographical_areas mega, measures m
+where mega.measure_sid = m.measure_sid  and m.measure_sid in (3750752)
+
+
+select condition_code, component_sequence_number, action_code, certificate_type_code, certificate_code,
+applicable_duty, applicable_duty_permutation, reference_price 
+from measure_activity_conditions mac where measure_activity_sid = 110
+order by condition_code, component_sequence_number;
+
+
+delete from measure_activity_footnotes;
+delete from measure_activity_conditions;
+delete from measure_activity_footnotes;
+delete from measure_activity_commodities 
+delete from measure_activity_additional_codes;
+delete from measure_activities;
+
+
+select *, title, reason, status, created_at, last_status_change_at, last_update_by_id 
+from workbaskets w where w.workbasket_id = 43;
+
+
+-- IMPORTANT - this is what I needed to run to populate the licensed quota order number table
+insert into licensed_quotas_oplog
+(quota_order_number_id, validity_start_date, operation, operation_date)
+select m.ordernumber, min(m.validity_start_date), 'C', min(m.validity_start_date)
+from measures m
+where left(m.ordernumber, 3) = '094'
+group by m.ordernumber
+order by m.ordernumber;
+
+select * from licensed_quotas lq where quota_order_number_id not like '094%'
+
+-- THIS IS IMPORTANT TOO
+update quota_order_numbers_oplog set quota_category = 'ATQ'
+where quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures
+	where left(measure_generating_regulation_id, 7) in ('R131388', 'R152265')
+)
+
+
+-- Gets WTO quotas
+update quota_order_numbers_oplog set quota_category = 'WTO'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.geographical_area_id in ('SI', 'AR', 'US', 'GR', 'AU', 'NZ', 'UR', 'PY')
+);
+
+
+
+-- Gets the steel safeguard quotas
+update quota_order_numbers_oplog set quota_category = 'SAF'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.geographical_area_id in ('5000', '5001', '5002')
+);
+
+
+-- Gets the preferential quotas
+update quota_order_numbers_oplog set quota_category = 'PRF'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.measure_type_id in ('143', '146')
+);
+
+
+-- Gets WTO quotas
+update licensed_quotas_oplog set quota_category = 'WTO'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.geographical_area_id in ('SI', 'AR', 'US', 'GR', 'AU', 'NZ', 'UR', 'PY')
+);
+
+
+
+-- Gets the steel safeguard quotas
+update licensed_quotas_oplog set quota_category = 'SAF'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.geographical_area_id in ('5000', '5001', '5002')
+);
+
+update licensed_quotas_oplog set origin_quota = false where origin_quota is null;
+
+-- Gets the preferential quotas
+update licensed_quotas_oplog set quota_category = 'PRF'
+where quota_category is null
+and quota_order_number_id in 
+(
+	select distinct ordernumber 
+	from measures m
+	where m.measure_type_id in ('143', '146')
+);
+
+select * from quota_order_numbers where quota_category is null;
+
+/* THIS WORKS QUITE WELL, BUT ... */
+select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'FCFS' as mechanism,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description, m.geographical_area_id 
+from quota_order_numbers q left outer join measures m on q.quota_order_number_id = m.ordernumber 
+where 1 > 0
+and q.quota_order_number_id in ('094014')
+--and q.quota_category in ('WTO', 'PRF')
+--and q.description like '%ipsum%'
+and q.origin_quota is false
+and m.geographical_area_id in ('1011', '1008')
+
+union 
+
+select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'Licensed' as mechanism,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description, m.geographical_area_id 
+from licensed_quotas q left outer join measures m on q.quota_order_number_id = m.ordernumber 
+where 1 > 0 
+and quota_order_number_id in ('094014')
+--and quota_category in ('WTO', 'PRF')
+--and description like '%ipsum%'
+and origin_quota is false
+and m.geographical_area_id in ('1011', '1008')
+;
+
+/* THIS MIGHT BE BETTER */
+with cte as (
+select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'FCFS' as mechanism,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+string_agg(distinct qono.geographical_area_id, ', ' order by qono.geographical_area_id) as geographical_area_ids
+from quota_order_numbers q left outer join quota_order_number_origins qono on q.quota_order_number_sid = qono.quota_order_number_sid 
+where 1 > 0
+--and q.quota_order_number_id in ('094002')
+and q.quota_category in ('WTO', 'PRF', 'ATQ')
+--and q.description like '%ipsum%'
+and q.origin_quota is false
+group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+--and qono.geographical_area_id in ('1011', '1008')
+
+union 
+
+select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'Licensed' as mechanism,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+string_agg(distinct m.geographical_area_id, ', ' order by m.geographical_area_id) as geographical_area_ids
+from licensed_quotas q left outer join measures m on q.quota_order_number_id = m.ordernumber 
+where 1 > 0 
+--and quota_order_number_id in ('094002')
+and quota_category in ('WTO', 'PRF', 'ATQ')
+--and description like '%ipsum%'
+and origin_quota is false
+--and m.geographical_area_id in ('1011', '1008')
+group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+
+
+with cte as (
+            select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'FCFS' as mechanism,
+            q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+            string_agg(distinct qono.geographical_area_id, ', ' order by qono.geographical_area_id) as geographical_area_ids
+            from quota_order_numbers q left outer join quota_order_number_origins qono on q.quota_order_number_sid = qono.quota_order_number_sid 
+            where 1 > 0
+            
+            group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+
+            
+            union 
+            
+            select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'Licensed' as mechanism,
+            q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+            string_agg(distinct m.geographical_area_id, ', ' order by m.geographical_area_id) as geographical_area_ids
+            from licensed_quotas q left outer join measures m on q.quota_order_number_id = m.ordernumber 
+            where 1 > 0 
+            
+            group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+            )
+            select * from cte where 1 > 0  and quota_category in ('SAF')  and origin_quota = true  order by quota_order_number_id ;
+            
+           
+           
+select quota_order_number_id, count(*)
+from quota_order_numbers qon group by quota_order_number_id
+order by 2 desc;
+
+
+update licensed_quotas_oplog q1
+set description = qd.description
+from ml.quota_descriptions qd where qd.quota_order_number_id = q1.quota_order_number_id;
+
+select geographical_area_id, qon.validity_start_date, qono.validity_start_date 
+from quota_order_number_origins qono, quota_order_numbers qon
+where qon.quota_order_number_sid = qono.quota_order_number_sid 
+and qon.quota_order_number_id = '090070';
+
+-- Get quota order number origins
+select qono.quota_order_number_origin_sid, qono.geographical_area_id, qono.geographical_area_sid,
+qono.validity_start_date, qono.validity_end_date, ga.description 
+from quota_order_number_origins qono, ml.ml_geographical_areas ga 
+where ga.geographical_area_sid = qono.geographical_area_sid 
+and qono.quota_order_number_sid = 3
+order by qono.validity_start_date desc, ga.description;
+
+
+-- Get quota order number origin exclusions
+select qono.quota_order_number_origin_sid, qono.geographical_area_id, qono.geographical_area_sid,
+qono.validity_start_date, qono.validity_end_date, ga.description 
+from quota_order_number_origins qono, ml.ml_geographical_areas ga 
+where ga.geographical_area_sid = qono.geographical_area_sid 
+and qono.quota_order_number_sid = 3
+order by qono.validity_start_date desc, ga.description;
+
+
+select qonoe.quota_order_number_origin_sid, qonoe.excluded_geographical_area_sid, ga.geographical_area_id, ga.description 
+from quota_order_number_origin_exclusions qonoe, quota_order_number_origins qono, ml.ml_geographical_areas ga 
+where qono.quota_order_number_origin_sid = qonoe.quota_order_number_origin_sid 
+and ga.geographical_area_sid = qonoe.excluded_geographical_area_sid 
+and qono.quota_order_number_sid = 3337
+order by ga.description;
+
+select * from quota_order_numbers qon where quota_order_number_sid = 3337
+
+--get quota_definitions 
+select qd.quota_definition_sid, qd.validity_start_date, qd.validity_end_date, qd.initial_volume,
+qd.measurement_unit_code, qd.maximum_precision, qd.critical_state, qd.critical_threshold,
+qd.monetary_unit_code, qd.measurement_unit_qualifier_code, qd.description,
+mud.description as measurement_unit_description, muqd.description as measurement_unit_qualifier_description
+from measurement_unit_descriptions mud right outer join quota_definitions qd on mud.measurement_unit_code = qd.measurement_unit_code 
+left outer join measurement_unit_qualifier_descriptions muqd on qd.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code 
+where qd.quota_order_number_sid = 3337;
+
+-- get suspension periods
+select qd.quota_order_number_sid, qd.quota_order_number_id, qsp.quota_suspension_period_sid, qsp.quota_definition_sid, qsp.suspension_start_date, qsp.suspension_end_date, qsp.description,
+qd.validity_start_date as definition_start_date, qd.validity_end_date as definition_end_date
+from quota_suspension_periods qsp, quota_definitions qd 
+where qsp.quota_definition_sid = qd.quota_definition_sid
+and qd.quota_order_number_sid = 3237
+order by qsp.suspension_start_date desc;
+
+-- get blocking periods
+select qd.quota_order_number_sid, qd.quota_order_number_id, qbp.quota_blocking_period_sid, qbp.quota_definition_sid,
+qbp.blocking_start_date, qbp.blocking_end_date, qbp.description,
+qd.validity_start_date as definition_start_date, qd.validity_end_date as definition_end_date,
+qbp.blocking_period_type, bpt.description as blocking_period_type_description
+from quota_blocking_periods qbp, quota_definitions qd, blocking_period_types bpt 
+where qbp.quota_definition_sid = qd.quota_definition_sid
+and qbp.blocking_period_type = bpt.blocking_period_type 
+and qd.quota_order_number_sid = 3237
+order by qbp.blocking_start_date desc;
+
+-- get associations
+select qa.main_quota_definition_sid, qa.sub_quota_definition_sid,
+qa.relation_type, qa.coefficient, 
+qdmain.initial_volume as main_initial_volume, qdmain.validity_start_date as main_validity_start_date, qdmain.validity_end_date as main_validity_end_date,
+qdmain.quota_order_number_id as main_quota_order_number_id, qdmain.quota_order_number_sid as main_quota_order_number_sid, 
+qdsub.initial_volume as sub_initial_volume, qdsub.validity_start_date as sub_validity_start_date, qdsub.validity_end_date as sub_validity_end_date,
+qdsub.quota_order_number_id as sub_quota_order_number_id, qdsub.quota_order_number_sid as sub_quota_order_number_sid
+from quota_associations qa, quota_definitions qdmain, quota_definitions qdsub
+where qa.main_quota_definition_sid = qdmain.quota_definition_sid 
+and qa.sub_quota_definition_sid = qdsub.quota_definition_sid 
+and (qdmain.quota_order_number_sid = 3424 or qdsub.quota_order_number_sid = 3424)
+
+
+
+
+with cte as (SELECT geographical_area_sid, geographical_area_id, description, geographical_code, validity_start_date,
+        validity_end_date,
+        case
+            when ga.validity_end_date is not null then 'Terminated'
+        else 'Active'
+        end as active_state
+        FROM ml.ml_geographical_areas ga
+        --WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+        )
+        select *, count(*) OVER() AS full_count from cte where 1 > 0 order by ga.geographical_area_id limit 200 offset 0
+
+
+
+
+
+select qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+qdmain.initial_volume as main_initial_volume, qdmain.validity_start_date as main_validity_start_date, qdmain.validity_end_date as main_validity_end_date,
+qdmain.quota_order_number_id as main_quota_order_number_id, qdmain.quota_order_number_sid as main_quota_order_number_sid, 
+qdsub.initial_volume as sub_initial_volume, qdsub.validity_start_date as sub_validity_start_date, qdsub.validity_end_date as sub_validity_end_date,
+qdsub.quota_order_number_id as sub_quota_order_number_id, qdsub.quota_order_number_sid as sub_quota_order_number_sid,
+string_agg(qonomain.geographical_area_id, ',' order by qonomain.geographical_area_id) as main_origin,
+string_agg(qonosub.geographical_area_id, ',' order by qonosub.geographical_area_id) as sub_origin
+from quota_associations qa, quota_definitions qdmain, quota_definitions qdsub,
+quota_order_number_origins qonomain, quota_order_number_origins qonosub
+where qa.main_quota_definition_sid = qdmain.quota_definition_sid 
+and qa.sub_quota_definition_sid = qdsub.quota_definition_sid 
+and qonomain.quota_order_number_sid = qdmain.quota_order_number_sid 
+and qonosub.quota_order_number_sid = qdsub.quota_order_number_sid 
+and (qdmain.quota_order_number_sid = 3424 or qdsub.quota_order_number_sid = 3424)
+group by 
+qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+qdmain.initial_volume, qdmain.validity_start_date, qdmain.validity_end_date,
+qdmain.quota_order_number_id, qdmain.quota_order_number_sid, 
+qdsub.initial_volume, qdsub.validity_start_date, qdsub.validity_end_date,
+qdsub.quota_order_number_id, qdsub.quota_order_number_sid
+order by qdmain.quota_order_number_id, qdmain.validity_start_date desc, qdsub.quota_order_number_id, qdsub.validity_start_date;
+
+
+select quota_definition_sid, suspension_start_date, suspension_end_date, description 
+from quota_suspension_periods qsp where quota_suspension_period_sid = 260
+
+select quota_definition_sid, validity_start_date, validity_end_date 
+from quota_definitions qd where quota_order_number_sid = 3237
+order by validity_start_date desc;
+
+select max(quota_suspension_period_sid) from quota_suspension_periods qsp;
+
+
+
+select wi.operation, qsp.quota_suspension_period_sid, qsp.suspension_start_date, qsp.suspension_end_date, qsp.description, wi.id, wi.record_id,
+'test.html' as view_url
+from workbasket_items wi, quota_suspension_periods qsp 
+where wi.record_id = qsp.oid
+and wi.record_type = 'quota_suspension_period'
+and wi.workbasket_id = 48
+and qsp.workbasket_id = 48
+order by wi.created_at
+
+
+
+
+
+select * from quota_blocking_periods qbp 
+order by blocking_start_date desc
+
+
+
+select qd.quota_order_number_id, qd.quota_order_number_sid, * from quota_blocking_periods qbp, quota_definitions qd 
+where qd.quota_definition_sid = qbp.quota_definition_sid 
+order by blocking_start_date desc
+
+
+
+select qd.quota_order_number_sid, qd.quota_order_number_id, qbp.quota_blocking_period_sid, qbp.quota_definition_sid,
+        qbp.blocking_start_date, qbp.blocking_end_date, qbp.description,
+        qd.validity_start_date as definition_start_date, qd.validity_end_date as definition_end_date,
+        qbp.blocking_period_type, bpt.description as blocking_period_type_description
+        from quota_blocking_periods qbp, quota_definitions qd, blocking_period_types bpt 
+        where qbp.quota_definition_sid = qd.quota_definition_sid
+        and qbp.blocking_period_type = bpt.blocking_period_type 
+        and qd.quota_order_number_sid = 2717
+        order by qbp.blocking_start_date desc;
+
+       
+   select distinct quota_order_number_id from quota_order_numbers qon where validity_end_date is null order by 1;
+   
+  
+SELECT geographical_area_sid, geographical_area_id, description
+FROM ml.ml_geographical_areas ga
+WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+order by description 
+
+
+
+
+
+select * from ml.goods_nomenclature_export_new('%', '2020-02-01')
+order by goods_nomenclature_item_id, producline_suffix;
+
+
+select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, gnd.description 
+from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
+where ordernumber = '098300'
+and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+and gn.producline_suffix = '80'
+and gn.validity_end_date is null
+order by m.goods_nomenclature_item_id, gnd.oid desc;
+
+
+select measure_sid, goods_nomenclature_item_id, goods_nomenclature_sid,
+geographical_area_id, geographical_area_sid, measure_type_id, validity_start_date, validity_end_date,
+measure_generating_regulation_id, reduction_indicator, status
+from ml.measures_real_end_dates m where ordernumber = '098300'
+order by validity_start_date, goods_nomenclature_item_id desc;
+
+
+select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid, gnd.description 
+        from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
+        where ordernumber = '098300'
+        and m.goods_nomenclature_sid 
+        and gn.producline_suffix = '80'
+        and gn.validity_end_date is null
+        order by m.goods_nomenclature_item_id, gnd.oid desc;
+        
+       
+       
+select *, m.measure_type_id, m.goods_nomenclature_item_id, m.goods_nomenclature_item_sid, m.validity_start_date, m.validity_end_date 
+from measures m
+where ordernumber = '098300'
+and validity_start_date >= '2020-01-01';
+

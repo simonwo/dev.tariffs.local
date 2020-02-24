@@ -187,10 +187,10 @@ require("../includes/metadata.php");
                                     </h2>
                                     <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
                                         <ul class="gem-c-related-navigation__link-list" data-module="track-click">
-                                            <li class="govuk-link gem-c-related-navigation__link"><a href="">Terminate this commodity code</a></li>
-                                            <li class="govuk-link gem-c-related-navigation__link"><a href="">Delete this commodity code</a></li>
-                                            <li class="govuk-link gem-c-related-navigation__link"><a href="">Edit this commodity code</a></li>
-                                            <li class="govuk-link gem-c-related-navigation__link"><a href="">Add child commodity code</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="">Terminate this commodity code</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="">Delete this commodity code</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="">Edit this commodity code</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="">Add child commodity code</a></li>
                                         </ul>
                                     </nav>
 
@@ -199,8 +199,8 @@ require("../includes/metadata.php");
                                     </h2>
                                     <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
                                         <ul class="gem-c-related-navigation__link-list" data-module="track-click">
-                                            <li class="govuk-link gem-c-related-navigation__link"><a class="gem-c-related-navigation__section-link" title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?= $goods_nomenclature_item_id ?>#import" target="_blank" href="#usage_measures">View this commodity on the Trade Tariff Service</a></li>
-                                            <li class="govuk-link gem-c-related-navigation__link"><a class="gem-c-related-navigation__section-link" title="Opens in new window" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20190827&Area=&MeasType=&StartPub=&EndPub=&MeasText=&GoodsText=&op=&Taric=<?= $goods_nomenclature_item_id ?>&search_text=goods&textSearch=&LangDescr=en&OrderNum=&Regulation=&measStartDat=&measEndDat=" target="_blank" href="#usage_measures">View this commodity on the EU Taric consultation</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" class="gem-c-related-navigation__section-link" title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?= $goods_nomenclature_item_id ?>#import" target="_blank" href="#usage_measures">View this commodity on the Trade Tariff Service</a></li>
+                                            <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" class="gem-c-related-navigation__section-link" title="Opens in new window" href="https://ec.europa.eu/taxation_customs/dds2/taric/measures.jsp?Lang=en&SimDate=20190827&Area=&MeasType=&StartPub=&EndPub=&MeasText=&GoodsText=&op=&Taric=<?= $goods_nomenclature_item_id ?>&search_text=goods&textSearch=&LangDescr=en&OrderNum=&Regulation=&measStartDat=&measEndDat=" target="_blank" href="#usage_measures">View this commodity on the EU Taric consultation</a></li>
                                         </ul>
                                     </nav>
                                 </div>
@@ -293,13 +293,13 @@ require("../includes/metadata.php");
                     <h2 class="govuk-heading-m" id="hierarchy">Position in hierarchy</h2>
                     <p class="govuk-body">The table below shows the position of this commodity code in the hierarchy. Lines that are greyed out are those
                         that use a product line suffix that is not "80". These are structural elements only and cannot be declared against.</p>
-                    <table class="govuk-table govuk-table--m sticky" cellspacing="0">
+                    <table class="govuk-table xgovuk-table--m sticky" cellspacing="0">
                         <tr class="govuk-table__row">
                             <th style="width:10%" class="govuk-table__header nopad">Commodity</th>
                             <th style="width:6%" class="govuk-table__header c">Suffix</th>
                             <th style="width:6%" class="govuk-table__header c">Indents</th>
                             <th style="width:73%" class="govuk-table__header">Description</th>
-                            <th style="width:5%" class="govuk-table__header c">End line</th>
+                            <th style="width:5%" class="govuk-table__header c nw">End line</th>
                         </tr>
                         <?php
                         $array = $obj_goods_nomenclature_item->ar_hierarchies;

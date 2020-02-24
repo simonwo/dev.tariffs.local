@@ -18,7 +18,7 @@ div.pq-grid {
 
 div.pq-grid-top {
     background: rgb(211, 225, 241);
-    color: #666;
+    color: #000;
 }
 
 div.pq-grid-title {
@@ -57,7 +57,7 @@ div.pq-grid-footer {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fefefe', endColorstr='#e6e6e6'); 
     background: -webkit-gradient(linear, left top, left bottom, from(#fefefe), to(#e6e6e6)); 
     background: -moz-linear-gradient(top,  #fefefe,  #e6e6e6); 	*/
-    background-color: #f0f0f0;
+    background-color: #fff;
     color: #000 !important;
 }
 
@@ -67,7 +67,7 @@ div.pq-grid-footer {
 
 .pq-grid td.pq-grid-col, .pq-grid td.pq-grid-number-col {
     font-weight: bold;
-    color: #666;
+    color: #000;
     /*text-shadow:0 1px 0 #fff;*/
     border-left-width: 0;
     border-bottom-width: 0;
@@ -83,10 +83,11 @@ tr.pq-grid-row>td {
     font-size: 14px;
     padding: 5px 5px !important;
 }
-
+/*
 tr.pq-grid-oddRow>td {
     background: #fafafa;
 }
+*/
 
 div.pq-hvscroll-square {
     background: #eee;

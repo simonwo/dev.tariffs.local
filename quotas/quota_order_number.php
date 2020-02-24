@@ -266,7 +266,7 @@ class quota_order_number
 
         //prend ($_REQUEST);
 
-        
+
         $this->measurement_unit_code = get_formvar("measurement_unit_code", "", True);
         $this->measurement_unit_qualifier_code = get_formvar("measurement_unit_qualifier_code", "", True);
         $this->maximum_precision = get_formvar("maximum_precision", "", True);
@@ -325,10 +325,10 @@ class quota_order_number
             array_push($errors, "introductory_period_option");
         }
 
-                
 
 
-        
+
+
         $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
         $this->validity_start_date_month = get_formvar("validity_start_date_month", "", True);
         $this->validity_start_date_year = get_formvar("validity_start_date_year", "", True);
@@ -439,7 +439,7 @@ class quota_order_number
                 $this->populate_from_cookies();
             }
         }
-        //pre ($this);
+        // pre($this);
     }
 
 
@@ -460,11 +460,16 @@ class quota_order_number
     function populate_from_db()
     {
         global $conn;
-        $sql = "SELECT validity_start_date, validity_end_date, description, origin_quota, quota_scope, quota_category, quota_order_number_sid
-        FROM quota_order_numbers WHERE quota_order_number_sid = $1
+        $ret = false;
+
+        // Get core data
+        $sql = "SELECT validity_start_date, validity_end_date, qon.description, origin_quota,
+        quota_scope, qon.quota_category, quota_order_number_sid, qc.description as quota_category_description
+        FROM quota_order_numbers qon left outer join quota_categories qc on qon.quota_category = qc.quota_category
+        WHERE quota_order_number_sid = $1
         order by validity_start_date desc limit 1";
-        pg_prepare($conn, "quota_populate_from_db", $sql);
-        $result = pg_execute($conn, "quota_populate_from_db", array($this->quota_order_number_sid));
+        pg_prepare($conn, "quota_populate_from_db_core", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_core", array($this->quota_order_number_sid));
         if ($result) {
             if (pg_num_rows($result) > 0) {
                 $row = pg_fetch_row($result);
@@ -475,6 +480,7 @@ class quota_order_number
                 $this->quota_scope = $row[4];
                 $this->quota_category = $row[5];
                 $this->quota_order_number_sid = $row[6];
+                $this->quota_category_description = $row[7];
                 $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));
                 $this->validity_start_date_month = date('m', strtotime($this->validity_start_date));
                 $this->validity_start_date_year = date('Y', strtotime($this->validity_start_date));
@@ -487,8 +493,447 @@ class quota_order_number
                     $this->validity_end_date_month = "";
                     $this->validity_end_date_year = "";
                 }
+                $ret = true;
             }
         }
+
+        // Get origins
+        $this->origins = array();
+        $sql = "select qono.quota_order_number_origin_sid, qono.geographical_area_id, qono.geographical_area_sid,
+        qono.validity_start_date, qono.validity_end_date, ga.description, qono.status
+        from quota_order_number_origins qono, ml.ml_geographical_areas ga 
+        where ga.geographical_area_sid = qono.geographical_area_sid 
+        and qono.quota_order_number_sid = $1
+        order by qono.validity_start_date desc, ga.description;";
+        pg_prepare($conn, "quota_populate_from_db_origins", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_origins", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $origin = new quota_order_number_origin();
+                    $origin->quota_order_number_origin_sid = $row[0];
+                    $origin->geographical_area_id = $row[1];
+                    $origin->geographical_area_sid = $row[2];
+                    $origin->validity_start_date = $row[3];
+                    $origin->validity_end_date = $row[4];
+                    $origin->description = $row[5];
+                    $origin->status = $row[6];
+                    $origin->exclusions = array();
+
+
+                    $origin->actions = "";
+                    $origin->edit_action = "<a class='govuk-link' href='origin_create_edit.html'><img src='/assets/images/edit.png' alt='Edit this origin' /></a>";
+                    $origin->delete_action = "<a class='govuk-link' href='origin_create_edit.html'><img src='/assets/images/delete.png' alt='Delete this origin' /></a>";
+                    $origin->actions .= $origin->edit_action;
+                    $origin->actions .= $origin->delete_action;
+                    array_push($this->origins, $origin);
+                }
+            }
+        }
+
+        // Get origin exclusions
+        $origin_exclusions = array();
+        $sql = "select qonoe.quota_order_number_origin_sid, qonoe.excluded_geographical_area_sid, ga.geographical_area_id, ga.description 
+        from quota_order_number_origin_exclusions qonoe, quota_order_number_origins qono, ml.ml_geographical_areas ga 
+        where qono.quota_order_number_origin_sid = qonoe.quota_order_number_origin_sid 
+        and ga.geographical_area_sid = qonoe.excluded_geographical_area_sid 
+        and qono.quota_order_number_sid = $1
+        order by ga.description;";
+        pg_prepare($conn, "quota_populate_from_db_origin_exclusions", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_origin_exclusions", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $origin_exclusion = new quota_order_number_origin_exclusion();
+                    $origin_exclusion->quota_order_number_origin_sid = $row[0];
+                    $origin_exclusion->excluded_geographical_area_sid = $row[1];
+                    $origin_exclusion->geographical_area_id = $row[2];
+                    $origin_exclusion->description = $row[3];
+                    array_push($origin_exclusions, $origin_exclusion);
+                }
+            }
+        }
+
+        // Now assign the exclusions to the origins
+        foreach ($origin_exclusions as $origin_exclusion) {
+            foreach ($this->origins as $origin) {
+                if ($origin_exclusion->quota_order_number_origin_sid == $origin->quota_order_number_origin_sid) {
+                    array_push($origin->exclusions, $origin_exclusion);
+                    break;
+                }
+            }
+        }
+
+        // And finally make the origin exclusion text field
+        foreach ($this->origins as $origin) {
+            $origin->exclusion_text = "";
+            $count = count($origin->exclusions);
+            $index = 0;
+            foreach ($origin->exclusions as $origin_exclusion) {
+                $index++;
+                $origin->exclusion_text .= $origin_exclusion->geographical_area_id . ' - ' . $origin_exclusion->description;
+                if ($index < $count) {
+                    $origin->exclusion_text .= "<br />";
+                }
+            }
+        }
+
+
+        // Get the definitions
+        $this->quota_definitions = array();
+        $sql = "select qd.quota_definition_sid, qd.validity_start_date, qd.validity_end_date, qd.initial_volume,
+        qd.measurement_unit_code, qd.maximum_precision, qd.critical_state, qd.critical_threshold,
+        qd.monetary_unit_code, qd.measurement_unit_qualifier_code, qd.description,
+        (qd.measurement_unit_code || ' - ' || mud.description) as measurement_unit_description,
+        (qd.measurement_unit_qualifier_code || ' - ' || muqd.description) as measurement_unit_qualifier_description,
+        qd.quota_order_number_sid, qd.quota_order_number_id, qd.status
+        from measurement_unit_descriptions mud right outer join quota_definitions qd on mud.measurement_unit_code = qd.measurement_unit_code 
+        left outer join measurement_unit_qualifier_descriptions muqd on qd.measurement_unit_qualifier_code = muqd.measurement_unit_qualifier_code 
+        where qd.quota_order_number_sid = $1 order by qd.validity_start_date desc;";
+        pg_prepare($conn, "quota_populate_from_db_definitions", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_definitions", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $quota_definition = new quota_definition();
+                    $quota_definition->quota_definition_sid = $row[0];
+                    $quota_definition->validity_start_date = $row[1];
+                    $quota_definition->validity_end_date = $row[2];
+                    $quota_definition->initial_volume = $row[3];
+                    $quota_definition->measurement_unit_code = $row[4];
+                    $quota_definition->maximum_precision = $row[5];
+                    $quota_definition->critical_state = $row[6];
+                    $quota_definition->critical_threshold = $row[7];
+                    $quota_definition->monetary_unit_code = $row[8];
+                    $quota_definition->measurement_unit_qualifier_code = $row[9];
+                    $quota_definition->description = $row[10];
+                    $quota_definition->measurement_unit_description = $row[11];
+                    $quota_definition->measurement_unit_qualifier_description = $row[12];
+                    $quota_definition->quota_order_number_sid = $row[13];
+                    $quota_definition->quota_order_number_id = $row[14];
+                    $quota_definition->status = $row[15];
+
+                    $quota_definition->initial_volume_string = number_format($quota_definition->initial_volume);
+                    if ($quota_definition->monetary_unit_code != "") {
+                        $quota_definition->unit = $quota_definition->monetary_unit_code;
+                    } else {
+                        $quota_definition->unit = $quota_definition->measurement_unit_description;
+                        if ($quota_definition->measurement_unit_qualifier_code != "") {
+                            $quota_definition->unit .= " " . $quota_definition->measurement_unit_qualifier_code_description;
+                        }
+                    }
+
+                    $quota_definition->actions = "";
+                    $quota_definition->duplicate_action = "<a class='govuk-link' href='/quota_definitions/create_edit.html?mode=duplicate&quota_definition_sid=" . $quota_definition->quota_definition_sid . "&quota_order_number_sid=" . $quota_definition->quota_order_number_sid . "&quota_order_number_id=" . $quota_definition->quota_order_number_id . "'><img src='/assets/images/copy.png' alt='Edit this quota definition' /></a>";
+                    $quota_definition->edit_action = "<a class='govuk-link' href='/quota_definitions/create_edit.html?mode=update&quota_definition_sid=" . $quota_definition->quota_definition_sid . "&quota_order_number_sid=" . $quota_definition->quota_order_number_sid . "&quota_order_number_id=" . $quota_definition->quota_order_number_id . "'><img src='/assets/images/edit.png' alt='Edit this quota definition' /></a>";
+                    $quota_definition->delete_action = "<a class='govuk-link' href='definition_create_edit.html'><img src='/assets/images/delete.png' alt='Delete this quota definition' /></a>";
+
+                    
+
+                    $quota_definition->actions .= $quota_definition->duplicate_action;
+                    $quota_definition->actions .= $quota_definition->edit_action;
+                    $quota_definition->actions .= $quota_definition->delete_action;
+
+
+                    array_push($this->quota_definitions, $quota_definition);
+                }
+            }
+        }
+
+
+        // Get the suspensions
+        $this->quota_suspension_periods = array();
+        $sql = "select qd.quota_order_number_sid, qd.quota_order_number_id, qsp.quota_suspension_period_sid, qsp.quota_definition_sid,
+        qsp.suspension_start_date, qsp.suspension_end_date, qsp.description,
+        qd.validity_start_date as definition_start_date, qd.validity_end_date as definition_end_date, quota_suspension_period_sid, qsp.status
+        from quota_suspension_periods qsp, quota_definitions qd 
+        where qsp.quota_definition_sid = qd.quota_definition_sid
+        and qd.quota_order_number_sid = $1
+        order by qsp.suspension_start_date desc;";
+        pg_prepare($conn, "quota_populate_from_db_suspension_periods", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_suspension_periods", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $quota_suspension_period = new quota_suspension_period();
+                    $quota_suspension_period->quota_order_number_sid = $row[0];
+                    $quota_suspension_period->quota_order_number_id = $row[1];
+                    $quota_suspension_period->quota_suspension_period_sid = $row[2];
+                    $quota_suspension_period->quota_definition_sid = $row[3];
+                    $quota_suspension_period->suspension_start_date = $row[4];
+                    $quota_suspension_period->suspension_end_date = $row[5];
+                    $quota_suspension_period->description = $row[6];
+                    $quota_suspension_period->definition_start_date = $row[7];
+                    $quota_suspension_period->definition_end_date = $row[8];
+                    $quota_suspension_period->quota_suspension_period_sid = $row[9];
+                    $quota_suspension_period->status = $row[10];
+
+                    $quota_suspension_period->suspension_dates = short_date($quota_suspension_period->suspension_start_date) . " - " . short_date($quota_suspension_period->suspension_end_date);
+                    $quota_suspension_period->definition_dates = short_date($quota_suspension_period->definition_start_date) . " - " . short_date($quota_suspension_period->definition_end_date);
+
+
+                    $quota_suspension_period->actions = "";
+                    $quota_suspension_period->edit_action = "<img src='/assets/images/blank.png' />";
+                    $quota_suspension_period->delete_action = "<img src='/assets/images/blank.png' />";
+                    if ($quota_suspension_period->suspension_end_date > date("Y-m-d")) {
+                        $quota_suspension_period->edit_action = "<a class='govuk-link' href='/quota_suspension_periods/create_edit.html?mode=update&quota_order_number_sid=" . $quota_suspension_period->quota_order_number_sid . "&quota_order_number_id=" . $quota_suspension_period->quota_order_number_id . "&quota_suspension_period_sid=" . $quota_suspension_period->quota_suspension_period_sid . "'><img src='/assets/images/edit.png' alt='Edit this suspension period' /></a>";
+                    }
+                    if ($quota_suspension_period->suspension_start_date > date("Y-m-d")) {
+                        $quota_suspension_period->delete_action = "<a class='govuk-link' href='actions.html?action=delete_suspension_period&quota_suspension_period_sid=" . $quota_suspension_period->quota_suspension_period_sid . "'><img src='/assets/images/delete.png' alt='Delete this suspension period' /></a>";
+                    }
+                    $quota_suspension_period->actions .= $quota_suspension_period->edit_action;
+                    $quota_suspension_period->actions .= $quota_suspension_period->delete_action;
+
+                    array_push($this->quota_suspension_periods, $quota_suspension_period);
+                }
+            }
+        }
+
+        // Get the blocking periods
+        $this->quota_blocking_periods = array();
+        $sql = "select qd.quota_order_number_sid, qd.quota_order_number_id, qbp.quota_blocking_period_sid, qbp.quota_definition_sid,
+        qbp.blocking_start_date, qbp.blocking_end_date, qbp.description,
+        qd.validity_start_date as definition_start_date, qd.validity_end_date as definition_end_date,
+        qbp.blocking_period_type, bpt.description as blocking_period_type_description, qbp.status
+        from quota_blocking_periods qbp, quota_definitions qd, blocking_period_types bpt 
+        where qbp.quota_definition_sid = qd.quota_definition_sid
+        and qbp.blocking_period_type = bpt.blocking_period_type 
+        and qd.quota_order_number_sid = $1
+        order by qbp.blocking_start_date desc;";
+        pg_prepare($conn, "quota_populate_from_db_blocking_periods", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_blocking_periods", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $quota_blocking_period = new quota_blocking_period();
+                    $quota_blocking_period->quota_order_number_sid = $row[0];
+                    $quota_blocking_period->quota_order_number_id = $row[1];
+                    $quota_blocking_period->quota_blocking_period_sid = $row[2];
+                    $quota_blocking_period->quota_definition_sid = $row[3];
+                    $quota_blocking_period->blocking_start_date = $row[4];
+                    $quota_blocking_period->blocking_end_date = $row[5];
+                    $quota_blocking_period->description = $row[6];
+                    $quota_blocking_period->definition_start_date = $row[7];
+                    $quota_blocking_period->definition_end_date = $row[8];
+                    $quota_blocking_period->blocking_period_type = $row[9];
+                    $quota_blocking_period->blocking_period_type_description = $row[10];
+                    $quota_blocking_period->status = $row[11];
+
+                    $quota_blocking_period->blocking_dates = short_date($quota_blocking_period->blocking_start_date) . " - " . short_date($quota_blocking_period->blocking_end_date);
+                    $quota_blocking_period->definition_dates = short_date($quota_blocking_period->definition_start_date) . " - " . short_date($quota_blocking_period->definition_end_date);
+
+                    $quota_blocking_period->actions = "";
+                    $quota_blocking_period->edit_action = "<img src='/assets/images/blank.png' />";
+                    $quota_blocking_period->delete_action = "<img src='/assets/images/blank.png' />";
+                    if ($quota_blocking_period->blocking_end_date > date("Y-m-d")) {
+                        $quota_blocking_period->edit_action = "<a class='govuk-link' href='/quota_blocking_periods/create_edit.html?mode=update&quota_order_number_sid=" . $quota_blocking_period->quota_order_number_sid . "&quota_order_number_id=" . $quota_blocking_period->quota_order_number_id . "&quota_blocking_period_sid=" . $quota_blocking_period->quota_blocking_period_sid . "'><img src='/assets/images/edit.png' alt='Edit this blocking period' /></a>";
+                    }
+                    if ($quota_blocking_period->blocking_start_date > date("Y-m-d")) {
+                        $quota_blocking_period->delete_action = "<a class='govuk-link' href='actions.html?action=delete_blocking_period&quota_blocking_period_sid=" . $quota_blocking_period->quota_blocking_period_sid . "'><img src='/assets/images/delete.png' alt='Delete this blocking period' /></a>";
+                    }
+                    $quota_blocking_period->actions .= $quota_blocking_period->edit_action;
+                    $quota_blocking_period->actions .= $quota_blocking_period->delete_action;
+
+                    array_push($this->quota_blocking_periods, $quota_blocking_period);
+                }
+            }
+        }
+
+        // Get the associations
+        $this->quota_associations = array();
+        $sql = "select qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+        qdmain.initial_volume as main_initial_volume, qdmain.validity_start_date as main_validity_start_date, qdmain.validity_end_date as main_validity_end_date,
+        qdmain.quota_order_number_id as main_quota_order_number_id, qdmain.quota_order_number_sid as main_quota_order_number_sid, 
+        qdsub.initial_volume as sub_initial_volume, qdsub.validity_start_date as sub_validity_start_date, qdsub.validity_end_date as sub_validity_end_date,
+        qdsub.quota_order_number_id as sub_quota_order_number_id, qdsub.quota_order_number_sid as sub_quota_order_number_sid,
+        string_agg(distinct qonomain.geographical_area_id, ',' order by qonomain.geographical_area_id) as main_origin,
+        string_agg(distinct qonosub.geographical_area_id, ',' order by qonosub.geographical_area_id) as sub_origin,
+        qdmain.measurement_unit_code as main_mu, qdmain.measurement_unit_qualifier_code as main_muq, 
+        qdsub.measurement_unit_code as sub_mu, qdsub.measurement_unit_qualifier_code as sub_muq, qa.status
+        from quota_associations qa, quota_definitions qdmain, quota_definitions qdsub,
+        quota_order_number_origins qonomain, quota_order_number_origins qonosub
+        where qa.main_quota_definition_sid = qdmain.quota_definition_sid 
+        and qa.sub_quota_definition_sid = qdsub.quota_definition_sid 
+        and qonomain.quota_order_number_sid = qdmain.quota_order_number_sid 
+        and qonosub.quota_order_number_sid = qdsub.quota_order_number_sid 
+        and (qdmain.quota_order_number_sid = $1 or qdsub.quota_order_number_sid = $1)
+        group by 
+        qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+        qdmain.initial_volume, qdmain.validity_start_date, qdmain.validity_end_date,
+        qdmain.quota_order_number_id, qdmain.quota_order_number_sid, 
+        qdsub.initial_volume, qdsub.validity_start_date, qdsub.validity_end_date,
+        qdsub.quota_order_number_id, qdsub.quota_order_number_sid,
+        qdmain.measurement_unit_code, qdmain.measurement_unit_qualifier_code, 
+        qdsub.measurement_unit_code, qdsub.measurement_unit_qualifier_code, qa.status
+        order by qdmain.quota_order_number_id, qdmain.validity_start_date desc, qdsub.quota_order_number_id, qdsub.validity_start_date;";
+        pg_prepare($conn, "quota_populate_from_db_associations", $sql);
+        $result = pg_execute($conn, "quota_populate_from_db_associations", array($this->quota_order_number_sid));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $quota_association = new quota_association();
+                    $quota_association->main_quota_definition_sid = $row[0];
+                    $quota_association->sub_quota_definition_sid = $row[1];
+                    $quota_association->relation_type = $row[2];
+                    $quota_association->coefficient = $row[3];
+                    $quota_association->main_initial_volume = $row[4];
+                    $quota_association->main_validity_start_date = $row[5];
+                    $quota_association->main_validity_end_date = $row[6];
+                    $quota_association->main_quota_order_number_id = $row[7];
+                    $quota_association->main_quota_order_number_sid = $row[8];
+                    $quota_association->sub_initial_volume = $row[9];
+                    $quota_association->sub_validity_start_date = $row[10];
+                    $quota_association->sub_validity_end_date = $row[11];
+                    $quota_association->sub_quota_order_number_id = $row[12];
+                    $quota_association->sub_quota_order_number_sid = $row[13];
+                    $quota_association->main_origin = $row[14];
+                    $quota_association->sub_origin = $row[15];
+                    $quota_association->main_mu = $row[16];
+                    $quota_association->main_muq = $row[17];
+                    $quota_association->sub_mu = $row[18];
+                    $quota_association->sub_muq = $row[19];
+                    $quota_association->status = $row[20];
+
+                    $quota_association->main_origin_string = $this->origin_parse($quota_association->main_origin);
+                    $quota_association->sub_origin_string = $this->origin_parse($quota_association->sub_origin);
+
+                    $quota_association->main_initial_volume_string = number_format($quota_association->main_initial_volume, 0) . " " . $quota_association->main_mu . " " . $quota_association->main_muq;
+                    $quota_association->sub_initial_volume_string = number_format($quota_association->sub_initial_volume, 0) . " " . $quota_association->sub_mu . " " . $quota_association->sub_muq;
+
+                    $quota_association->ratio = ($quota_association->sub_initial_volume / $quota_association->main_initial_volume) * 100;
+
+                    if ($quota_association->main_quota_order_number_id == $this->quota_order_number_id) {
+                        $quota_association->main_quota_order_number_id_string = $quota_association->main_quota_order_number_id;
+                    } else {
+                        $quota_association->main_quota_order_number_id_string = '<a class="govuk-link" href="./view.html?mode=view&quota_order_number_sid=' . $quota_association->main_quota_order_number_sid . '&quota_order_number_id=' . $quota_association->main_quota_order_number_id . '#tab_quota_associations">' . $quota_association->main_quota_order_number_id . '</a>';
+                    }
+                    if ($quota_association->sub_quota_order_number_id == $this->quota_order_number_id) {
+                        $quota_association->sub_quota_order_number_id_string = $quota_association->sub_quota_order_number_id;
+                    } else {
+                        $quota_association->sub_quota_order_number_id_string = '<a class="govuk-link" href="./view.html?mode=view&quota_order_number_sid=' . $quota_association->sub_quota_order_number_sid . '&quota_order_number_id=' . $quota_association->sub_quota_order_number_id . '#tab_quota_associations">' . $quota_association->sub_quota_order_number_id . '</a>';
+                    }
+
+                    $quota_association->actions = "";
+                    $quota_association->edit_action = "<a class='govuk-link' href='definition_create_edit.html'><img src='/assets/images/edit.png' alt='Edit this association' /></a>";
+                    $quota_association->delete_action = "<a class='govuk-link' href='definition_create_edit.html'><img src='/assets/images/delete.png' alt='Delete this association' /></a>";
+                    $quota_association->actions .= $quota_association->edit_action;
+                    $quota_association->actions .= $quota_association->delete_action;
+
+                    array_push($this->quota_associations, $quota_association);
+                }
+            }
+        }
+
+
+
+        // Get the commodities
+        $this->quota_commodities = array();
+        $sql = "select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid, gnd.description 
+        from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
+        where ordernumber = $1
+        and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+        and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+        and gn.producline_suffix = '80'
+        and gn.validity_end_date is null
+        order by m.goods_nomenclature_item_id, gnd.oid desc;";
+
+        $stmt = "quota_get_commodities_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->quota_order_number_id));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $gn = new goods_nomenclature();
+                    $gn->goods_nomenclature_item_id = $row[0];
+                    $gn->goods_nomenclature_sid = $row[1];
+                    $gn->description = $row[2];
+                    $url = "/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $gn->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $gn->goods_nomenclature_sid;
+                    $gn->goods_nomenclature_item_id_link = "<a class='nodecorate' href='" . $url . "'>" . format_goods_nomenclature_item_id($gn->goods_nomenclature_item_id) . "</a>";
+                    array_push($this->quota_commodities, $gn);
+                }
+            }
+        }
+
+
+        // Get the measures
+        $this->quota_measures = array();
+        $sql = "select measure_sid, goods_nomenclature_item_id, goods_nomenclature_sid,
+        geographical_area_id, geographical_area_sid, m.measure_type_id, validity_start_date, validity_end_date,
+        measure_generating_regulation_id, reduction_indicator, m.status, mtd.description as measure_type_description
+        from ml.measures_real_end_dates m, measure_type_descriptions mtd
+        where ordernumber = $1
+        and m.measure_type_id = mtd.measure_type_id
+        order by validity_start_date desc, goods_nomenclature_item_id;";
+
+        $stmt = "quota_get_measures_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->quota_order_number_id));
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $m = new measure();
+                    $m->measure_sid = $row[0];
+                    $m->goods_nomenclature_item_id = $row[1];
+                    $m->goods_nomenclature_sid = $row[2];
+                    $m->geographical_area_id = $row[3];
+                    $m->geographical_area_sid = $row[4];
+                    $m->measure_type_id = $row[5];
+                    $m->validity_start_date = $row[6];
+                    $m->validity_end_date = $row[7];
+                    $m->measure_generating_regulation_id = $row[8];
+                    $m->reduction_indicator = $row[9];
+                    $m->status = $row[10];
+                    $m->measure_type_description = $row[11];
+
+                    // Get commodity link
+                    $commodity_url = "/goods_nomenclatures/goods_nomenclature_item_view.html?mode=view&goods_nomenclature_item_id=" . $m->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $m->goods_nomenclature_sid;
+                    $m->goods_nomenclature_item_id_link = "<a class='nodecorate' href='" . $commodity_url . "'>" . format_goods_nomenclature_item_id($m->goods_nomenclature_item_id) . "</a>";
+
+                    // Get measure type link
+                    $measure_type_url = "/measure_types/view.html?mode=view&measure_type_id=" . $m->measure_type_id;
+                    $m->measure_type_link = "<a class='govuk-link' href='" . $measure_type_url . "'><abbr title='" . $m->measure_type_description . "'>" . $m->measure_type_id . "</abbr></a>";
+                    
+                    // Get geographical area ID link
+                    $geographical_area_url = "/geographical_areas/view.html?mode=view&geographical_area_id=" . $m->geographical_area_id . "&geographical_area_sid=" . $m->geographical_area_sid;
+                    $m->geographical_area_link = "<a class='govuk-link' href='" . $geographical_area_url . "'>" . $m->geographical_area_id . "</a>";
+                    
+                    // Get Measure SID link
+                    $measure_url = "/measures/view.html?mode=view&measure_sid=" . $m->measure_sid;
+                    $m->measure_link = "<a class='govuk-link' href='" . $measure_url . "'>" . $m->measure_sid . "</a>";
+                    
+                    // Get regulation link
+                    $regulation_url = "/regulations/view.html?mode=view&base_regulation_id=" . $m->measure_generating_regulation_id;
+                    $m->regulation_link = "<a class='govuk-link' href='" . $regulation_url . "'>" . $m->measure_generating_regulation_id . "</a>";
+                    
+
+
+                    http://dev.tariffs.local/measures/view.html?mode=view&measure_sid=3702442
+
+
+
+                    array_push($this->quota_measures, $m);
+                }
+            }
+        }
+
+        // Return the primary result
+        return ($ret);
+    }
+
+    function origin_parse($s)
+    {
+        $array = explode(",", $s);
+        $out = "";
+        $count = count($array);
+        $index = 0;
+        foreach ($array as $s) {
+            $index++;
+            $out .= "<a class='govuk-link' href='/geographical_areas/view.html?mode=view&geographical_area_id=" . $s . "'>" . $s . "</a>";
+            if ($index < $count) {
+                $out .= ", ";
+            }
+        }
+        return ($out);
     }
 
     function populate_from_cookies()

@@ -61,7 +61,7 @@ $application->get_measure_condition_codes();
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-full">
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl">View measure condition codes</h1>
                     <!-- End main title //-->

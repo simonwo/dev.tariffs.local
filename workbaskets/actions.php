@@ -18,9 +18,11 @@ switch ($action) {
         break;
 
     case "delete_workbasket_item":
-        pre($application->session->workbasket);
-        $id = get_querystring("id");
-        $application->session->workbasket->delete_workbasket_item($id);
+        //prend ($_REQUEST);
+        //pre($application->session->workbasket);
+        $workbasket_item_id = get_querystring("workbasket_item_id");
+        $application->session->workbasket->delete_workbasket_item($workbasket_item_id);
+        //die();
         $url = "view.html";
         header("Location: " . $url);
         break;

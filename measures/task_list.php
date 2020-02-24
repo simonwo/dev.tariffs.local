@@ -101,67 +101,7 @@ require("../includes/metadata.php");
                                 </li>
                             </ul>
                         </li>
-                        <!--
-                        <li>
-                            <h2 class="app-task-list__section">
-                                <span class="app-task-list__section-number">2. </span> Prepare application
-                            </h2>
-                            <ul class="app-task-list__items">
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#" aria-describedby="company-information-completed">
-                                            Company information
-                                        </a>
-                                    </span>
-                                    <strong class="govuk-tag app-task-list__task-completed" id="company-information-completed">Completed</strong>
-                                </li>
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#" aria-describedby="contact-details-completed">
-                                            Your contact details
-                                        </a>
-                                    </span>
-                                    <strong class="govuk-tag app-task-list__task-completed" id="contact-details-completed">Completed</strong>
-                                </li>
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#">
-                                            List convictions
-                                        </a>
-                                    </span>
-                                </li>
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#">
-                                            Provide financial evidence
-                                        </a>
-                                    </span>
-                                </li>
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#" aria-describedby="medical-information-completed">
-                                            Give medical information
-                                        </a>
-                                    </span>
-                                    <strong class="govuk-tag app-task-list__task-completed" id="medical-information-completed">Completed</strong>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <h2 class="app-task-list__section">
-                                <span class="app-task-list__section-number">3. </span> Apply
-                            </h2>
-                            <ul class="app-task-list__items">
-                                <li class="app-task-list__item">
-                                    <span class="app-task-list__task-name">
-                                        <a class="govuk-link" href="#">
-                                            Submit and pay
-                                        </a>
-                                    </span>
-                                </li>
-                            </ul>
-                        </li>
-                        //-->
+                        
                     </ol>
                 </div>
             </div>

@@ -34,6 +34,7 @@ class application
     public $row_count = 0;
     public $session = null;
     public $conditional_duty_application_options = array();
+    public $quotas = array();
 
     public function __construct()
     {
@@ -82,6 +83,7 @@ class application
         $data = file_get_contents($path);
         $this->global_config = json_decode($data, true);
         $this->common_measurement_units = $this->global_config["config"]["common_measurement_units"];
+        $this->minimum_sids = $this->global_config["config"]["minimum_sids"];
 
         // Config settings for the specific object
         $sfn = $_SERVER['SCRIPT_FILENAME'];
@@ -133,7 +135,7 @@ class application
     public function get_measure_actions()
     {
         global $conn;
-        $sql = "SELECT ma.action_code, description, validity_start_date, validity_end_date
+        $sql = "SELECT ma.action_code, description, abbreviation, validity_start_date, validity_end_date
         FROM measure_actions ma, measure_action_descriptions mad
         WHERE ma.action_code = mad.action_code
         AND validity_end_date IS NULL ORDER BY ma.action_code;";
@@ -150,6 +152,7 @@ class application
                 $measure_action = new measure_action;
                 $measure_action->action_code = $action_code;
                 $measure_action->description = put_spaces_round_slashes($description);
+                $measure_action->abbreviation = $row['abbreviation'];
                 $measure_action->validity_start_date = $validity_start_date;
                 $measure_action->validity_end_date = $validity_end_date;
                 $measure_action->optgroup = "";
@@ -450,6 +453,29 @@ class application
         array_push($this->regulation_types, new simple_object("Modification", "Modification", "Modification", ""));
     }
 
+    public function get_current_geographical_areas()
+    {
+        global $conn;
+        $this->current_geographical_areas = array();
+        $sql = "SELECT geographical_area_sid, geographical_area_id, description
+        FROM ml.ml_geographical_areas ga
+        WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
+        order by description";
+        $stmt = "get_current_geographical_areas" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array());
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $obj = new reusable();
+                $obj->id = $row["geographical_area_id"];
+                $obj->sid = $row["geographical_area_sid"];
+                $obj->string = $row["geographical_area_id"] . " - " . str_replace('"', '', $row["description"]);
+                array_push($this->current_geographical_areas, $obj);
+            }
+        }
+    }
+
     public function get_geographical_areas()
     {
         global $conn;
@@ -739,6 +765,13 @@ class application
             }
             $this->measure_types = $temp;
         }
+    }
+
+    public function get_relation_types()
+    {
+        $this->relation_types = array();
+        array_push($this->relation_types, new simple_object("EQ", "EQ - Equivalent to main quota", "", "This means that, when the subquota is decremented, the main quota will be decremented by a different amount, as dictated by the coefficient."));
+        array_push($this->relation_types, new simple_object("NM", "NM - Normal (restrictive to main quota)", "", "This means that, when the subquota is decremented, the main quota will be decremented by the same amount. This is used to place product- or geography-specific quantitative restrictions on sub-quotas."));
     }
 
     public function get_additional_code_application_codes()
@@ -1414,9 +1447,15 @@ class application
             }
         } else {
             $this->sort_clause = "";
+            $this->sort_clause = " order by ";
+            $this->default_sort_fields = $config["default_sort_fields"];
+            $this->default_sort_fields_array = explode("|", $this->default_sort_fields);
+            foreach ($this->default_sort_fields_array as $field) {
+                $this->sort_clause .= $field . ", ";
+            }
+            $this->sort_clause = trim($this->sort_clause);
+            $this->sort_clause = trim($this->sort_clause, ",");
         }
-
-        //pre ($_REQUEST); 
 
         if (!empty($_POST)) {
             $this->filter_options = $_POST;
@@ -1652,6 +1691,47 @@ class application
         }
     }
 
+
+    public function get_blocking_period_types()
+    {
+        global $conn;
+        $this->blocking_period_types = array();
+        $sql = "select blocking_period_type, description from blocking_period_types bpt order by 1";
+        $stmt = "get_blocking_period_types_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array());
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $obj = new reusable();
+                $obj->id = $row["blocking_period_type"];
+                $obj->string = $obj->id . " - " . $row["description"];
+                array_push($this->blocking_period_types, $obj);
+            }
+        }
+    }
+
+    public function get_current_quota_order_numbers()
+    {
+        global $conn;
+        $this->current_quota_order_numbers = array();
+        $sql = "select distinct quota_order_number_id from quota_order_numbers qon where validity_end_date is null order by 1;";
+        $stmt = "get_current_quota_order_numbers" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array());
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $obj = new reusable();
+                $obj->id = $row["quota_order_number_id"];
+                array_push($this->current_quota_order_numbers, $obj);
+            }
+        }
+    }
+
+    
+
+
     public function get_workbaskets()
     {
         global $conn;
@@ -1771,6 +1851,15 @@ class application
         array_push($this->workbasket_statuses, new simple_object("Sent to CDS", "Sent to CDS", "Sent to CDS", ""));
     }
 
+    public function get_regulation_sources()
+    {
+        $this->regulation_sources = array();
+        array_push($this->regulation_sources, new simple_object("uksi", "UK regulation", "", ""));
+        array_push($this->regulation_sources, new simple_object("eur", "Adopted EU regulation", "", ""));
+        array_push($this->regulation_sources, new simple_object("eud", "Adopted EU decision", "", ""));
+        array_push($this->regulation_sources, new simple_object("eudr", "Adopted EU directive", "", ""));
+    }
+
 
     public function get_yes_no()
     {
@@ -1778,6 +1867,15 @@ class application
         array_push($yes_no, new simple_object("Yes", "Yes", "Yes", ""));
         array_push($yes_no, new simple_object("No", "No", "No", ""));
         return ($yes_no);
+    }
+
+
+    public function get_create_measures_yes_no()
+    {
+        $this->create_measures_yes_no = array();
+        array_push($this->create_measures_yes_no, new simple_object("Yes", "Yes - create measures", "Yes", "By selecting this option, you will be asked to confirm the commodity codes, measure type and origin(s) to for the measures that will be created."));
+        array_push($this->create_measures_yes_no, new simple_object("No", "No - I will create measures separately", "No", "If you select this option, just the quota definition will be created. You will need to manually create the measures separately."));
+        //return ($create_measures_yes_no);
     }
 
 
@@ -2236,7 +2334,26 @@ class application
         }
         $clause .= $geographies_clause;
 
-        //prend($_REQUEST);
+
+        // Get order number clause
+        $ordernumber = get_formvar("ordernumber");
+        $ordernumber = str_replace(" ", ",", $ordernumber);
+        if (strlen($ordernumber) >= 6) {
+            $ordernumbers = explode(",", $ordernumber);
+            $count = count($ordernumbers);
+            $index = 0;
+            $ordernumber_clause = "and ordernumber in (";
+            foreach ($ordernumbers as $measure_type) {
+                $ordernumber_clause .= "'" . $measure_type . "'";
+                $index += 1;
+                if ($index < $count) {
+                    $ordernumber_clause .= ", ";
+                }
+            }
+            $ordernumber_clause .= ")";
+            $clause .= $ordernumber_clause;
+        }
+
 
         // Get start date field
         $validity_start_date_operator = get_formvar("validity_start_date_operator");
@@ -2282,6 +2399,7 @@ class application
         $this->sort_clause = " order by m.validity_start_date desc, m.goods_nomenclature_item_id";
         $sql .= $this->sort_clause;
         $sql .= " limit $this->page_size offset $offset";
+
 
         // Get the measure components
         $sql_components = "select m.measure_type_id, mc.measure_sid, mc.duty_expression_id, mc.duty_amount, mc.measurement_unit_code,
@@ -2501,10 +2619,210 @@ class application
         }
     }
 
-    public function get_conditional_duty_application_options() {
+    public function get_conditional_duty_application_options()
+    {
         $this->conditional_duty_application_options = array();
         array_push($this->conditional_duty_application_options, new simple_object("0", "Common to all permutations", "Common to all permutations", "The duty specified below will be common to all specified permutations."));
         array_push($this->conditional_duty_application_options, new simple_object("1", "Different per permutation", "Different per permutation", "Duties will vary depending on the permutation specified on the previous screen."));
+    }
+
+
+    public function get_quotas()
+    {
+        $this->page_size = 100;
+        global $conn;
+        $sql = "with cte as (
+            select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'FCFS' as mechanism,
+            q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+            string_agg(distinct qono.geographical_area_id, ', ' order by qono.geographical_area_id) as geographical_area_ids
+            from quota_order_numbers q left outer join quota_order_number_origins qono on q.quota_order_number_sid = qono.quota_order_number_sid 
+            where 1 > 0
+            PLACEHOLDER_GEOGRAPHY1
+            group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+
+            
+            union 
+            
+            select q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota, 'Licensed' as mechanism,
+            q.quota_category, q.validity_start_date, q.validity_end_date, q.description,
+            string_agg(distinct m.geographical_area_id, ', ' order by m.geographical_area_id) as geographical_area_ids
+            from licensed_quotas q left outer join measures m on q.quota_order_number_id = m.ordernumber 
+            where 1 > 0 
+            PLACEHOLDER_GEOGRAPHY2
+            group by q.quota_order_number_id, q.quota_order_number_sid, q.origin_quota,
+q.quota_category, q.validity_start_date, q.validity_end_date, q.description
+            )
+            select *, count(*) OVER() AS full_count from cte where 1 > 0 PLACEHOLDER ";
+
+        $clause = "";
+
+        // Get quota order number clause
+        $quota_order_number_id_operator = get_formvar("quota_order_number_id_operator");
+        $quota_order_number_id = get_formvar("quota_order_number_id");
+        if (strlen($quota_order_number_id) > 2) {
+            if ($quota_order_number_id_operator == "starts_with") {
+                $clause .= " and quota_order_number_id like '" . $quota_order_number_id . "%' ";
+            } elseif ($quota_order_number_id_operator == "is_one_of") {
+                $quota_order_number_id = standardise_form_string($quota_order_number_id);
+                $quota_order_number_id_clause = "";
+                $quota_order_numbers = explode(",", $quota_order_number_id);
+                $count = count($quota_order_numbers);
+                $index = 0;
+                $quota_order_number_id_clause .= "and quota_order_number_id in (";
+                foreach ($quota_order_numbers as $quota_order_number) {
+                    $quota_order_number_id_clause .= "'" . $quota_order_number . "'";
+                    $index += 1;
+                    if ($index < $count) {
+                        $quota_order_number_id_clause .= ", ";
+                    }
+                }
+                $quota_order_number_id_clause .= ")";
+                $clause .= $quota_order_number_id_clause;
+            }
+        }
+
+        //$sql = str_replace("PLACEHOLDER1", $clause, $sql);
+
+        // Get administration mechanism
+        $administration_mechanisms = get_formvar("administration_mechanism");
+        if (is_array($administration_mechanisms)) {
+            if (count($administration_mechanisms) == 1) {
+                $administration_mechanism = $administration_mechanisms[0];
+                $administration_mechanism_clause = " and mechanism = '" . $administration_mechanism . "' ";
+                $clause .= $administration_mechanism_clause;
+            }
+        }
+
+        // Get category
+        $quota_categories = get_formvar("quota_category");
+        $quota_category_clause = "";
+        if (is_array($quota_categories)) {
+            if ((count($quota_categories) > 0) and (count($quota_categories) < 4)) {
+                $quota_category_clause = " and quota_category in (PLACEHOLDER_CATEGORY) ";
+                $placeholder = "";
+                foreach ($quota_categories as $quota_category) {
+                    $placeholder .= "'" . $quota_category . "', ";
+                }
+                $placeholder = trim($placeholder);
+                $placeholder = trim($placeholder, ",");
+                $quota_category_clause = str_replace("PLACEHOLDER_CATEGORY", $placeholder, $quota_category_clause);
+
+                $clause .= $quota_category_clause;
+            }
+        }
+
+        // Get description clause
+        $description = get_formvar("description");
+        if ($description != "") {
+            $clause .= " and lower(description) like '%" . strtolower($description) . "%' ";
+        }
+
+        // Get origin clause
+        $geo_clause1 = "";
+        $geo_clause2 = "";
+        $origins = get_formvar("origin");
+        if (strlen($origins) >= 2) {
+            $origins = strtoupper(standardise_form_string($origins));
+            $origin_clause = "";
+            $origin_list = explode(",", $origins);
+            $count = count($origin_list);
+            $index = 0;
+            $origin_clause .= "and qono.geographical_area_id in (";
+            foreach ($origin_list as $origin) {
+                $origin_clause .= "'" . $origin . "'";
+                $index += 1;
+                if ($index < $count) {
+                    $origin_clause .= ", ";
+                }
+            }
+            $origin_clause .= ")";
+            $geo_clause1 = $origin_clause;
+            $geo_clause2 = str_replace("qono", "m", $origin_clause);
+        }
+
+        // Get origin quota
+        $origin_quotas = get_formvar("origin_quota");
+        if (is_array($origin_quotas)) {
+            if (count($origin_quotas) == 1) {
+                $origin_quota = $origin_quotas[0];
+                if ($origin_quota == "yes") {
+                    $origin_quota_clause = " and origin_quota = true ";
+                } else {
+                    $origin_quota_clause = " and origin_quota = false ";
+                }
+                $clause .= $origin_quota_clause;
+            }
+        }
+
+        $sql = str_replace("PLACEHOLDER_GEOGRAPHY1", $geo_clause1, $sql);
+        $sql = str_replace("PLACEHOLDER_GEOGRAPHY2", $geo_clause2, $sql);
+        $sql = str_replace("PLACEHOLDER", $clause, $sql);
+
+
+
+        $offset = ($this->page - 1) * $this->page_size;
+        //$this->sort_clause = " order by m.validity_start_date desc, m.goods_nomenclature_item_id";
+        $sql .= $this->sort_clause;
+        $sql .= " limit $this->page_size offset $offset";
+        //pre ($sql);
+
+        // Get the measures
+        $result = pg_query($conn, $sql);
+        $temp = array();
+        if ($result) {
+            if (pg_num_rows($result) > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $this->row_count = $row['full_count'];
+                    $quota_order_number = new quota_order_number;
+                    $quota_order_number->quota_order_number_id = $row['quota_order_number_id'];
+                    $quota_order_number->quota_order_number_sid = $row['quota_order_number_sid'];
+                    $quota_order_number->validity_start_date = short_date($row['validity_start_date']);
+                    $quota_order_number->validity_end_date = short_date($row['validity_end_date']);
+                    $quota_order_number->origin_quota = yn4($row['origin_quota']);
+                    $quota_order_number->mechanism = $row['mechanism'];
+                    $quota_order_number->description = $row['description'];
+                    $quota_order_number->quota_category = $row['quota_category'];
+                    $quota_order_number->geographical_area_ids = $row['geographical_area_ids'];
+                    $quota_order_number->status = "In Progress"; //$row['status'];
+                    $quota_order_number->active_state = "active"; //$row['active_state'];
+
+                    array_push($temp, $quota_order_number);
+                }
+                $this->quotas = $temp;
+            }
+        }
 
     }
+/*
+    function get_minimum_sids() {}
+
+
+    def get_minimum_sids(self):
+        with open(self.CONFIG_FILE, 'r') as f:
+            my_dict = json.load(f)
+
+            min_list = my_dict['minimum_sids'][self.DBASE]
+
+            self.last_additional_code_description_period_sid = self.larger(self.get_scalar("SELECT MAX(additional_code_description_period_sid) FROM additional_code_description_periods_oplog;"), min_list['additional.code.description.periods']) + 1
+            self.last_additional_code_sid = self.larger(self.get_scalar("SELECT MAX(additional_code_sid) FROM additional_codes_oplog;"), min_list['additional.codes']) + 1
+
+            self.last_certificate_description_period_sid = self.larger(self.get_scalar("SELECT MAX(certificate_description_period_sid) FROM certificate_description_periods_oplog;"), min_list['certificate.description.periods']) + 1
+            self.last_footnote_description_period_sid = self.larger(self.get_scalar("SELECT MAX(footnote_description_period_sid) FROM footnote_description_periods_oplog;"), min_list['footnote.description.periods']) + 1
+            self.last_geographical_area_description_period_sid = self.larger(self.get_scalar("SELECT MAX(geographical_area_description_period_sid) FROM geographical_area_description_periods_oplog;"), min_list['geographical.area.description.periods']) + 1
+            self.last_geographical_area_sid = self.larger(self.get_scalar("SELECT MAX(geographical_area_sid) FROM geographical_areas_oplog;"), min_list['geographical.areas']) + 1
+
+            self.last_goods_nomenclature_sid = self.larger(self.get_scalar("SELECT MAX(goods_nomenclature_sid) FROM goods_nomenclatures_oplog;"), min_list['goods.nomenclature']) + 1
+            self.last_goods_nomenclature_indent_sid = self.larger(self.get_scalar("SELECT MAX(goods_nomenclature_indent_sid) FROM goods_nomenclature_indents_oplog;"), min_list['goods.nomenclature.indents']) + 1
+            self.last_goods_nomenclature_description_period_sid = self.larger(self.get_scalar("SELECT MAX(goods_nomenclature_description_period_sid) FROM goods_nomenclature_description_periods_oplog;"), min_list['goods.nomenclature.description.periods']) + 1
+
+            self.last_measure_sid = self.larger(self.get_scalar("SELECT MAX(measure_sid) FROM measures_oplog;"), min_list['measures']) + 1
+            self.last_measure_condition_sid = self.larger(self.get_scalar("SELECT MAX(measure_condition_sid) FROM measure_conditions_oplog"), min_list['measure.conditions']) + 1
+
+            self.last_quota_order_number_sid = self.larger(self.get_scalar("SELECT MAX(quota_order_number_sid) FROM quota_order_numbers_oplog"), min_list['quota.order.numbers']) + 1
+            self.last_quota_order_number_origin_sid = self.larger(self.get_scalar("SELECT MAX(quota_order_number_origin_sid) FROM quota_order_number_origins_oplog"), min_list['quota.order.number.origins']) + 1
+            self.last_quota_definition_sid = self.larger(self.get_scalar("SELECT MAX(quota_definition_sid) FROM quota_definitions_oplog"), min_list['quota.definitions']) + 1
+            self.last_quota_suspension_period_sid = self.larger(self.get_scalar("SELECT MAX(quota_suspension_period_sid) FROM quota_suspension_periods_oplog"), min_list['quota.suspension.periods']) + 1
+            self.last_quota_blocking_period_sid = self.larger(self.get_scalar("SELECT MAX(quota_blocking_period_sid) FROM quota_blocking_periods_oplog"), min_list['quota.blocking.periods']) + 1
+*/
 }

@@ -1,0 +1,124 @@
+{
+    "blocking_periods": {
+        "config": {
+            "title": "Create or edit quota blocking period",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "quota_order_number_id|validity_start_date desc",
+            "object_name": "Quotas",
+            "override_root": "/quotas/",
+            "title_create": "Create blocking period on quota {quota_order_number_id}",
+            "title_edit": "Edit blocking period on quota {quota_order_number_id}",
+            "url_edit": "",
+            "title_view": "Quota {quota_order_number_id}",
+            "description_keys": "quota_order_number_id",
+            "validate": false,
+            "breadcrumb_insert_text": "Quota {quota_order_number_id}",
+            "breadcrumb_insert_url": "/quotas/view.html?mode=view&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Add to workbasket",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "",
+                "info_text": "",
+                "cancel_button_text": "",
+                "cancel_button_href": ""
+            }
+        },
+        "view": {
+            "fields": [],
+            "controls": []
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Please use this form to create a new blocking period on quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Please use this form to update an existing blocking period on quota {quota_order_number_id}.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "blocking_period"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_id",
+                "value": "{quota_order_number_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "quota_order_number_sid",
+                "value": "{quota_order_number_sid}"
+            },
+            {
+                "control_type": "select_control",
+                "label": "Select the quota definition period to block",
+                "label_style": "govuk-label--m",
+                "hint_text": "This is the quota definition to which the quota blocking period will be assigned. This list only includes future and current definition periods.",
+                "control_name": "quota_definition_sid",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a quota definition period -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "Blocking period start",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please ensure that this date falls on or after the definition start date.",
+                "control_name": "blocking_start_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "Blocking period end",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please ensure that this date falls on or before the definition end date.",
+                "control_name": "blocking_end_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "select_control",
+                "label": "Select the type of blocking period",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please select from the options below.",
+                "control_name": "blocking_period_type",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a blocking period type -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": false
+            },
+            {
+                "control_type": "character_count_control",
+                "label": "Please enter a description for this blocking period",
+                "label_style": "govuk-label--m",
+                "hint_text": "Optionally, enter a description / reason for this blocking period. This field is for informational purposes only.",
+                "control_name": "description",
+                "control_scope": "",
+                "rows": 3,
+                "maxlength": 500,
+                "required": true,
+                "default": ""
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    }
+}

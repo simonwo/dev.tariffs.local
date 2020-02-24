@@ -31,9 +31,9 @@ class hidden_control
         global $application;
         //if ($application->mode != "insert") {
 ?>
-            <!-- Start mode control //-->
+            <!-- Start hidden control //-->
             <input type="hidden" name="<?= $this->control_name ?>" id="<?= $this->control_name ?>" value="<?= $this->value ?>" />
-            <!-- End mode control //-->
+            <!-- End hidden control //-->
         <?php
         //}
         ?>

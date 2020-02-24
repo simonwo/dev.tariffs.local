@@ -94,7 +94,6 @@ class view_form
         global $application;
         $my_field_content = $application->data[$application->tariff_object]["view"]["fields"];
         $my_control_content = $application->data[$application->tariff_object]["view"]["controls"];
-        //pre ($my_control_content);
         $config = $application->data[$application->tariff_object]["config"];
 ?>
         <!-- Start breadcrumbs //-->
@@ -199,6 +198,10 @@ class view_form
                         <!-- Start secondary fields //-->
                         <?php
                         foreach ($my_control_content as $item) {
+                            $table_class = "";
+                            if (isset($item["table_class"])) {
+                                $table_class = $item["table_class"];
+                            }
                         ?>
                             <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="tab_<?= $item["control_name"] ?>">
                                 <?php
@@ -229,10 +232,12 @@ class view_form
                                             $control_name = $item["control_name"],
                                             $control_scope = $item["control_scope"],
                                             $caption = $item["caption"],
+                                            $intro_text = $item["intro_text"],
                                             $edit_text = $item["edit_text"],
                                             $edit_url = $item["edit_url"],
                                             $dataset = $this->control_content[$control_name],
-                                            $description_keys = $config["description_keys"]
+                                            $description_keys = $config["description_keys"],
+                                            $table_class = $table_class
                                         );
                                         break;
     

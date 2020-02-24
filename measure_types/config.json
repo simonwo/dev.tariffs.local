@@ -69,7 +69,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Use this form to manage existing measure types or to create new measure types. Please be aware that there is additional configuration work required on downstream systems (e.g. CDS) before any modifications can be made fully operable. Please ensure that HMRC are notified of any upcoming changes to measure types.<br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to manage existing measure types or to create new measure types. Please be aware that there is additional configuration work required on downstream systems (e.g. CDS) before any modifications can be made fully operable. Please ensure that HMRC are notified of any upcoming changes to measure types.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"

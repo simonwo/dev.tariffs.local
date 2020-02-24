@@ -71,13 +71,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to create a new additional code type. In order to ensure that additional codes of this type can be assigned to measure, you will also need to specify which measures are associated with this additional code type. This can be done once the additional code is initially set up. <br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to create a new additional code type. In order to ensure that additional codes of this type can be assigned to measure, you will also need to specify which measures are associated with this additional code type. This can be done once the additional code is initially set up.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Use this form to manage an existing additional code type. <br /><br />This activity will be added to workbasket {workbasket_name}.",
-                "xtext": "Use this form to manage an existing additional code type and to <a class='govuk-link' href='#measure_types'>assign the additional code to measure types</a>. <br /><br />This activity will be added to workbasket {workbasket_name}."
+                "text": "Use this form to manage an existing additional code type.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"

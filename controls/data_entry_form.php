@@ -4,10 +4,13 @@ class data_entry_form
     // Class properties and methods go here
     public $dataset = Null;
     public $control_content = Null;
+    public $class_name = Null;
     public $root = "./";
     public $show_left_nav = false;
     public $navigation = null;
     public $show_navigation = false;
+    public $breadcrumb_insert_text = null;
+    public $breadcrumb_insert_url = null;
 
     public function __construct($control_content, $object, $left_nav, $action = "")
     {
@@ -15,9 +18,17 @@ class data_entry_form
         $this->control_content = $control_content;
         $this->object = $object;
         $this->action = $action;
+        $this->get_class_name();
 
         $this->get_config();
         $this->display();
+    }
+
+    private function get_class_name()
+    {
+        $s = strtolower(get_class($this->object));
+        $s = str_replace(" ", "_", $s);
+        $this->class_name = $s;
     }
 
     private function get_config()
@@ -47,6 +58,11 @@ class data_entry_form
         } else {
             $this->page_title_edit = "";
         }
+        if (isset($config["title_duplicate"])) {
+            $this->page_title_duplicate = $config["title_duplicate"];
+        } else {
+            $this->page_title_duplicate = "";
+        }
         $this->validate = $config["validate"];
         if ($this->validate == true) {
             $this->validate_string = "";
@@ -55,6 +71,8 @@ class data_entry_form
         }
         if ($application->mode == "update") {
             $this->page_title = $this->page_title_edit;
+        } elseif ($application->mode == "duplicate") {
+            $this->page_title = $this->page_title_duplicate;
         } else {
             $this->page_title = $this->page_title_create;
         }
@@ -70,23 +88,16 @@ class data_entry_form
         }
         $application->default_sort_fields_array = explode("|", $this->default_sort_fields);
 
-        $this->parse_title();
-    }
+        // Get breadcrumb insert
+        if ((isset($config["breadcrumb_insert_text"])) && (isset($config["breadcrumb_insert_url"]))) {
+            $this->breadcrumb_insert_text = $config["breadcrumb_insert_text"];
+            $this->breadcrumb_insert_url = $config["breadcrumb_insert_url"];
 
-    private function parse_title()
-    {
-        $text = $this->page_title;
-        preg_match_all('/{(.*?)}/', $text, $matches);
-        foreach ($matches[1] as $match) {
-            if (isset($_GET[$match])) {
-                $text = str_replace($match, $this->object->{$match}, $text);
-            } else {
-                $text = str_replace($match, "", $text);
-            }
-            $text = str_replace("{", "", $text);
-            $text = str_replace("}", "", $text);
+            $this->breadcrumb_insert_text = parse_placeholders($this->breadcrumb_insert_text, $this->object);
+            $this->breadcrumb_insert_url = parse_placeholders($this->breadcrumb_insert_url, $this->object);
         }
-        $this->page_title = $text;
+
+        $this->page_title = parse_placeholders($this->page_title, $this->object);
     }
 
     private function display()
@@ -110,6 +121,15 @@ class data_entry_form
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="<?= $this->root ?>"><?= $this->object_name ?></a>
                 </li>
+                <?php
+                if (($this->breadcrumb_insert_text != null) && ($this->breadcrumb_insert_url != null)) {
+                ?>
+                    <li class="govuk-breadcrumbs__list-item">
+                        <a class="govuk-breadcrumbs__link" href="<?= $this->breadcrumb_insert_url ?>"><?= $this->breadcrumb_insert_text ?></a>
+                    </li>
+                <?php
+                }
+                ?>
                 <li class="govuk-breadcrumbs__list-item" aria-current="page"><?= $this->page_title ?></li>
             </ol>
         </div>
@@ -133,7 +153,7 @@ class data_entry_form
                     <?php
                     if ($this->show_form) {
                     ?>
-                        <form action="<?= $this->action ?>" class="data_entry_form" method="post" <?= $this->validate_string ?>>
+                        <form name="form_<?= $this->class_name ?>" id="form_<?= $this->class_name ?>" action="<?= $this->action ?>" class="data_entry_form" method="post" <?= $this->validate_string ?>>
                         <?php
                     }
                         ?>
@@ -278,7 +298,8 @@ class data_entry_form
                                             new span_control(
                                                 $text = $item["text"],
                                                 $control_scope = $control_scope,
-                                                $control_name = $control_name
+                                                $control_name = $control_name,
+                                                $group_class = $group_class,
                                             );
                                             break;
                                         case "start_form":
@@ -370,6 +391,7 @@ class data_entry_form
                                             break;
 
                                         case "select_control":
+                                            //h1 ($this->object->{$item["control_name"]});
                                             new select_control(
                                                 $label = $item["label"],
                                                 $label_style = $item["label_style"],

@@ -5,13 +5,15 @@ class span_control
     public $text = "";
     public $control_scope = "";
     public $control_name = "";
+    public $group_class = "";
     public $name_id_string = "";
 
-    public function __construct($text, $control_scope = "", $control_name = "")
+    public function __construct($text, $control_scope = "", $control_name = "", $group_class = "")
     {
         $this->text = $text;
         $this->control_scope = $control_scope;
         $this->control_name = $control_name;
+        $this->group_class = $group_class;
         $this->suppress_control = false;
 
         $this->display();
@@ -34,7 +36,7 @@ class span_control
         if (!$this->suppress_control) {
 ?>
         <!-- Start inset text //-->
-        <span <?= $this->name_id_string ?> class="conditional_span govuk-hint"><?= $this->text ?></span>
+        <span <?= $this->name_id_string ?> class="conditional_span govuk-hint <?= $this->group_class ?>"><?= $this->text ?></span>
         <!-- End inset text //-->
 <?php
         }

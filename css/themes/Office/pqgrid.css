@@ -51,7 +51,7 @@ div.pq-grid-footer{
 }
 .pq-grid td.pq-grid-col, .pq-grid td.pq-grid-number-col{
     font-weight:bold;
-    color:#666;
+    color:#000;
     text-shadow:0 1px 0 #fff;
     border-left-width:0;
     border-bottom-width:0;

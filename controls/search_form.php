@@ -24,7 +24,8 @@ class search_form
         $this->freetext_fields = $config["freetext_fields"];
         $this->default_sort_fields = $config["default_sort_fields"];
         $application->default_sort_fields_array = explode("|", $this->default_sort_fields);
-        if (in_array($this->page_title, array("Measures", "Quotas"))) {
+        //h1 ($this->page_title);
+        if (in_array($this->page_title, array("Measures", "Find and edit a quota"))) {
             $this->suppress_intro = true;
         }
     }

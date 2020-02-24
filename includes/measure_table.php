@@ -294,7 +294,7 @@
 						<th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity&nbsp;<a href="<?=$url . "&so=goods_nomenclature_item_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=goods_nomenclature_item_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
 						<th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID&nbsp;<a href="<?=$url . "&so=measure_type_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=measure_type_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
 						<th nowrap class="govuk-table__header vsmall l" style="width:15%">Geographical area&nbsp;<a href="<?=$url . "&so=geographical_area_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=geographical_area_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
-						<th nowrap class="govuk-table__header vsmall c">Add. code</th>
+						<th nowrap class="govuk-table__header vsmall c nw">Add. code</th>
 						<th nowrap class="govuk-table__header vsmall">Regulation&nbsp;<a href="<?=$url . "&so=regulation&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=regulation&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
 						<th nowrap class="govuk-table__header vsmall l">Start date</th>
 						<th nowrap class="govuk-table__header vsmall l">End&nbsp;date</th>

@@ -61,7 +61,7 @@ $application->get_duty_expressions();
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-full">
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl">View duty expressions</h1>
                     <!-- End main title //-->

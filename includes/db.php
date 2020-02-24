@@ -32,15 +32,15 @@ require(dirname(__FILE__) . "../../classes/measure_partial_temporary_stop.php");
 require(dirname(__FILE__) . "../../classes/duty.php");
 require(dirname(__FILE__) . "../../classes/siv_component.php");
 require(dirname(__FILE__) . "../../geographical_areas/geographical_area.php");
-require(dirname(__FILE__) . "../../classes/quota_definition.php");
+require(dirname(__FILE__) . "../../quota_definitions/quota_definition.php");
 require(dirname(__FILE__) . "../../quotas/quota_order_number.php");
-require(dirname(__FILE__) . "../../classes/quota_order_number_origin.php");
-require(dirname(__FILE__) . "../../classes/quota_order_number_origin_exclusion.php");
+require(dirname(__FILE__) . "../../quota_order_number_origins/quota_order_number_origin.php");
+require(dirname(__FILE__) . "../../quota_order_number_origins/quota_order_number_origin_exclusion.php");
 require(dirname(__FILE__) . "../../regulations/base_regulation.php");
 require(dirname(__FILE__) . "../../regulation_groups/regulation_group.php");
-require(dirname(__FILE__) . "../../classes/quota_association.php");
-require(dirname(__FILE__) . "../../classes/quota_blocking_period.php");
-require(dirname(__FILE__) . "../../classes/quota_suspension_period.php");
+require(dirname(__FILE__) . "../../quota_associations/quota_association.php");
+require(dirname(__FILE__) . "../../quota_blocking_periods/quota_blocking_period.php");
+require(dirname(__FILE__) . "../../quota_suspension_periods/quota_suspension_period.php");
 require(dirname(__FILE__) . "../../additional_codes/additional_code.php");
 require(dirname(__FILE__) . "../../additional_code_types/additional_code_type.php");
 require(dirname(__FILE__) . "../../classes/measure_excluded_geographical_area.php");
@@ -198,6 +198,23 @@ function get_formvar($key, $prefix = "", $store_cookie = False)
     return ($s);
 }
 
+function get_form_array($key)
+{
+    $s = array();
+    if (isset($_REQUEST[$key])) {
+        if (!is_array($_REQUEST[$key])) {
+            $s = trim($_REQUEST[$key]);
+        } else {
+            $s = $_REQUEST[$key];
+        }
+    }
+    if ($s == "") {
+        $s = array();
+    }
+
+    return ($s);
+}
+
 function get_querystring($key)
 {
     if (isset($_GET[$key])) {
@@ -334,6 +351,15 @@ function yn3($var)
         return ("No");
     } else {
         return ("Yes");
+    }
+}
+function yn4($var)
+{
+    //h1 (gettype($var));
+    if ($var == 't') {
+        return ("Yes");
+    } else {
+        return ("No");
     }
 }
 
@@ -601,7 +627,7 @@ function to_part_of_year_string($day, $month, $year)
 
 function p($s)
 {
-    echo ("<p>" . $s . "</p>");
+    echo ("<p class='govuk-body'>" . $s . "</p>");
 }
 
 function h1($s)
@@ -697,25 +723,26 @@ function standardise_goods_nomenclature_item_id($goods_nomenclature_item_id)
     return ($goods_nomenclature_item_id);
 }
 
-function format_goods_nomenclature_item_id($s)
+function format_goods_nomenclature_item_id($s, $size_class = "")
 {
     $s2 = "";
     $len = strlen($s);
+
     switch ($len) {
         case 10:
-            $s2 = "<span class='rpad mauve'>" . substr($s, 0, 2) . "</span><span class='rpad mauve'>" . substr($s, 2, 2) . "</span><span class='rpad mauve'>" . substr($s, 4, 2) . "</span><span class='rpad blue'>" . substr($s, 6, 2) . "</span><span class='rpad green'>" . substr($s, 8, 2) . "</span>";
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 4, 2) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 6, 2) . "</span><span class='rpad green " . $size_class . "'>" . substr($s, 8, 2) . "</span>";
             break;
         case 8:
-            $s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span><span class='rpad blue'>" . substr($s, 6, 2) . "</span>";
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 4) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 4, 2) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 6, 2) . "</span>";
             break;
         case 6:
-            $s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span><span class='rpad blue'>" . substr($s, 4, 2) . "</span>";
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 4) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 4, 2) . "</span>";
             break;
         case 4:
-            $s2 = "<span class='rpad mauve'>" . substr($s, 0, 4) . "</span>";
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 4) . "</span>";
             break;
         case 2:
-            $s2 = "<span class='rpad mauve'>" . substr($s, 0, 2) . "</span>";
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span>";
             break;
     }
     return ($s2);
@@ -843,7 +870,18 @@ function format_value($row, $field)
         case "operation_date":
         case "validity_start_date":
         case "validity_end_date":
+        case "main_validity_start_date":
+        case "main_validity_end_date":
+        case "sub_validity_start_date":
+        case "sub_validity_end_date":
+        case "suspension_start_date":
+        case "suspension_end_date":
+        case "blocking_start_date":
+        case "blocking_end_date":
             return (short_date($row->{$field}));
+            break;
+        case "ratio":
+            return (number_format($row->{$field}, 2));
             break;
         case "operation":
             return (expand_operation($row->{$field}));
@@ -853,6 +891,42 @@ function format_value($row, $field)
             break;
     }
     return ($row->{$field});
+}
+
+function format_array_value($value, $field)
+{
+    switch ($field) {
+        case "status":
+            //return (status_image(ucwords($value)) . ucwords($value));
+            return (status_image(ucwords($value)));
+            break;
+        case "operation_date":
+        case "validity_start_date":
+        case "validity_end_date":
+        case "main_validity_start_date":
+        case "main_validity_end_date":
+        case "sub_validity_start_date":
+        case "sub_validity_end_date":
+        case "suspension_start_date":
+        case "suspension_end_date":
+        case "blocking_start_date":
+        case "blocking_end_date":
+            return (short_date($value));
+            break;
+        case "ratio":
+            return (number_format($value, 1) . "%");
+            break;
+        case "operation":
+            return (expand_operation($value));
+            break;
+        default:
+            if ($value == "") {
+                $value = "-";
+            }
+            return ($value);
+            break;
+    }
+    return ($value);
 }
 
 function expand_operation($s)
@@ -930,13 +1004,39 @@ function status_image($status)
         default:
             $status_image = "";
     }
-    return ("<img alt='" . $status . "' title='" . $status . "' style='position:relative;top:3px;margin-right:10px' src='/assets/images/" . $status_image . "' />");
+    return ("<img class='status_image' alt='" . $status . "' title='" . $status . "' src='/assets/images/" . $status_image . "' />");
 }
 
-function contains_string($haystack, $needle) {
-    if(strpos($haystack, $needle) !== false){
+function contains_string($haystack, $needle)
+{
+    if (strpos($haystack, $needle) !== false) {
         return (true);
     } else {
         return (false);
     }
+}
+
+function na($s, $alt = "-")
+{
+    if (($s == null) || ($s == "")) {
+        $s = $alt;
+    }
+    return ($s);
+}
+
+function parse_placeholders($s, $obj = null)
+{
+    preg_match_all('/{(.*?)}/', $s, $matches);
+    foreach ($matches[1] as $match) {
+        if (isset($_GET[$match])) {
+            $s = str_replace("{" . $match . "}", $_GET[$match], $s);
+        } else {
+            if ($obj != null) {
+                $s = str_replace("{" . $match . "}", $obj->{$match}, $s);
+            } else {
+                $s = str_replace("{" . $match . "}", "", $s);
+            }
+        }
+    }
+    return ($s);
 }

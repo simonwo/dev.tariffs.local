@@ -1,13 +1,39 @@
+function fmt_title(item) {
+    item = item.replace("_", " ")
+    item = item.toLowerCase();
+    item = sentenceCase(item);
+    return (item);
+}
+
+function sentenceCase(str) {
+    return str.replace(/[a-z]/i, function (letter) {
+
+        return letter.toUpperCase();
+
+    }).trim();
+}
+
 $(document).ready(function () {
-    // Vraiables used in measure condition logic
+    // Variables used in measure condition logic
     var measure_condition_codes_json;
     var measure_action_codes_json;
 
+    url = "/api/v1/geographical_areas/current2.php";
+    var geo_data = getJson(url);
+    console.log("above");
+    console.log(geo_data);
+    console.log("below");
+    /*
+    */
 
     /* Begin tooltip related functions */
     $(".tooltip").attr("aria-hidden", "true");
     $(".tooltip").addClass("hidden");
     $(".tooltip").prepend("<span class='notch'></span>");
+
+    /* geo functions */
+    $("#form_quota_order_number_origin .exclusions").css("display", "none");
+
 
     $("th.tip").mouseover(function () {
         tip_name = $(this).attr("aria-describedby");
@@ -25,14 +51,12 @@ $(document).ready(function () {
     });
     /* End tooltip related functions */
 
-    console.log("Before");
     $('#erga_omnes_exclusions').select2({
         ajax: {
             url: '/api/v1/geographical_areas/?parent=400',
             dataType: 'json'
         }
     });
-    console.log("After");
 
     /* Start regulations typeahead */
     var regulations = new Bloodhound({
@@ -81,6 +105,48 @@ $(document).ready(function () {
 
 
 
+    /* Start quota order number (sub) typeahead */
+    var current_order_numbers = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        sufficient: 10,
+        prefetch: {
+            url: '/api/v1/quotas/current.php',
+            ttl: 100,
+            cache: true
+        }
+    });
+
+    $('#sub_quota_order_number_id').typeahead(null, {
+        name: 'sub_quota_order_number_id',
+        source: current_order_numbers,
+        limit: 10,
+    });
+    /* End quota order number (sub) typeahead */
+
+
+
+    /* Start geographical area typeahead */
+    var geographical_areas = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        sufficient: 10,
+        prefetch: {
+            url: '/api/v1/geographical_areas/current.php',
+            ttl: 100,
+            cache: true
+        }
+    });
+
+    $('#geographical_area_id').typeahead(null, {
+        name: 'geographical_areas',
+        source: geographical_areas,
+        limit: 10,
+    });
+    /* End geographical area typeahead */
+
+
+
     /* Start geographical areas typeahead */
     /*
     var geo_bloodhound = new Bloodhound({
@@ -115,7 +181,7 @@ $(document).ready(function () {
             cache: true
         }
     });
-    
+
     $('#footnote').typeahead(null, {
         name: 'footnotes_bloodhound',
         source: footnotes_bloodhound,
@@ -258,7 +324,7 @@ $(document).ready(function () {
     }
 
     $("#radio_geographical_area_id_erga_omnes").click(function () {
-        console.log("Clicked");
+        //console.log("Clicked");
         json_file = '/api/v1/geographical_areas/?parent=400';
         var $erga_omnes_exclusions = $("#erga_omnes_exclusions").select2();
         $erga_omnes_exclusions.val(null).trigger("change");
@@ -276,7 +342,7 @@ $(document).ready(function () {
         if (my_array.length > 0) {
             geographical_area_id_group_sid = my_array[0]["id"];
             json_file = '/api/v1/geographical_areas/?parent=' + geographical_area_id_group_sid;
-            console.log(json_file);
+            //console.log(json_file);
             var $group_exclusions = $("#group_exclusions").select2();
             $group_exclusions.val(null).trigger("change");
             $('#group_exclusions').select2({
@@ -314,7 +380,7 @@ $(document).ready(function () {
             //console.log(name);
             if (name.includes(object_name)) {
                 Cookies.remove(name, { path: '' });
-                console.log("clearing" + name);
+                //console.log("clearing" + name);
                 //document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
             }
         }
@@ -425,13 +491,13 @@ $(document).ready(function () {
     // Get the measure condition code JSON
     readTextFile("/data/measure_condition_codes.json", function (text) {
         measure_condition_codes_json = JSON.parse(text);
-        console.log(measure_condition_codes_json);
+        //console.log(measure_condition_codes_json);
     });
 
     // Get the measure action code JSON
     readTextFile("/data/measure_action_codes.json", function (text) {
         measure_action_codes_json = JSON.parse(text);
-        console.log(measure_action_codes_json);
+        //console.log(measure_action_codes_json);
     });
 
     $(".reference_price_group").hide();
@@ -544,7 +610,7 @@ $(document).ready(function () {
         // Show or hide the certificate dropdown
         condition_mechanic_certificate_group = $(this).parent().parent().parent().find('.certificate_group');
         condition_mechanic_certificate_field = $(this).parent().parent().parent().find('.certificate_group .condition_mechanic_certificate');
-        console.log(show_certificate);
+        //console.log(show_certificate);
         if (show_certificate == 0) {
             condition_mechanic_certificate_group.hide();
             hint_text += "The certificate field is not relevant to this condition code, so it has been hidden. ";
@@ -593,13 +659,13 @@ $(document).ready(function () {
     /***************************************************************************************************************/
     // START - Add condition functions
     $("#add_condition").click(function () {
-        console.log("Adding a condition");
+        //console.log("Adding a condition");
         group_control = $("#conditions_group");
         details_control = $("#conditions_group details:first-of-type");
         new_condition = $(details_control).clone(true, true).appendTo(group_control);
         new_condition.attr("open", "");
         details_count = $("#conditions_group details").length;
-        console.log(details_count);
+        //console.log(details_count);
 
         // Rename the section
         new_condition.children("summary").children("span:first").text("Condition " + details_count);
@@ -673,7 +739,7 @@ $(document).ready(function () {
     /***************************************************************************************************************/
     // START - Remove condition functions
     $(".remove_condition").click(function () {
-        console.log("Removing a condition");
+        //console.log("Removing a condition");
         details_control = $(this).closest("details");
         details_control.remove();
         $(".remove_condition").css("display", "block");
@@ -697,7 +763,7 @@ $(document).ready(function () {
     /***************************************************************************************************************/
     // START - clear forms
     $("#clear_button").click(function () {
-        console.log("Clearing forms");
+        //console.log("Clearing forms");
         $(".complex_search_form input[type=checkbox]").prop("checked", false);
         $(".complex_search_form input[type=text]").val("");
         $(".complex_search_form input[type=number]").val("");
@@ -748,7 +814,7 @@ $(document).ready(function () {
         console.log("success");
         footnote_id = $("#next_id").text();
         $("#footnote_id").val(footnote_id);
-        console.log(footnote_id);
+        //console.log(footnote_id);
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -763,7 +829,7 @@ $(document).ready(function () {
     $("#certificate_type_code").on("change", function () {
         var certificate_type_code = $(this).val();
         var next_id = "";
-        console.log("Changing certificate type code to " + certificate_type_code);
+        //console.log("Changing certificate type code to " + certificate_type_code);
         var opt = $("#certificate_type_code option:selected").attr("group").toLowerCase();
         if (opt === "unspecified") {
             $(".conditional_span:nth-of-type(1)").text("");
@@ -784,10 +850,10 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#use_next_id", function (e) {
-        console.log("success");
+        //console.log("success");
         certificate_code = $("#next_id").text();
         $("#certificate_code").val(footnote_id);
-        console.log(footnote_id);
+        //console.log(footnote_id);
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -863,7 +929,7 @@ $(document).ready(function () {
     function get_next_quota_order_number_id() {
         var quota_category = $("#quota_category").val();
         var next_id = "";
-        console.log("Changing quota category to " + quota_category);
+        //console.log("Changing quota category to " + quota_category);
         if (quota_category === "Unspecified") {
             $(".conditional_span:nth-of-type(1)").text("");
         } else {
@@ -871,11 +937,11 @@ $(document).ready(function () {
             var quota_mechanism = $("input[name='quota_mechanism']:checked").val();
             var quota_category = $("#quota_category").children("option:selected").val();
             url = "/api/v1/quotas/available.php?quota_mechanism=" + quota_mechanism + "&quota_category=" + quota_category;
-            console.log(url);
+            //console.log(url);
             var data = getJson(url);
             var results = data.results[0];
             next_quota_order_number = results.next_quota_order_number;
-            console.log(next_quota_order_number);
+            //console.log(next_quota_order_number);
 
 
             var txt = "The next available quota order number is <span id='next_id'>" + next_quota_order_number + "</span>. <a class='govuk-link' href='#' id='use_next_id'>Use this ID</a>.";
@@ -886,10 +952,10 @@ $(document).ready(function () {
 
 
     $(document).on("click", "#use_next_id", function (e) {
-        console.log("success");
+        //console.log("success");
         certificate_code = $("#next_id").text();
         $("#quota_order_number_id").val(footnote_id);
-        console.log(footnote_id);
+        //console.log(footnote_id);
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -897,12 +963,12 @@ $(document).ready(function () {
 
 
     $("#quota_mechanism_FCFS").on("change", function () {
-        console.log("FCFS clicked");
+        //("FCFS clicked");
         $("#quota_order_number_id").prop("pattern", "09[0-9]{4}");
     });
 
     $("#quota_mechanism_licensed").on("change", function () {
-        console.log("licensed clicked");
+        //console.log("licensed clicked");
         $("#quota_order_number_id").prop("pattern", "094[0-9]{3}");
     });
 
@@ -914,9 +980,9 @@ $(document).ready(function () {
 
     $("#measurement_unit_code").on("change", function () {
         var measurement_unit_code = $(this).children("option:selected").val();
-        console.log("measurement_unit_code changed to " + measurement_unit_code);
+        //console.log("measurement_unit_code changed to " + measurement_unit_code);
         url = "/api/v1/measurements/measurement_combinations.php?measurement_unit_code=" + measurement_unit_code;
-        console.log(url);
+        //console.log(url);
         var data = getJson(url);
         var results = data.results;
         if (results.length == 0) {
@@ -948,7 +1014,7 @@ $(document).ready(function () {
                 }
                 */
             });
-            console.log(option_array);
+            //console.log(option_array);
         }
     });
 
@@ -968,9 +1034,7 @@ $(document).ready(function () {
             for (i = 0; i < parts.length; i++) {
                 part = parts[i];
                 if (part.length > 0) {
-                    //console.log(part);
                     url = "/api/v1/commodities?goods_nomenclature_item_id=" + part;
-                    //console.log(url);
                     var data = getJson(url);
                     var results = data.results;
                     if (results === undefined) {
@@ -980,7 +1044,7 @@ $(document).ready(function () {
                         out += "</span>";
                     } else {
                         sid = results[0]["goods_nomenclature_sid"].toString();
-                        console.log(results[0]["goods_nomenclature_sid"]);
+                        //console.log(results[0]["goods_nomenclature_sid"]);
                         out += "<span class='commodity_check'>";
                         out += "<span class='commodity_check1'><a class='nodecorate' target='_blank' href='/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" + part + "&productline_suffix=80&goods_nomenclature_sid=" + sid + "'>" + format_goods_nomenclature_item_id(part) + "</a></span>";
                         out += "<span class='commodity_check2'>" + results[0]["description"] + "</span>";
@@ -1216,7 +1280,7 @@ $(document).ready(function () {
     /***************************************************************************************************************/
     // START - footnote ID
 
-    /* Start regulations typeahead */
+    /* Start footnotes typeahead */
     var footnotes = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -1227,7 +1291,7 @@ $(document).ready(function () {
         }
     });
 
-    console.log(footnotes);
+    //console.log(footnotes);
 
     $('#footnote_id').typeahead(null, {
         name: 'footnotes',
@@ -1235,7 +1299,7 @@ $(document).ready(function () {
         limit: 15,
     });
 
-    /* Start regulations typeahead */
+    /* Start footnotes_measures typeahead */
     var footnotes_measures = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -1246,7 +1310,7 @@ $(document).ready(function () {
         }
     });
 
-    console.log(footnotes);
+    //console.log(footnotes);
 
     $('#measure_prototype_footnote_id').typeahead(null, {
         name: 'footnotes_measures',
@@ -1276,5 +1340,232 @@ $(document).ready(function () {
 
     // END - conditional date picker controls
     /***************************************************************************************************************/
+
+    /***************************************************************************************************************/
+    // START - regulation helpers
+
+    $(document).on("click", "#suggest_identifier", function (e) {
+        base_regulation_id = $("#base_regulation_id").val();
+        if (base_regulation_id.length == 8) {
+            type = base_regulation_id.substr(0, 1);
+            year = base_regulation_id.substr(1, 2);
+            number = base_regulation_id.substr(3, 4);
+            part = base_regulation_id.substr(7, 1);
+            /*
+            console.log(base_regulation_id);
+            console.log(type);
+            console.log(year);
+            console.log(number);
+            console.log(part);
+            */
+            if (type == 'N') {
+                suggestion = 'Taxation Notice: 20' + year + '/' + pad(parseInt(number), 3);
+            } else {
+                suggestion = "20" + year + " No. " + parseInt(number).toString();
+            }
+            $("#public_identifier").val(suggestion);
+
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+
+    $(document).on("click", "#suggest_url", function (e) {
+        //http://www.legislation.gov.uk/uksi/2019/5/contents/made
+        //regulation_source
+        //regulation_source_EU
+        base_regulation_id = $("#base_regulation_id").val();
+        if (base_regulation_id.length == 8) {
+            type = base_regulation_id.substr(0, 1);
+            year = base_regulation_id.substr(1, 2);
+            number = base_regulation_id.substr(3, 4);
+            part = base_regulation_id.substr(7, 1);
+
+            scope = getRadioValue("regulation_source");
+            if (scope == "") {
+                scope = "uksi";
+            }
+
+            if (type == 'N') {
+                suggestion = "";
+            } else {
+                suggestion = "http://www.legislation.gov.uk/" + scope + "/20" + year + "/" + parseInt(number) + "/contents/made";
+                $("#url").val(suggestion);
+            }
+
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    // END - regulation helpers
+    /***************************************************************************************************************/
+
+
+
+    /***************************************************************************************************************/
+    // START - quota association helpers
+
+    $(document).on("click", "#relation_type_NM", function (e) {
+        $("#coefficient").val("1.00000");
+    });
+
+    // END - quota association helpers
+    /***************************************************************************************************************/
+
+
+    /***************************************************************************************************************/
+    // START - origin helpers
+
+    $(document).on("click", "#create_measures_Yes", function (e) {
+        $(".govuk-button").html("Continue to create measures");
+        //alert ("here");
+    });
+
+    $(document).on("click", "#create_measures_No", function (e) {
+        $(".govuk-button").html("Add to workbasket");
+        //alert ("here");
+    });
+
+    $(document).on("blur", "#form_quota_order_number_origin #geographical_area_id", function (e) {
+        my_value = $(this).val();
+        hyphen_pos = my_value.indexOf("-");
+        if (hyphen_pos > -1) {
+            my_value = my_value.substr(0, hyphen_pos - 1).trim();
+            if (my_value.length == 2) {
+                // It is a country or region
+                $(".exclusions").fadeOut(300);
+                console.log("country or region");
+            } else {
+                $(".exclusions").fadeIn(300, function () {
+                    $("#geographical_area_exclusions").focus();
+                });
+                // It is a group
+                console.log("group");
+            }
+        }
+    });
+
+    $(document).on("keyup", "#form_quota_order_number_origin #geographical_area_exclusions", function (e) {
+        s = $(this).val();
+        s = s.toUpperCase();
+        //s = s.replace(/\t/g, " ");
+        s = s.replace(/[\t,;/]/g, " ");
+        s = s.replace("  ", " ");
+        ar = s.split(" ");
+        out = "Your selected geographical areas: <span style='color:#000'>";
+        for (i = 0; i < ar.length; i++) {
+            part = ar[i];
+            if (part.length == 2) {
+                country = geo_data[ar[i]];
+                if (country !== undefined) {
+                    out += country + ", ";
+                }
+            }
+        }
+        out = out.trim(" ");
+        out = out.trim(",");
+        out += "</span>";
+        $("#selected_exclusions").html(out);
+    });
+
+    // END - origin helpers
+    /***************************************************************************************************************/
+
+
+    /***************************************************************************************************************/
+    // START - quota definition helpers
+
+    $(document).on("click", "#quota_definition_add_year", function (e) {
+        year_value = $("#validity_start_date_year").val();
+        year_value = parseInt(year_value);
+        year_value += 1;
+        $("#validity_start_date_year").val(year_value);
+
+        year_value = $("#validity_end_date_year").val();
+        year_value = parseInt(year_value);
+        year_value += 1;
+        $("#validity_end_date_year").val(year_value);
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+
+    $(document).on("click", "#quota_definition_add_quarter", function (e) {
+        year_value = $("#validity_start_date_year").val();
+        month_value = $("#validity_start_date_month").val();
+        day_value = $("#validity_start_date_day").val();
+        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
+        dateMomentObject.add(3, 'months');
+        $("#validity_start_date_year").val(dateMomentObject.format("YYYY"));
+        $("#validity_start_date_month").val(dateMomentObject.format("MM"));
+        $("#validity_start_date_day").val(dateMomentObject.format("DD"));
+
+        year_value = $("#validity_end_date_year").val();
+        month_value = $("#validity_end_date_month").val();
+        day_value = $("#validity_end_date_day").val();
+        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
+        dateMomentObject.add(3, 'months');
+        $("#validity_end_date_year").val(dateMomentObject.format("YYYY"));
+        $("#validity_end_date_month").val(dateMomentObject.format("MM"));
+        $("#validity_end_date_day").val(dateMomentObject.format("DD"));
+                
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+
+
+    $(document).on("click", "#quota_definition_add_6_months", function (e) {
+        year_value = $("#validity_start_date_year").val();
+        month_value = $("#validity_start_date_month").val();
+        day_value = $("#validity_start_date_day").val();
+        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
+        dateMomentObject.add(6, 'months');
+        $("#validity_start_date_year").val(dateMomentObject.format("YYYY"));
+        $("#validity_start_date_month").val(dateMomentObject.format("MM"));
+        $("#validity_start_date_day").val(dateMomentObject.format("DD"));
+
+        year_value = $("#validity_end_date_year").val();
+        month_value = $("#validity_end_date_month").val();
+        day_value = $("#validity_end_date_day").val();
+        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
+        dateMomentObject.add(6, 'months');
+        $("#validity_end_date_year").val(dateMomentObject.format("YYYY"));
+        $("#validity_end_date_month").val(dateMomentObject.format("MM"));
+        $("#validity_end_date_day").val(dateMomentObject.format("DD"));
+                
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+
+
+    // END - quota definition helpers
+    /***************************************************************************************************************/
+
+
+
+    function getRadioValue(element_Name) {
+        var ele = document.getElementsByName(element_Name);
+        for (i = 0; i < ele.length; i++) {
+            if (ele[i].checked) {
+                return (ele[i].value);
+            }
+        }
+        return ("");
+    }
+
+    function pad(num, size) {
+        var s = num + "";
+        while (s.length < size) s = "0" + s;
+        return s;
+    }
+
 
 });

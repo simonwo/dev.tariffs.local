@@ -40,7 +40,7 @@ require("../includes/metadata.php");
         <!-- End breadcrumbs //-->
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-four-fifths">
+                <div class="govuk-grid-column-full">
                     <?php
                     new title_control("", "", "", "Find and edit commodity codes");
                     ?>
@@ -49,7 +49,7 @@ require("../includes/metadata.php");
                     require("commodity_search.php");
                     require("commodity_nav.php");
                     ?>
-                    <table cellspacing="0" class="govuk-table govuk-table--m sticky">
+                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" scope="col" style="width:10%">Code</th>
                             <th class="govuk-table__header" scope="col" style="width:75%">Description</th>
@@ -82,14 +82,14 @@ require("../includes/metadata.php");
 
                                     } else {
                                     ?>
-                                        <td class="govuk-table__cell"><a href="commodity.html?section_id=<?= $goods_nomenclature->section_id ?>&goods_nomenclature_item_id=<?= $heading->goods_nomenclature_item_id ?>&producline_suffix=<?= $heading->producline_suffix ?>&goods_nomenclature_sid=<?= $heading->goods_nomenclature_sid ?>&"><?= $heading->description ?></a></td>
+                                        <td class="govuk-table__cell"><a class="govuk-link" href="commodity.html?section_id=<?= $goods_nomenclature->section_id ?>&goods_nomenclature_item_id=<?= $heading->goods_nomenclature_item_id ?>&producline_suffix=<?= $heading->producline_suffix ?>&goods_nomenclature_sid=<?= $heading->goods_nomenclature_sid ?>&"><?= $heading->description ?></a></td>
                                     <?php
 
                                     }
                                     ?>
                                     <td class="govuk-table__cell c"><?= $heading->productline_suffix_display() ?></td>
                                     <td class="govuk-table__cell c"><?= $heading->number_indents ?></td>
-                                    <td class="govuk-table__cell r" nowrap><a href="">View / edit</a></td>
+                                    <td class="govuk-table__cell r" nowrap><a class="govuk-link" href="">View / edit</a></td>
                                 </tr>
                         <?php
                             }
