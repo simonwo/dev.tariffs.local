@@ -72,7 +72,9 @@ class application
         $uri = $_SERVER["REQUEST_URI"];
         if (strpos($uri, 'create') !== false) {
             if ($this->session->workbasket == null) {
-                $url = "/workbaskets/create_edit.html?tariff_object=" . $this->tariff_object;
+                //prend ($_SERVER);
+                $request_uri = urlencode($_SERVER["REQUEST_URI"]);
+                $url = "/workbaskets/create_or_open_workbasket.html?request_uri=" . $request_uri;
                 header("Location: " . $url);
             }
         }
@@ -423,7 +425,7 @@ class application
 
                 $url = "/measures/?filter_measures_freetext=" . $base_regulation->base_regulation_id;
                 $base_regulation->measures_url = "<a class='govuk-link' href='" . $url . "'>View measures</a>";
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $base_regulation->status = status_image($workbasket->status);
                 array_push($temp, $base_regulation);
             }
@@ -575,7 +577,7 @@ class application
 
                 $measures_url = "#";
                 $additional_code->measures_link = '<a class="govuk-link" href="' . $measures_url . '">View measures</a>';
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $additional_code->status = status_image($workbasket->status);
 
                 array_push($temp, $additional_code);
@@ -677,7 +679,7 @@ class application
                 $certificate->validity_start_date = short_date($row['validity_start_date']);
                 $certificate->validity_end_date = short_date($row['validity_end_date']);
                 $certificate->measures_url = "<a class='govuk-link' href=''>View measures</a>";
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $certificate->status = status_image($workbasket->status);
                 array_push($temp, $certificate);
             }
@@ -749,7 +751,7 @@ class application
                     $description,
                     $is_quota
                 );
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $measure_type->status = status_image($workbasket->status);
                 $measure_type->measure_type_series_description = $measure_type_series_description;
                 $measure_type->measure_type_series_id_description = $measure_type_series_id . '&nbsp;' . $measure_type_series_description;
@@ -842,7 +844,7 @@ class application
                 $footnote->validity_end_date = short_date($row['validity_end_date']);
                 $footnote->description = $row['description'];
                 $footnote->footnote_type_description = $row['footnote_type_description'];
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $footnote->status = status_image($workbasket->status);
                 $footnote->footnote_type_id_description = $footnote->footnote_type_id . ' ' . $footnote->footnote_type_description;
                 //$footnote->footnote_description_url = '<a class="govuk-link" href="./create_edit.html?mode=update&footnote_id=' . $footnote->footnote_id . '&footnote_type_id=' . $footnote->footnote_type_id . '">' . $footnote->description . '</a>';
@@ -968,7 +970,7 @@ class application
                 $additional_code_type->application_code = $application_code;
                 $additional_code_type->id = $additional_code_type->additional_code_type_id;
                 $additional_code_type->string = $additional_code_type->additional_code_type_id . " - " . $additional_code_type->description;
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $additional_code_type->status = status_image($workbasket->status);
                 //$url = "/additional_code_types/create_edit.html?mode=update&additional_code_type_id=" . $additional_code_type->additional_code_type_id;
                 $url = "/additional_code_types/view.html?mode=view&additional_code_type_id=" . $additional_code_type->additional_code_type_id;
@@ -1013,7 +1015,7 @@ class application
                 $validity_end_date = short_date($row['validity_end_date']);
                 $application_code = $row['application_code'];
                 $application_code_description = $row['application_code_description'];
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $image = status_image($workbasket->status);
                 $workbasket_id = $row['workbasket_id'];
 
@@ -1172,7 +1174,7 @@ class application
                 $certificate_type->string = "<b>" . $certificate_type_code . "</b> " . $certificate_type->description;
                 $certificate_type->validity_start_date = $validity_start_date;
                 $certificate_type->validity_end_date = $validity_end_date;
-                $workbasket->status = ucwords($row['status']);
+                $workbasket->status = $row['status'];
                 $certificate_type->status = status_image($workbasket->status);
                 //$url = "/certificate_types/create_edit.html?mode=update&certificate_type_code=" . $certificate_type_code;
                 $url = "/certificate_types/view.html?mode=view&certificate_type_code=" . $certificate_type_code;
@@ -1353,7 +1355,7 @@ class application
         return ($date);
     }
 
-    function show_page_controls($show_paging = true, $dataset = null)
+    function show_page_controls($show_paging = true, $dataset = null, $hide_export_link = null)
     {
         //pre ($dataset);
         $control_count = 7;
@@ -1363,7 +1365,9 @@ class application
         $page_count = ceil($this->row_count / $this->page_size);
         echo ('<p class="govuk-body-s">Page ' . $this->page . ' of ' . $page_count . ' - showing ' . min($this->page_size, $this->row_count) . ' records of ' . $this->row_count . '. ');
         if ($dataset != null) {
-            echo ('<a class="govuk-link" href=""><img src="/assets/images/export.png" style="margin:0px 0.2em 0px 0.5em;top:3px;position:relative;" />Export data to CSV</a>');
+            if ($hide_export_link == null) {
+                echo ('<a class="govuk-link" href=""><img src="/assets/images/export.png" style="margin:0px 0.2em 0px 0.5em;top:3px;position:relative;" />Export data to CSV</a>');
+            }
         }
         echo ('</p>');
         if ($show_paging) {
@@ -1729,7 +1733,7 @@ class application
         }
     }
 
-    
+
 
 
     public function get_workbaskets()
@@ -1762,7 +1766,7 @@ class application
                 $workbasket->title = $row[4];
                 $workbasket->reason = $row[5];
                 $workbasket->type = $row[6];
-                $workbasket->status = ucwords($row[7]);
+                $workbasket->status = $row[7];
                 $workbasket->updated_at = $row[8];
                 $workbasket->workbasket_id = $row[9];
                 $workbasket->actions = "<a class='govuk-link' href='reassign.html'>Reassign workbasket</a><br /><a class='govuk-link' href='view.html'>View workbasket</a><br /><a class='govuk-link' href='view.html'>Approve workbasket</a>";
@@ -1798,7 +1802,7 @@ class application
                 $workbasket->title = $row[4];
                 $workbasket->reason = $row[5];
                 $workbasket->type = $row[6];
-                $workbasket->status = ucwords($row[7]);
+                $workbasket->status = $row[7];
                 $workbasket->created_at = string_to_time($row[8]);
                 $workbasket->updated_at = string_to_time($row[9]);
                 $workbasket->workbasket_id = $row[10];
@@ -1808,10 +1812,46 @@ class application
         }
     }
 
+
+
+
+
+
+
+    public function get_my_workbaskets_or_new()
+    {
+        global $conn;
+        $offset = ($this->page - 1) * $this->page_size;
+        $this->workbaskets = array();
+        $sql = "select -1 as workbasket_id, '<b>New workbasket</b>' as title, '1970-01-01' as created_at
+        union 
+        select workbasket_id, title, created_at
+        from workbaskets
+        where status = 'In progress'
+        and user_id = 1
+        order by created_at desc;";
+
+        // pre ($sql);
+
+        $stmt = "get_my_workbaskets_or_new" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $workbaskets = array();
+        $result = pg_execute($conn, $stmt, array());
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $obj = new reusable();
+                $obj->id = $row["workbasket_id"];
+                $obj->string = $row["title"];
+                array_push($workbaskets, $obj);
+            }
+        }
+        return ($workbaskets);
+    }
+
     public function get_my_workbaskets()
     {
         global $conn;
-        //pre ($this->session);
         $offset = ($this->page - 1) * $this->page_size;
         $this->workbaskets = array();
         $sql = "select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
@@ -1833,7 +1873,7 @@ class application
                 $workbasket->title = $row[4];
                 $workbasket->reason = $row[5];
                 $workbasket->type = $row[6];
-                $workbasket->status = ucwords($row[7]);
+                $workbasket->status = $row[7];
                 $workbasket->created_at = string_to_time($row[8]);
                 $workbasket->updated_at = string_to_time($row[9]);
                 $workbasket->workbasket_id = $row[10];
@@ -1843,12 +1883,88 @@ class application
         }
     }
 
+    public function get_workbaskets_by_filter()
+    {
+        global $conn;
+        $workbasket = new workbasket();
+        $filter_clause = $this->get_filter_clause();
+        $offset = ($this->page - 1) * $this->page_size;
+        $sql = "with cte as (select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+        w.title, w.reason, w.status, w.created_at, w.updated_at, w.workbasket_id, ws.sequence_id, 
+        case 
+        when u.id = " . $this->session->uid . " then 'own'
+        else 'other'
+        end as ownership        
+        from workbaskets w, users u, workbasket_statuses ws
+        where w.user_id = u.id 
+        and w.status = ws.status)
+        select *, count(*) OVER() AS full_count from cte where 1 > 0 ";
+
+        $sql .= $filter_clause;
+        $sql .= " " . $this->sort_clause;
+        $sql .= " limit $this->page_size offset $offset";
+
+        //pre ($sql);
+
+        $result = pg_query($conn, $sql);
+        $this->workbaskets = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $this->row_count = $row['full_count'];
+                $wb = new workbasket;
+                $wb->workbasket_id = $row['workbasket_id'];
+                $wb->title = $row['title'];
+                $wb->title_link = "<a class='govuk-link' href='/workbaskets/view.html?workbasket_id=" . $wb->workbasket_id . "'>" . $row['title'] . "</a>";
+                $wb->user_id = $row['user_id'];
+                $wb->user_name = $row['user_name'];
+                $wb->created_at = $row['created_at'];
+                $wb->updated_at = $row['updated_at'];
+
+                $wb->created_at_string = short_date_time($wb->created_at);
+                $wb->updated_at_string = short_date($wb->updated_at);
+                $wb->status = $row['status'];
+                $wb->actions = "";
+                $wb->actions .= $wb->show_workbasket_icon_open_close();
+                $wb->actions .= $wb->show_workbasket_icon_withdraw();
+                $wb->actions .= $wb->show_workbasket_icon_submit();
+                $status_text = $wb->status;
+
+                if (isset($this->session->workbasket->workbasket_id)) {
+                    $test = $this->session->workbasket->workbasket_id;
+                } else {
+                    $test = -1;
+                }
+        
+                if ($wb->workbasket_id == $test) {
+                    $status_text .= " (active)";
+                    $wb->row_class = "b";
+                } else {
+                    $wb->row_class = "";
+                }
+                $wb->status_image = status_image($row['status']) . "<span>" . $status_text . "</span>";
+                array_push($this->workbaskets, $wb);
+            }
+        }
+    }
+
+
+
     public function get_workbasket_statuses()
     {
+        global $conn;
+
         $this->workbasket_statuses = array();
-        array_push($this->workbasket_statuses, new simple_object("New - in progress", "New - in progress", "New - in progress", ""));
-        array_push($this->workbasket_statuses, new simple_object("Awaiting approval", "Awaiting approval", "Awaiting approval", ""));
-        array_push($this->workbasket_statuses, new simple_object("Sent to CDS", "Sent to CDS", "Sent to CDS", ""));
+        $sql = "SELECT status from workbasket_statuses order by sequence_id;";
+        $result = pg_query($conn, $sql);
+        $this->workbasket_statuses = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $wb_status = new reusable;
+                $wb_status->id = $row['status'];
+                $wb_status->string = $row['status'];
+                array_push($this->workbasket_statuses, $wb_status);
+            }
+        }
     }
 
     public function get_regulation_sources()
@@ -1858,6 +1974,13 @@ class application
         array_push($this->regulation_sources, new simple_object("eur", "Adopted EU regulation", "", ""));
         array_push($this->regulation_sources, new simple_object("eud", "Adopted EU decision", "", ""));
         array_push($this->regulation_sources, new simple_object("eudr", "Adopted EU directive", "", ""));
+    }
+
+    public function get_workbasket_ownerships()
+    {
+        $this->workbasket_ownerships = array();
+        array_push($this->workbasket_ownerships, new simple_object("own", "Created by me", "", ""));
+        array_push($this->workbasket_ownerships, new simple_object("other", "Created by others", "", ""));
     }
 
 
@@ -1928,18 +2051,19 @@ class application
                 $this->row_count = $row['full_count'];
 
                 $goods_nomenclature = new goods_nomenclature;
+                $goods_nomenclature->goods_nomenclature_sid = $row['goods_nomenclature_sid'];
                 $goods_nomenclature->goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
-                $goods_nomenclature->goods_nomenclature_item_id_formatted = format_goods_nomenclature_item_id($goods_nomenclature->goods_nomenclature_item_id);
                 $goods_nomenclature->productline_suffix = $row['producline_suffix'];
+                $edit_url = 'goods_nomenclature_item_view.html?goods_nomenclature_item_id=' . $goods_nomenclature->goods_nomenclature_item_id . '&productline_suffix=' . $goods_nomenclature->productline_suffix . '&goods_nomenclature_sid=' . $goods_nomenclature->goods_nomenclature_sid;
+                $goods_nomenclature->goods_nomenclature_item_id_formatted = format_goods_nomenclature_item_id($goods_nomenclature->goods_nomenclature_item_id);
+                $goods_nomenclature->goods_nomenclature_item_link = '<a class="nodecorate" href="' . $edit_url . '">' . $goods_nomenclature->goods_nomenclature_item_id_formatted . '</a>';
                 $goods_nomenclature->description = $row['description'];
                 $goods_nomenclature->number_indents = $row['number_indents'];
                 $goods_nomenclature->number_indents = $row['significant_digits'];
                 $goods_nomenclature->description_formatted = $goods_nomenclature->format_description();
-                //$goods_nomenclature->section_id = $row['section_id'];
                 $goods_nomenclature->validity_start_date = short_date($row['validity_start_date']);
                 $goods_nomenclature->validity_end_date = short_date($row['validity_end_date']);
-                $goods_nomenclature->goods_nomenclature_sid = $row['goods_nomenclature_sid'];
-                $goods_nomenclature->url = '<a class="govuk-link" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=' . $goods_nomenclature->goods_nomenclature_item_id . '&productline_suffix=' . $goods_nomenclature->productline_suffix . '&goods_nomenclature_sid=' . $goods_nomenclature->goods_nomenclature_sid . '">View / edit</a>';
+                $goods_nomenclature->actions = '<a class="govuk-link" href="' . $edit_url . '"><img src="/assets/images/edit.png" /></a>';
 
 
                 array_push($temp, $goods_nomenclature);
@@ -2190,8 +2314,10 @@ class application
 
     public function get_measures()
     {
-        $this->page_size = 10000;
+        $this->page_size = 500;
         global $conn;
+        $filter_clause = $this->get_filter_clause();
+        $offset = ($this->page - 1) * $this->page_size;
         $sql = "select m.measure_sid, m.measure_generating_regulation_id, m.validity_start_date, m.validity_end_date,
         m.goods_nomenclature_item_id, m.additional_code, m.additional_code_sid,
         m.geographical_area_id, 'tbc' as exclusions, m.measure_type_id, m.measure_generating_regulation_id, m.ordernumber, m.status,
@@ -2354,7 +2480,6 @@ class application
             $clause .= $ordernumber_clause;
         }
 
-
         // Get start date field
         $validity_start_date_operator = get_formvar("validity_start_date_operator");
         $validity_start_date_day = get_formvar("validity_start_date_day");
@@ -2366,7 +2491,7 @@ class application
             if ($validity_start_date_operator == "is") {
                 $clause .= " and validity_start_date = '" . $validity_start_date . "' ";
             } elseif ($validity_start_date_operator == "is_on_or_after") {
-                $clause .= " and validity_start_date > '" . $validity_start_date . "' ";
+                $clause .= " and validity_start_date >= '" . $validity_start_date . "' ";
             } elseif ($validity_start_date_operator == "is_before") {
                 $clause .= " and validity_start_date < '" . $validity_start_date . "' ";
             }
@@ -2399,6 +2524,8 @@ class application
         $this->sort_clause = " order by m.validity_start_date desc, m.goods_nomenclature_item_id";
         $sql .= $this->sort_clause;
         $sql .= " limit $this->page_size offset $offset";
+
+        //prend ($sql);
 
 
         // Get the measure components
@@ -2784,7 +2911,7 @@ q.quota_category, q.validity_start_date, q.validity_end_date, q.description
                     $quota_order_number->description = $row['description'];
                     $quota_order_number->quota_category = $row['quota_category'];
                     $quota_order_number->geographical_area_ids = $row['geographical_area_ids'];
-                    $quota_order_number->status = "In Progress"; //$row['status'];
+                    $quota_order_number->status = "In progress"; //$row['status'];
                     $quota_order_number->active_state = "active"; //$row['active_state'];
 
                     array_push($temp, $quota_order_number);
@@ -2792,9 +2919,8 @@ q.quota_category, q.validity_start_date, q.validity_end_date, q.description
                 $this->quotas = $temp;
             }
         }
-
     }
-/*
+    /*
     function get_minimum_sids() {}
 
 

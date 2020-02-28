@@ -233,7 +233,7 @@ class geographical_area
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         # Create the geographical_area record
         $sql = "INSERT INTO geographical_areas_oplog (
             geographical_area_sid, geographical_area_id, geographical_code, validity_start_date,

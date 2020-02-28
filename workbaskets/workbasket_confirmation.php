@@ -2,11 +2,7 @@
 require(dirname(__FILE__) . "../../includes/db.php");
 $error_handler = new error_handler();
 $application = new application;
-$submitted = get_formvar("submitted");
-$workbasket = new workbasket();
-if ($submitted) {
-    $application->session->create_workbasket();
-}
+$request_uri = get_querystring("request_uri");
 ?>
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -38,7 +34,7 @@ require("../includes/metadata.php");
                     <!-- End panel //-->
                     <h2 class="govuk-heading-m">Next steps</h2>
                     <ul class="govuk-list">
-                        <li>Return to main menu to <a class='govuk-link' href="/">begin making changes</a>.</li>
+                        <li>Return to main menu to <a class='govuk-link' href="/">begin making changes</a> or <a class='govuk-link' href="<?=$request_uri?>">carry on where you left off</a>.</li>
                     </ul>
                 </div>
             </div>

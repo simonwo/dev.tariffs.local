@@ -2318,8 +2318,158 @@ select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, 
         
        
        
-select *, m.measure_type_id, m.goods_nomenclature_item_id, m.goods_nomenclature_item_sid, m.validity_start_date, m.validity_end_date 
+select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, m.goods_nomenclature_sid, m.validity_start_date, m.validity_end_date 
 from measures m
 where ordernumber = '098300'
 and validity_start_date >= '2020-01-01';
 
+update quota_suspension_periods_oplog set status = 'published';
+update quota_blocking_periods_oplog set status = 'published';
+update quota_order_number_origin_exclusions_oplog set status = 'published';
+
+
+
+select qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+        qdmain.initial_volume as main_initial_volume, qdmain.validity_start_date as main_validity_start_date, qdmain.validity_end_date as main_validity_end_date,
+        qdmain.quota_order_number_id as main_quota_order_number_id, qdmain.quota_order_number_sid as main_quota_order_number_sid, 
+        qdsub.initial_volume as sub_initial_volume, qdsub.validity_start_date as sub_validity_start_date, qdsub.validity_end_date as sub_validity_end_date,
+        qdsub.quota_order_number_id as sub_quota_order_number_id, qdsub.quota_order_number_sid as sub_quota_order_number_sid,
+        string_agg(distinct qonomain.geographical_area_id, ',' order by qonomain.geographical_area_id) as main_origin,
+        string_agg(distinct qonosub.geographical_area_id, ',' order by qonosub.geographical_area_id) as sub_origin,
+        qdmain.measurement_unit_code as main_mu, qdmain.measurement_unit_qualifier_code as main_muq, 
+        qdsub.measurement_unit_code as sub_mu, qdsub.measurement_unit_qualifier_code as sub_muq, qa.status
+        from quota_associations qa, quota_definitions qdmain, quota_definitions qdsub,
+        quota_order_number_origins qonomain, quota_order_number_origins qonosub
+        where qa.main_quota_definition_sid = qdmain.quota_definition_sid 
+        and qa.sub_quota_definition_sid = qdsub.quota_definition_sid 
+        and qonomain.quota_order_number_sid = qdmain.quota_order_number_sid 
+        and qonosub.quota_order_number_sid = qdsub.quota_order_number_sid 
+        and (qdmain.quota_order_number_sid = 501 or qdsub.quota_order_number_sid = 501)
+        group by 
+        qa.main_quota_definition_sid, qa.sub_quota_definition_sid, qa.relation_type, qa.coefficient, 
+        qdmain.initial_volume, qdmain.validity_start_date, qdmain.validity_end_date,
+        qdmain.quota_order_number_id, qdmain.quota_order_number_sid, 
+        qdsub.initial_volume, qdsub.validity_start_date, qdsub.validity_end_date,
+        qdsub.quota_order_number_id, qdsub.quota_order_number_sid,
+        qdmain.measurement_unit_code, qdmain.measurement_unit_qualifier_code, 
+        qdsub.measurement_unit_code, qdsub.measurement_unit_qualifier_code, qa.status
+        order by qdmain.quota_order_number_id, qdmain.validity_start_date desc, qdsub.quota_order_number_id, qdsub.validity_start_date;
+       
+       
+       
+SELECT validity_start_date, validity_end_date, lq.description, origin_quota,
+quota_scope, lq.quota_category, quota_order_number_sid, qc.description as quota_category_description
+FROM licensed_quotas_oplog lq left outer join quota_categories qc on lq.quota_category = qc.quota_category
+WHERE quota_order_number_id = '094001'
+order by validity_start_date desc limit 1
+
+
+
+select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid, gnd.description 
+from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
+where ordernumber = '094001'
+and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+and gn.producline_suffix = '80'
+and gn.validity_end_date is null
+and m.validity_end_date is null
+--and m.validity_start_date >= (select qd.validity_start_date from quota_definitions qd where qd.quota_order_number_id = ordernumber order by qd.validity_start_date desc limit 1) 
+order by m.goods_nomenclature_item_id, gnd.oid desc;
+
+
+select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid, gnd.description 
+from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
+where ordernumber = '094001'
+and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+and gn.producline_suffix = '80'
+and gn.validity_end_date is null
+and m.validity_end_date is null
+order by m.goods_nomenclature_item_id, gnd.oid desc;
+
+select * from measures where measure_type_id = '146' order by validity_start_date desc;
+
+
+select activity_name, ma.validity_start_date, ma.validity_end_date, measure_generating_regulation_id, 
+        ma.measure_type_id, geographical_area_id, geographical_area_sid, information_text,
+        mtd.description as measure_type_description, ma.quota_order_number_id
+        from measure_activities ma, base_regulations br, measure_type_descriptions mtd
+        where ma.measure_generating_regulation_id = br.base_regulation_id
+        and ma.measure_type_id = mtd.measure_type_id
+        and measure_activity_sid = 118
+        
+        
+select * from measure_condition_components mcc, measure_conditions mc 
+where mcc.measure_condition_sid = mc.measure_condition_sid 
+and mc.measure_sid = 3700634;
+
+select measure_generating_regulation_id, count(*)
+from ml.measures_real_end_dates m where measure_type_id = '552'
+and validity_end_date is null
+group by measure_generating_regulation_id
+order by 2 desc;
+
+select m.measure_sid,
+(m.measure_type_id || ' - ' || mtd.description) as measure_type_description,
+(m.geographical_area_id || ' - ' || ga.description) as geographical_area_description,
+m.validity_start_date, m.validity_end_date, m.goods_nomenclature_item_id, m.ordernumber,
+(m.additional_code_type_id || m.additional_code_id) as additional_code
+from measures m, ml.ml_geographical_areas ga, measure_type_descriptions mtd 
+where m.geographical_area_id = ga.geographical_area_id 
+and m.measure_type_id = mtd.measure_type_id 
+and m.measure_generating_regulation_id = 'R1515180'
+order by m.validity_start_date, m.goods_nomenclature_item_id;
+
+
+with cte as (
+select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid,
+gnd.description, m.measure_type_id || ' - ' || mtd.description as measure_type, m.validity_start_date, m.validity_end_date
+from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd, measure_type_descriptions mtd
+where measure_generating_regulation_id = 'R1515180'
+and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+and gn.producline_suffix = '80'
+and gn.validity_end_date is null
+and m.measure_type_id = mtd.measure_type_id
+order by m.goods_nomenclature_item_id, gnd.oid desc
+)
+select goods_nomenclature_item_id, goods_nomenclature_sid, description,
+max(validity_start_date) as latest_start_date, max(validity_end_date) as latest_end_date
+from cte 
+group by goods_nomenclature_item_id, goods_nomenclature_sid, description
+order by goods_nomenclature_item_id;
+
+
+select -1 as workbasket_id, 'New workbasket' as title, '1970-01-01' as created_at
+union 
+select workbasket_id, title, created_at
+from workbaskets
+where status = 'in progress'
+and user_id = 1
+order by created_at desc;
+
+
+SELECT validity_start_date, br.regulation_group_id, information_text,
+public_identifier, trade_remedies_case, url, validity_end_date, rgd.description as regulation_group_description, br.regulation_source,
+rs.description as regulation_source_description
+FROM regulation_group_descriptions rgd, base_regulations br left outer join regulation_sources rs on br.regulation_source = rs.regulation_source 
+WHERE rgd.regulation_group_id = br.regulation_group_id
+and base_regulation_id = '00025340';
+
+
+SELECT mr.validity_start_date, br.regulation_group_id, mr.information_text,
+mr.public_identifier, mr.trade_remedies_case, mr.url, mr.validity_end_date, rgd.description as regulation_group_description, mr.regulation_source,
+rs.description as regulation_source_description
+FROM base_regulations br, regulation_group_descriptions rgd, modification_regulations mr
+left outer join regulation_sources rs on mr.regulation_source = rs.regulation_source 
+WHERE rgd.regulation_group_id = br.regulation_group_id
+and br.base_regulation_id = mr.base_regulation_id 
+and br.base_regulation_role = mr.base_regulation_role 
+and mr.modification_regulation_id = 'A9500010';
+
+
+select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+w.title, w.reason, w.type, w.status, w.created_at, w.updated_at, w.workbasket_id,
+count(*) OVER() AS full_count
+from workbaskets w, users  u
+where w.user_id = u.id  -- and w.user_id = '1' order by w.created_at desc order by w.status asc, w.created_at desc, w.title limit 4 offset 0

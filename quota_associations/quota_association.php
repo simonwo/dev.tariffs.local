@@ -109,7 +109,7 @@ class quota_association
             $this->quota_blocking_period_sid = $this->get_next_sid();
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         $sql = "INSERT INTO quota_blocking_periods_oplog (
         quota_blocking_period_sid,
         quota_definition_sid,

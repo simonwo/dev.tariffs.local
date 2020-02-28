@@ -218,7 +218,14 @@ function get_form_array($key)
 function get_querystring($key)
 {
     if (isset($_GET[$key])) {
-        return (trim($_GET[$key]));
+        if (!is_array($_GET[$key])) {
+            $s = trim($_GET[$key]);
+        } else {
+            $s = $_GET[$key];
+        }
+        return ($s);
+    } else {
+        return ("");
     }
 }
 
@@ -670,6 +677,19 @@ function short_date($s, $keep_spaces = false)
     return ($s2);
 }
 
+function short_date_time($s, $keep_spaces = false)
+{
+    if ($s == "") {
+        $s2 = "-";
+    } else {
+        $s2 = date("d M y H:i", strtotime($s));
+        if (!$keep_spaces) {
+            $s2 = str_replace(" ", "&nbsp;", $s2);
+        }
+    }
+    return ($s2);
+}
+
 function short_date_rev($s, $use_nulls = false)
 {
     if ($s == "") {
@@ -865,7 +885,7 @@ function format_value($row, $field)
 {
     switch ($field) {
         case "status":
-            return (status_image(ucwords($row->{$field})) . ucwords($row->{$field}));
+            return (status_image($row->{$field}) . $row->{$field});
             break;
         case "operation_date":
         case "validity_start_date":
@@ -878,10 +898,15 @@ function format_value($row, $field)
         case "suspension_end_date":
         case "blocking_start_date":
         case "blocking_end_date":
+        case "latest_start_date":
+        case "latest_end_date":
             return (short_date($row->{$field}));
             break;
         case "ratio":
             return (number_format($row->{$field}, 2));
+            break;
+        case "goods_nomenclature_item_id":
+            return (format_goods_nomenclature_item_id($row->{$field}));
             break;
         case "operation":
             return (expand_operation($row->{$field}));
@@ -977,34 +1002,31 @@ function db_execute($sql, $array)
 function status_image($status)
 {
     switch ($status) {
-        case "In Progress":
+        case "In progress":
             $status_image = "in_progress.png";
             break;
-        case "Approval Rejected":
+        case "Awaiting approval":
+            $status_image = "awaiting_approval.png";
+            break;
+        case "Approval rejected":
             $status_image = "approval_rejected.png";
             break;
-        case "Sent To CDS":
+        case "Sent to CDS":
             $status_image = "sent_to_cds.png";
             break;
         case "Published":
             $status_image = "published.png";
             break;
-        case "In Progress":
-            $status_image = "in_progress.png";
-            break;
-        case "Awaiting Approval":
-            $status_image = "awaiting_approval.png";
-            break;
         case "Re-editing":
             $status_image = "re_editing.png";
             break;
-        case "CDS Error":
+        case "CDS error":
             $status_image = "cds_error.png";
             break;
         default:
             $status_image = "";
     }
-    return ("<img class='status_image' alt='" . $status . "' title='" . $status . "' src='/assets/images/" . $status_image . "' />");
+    return ("<img class='status_image' alt='Status: " . $status . "' title='Status: " . $status . "' src='/assets/images/" . $status_image . "' />");
 }
 
 function contains_string($haystack, $needle)

@@ -298,7 +298,7 @@ require("../includes/metadata.php");
                                                 <td class="govuk-table__cell vsmall r">
                                                     <?php
                                                     if ($commodity->assigned == true) {
-                                                        echo ("<a href='measure_view.html?measure_sid=" . $measure->measure_sid . "'>" . $measure->combined_duty . "</a>");
+                                                        echo ("<a href='/measures/view.html?mode=view&measure_sid=" . $measure->measure_sid . "'>" . $measure->combined_duty . "</a>");
                                                     } else {
                                                         echo ($measure->combined_duty);
                                                     }

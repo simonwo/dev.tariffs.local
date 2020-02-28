@@ -18,64 +18,7 @@
 		if ($productline_suffix == "80") {
 	?>
 
-	<form action="/actions/goods_nomenclature_actions.html" method="get" class="inline_form">
-				<h3>Filter results</h3>
-				<!--<input type="hidden" name="goods_nomenclature_item_id" value="<?=$goods_nomenclature_item_id?>" />//-->
-				<input type="hidden" name="phase" value="goods_nomenclature_item_view_filter" />
-				<input type="hidden" name="productline_suffix" value="<?=$productline_suffix?>" />
-				<div class="column-one-third" style="width:200px">
-					<div class="govuk-form-group">
-						<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-							<span id="base_regulation_hint" class="govuk-hint">Filter by commodity code</span>
-							<div class="govuk-date-input" id="measure_start">
-								<div class="govuk-date-input__item">
-									<div class="govuk-form-group" style="padding:0px;margin:0px">
-										<input value="<?=$goods_nomenclature_item_id?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="goods_nomenclature_item_id" maxlength="14" name="goods_nomenclature_item_id" type="text">
-									</div>
-								</div>
-							</div>
-						</fieldset>
-					</div>
-				</div>
-				<div class="column-one-third" style="width:200px">
-					<div class="govuk-form-group">
-						<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-							<span id="base_regulation_hint" class="govuk-hint">Filter by measure type ID</span>
-							<div class="govuk-date-input" id="measure_start">
-								<div class="govuk-date-input__item">
-									<div class="govuk-form-group" style="padding:0px;margin:0px">
-										<input value="<?=$measure_type_id?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="measure_type_id" maxlength="50" name="measure_type_id" type="text">
-									</div>
-								</div>
-							</div>
-						</fieldset>
-					</div>
-				</div>
-				<div class="column-one-third" style="width:200px">
-					<div class="govuk-form-group">
-						<fieldset class="govuk-fieldset" aria-describedby="base_regulation_hint" role="group">
-							<span id="base_regulation_hint" class="govuk-hint">Filter by geo. area ID</span>
-							<div class="govuk-date-input" id="measure_start">
-								<div class="govuk-date-input__item">
-									<div class="govuk-form-group" style="padding:0px;margin:0px">
-										<input value="<?=$geographical_area_id?>" class="govuk-input govuk-date-input__input govuk-input--width-8" id="geographical_area_id" maxlength="50" name="geographical_area_id" type="text">
-									</div>
-								</div>
-							</div>
-						</fieldset>
-					</div>
-				</div>
-				<div class="column-one-third" style="width:200px">
-					<div class="govuk-form-group" style="padding:0px;margin:0px">
-						<button type="submit" class="govuk-button" style="margin-top:36px">Search</button>
-					</div>
-				</div>
-				<div class="clearer"><!--&nbsp;//--></div>
-				</form>
-
-
-
-	<?php
+<?php
 		// Firstly, get all the duties to put in the duty column
 			$sql = "SELECT m.additional_code_type_id, m.additional_code_id, m.measure_type_id,
 			mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
@@ -288,17 +231,17 @@
 					}
 					$url = $base_url . $qs;
 ?>
-				<table class="govuk-table" cellspacing="0">
+				<table class="govuk-table govuk-table--m" cellspacing="0">
 					<tr class="govuk-table__row">
-						<th nowrap class="govuk-table__header nopad vsmall">Measure SID&nbsp;<a href="<?=$url . "&so=measure_sid&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=measure_sid&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
-						<th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity&nbsp;<a href="<?=$url . "&so=goods_nomenclature_item_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=goods_nomenclature_item_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
-						<th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID&nbsp;<a href="<?=$url . "&so=measure_type_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=measure_type_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
-						<th nowrap class="govuk-table__header vsmall l" style="width:15%">Geographical area&nbsp;<a href="<?=$url . "&so=geographical_area_id&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=geographical_area_id&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
+						<th nowrap class="govuk-table__header nopad vsmall">Measure SID</th>
+						<th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity</th>
+						<th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID</th>
+						<th nowrap class="govuk-table__header vsmall l" style="width:15%">Geographical area</th>
 						<th nowrap class="govuk-table__header vsmall c nw">Add. code</th>
-						<th nowrap class="govuk-table__header vsmall">Regulation&nbsp;<a href="<?=$url . "&so=regulation&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=regulation&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
+						<th nowrap class="govuk-table__header vsmall">Regulation</th>
 						<th nowrap class="govuk-table__header vsmall l">Start date</th>
 						<th nowrap class="govuk-table__header vsmall l">End&nbsp;date</th>
-						<th nowrap class="govuk-table__header vsmall c">Order number&nbsp;<a href="<?=$url . "&so=ordernumber&sd=asc#assigned"?>" class="table_arrow">&uarr;</a><a href="<?=$url . "&so=ordernumber&sd=desc#assigned"?>" class="table_arrow">&darr;</a></th>
+						<th nowrap class="govuk-table__header vsmall c">Order number&nbsp;</th>
 						<th nowrap class="govuk-table__header vsmall r">Duty</th>
 					</tr>
 <?php					
@@ -309,14 +252,14 @@
 					$rowclass                   = rowclass($m->validity_start_date, $m->validity_end_date);
 	?>
 					<tr class="<?=$rowclass?>">
-						<td class="govuk-table__cell nopad vsmall"><a href="measure_view.html?measure_sid=<?=$m->measure_sid?>"><?=$m->measure_sid?></a></td>
+						<td class="govuk-table__cell nopad vsmall"><a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=<?=$m->measure_sid?>"><?=$m->measure_sid?></a></td>
 	<!-- Show nomenclature cell //-->
 	<?php
 		$pos = strpos($current_file_name, "goods_nomenclature_item_view");
 		if ($pos != 0) {
 	?>
 						<td class="govuk-table__cell vsmall" nowrap>
-							<a class="nodecorate" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$m->goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>
+							<a class="nodecorate" class="govuk-link" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$m->goods_nomenclature_item_id?>"><?=format_goods_nomenclature_item_id($goods_nomenclature_item_id)?></a>
 						</td>
 	<?php
 		} else {
@@ -331,7 +274,7 @@
 
 
 	<!-- Start show measure type cell //-->
-						<td class="govuk-table__cell vsmall"><a href="measure_type_view.html?measure_type_id=<?=$m->measure_type_id?>"><?=$m->measure_type_id?>&nbsp;<?=$m->measure_type_description?></a></td>
+						<td class="govuk-table__cell vsmall"><a class="govuk-link" href="/measure_types/view.html?measure_type_id=<?=$m->measure_type_id?>"><?=$m->measure_type_id?>&nbsp;<?=$m->measure_type_description?></a></td>
 	<!-- End show measure type cell //-->
 
 
@@ -340,7 +283,7 @@
 		if ($current_file_name != "geographical_area_view.html") {
 	?>
 						<td class="govuk-table__cell vsmall">
-							<a href="geographical_area_view.html?geographical_area_id=<?=$m->geographical_area_id?>"><?=$m->geographical_area_id?>&nbsp;<?=$m->geographical_area_description?></a>
+							<a class="govuk-link" href="/geographical_areas/view.html?geographical_area_id=<?=$m->geographical_area_id?>"><?=$m->geographical_area_id?>&nbsp;<?=$m->geographical_area_description?></a>
 						</td>
 	<?php
 		} else {
@@ -354,10 +297,10 @@
 
 
 						<td class="govuk-table__cell vsmall c"><?=$m->additional_code_type_id?><?=$m->additional_code_id?></td>
-						<td class="govuk-table__cell vsmall"><a href="regulation_view.html?base_regulation_id=<?=$m->regulation_id_full?>"><?=$m->regulation_id_full?></a></td>
+						<td class="govuk-table__cell vsmall"><a class="govuk-link" href="/regulations/view.html?base_regulation_id=<?=$m->regulation_id_full?>"><?=$m->regulation_id_full?></a></td>
 						<td nowrap class="govuk-table__cell vsmall l"><?=$m->validity_start_date?></td>
 						<td nowrap class="govuk-table__cell vsmall l"><?=$m->validity_end_date?></td>
-						<td nowrap class="govuk-table__cell vsmall c"><a href="/quota_order_number_view.html?quota_order_number_id=<?=$m->quota_order_number_id?>"><?=$m->quota_order_number_id?></a></td>
+						<td nowrap class="govuk-table__cell vsmall c"><a class="govuk-link" href="/quota_order_number_view.html?quota_order_number_id=<?=$m->quota_order_number_id?>"><?=$m->quota_order_number_id?></a></td>
 						<td class="govuk-table__cell vsmall r"><?=$m->combined_duty?></td>
 					</tr>
 	<?php
@@ -370,7 +313,7 @@
 			echo ("<p>There are no measures assigned that match the chosen criteria.</p>");
 		}
 ?>		
-				<p class="back_to_top"><a href="#top">Back to top</a></p>
+				<p class="back_to_top"><a class="govuk-link" href="#top">Back to top</a></p>
 	<?php
 		} else {
 			echo ("<p>No measures, as this does not have a product line suffix of '80'.</p>");

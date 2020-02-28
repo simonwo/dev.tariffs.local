@@ -60,6 +60,20 @@ class session
         }
     }
 
+    function filter_workbasket()
+    {
+        $workbasket_filter_text = get_querystring("workbasket_filter_text");
+        $status = get_querystring("status");
+        $view_option = get_querystring("view_option");
+
+        $_SESSION["workbasket_filter_text"] = $workbasket_filter_text;
+        $_SESSION["workbasket_filter_status"] = serialize($status);
+        $_SESSION["workbasket_filter_view_option"] = $view_option;
+
+        $url = "/#workbaskets";
+        header("Location: " . $url);
+    }
+
     function sign_in()
     {
         global $conn;
@@ -214,8 +228,13 @@ class session
     public function open_workbasket($id)
     {
         $_SESSION["workbasket_id"] = $id;
+        $request_uri = get_formvar("request_uri");
         $this->get_workbasket();
-        $url = "/#workbaskets";
+        if ($request_uri == "") {
+            $url = "/#workbaskets";
+        } else {
+            $url = $request_uri;
+        }
         header("Location: " . $url);
     }
 
@@ -239,12 +258,25 @@ class session
         $_SESSION["cookies_accepted"] = 1;
     }
 
+    public function create_or_open_workbasket()
+    {
+        //prend ($_REQUEST);
+        $workbasket_id = get_formvar("workbasket_id");
+        if ($workbasket_id == -1) {
+            $this->create_workbasket();
+        } else {
+            $this->open_workbasket($workbasket_id);
+        }
+    }
+
     public function create_workbasket()
     {
         global $conn, $application;
         $errors = array();
 
-        //prend($_SESSION);
+        //prend($_REQUEST);
+        $request_uri = get_formvar("request_uri");
+        //prend ($request_uri);
 
         $this->title = get_formvar("title");
         $this->reason = get_formvar("reason");
@@ -264,7 +296,7 @@ class session
             $url = "create_edit.html?err=1";
         } else {
             $operation_date = $application->get_operation_date();
-            $sql = "insert into workbaskets (title, reason, user_id, status, created_at) values ($1, $2, $3, 'in progress', $4) RETURNING workbasket_id;";
+            $sql = "insert into workbaskets (title, reason, user_id, status, created_at) values ($1, $2, $3, 'In progress', $4) RETURNING workbasket_id;";
             pg_prepare($conn, "workbasket_insert", $sql);
             $result = pg_execute($conn, "workbasket_insert", array($this->title, $this->reason, $this->uid, $operation_date));
             if ($result) {
@@ -276,7 +308,7 @@ class session
             }
 
 
-            $url = "workbasket_confirmation.html";
+            $url = "workbasket_confirmation.html?request_uri=" . urlencode($request_uri);
         }
         header("Location: " . $url);
     }

@@ -23,6 +23,7 @@ class quota_order_number
     public $year_count = null;
     public $duties_same_for_all_commodities = null;
     public $quota_category = "";
+    public $mechanism = "";
     public $origins = array();
     public $measure_types = array();
 
@@ -462,40 +463,86 @@ class quota_order_number
         global $conn;
         $ret = false;
 
+        if (substr($this->quota_order_number_id, 0, 3) == "094") {
+            $this->licensed = true;
+        } else {
+            $this->licensed = false;
+        }
+
         // Get core data
-        $sql = "SELECT validity_start_date, validity_end_date, qon.description, origin_quota,
-        quota_scope, qon.quota_category, quota_order_number_sid, qc.description as quota_category_description
-        FROM quota_order_numbers qon left outer join quota_categories qc on qon.quota_category = qc.quota_category
-        WHERE quota_order_number_sid = $1
-        order by validity_start_date desc limit 1";
-        pg_prepare($conn, "quota_populate_from_db_core", $sql);
-        $result = pg_execute($conn, "quota_populate_from_db_core", array($this->quota_order_number_sid));
-        if ($result) {
-            if (pg_num_rows($result) > 0) {
-                $row = pg_fetch_row($result);
-                $this->validity_start_date = $row[0];
-                $this->validity_end_date = $row[1];
-                $this->description = $row[2];
-                $this->origin_quota = $row[3];
-                $this->quota_scope = $row[4];
-                $this->quota_category = $row[5];
-                $this->quota_order_number_sid = $row[6];
-                $this->quota_category_description = $row[7];
-                $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));
-                $this->validity_start_date_month = date('m', strtotime($this->validity_start_date));
-                $this->validity_start_date_year = date('Y', strtotime($this->validity_start_date));
-                if ($this->validity_end_date != "") {
-                    $this->validity_end_date_day = date('d', strtotime($this->validity_end_date));
-                    $this->validity_end_date_month = date('m', strtotime($this->validity_end_date));
-                    $this->validity_end_date_year = date('Y', strtotime($this->validity_end_date));
-                } else {
-                    $this->validity_end_date_day = "";
-                    $this->validity_end_date_month = "";
-                    $this->validity_end_date_year = "";
+        if (!$this->licensed) {
+            $sql = "SELECT validity_start_date, validity_end_date, qon.description, origin_quota,
+            quota_scope, qon.quota_category, quota_order_number_sid, qc.description as quota_category_description
+            FROM quota_order_numbers qon left outer join quota_categories qc on qon.quota_category = qc.quota_category
+            WHERE quota_order_number_sid = $1
+            order by validity_start_date desc limit 1";
+            pg_prepare($conn, "quota_populate_from_db_core", $sql);
+            $result = pg_execute($conn, "quota_populate_from_db_core", array($this->quota_order_number_sid));
+            if ($result) {
+                if (pg_num_rows($result) > 0) {
+                    $row = pg_fetch_row($result);
+                    $this->mechanism = "First Come First Served";
+                    $this->validity_start_date = $row[0];
+                    $this->validity_end_date = $row[1];
+                    $this->description = $row[2];
+                    $this->origin_quota = $row[3];
+                    $this->quota_scope = $row[4];
+                    $this->quota_category = $row[5];
+                    $this->quota_order_number_sid = $row[6];
+                    $this->quota_category_description = $row[7];
+                    $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));
+                    $this->validity_start_date_month = date('m', strtotime($this->validity_start_date));
+                    $this->validity_start_date_year = date('Y', strtotime($this->validity_start_date));
+                    if ($this->validity_end_date != "") {
+                        $this->validity_end_date_day = date('d', strtotime($this->validity_end_date));
+                        $this->validity_end_date_month = date('m', strtotime($this->validity_end_date));
+                        $this->validity_end_date_year = date('Y', strtotime($this->validity_end_date));
+                    } else {
+                        $this->validity_end_date_day = "";
+                        $this->validity_end_date_month = "";
+                        $this->validity_end_date_year = "";
+                    }
+                    $ret = true;
                 }
-                $ret = true;
+            }
+        } else {
+            //h1 ($this->quota_order_number_id);
+            $sql = "SELECT validity_start_date, validity_end_date, lq.description, origin_quota,
+            quota_scope, lq.quota_category, quota_order_number_sid, qc.description as quota_category_description
+            FROM licensed_quotas_oplog lq left outer join quota_categories qc on lq.quota_category = qc.quota_category
+            WHERE quota_order_number_id = $1
+            order by validity_start_date desc limit 1";
+            pg_prepare($conn, "quota_populate_from_db_core", $sql);
+            $result = pg_execute($conn, "quota_populate_from_db_core", array($this->quota_order_number_id));
+            if ($result) {
+                if (pg_num_rows($result) > 0) {
+                    $row = pg_fetch_row($result);
+                    $this->mechanism = "Licensed";
+                    $this->validity_start_date = $row[0];
+                    $this->validity_end_date = $row[1];
+                    $this->description = $row[2];
+                    $this->origin_quota = $row[3];
+                    $this->quota_scope = $row[4];
+                    $this->quota_category = $row[5];
+                    $this->quota_order_number_sid = $row[6];
+                    $this->quota_category_description = $row[7];
+                    $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));
+                    $this->validity_start_date_month = date('m', strtotime($this->validity_start_date));
+                    $this->validity_start_date_year = date('Y', strtotime($this->validity_start_date));
+                    if ($this->validity_end_date != "") {
+                        $this->validity_end_date_day = date('d', strtotime($this->validity_end_date));
+                        $this->validity_end_date_month = date('m', strtotime($this->validity_end_date));
+                        $this->validity_end_date_year = date('Y', strtotime($this->validity_end_date));
+                    } else {
+                        $this->validity_end_date_day = "";
+                        $this->validity_end_date_month = "";
+                        $this->validity_end_date_year = "";
+                    }
+                    $ret = true;
+                }
             }
         }
+
 
         // Get origins
         $this->origins = array();
@@ -628,7 +675,7 @@ class quota_order_number
                     $quota_definition->edit_action = "<a class='govuk-link' href='/quota_definitions/create_edit.html?mode=update&quota_definition_sid=" . $quota_definition->quota_definition_sid . "&quota_order_number_sid=" . $quota_definition->quota_order_number_sid . "&quota_order_number_id=" . $quota_definition->quota_order_number_id . "'><img src='/assets/images/edit.png' alt='Edit this quota definition' /></a>";
                     $quota_definition->delete_action = "<a class='govuk-link' href='definition_create_edit.html'><img src='/assets/images/delete.png' alt='Delete this quota definition' /></a>";
 
-                    
+
 
                     $quota_definition->actions .= $quota_definition->duplicate_action;
                     $quota_definition->actions .= $quota_definition->edit_action;
@@ -824,18 +871,34 @@ class quota_order_number
             }
         }
 
-
-
         // Get the commodities
         $this->quota_commodities = array();
-        $sql = "select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid, gnd.description 
-        from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd 
-        where ordernumber = $1
-        and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
-        and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
-        and gn.producline_suffix = '80'
-        and gn.validity_end_date is null
-        order by m.goods_nomenclature_item_id, gnd.oid desc;";
+        if ($this->licensed == false) {
+            $sql = "select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid,
+            gnd.description, m.measure_type_id || ' - ' || mtd.description as measure_type
+            from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd, measure_type_descriptions mtd
+            where ordernumber = $1
+            and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+            and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+            and gn.producline_suffix = '80'
+            and gn.validity_end_date is null
+            and m.measure_type_id = mtd.measure_type_id
+            and m.validity_start_date >=
+            (select qd.validity_start_date from quota_definitions qd where qd.quota_order_number_id = ordernumber order by qd.validity_start_date desc limit 1) 
+            order by m.goods_nomenclature_item_id, gnd.oid desc;";
+        } else {
+            $sql = "select distinct on (m.goods_nomenclature_item_id) m.goods_nomenclature_item_id, m.goods_nomenclature_sid,
+            gnd.description, m.measure_type_id || ' - ' || mtd.description as measure_type
+            from measures m, goods_nomenclatures gn, goods_nomenclature_descriptions gnd, measure_type_descriptions mtd
+            where ordernumber = $1
+            and m.goods_nomenclature_sid = gn.goods_nomenclature_sid 
+            and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid 
+            and gn.producline_suffix = '80'
+            and gn.validity_end_date is null
+            and m.validity_end_date is null
+            and m.measure_type_id = mtd.measure_type_id
+            order by m.goods_nomenclature_item_id, gnd.oid desc;";
+        }
 
         $stmt = "quota_get_commodities_" . uniqid();
         pg_prepare($conn, $stmt, $sql);
@@ -847,13 +910,13 @@ class quota_order_number
                     $gn->goods_nomenclature_item_id = $row[0];
                     $gn->goods_nomenclature_sid = $row[1];
                     $gn->description = $row[2];
+                    $gn->measure_type = $row[3];
                     $url = "/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $gn->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $gn->goods_nomenclature_sid;
                     $gn->goods_nomenclature_item_id_link = "<a class='nodecorate' href='" . $url . "'>" . format_goods_nomenclature_item_id($gn->goods_nomenclature_item_id) . "</a>";
                     array_push($this->quota_commodities, $gn);
                 }
             }
         }
-
 
         // Get the measures
         $this->quota_measures = array();
@@ -884,6 +947,10 @@ class quota_order_number
                     $m->reduction_indicator = $row[9];
                     $m->status = $row[10];
                     $m->measure_type_description = $row[11];
+                    $m->exclusions = "";
+                    $m->duties = "duties";
+                    $m->conditions = "conditions";
+                    $m->footnotes = "footnotes";
 
                     // Get commodity link
                     $commodity_url = "/goods_nomenclatures/goods_nomenclature_item_view.html?mode=view&goods_nomenclature_item_id=" . $m->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $m->goods_nomenclature_sid;
@@ -892,22 +959,22 @@ class quota_order_number
                     // Get measure type link
                     $measure_type_url = "/measure_types/view.html?mode=view&measure_type_id=" . $m->measure_type_id;
                     $m->measure_type_link = "<a class='govuk-link' href='" . $measure_type_url . "'><abbr title='" . $m->measure_type_description . "'>" . $m->measure_type_id . "</abbr></a>";
-                    
+
                     // Get geographical area ID link
                     $geographical_area_url = "/geographical_areas/view.html?mode=view&geographical_area_id=" . $m->geographical_area_id . "&geographical_area_sid=" . $m->geographical_area_sid;
                     $m->geographical_area_link = "<a class='govuk-link' href='" . $geographical_area_url . "'>" . $m->geographical_area_id . "</a>";
-                    
+
                     // Get Measure SID link
                     $measure_url = "/measures/view.html?mode=view&measure_sid=" . $m->measure_sid;
                     $m->measure_link = "<a class='govuk-link' href='" . $measure_url . "'>" . $m->measure_sid . "</a>";
-                    
+
                     // Get regulation link
                     $regulation_url = "/regulations/view.html?mode=view&base_regulation_id=" . $m->measure_generating_regulation_id;
                     $m->regulation_link = "<a class='govuk-link' href='" . $regulation_url . "'>" . $m->measure_generating_regulation_id . "</a>";
-                    
 
 
-                    http://dev.tariffs.local/measures/view.html?mode=view&measure_sid=3702442
+
+                    http: //dev.tariffs.local/measures/view.html?mode=view&measure_sid=3702442
 
 
 

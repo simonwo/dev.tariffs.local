@@ -386,7 +386,7 @@ class footnote
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         # Create the footnote record
         $sql = "INSERT INTO footnotes_oplog (
             footnote_id, footnote_type_id, validity_start_date, validity_end_date,
@@ -444,7 +444,7 @@ class footnote
         $operation_date = $application->get_operation_date();
         $this->footnote_description_period_sid = $application->get_next_footnote_description_period();
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
 
         # Create the footnote description record
         $sql = "INSERT INTO footnote_descriptions_oplog (footnote_description_period_sid, footnote_id,
@@ -586,7 +586,7 @@ class footnote
         $this->footnote_description_period_sid = $footnote_description_period_sid;
 
         $this->f_validity_start_date = $this->get_start_date();
-        $status = 'awaiting approval';
+        $status = 'In progress';
 
         # Insert the footnote description period
         $sql = "INSERT INTO footnote_description_periods_oplog

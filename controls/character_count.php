@@ -43,6 +43,7 @@ class character_count_control
         // Get pattern string
         $this->pattern = $pattern;
         $this->group_class  = $group_class;
+        //h1 ($this->group_class);
 
         $this->display();
     }
@@ -72,7 +73,7 @@ class character_count_control
             } else {
             ?>
                 <!-- Start character count control <?= $this->control_name ?> //-->
-                <div id="heading_<?= $this->control_name ?>" class="govuk-character-count <?= $error_handler->get_error($this->error_key); ?>" data-module="govuk-character-count" <?= $this->data_maxlength_string ?>>
+                <div id="heading_<?= $this->control_name ?>" class="govuk-character-count <?= $this->group_class ?> <?= $error_handler->get_error($this->error_key); ?>" data-module="govuk-character-count" <?= $this->data_maxlength_string ?>>
                     <div class="govuk-form-group <?= $error_handler->get_error($this->error_key); ?>">
                         <label class="<?= $this->label_style ?>" for="<?= $this->control_name ?>"><?= $this->label ?></label>
                         <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>

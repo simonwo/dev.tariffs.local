@@ -1,7 +1,17 @@
 <?php
 require(dirname(__FILE__) . "/includes/db.php");
 $application = new application;
-$application->clear_filter_cookies();
+//$application->clear_filter_cookies();
+$application->init("workbaskets", "/workbaskets/config.json");
+$application->get_filter_options();
+$application->get_workbasket_statuses();
+$application->get_workbaskets_by_filter();
+$application->get_workbasket_ownerships();
+$filter_content = array();
+array_push($filter_content, $application->workbasket_ownerships);
+array_push($filter_content, $application->workbasket_statuses);
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -150,154 +160,18 @@ require("includes/metadata.php");
                 <div class="govuk-grid-column-full">
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-m" id="workbaskets">Workbaskets</h1>
+                    <!--<h2 class="govuk-heading-s">You are logged on as <?= $application->session->user_id ?> with permissions <?= $application->session->permissions ?></h2>//-->
+
                     <!-- End main title //-->
-                    <p class="govuk-body">Below is a list of all of the workbaskets that you have created. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
-                    <form>
-                        <!-- Start text input //-->
-                        <div class="govuk-form-group" style='margin:0px'>
-                            <label class="govuk-label govuk-visually-hidden" for="workbasket_filter">
-                                Filter workbasket list
-                            </label>
-                            <input class="govuk-input workbasket_filter" id="workbasket_filter" name="workbasket_filter" type="text" />
-                            <button class="govuk-button" data-module="govuk-button">Filter list</button>
-                            <a id="clear_filter" href="#" class="textual_button govuk-link" style="top:0px !important">Clear filter</a>
-                        </div>
-                        <!-- End text input //-->
+                    <p class="govuk-body">Use the table below to search for existing workbaskets. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
 
-                    </form>
                     <?php
-                    if ($application->session->permissions == "Tariff manager") {
-                        $application->get_my_workbaskets();
-                    } else {
-                        $application->get_all_workbaskets();
-                    }
+                    new search_form(
+                        $application->workbaskets,
+                        $filter_content
+                    );
+
                     ?>
-                    <table class="govuk-table workbaskets">
-                        <thead>
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header">Workbasket ID</th>
-                                <th scope="col" class="govuk-table__header">Workbasket name</th>
-                                <th scope="col" class="govuk-table__header">Created by</th>
-                                <th scope="col" class="govuk-table__header">Date created</th>
-                                <th scope="col" class="govuk-table__header">Last event</th>
-                                <th scope="col" class="govuk-table__header">Status</th>
-                                <th scope="col" class="govuk-table__header r">Next step</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <?php
-                            foreach ($application->workbaskets as $workbasket) {
-                                if ($application->session->workbasket != null) {
-                                    if ($workbasket->workbasket_id == $application->session->workbasket->workbasket_id) {
-                                        $row_class = " b";
-                                        $current = true;
-                                        $active = " (active)";
-                                    } else {
-                                        $row_class = "";
-                                        $current = false;
-                                        $active = "";
-                                    }
-                                } else {
-                                    $row_class = "";
-                                    $current = false;
-                                    $active = "";
-                                }
-                            ?>
-                                <tr class="govuk-table__row <?= $row_class ?>">
-                                    <td class="govuk-table__cell"><?= $workbasket->workbasket_id ?></td>
-                                    <td class="govuk-table__cell"><?= $workbasket->title ?></td>
-                                    <td class="govuk-table__cell"><?= $workbasket->user_name ?></td>
-                                    <td class="govuk-table__cell"><?= $workbasket->created_at ?></td>
-                                    <td class="govuk-table__cell"><?= $workbasket->updated_at ?></td>
-                                    <td class="govuk-table__cell nowrap"><?= status_image($workbasket->status) ?><?= $workbasket->status ?><?= $active ?></td>
-                                    <td class="govuk-table__cell r">
-                                        <?php
-                                        // The buttons to show for the tariff manager
-                                        if ($application->session->permissions == "Tariff manager") {
-
-                                            # Open / close icon
-                                            if ($current == true) {
-                                                echo ("<a title='Close this workbasket' href='/workbaskets/actions.php?action=close'><img alt='Close workbasket' src='/assets/images/close.png' /></a>\r\n");
-                                            } else {
-                                                if ($workbasket->status == 'In Progress') {
-                                                    echo ("<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $workbasket->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n");
-                                                } elseif ($workbasket->status == 'Published') {
-                                                    echo ("<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n");
-                                                } else {
-                                                    echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                                }
-                                            }
-                                            # Withdraw icon
-                                            if (($workbasket->status == 'In Progress') || ($workbasket->status == 'Awaiting Approval') || ($workbasket->status == 'Approval Rejected') || ($workbasket->status == 'Re-editing')) {
-                                                echo ("<a title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $workbasket->workbasket_id . "'><img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /></a>\r\n");
-                                            } else {
-                                                echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                            }
-                                            # View icon
-                                            echo ("<a class='govuk-link' href='/workbaskets/view.html?workbasket_id=" . $workbasket->workbasket_id . "' title='View this workbasket'><img alt='View workbasket' src='/assets/images/view.png' /></a>\r\n");
-
-                                            # Submit icon
-                                            if (($workbasket->status == 'In Progress') || ($workbasket->status == 'xApproval Rejected')) {
-                                                echo ("<a title='Submit workbasket for approval' href=''><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n");
-                                            } else {
-                                                echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                            }
-                                        } else {
-                                            // The buttons to show for the approver
-                                            # Open / close icon
-                                            if ($workbasket->user_id == $application->session->user_id) {
-                                                if ($current == true) {
-                                                    echo ("<a title='Close this workbasket' href='/workbaskets/actions.php?action=close'><img alt='Close workbasket' src='/assets/images/close.png' /></a>\r\n");
-                                                } else {
-                                                    if ($workbasket->status == 'In Progress') {
-                                                        echo ("<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $workbasket->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n");
-                                                    } elseif ($workbasket->status == 'Published') {
-                                                        echo ("<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n");
-                                                    } else {
-                                                        echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                                    }
-                                                }
-                                            } else {
-                                                echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                            }
-
-
-
-
-                                            # Withdraw icon
-                                            if ($workbasket->user_id == $application->session->user_id) {
-                                                if (($workbasket->status == 'In Progress') || ($workbasket->status == 'Awaiting Approval') || ($workbasket->status == 'Approval Rejected') || ($workbasket->status == 'Re-editing')) {
-                                                    echo ("<a title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $workbasket->workbasket_id . "'><img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /></a>\r\n");
-                                                } else {
-                                                    echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                                }
-                                            }
-
-
-                                            # View icon
-                                            echo ("<a class='govuk-link' href='/workbaskets/view.html?workbasket_id=" . $workbasket->workbasket_id . "' title='View this workbasket' href=''><img src='/assets/images/view.png' /></a>\r\n");
-
-                                            # Submit icon
-                                            if ($workbasket->user_id == $application->session->user_id) {
-                                                if (($workbasket->status == 'In Progress') || ($workbasket->status == 'xApproval Rejected')) {
-                                                    echo ("<a title='Submit workbasket for approval' href=''><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n");
-                                                } else {
-                                                    echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                                }
-                                            } else {
-                                                echo ("<img alt='' src='/assets/images/blank.png' />\r\n");
-                                            }
-                                        }
-                                        ?>
-                                    </td>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-
-
                 </div>
             </div>
 
@@ -306,7 +180,6 @@ require("includes/metadata.php");
     <?php
     require("includes/footer.php");
     ?>
-
 </body>
 
 </html>

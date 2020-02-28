@@ -129,7 +129,7 @@ class quota_order_number_origin
             $this->quota_definition_sid = $this->get_next_sid();
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         $sql = "INSERT INTO quota_definitions_oplog (
         quota_definition_sid,
         quota_definition_sid,

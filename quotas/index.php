@@ -86,7 +86,7 @@ require("../includes/metadata.php");
                                         <div class="govuk-checkboxes__item">
                                             <input <?php if (in_array("FCFS", get_form_array("administration_mechanism"))) { echo ("checked");} ?> class="govuk-checkboxes__input" id="administration_mechanism_fcfs" name="administration_mechanism[]" type="checkbox" value="FCFS">
                                             <label class="govuk-label govuk-checkboxes__label" for="administration_mechanism_fcfs">
-                                                First come, first served quotas
+                                                First come, first served (FCFS) quotas
                                             </label>
                                         </div>
                                         <div class="govuk-checkboxes__item">

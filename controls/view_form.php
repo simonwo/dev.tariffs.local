@@ -24,7 +24,7 @@ class view_form
 
         $this->object_name = $config["object_name"];
         $this->url_edit = $this->detokenise($config["url_edit"]);
-        //prend ($this->url_edit);
+
         if (isset($config["override_root"])) {
             $this->root = $config["override_root"];
         } else {
@@ -93,7 +93,7 @@ class view_form
     {
         global $application;
         $my_field_content = $application->data[$application->tariff_object]["view"]["fields"];
-        $my_control_content = $application->data[$application->tariff_object]["view"]["controls"];
+        $control_list = $application->data[$application->tariff_object]["view"]["controls"];
         $config = $application->data[$application->tariff_object]["config"];
 ?>
         <!-- Start breadcrumbs //-->
@@ -132,14 +132,21 @@ class view_form
                                 </a>
                             </li>
                             <?php
-                            foreach ($my_control_content as $item) {
+                            foreach ($control_list as $item) {
+                                $control_name = $item["control_name"];
+                                if (isset($this->control_content[$control_name])) {
+                                    $type = gettype($this->control_content[$control_name]);
+                                    //h1 ($control_name . " : " . $type);
+                                    if ((gettype($this->control_content[$control_name]) == "array") || (gettype($this->control_content[$control_name]) == "resource")) {
                             ?>
-                                <li class="govuk-tabs__list-item">
-                                    <a class="govuk-tabs__tab" href="#tab_<?= $item["control_name"] ?>">
-                                        <?= $item["caption"] ?>
-                                    </a>
-                                </li>
+                                        <li class="govuk-tabs__list-item">
+                                            <a class="govuk-tabs__tab" href="#tab_<?= $control_name ?>">
+                                                <?= $item["caption"] ?>
+                                            </a>
+                                        </li>
                             <?php
+                                    }
+                                }
                             }
                             ?>
                         </ul>
@@ -197,7 +204,7 @@ class view_form
 
                         <!-- Start secondary fields //-->
                         <?php
-                        foreach ($my_control_content as $item) {
+                        foreach ($control_list as $item) {
                             $table_class = "";
                             if (isset($item["table_class"])) {
                                 $table_class = $item["table_class"];
@@ -240,7 +247,7 @@ class view_form
                                             $table_class = $table_class
                                         );
                                         break;
-    
+
                                     case "additional_code_measure_type_table_control":
                                         new additional_code_measure_type_table_control(
                                             $control_name = $item["control_name"],

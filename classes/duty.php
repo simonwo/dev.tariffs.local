@@ -160,7 +160,7 @@ class duty
                     $this->duty_string .= $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
-                        if ($this->measurement_unit_qualifier_code != "") {
+                        if ($this->measurement_unit_qualifier_code . "" != "") {
                             $this->duty_string .= " / " . $this->getQualifier();
                         }
                     }
@@ -178,7 +178,7 @@ class duty
                     $this->duty_string .= " + " . $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
-                        if ($this->measurement_unit_qualifier_code != "") {
+                        if ($this->measurement_unit_qualifier_code . "" != "") {
                             $this->duty_string .= " / " . $this->getQualifier();
                         }
                     }
@@ -197,7 +197,7 @@ class duty
                     $this->duty_string .= "MIN " . $duty_amount . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
-                        if ($this->measurement_unit_qualifier_code != "") {
+                        if ($this->measurement_unit_qualifier_code . "" != "") {
                             $this->duty_string .= " / " . $this->getQualifier();
                         }
                     }
@@ -214,7 +214,7 @@ class duty
                     $this->duty_string .= "MAX " . $duty_amount  . " " . $this->monetary_unit_code;
                     if ($this->measurement_unit_code != "") {
                         $this->duty_string .= " / " . $this->getMeasurementUnit();
-                        if ($this->measurement_unit_qualifier_code != "") {
+                        if ($this->measurement_unit_qualifier_code . "" != "") {
                             $this->duty_string .= " / " . $this->getQualifier();
                         }
                     }
@@ -363,6 +363,9 @@ class duty
                 break;
             case "G":
                 $qual_desc = "gross";
+                break;
+            case "I":
+                $qual_desc = "of biodiesel content";
                 break;
             case "M":
                 $qual_desc = "net dry";

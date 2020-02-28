@@ -29,7 +29,8 @@ class workbasket
         return ($measure_sid);
     }
 
-    function populate() {
+    function populate()
+    {
         global $conn;
         $sql = "select title, reason, user_id, status, created_at, last_status_change_at, last_update_by_id 
         from workbaskets w where w.workbasket_id = $1;";
@@ -43,15 +44,11 @@ class workbasket
             $this->title = $row[0];
             $this->reason = $row[1];
             $this->user_id = $row[2];
-            $this->status = ucwords($row[3]);
+            $this->status = $row[3];
             $this->created_at = $row[4];
             $this->last_status_change = $row[5];
             $this->last_updated_by = $row[6];
         }
-    }
-
-    function reassign_workbasket()
-    {
     }
 
     public function show_section($object_type, $result)
@@ -235,7 +232,7 @@ class workbasket
         and wi.record_type = 'footnote'
         and wi.workbasket_id = $1
         order by wi.created_at";
-        
+
         pg_prepare($conn, "workbasket_get_footnotes", $sql);
         $result = pg_execute($conn, "workbasket_get_footnotes", array(
             $this->workbasket_id
@@ -329,7 +326,7 @@ class workbasket
             $this->workbasket_id
         ));
         $this->show_section("geographical areas", $result);
-    }    
+    }
 
     public function workbasket_get_measure_activities()
     {
@@ -535,5 +532,63 @@ class workbasket
                 db_execute($sql, array($workbasket_item_id));
                 break;
         }
+    }
+
+    function show_workbasket_icon_open_close()
+    {
+        global $application;
+        $ret = "";
+        if (isset($application->session->workbasket->workbasket_id)) {
+            $test = $application->session->workbasket->workbasket_id;
+        } else {
+            $test = -1;
+        }
+        if ($this->workbasket_id == $test) {
+            $ret = "<a title='Close this workbasket' href='/workbaskets/actions.php?action=close'><img alt='Close workbasket' src='/assets/images/close.png' /></a>\r\n";
+        } else {
+            if ($this->status == 'In progress') {
+                $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
+            } elseif ($this->status == 'Published') {
+                $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+            } else {
+                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            }
+        }
+        return ($ret);
+    }
+
+    function show_workbasket_icon_withdraw()
+    {
+        global $application;
+        $ret = "";
+
+        if ($this->user_id == $application->session->user_id) {
+            if (($this->status == 'In progress') || ($this->status == 'Awaiting Approval') || ($this->status == 'Approval Rejected') || ($this->status == 'Re-editing')) {
+                $ret = "<a title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $this->workbasket_id . "'><img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /></a>\r\n";
+            } else {
+                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            }
+        } else {
+            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+        }
+
+        return ($ret);
+    }
+
+    function show_workbasket_icon_submit()
+    {
+        global $application;
+        $ret = "";
+
+        if ($this->user_id == $application->session->user_id) {
+            if (($this->status == 'In progress') || ($this->status == 'Re-editing')) {
+                $ret = "<a title='Submit workbasket for approval' href=''><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n";
+            } else {
+                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            }
+        } else {
+            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+        }
+        return ($ret);
     }
 }

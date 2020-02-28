@@ -65,7 +65,7 @@ require("../includes/metadata.php");
                                     The indent field ...
                                 </span>
                             </th>
-                            <th class="govuk-table__header r" scope="col" style="width:5%">Manage</th>
+                            <th class="govuk-table__header c" scope="col" style="width:5%">Manage</th>
                         </tr>
 
                         <?php
@@ -89,7 +89,7 @@ require("../includes/metadata.php");
                                     ?>
                                     <td class="govuk-table__cell c"><?= $heading->productline_suffix_display() ?></td>
                                     <td class="govuk-table__cell c"><?= $heading->number_indents ?></td>
-                                    <td class="govuk-table__cell r" nowrap><a class="govuk-link" href="">View / edit</a></td>
+                                    <td class="govuk-table__cell c" nowrap><a class="govuk-link" href=""><img src='/assets/images/view.png' alt='View this commodity' /></a></td>
                                 </tr>
                         <?php
                             }

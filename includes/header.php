@@ -69,7 +69,7 @@
                     if ($application->session->workbasket != null) {
                         echo ('Current workbasket: <a href="/workbaskets/view.html">' . $application->session->workbasket->title . '</a>&nbsp;&nbsp;');
                     } else {
-                        echo ('<a href="/workbaskets/create_edit.html">Create workbasket</a>&nbsp;&nbsp;');
+                        echo ('<a href="/workbaskets/create_or_open_workbasket.html">Create or open workbasket</a>&nbsp;&nbsp;');
                     }
                     echo ('<a href="/session/sign_out.html">Sign out</a>');
                 }

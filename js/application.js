@@ -34,6 +34,9 @@ $(document).ready(function () {
     /* geo functions */
     $("#form_quota_order_number_origin .exclusions").css("display", "none");
 
+    $(".new_workbasket").css("display", "none");
+    
+
 
     $("th.tip").mouseover(function () {
         tip_name = $(this).attr("aria-describedby");
@@ -1496,7 +1499,7 @@ $(document).ready(function () {
         year_value = $("#validity_start_date_year").val();
         month_value = $("#validity_start_date_month").val();
         day_value = $("#validity_start_date_day").val();
-        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateString = day_value + "/" + month_value + "/" + year_value;
         var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
         dateMomentObject.add(3, 'months');
         $("#validity_start_date_year").val(dateMomentObject.format("YYYY"));
@@ -1506,13 +1509,13 @@ $(document).ready(function () {
         year_value = $("#validity_end_date_year").val();
         month_value = $("#validity_end_date_month").val();
         day_value = $("#validity_end_date_day").val();
-        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateString = day_value + "/" + month_value + "/" + year_value;
         var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
         dateMomentObject.add(3, 'months');
         $("#validity_end_date_year").val(dateMomentObject.format("YYYY"));
         $("#validity_end_date_month").val(dateMomentObject.format("MM"));
         $("#validity_end_date_day").val(dateMomentObject.format("DD"));
-                
+
         e.preventDefault();
         e.stopPropagation();
     });
@@ -1523,7 +1526,7 @@ $(document).ready(function () {
         year_value = $("#validity_start_date_year").val();
         month_value = $("#validity_start_date_month").val();
         day_value = $("#validity_start_date_day").val();
-        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateString = day_value + "/" + month_value + "/" + year_value;
         var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
         dateMomentObject.add(6, 'months');
         $("#validity_start_date_year").val(dateMomentObject.format("YYYY"));
@@ -1533,13 +1536,13 @@ $(document).ready(function () {
         year_value = $("#validity_end_date_year").val();
         month_value = $("#validity_end_date_month").val();
         day_value = $("#validity_end_date_day").val();
-        var dateString = day_value + "/" + month_value + "/" + year_value; 
+        var dateString = day_value + "/" + month_value + "/" + year_value;
         var dateMomentObject = moment(dateString, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
         dateMomentObject.add(6, 'months');
         $("#validity_end_date_year").val(dateMomentObject.format("YYYY"));
         $("#validity_end_date_month").val(dateMomentObject.format("MM"));
         $("#validity_end_date_day").val(dateMomentObject.format("DD"));
-                
+
         e.preventDefault();
         e.stopPropagation();
     });
@@ -1548,8 +1551,6 @@ $(document).ready(function () {
 
     // END - quota definition helpers
     /***************************************************************************************************************/
-
-
 
     function getRadioValue(element_Name) {
         var ele = document.getElementsByName(element_Name);
@@ -1567,5 +1568,51 @@ $(document).ready(function () {
         return s;
     }
 
+    function copy_commodities() {
+        /* Get the text field */
+        //var copyText = document.getElementById("myInput");
+
+        var out = "";
+        var data = [];
+        table = $("#commodities");
+
+
+        /* Select the text field */
+        //copyText.select();
+        //copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+
+        /* Copy the text inside the text field */
+        //document.execCommand("copy");
+
+        /* Alert the copied text */
+        console.log("Copied the text: " + out);
+    }
+
+    $(document).on("click", "#copy_commodity_list", function (e) {
+        alert ("Copy function would go here.");
+        //copy_commodities();
+
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    /***************************************************************************************************************/
+    // START - quota definition helpers
+
+    $(document).on("click", "#create_or_add_to_existing input[type=radio]", function (e) {
+        obj_id = $(this).prop("id");
+        console.log (obj_id);
+        if (obj_id == "workbasket_id_-1") {
+            $(".new_workbasket").fadeIn(200);
+            $("#btn_create_or_open_workbasket").text("Create workbasket");
+        } else {
+            $(".new_workbasket").css("display", "none");
+            $("#btn_create_or_open_workbasket").text("Open workbasket");
+        }
+    });
+    
+
+    // END - quota definition helpers
+    /***************************************************************************************************************/
 
 });

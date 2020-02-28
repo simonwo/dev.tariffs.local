@@ -64,11 +64,11 @@ class table_control
                         $tooltip = $column["tooltip"];
                         $align = $column["align"];
 
-                        //$up = $application->encrypt("asc|$sort_field");
-                        //$down = $application->encrypt("desc|$sort_field");
                         if ($sort_field == "") {
                             $up_down = "";
+                            $arrow_class = "";
                         } else {
+                            $arrow_class = "arrows_indent";
                             $up = "asc~" . $sort_field;
                             $down = "desc~" . $sort_field;
                             $up_down = "<div class='arrows'>
@@ -89,7 +89,7 @@ class table_control
                             $described_by = "";
                             $tooltip_content = "";
                         }
-                        echo ('<th scope="col" class="govuk-table__header tip ' . $align_class . '"' . $described_by . '>' . $column_name . $tooltip_content . $up_down . '</th>' . "\xA");
+                        echo ('<th scope="col" class="govuk-table__header ' . $arrow_class . ' tip ' . $align_class . '"' . $described_by . '>' . $column_name . $tooltip_content . $up_down . '</th>' . "\xA");
                     }
                     ?>
                 </tr>
@@ -115,8 +115,14 @@ class table_control
                             }
                         }
                     }
+                    //pre ($data_item);
+                    if (isset($data_item->row_class)) {
+                        $row_class = $data_item->row_class;
+                    } else {
+                        $row_class = "";
+                    }
                 ?>
-                    <tr class="govuk-table__row">
+                    <tr class="govuk-table__row <?= $row_class ?>">
                         <?php
                         foreach ($this->columns as $column) {
                             $align = $column["align"];
@@ -138,7 +144,7 @@ class table_control
                                     $control_id = $data_column . "_" . $data_item->{$data_column};
                                     echo ('<div class="govuk-checkboxes govuk-checkboxes--vsmall">');
                                     echo ('<div class="govuk-checkboxes__item">');
-                                    echo ('<input class="govuk-checkboxes__input" id="' . $control_id . '" name="' . $data_column . '[]" type="checkbox" value="' . ($data_item->{$data_column}) . '">');
+                                    echo ('<input checked class="govuk-checkboxes__input" id="' . $control_id . '" name="' . $data_column . '[]" type="checkbox" value="' . ($data_item->{$data_column}) . '">');
                                     echo ('<label class="govuk-label govuk-checkboxes__label" for="' . $control_id . '"><a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=' . $data_item->{$data_column} . '">' . ($data_item->{$data_column}) . '</a></label>');
                                     echo ('</div>');
                                     echo ('</div>');
@@ -155,7 +161,7 @@ class table_control
                                     $geo_count = count($geo_array);
                                     $index = 0;
                                     foreach ($geo_array as $geo) {
-                                        $index ++;
+                                        $index++;
                                         echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . trim($geo) . '">' . trim($geo) . "</a>");
                                         if ($index < $geo_count) {
                                             echo (", ");
@@ -174,7 +180,7 @@ class table_control
                                     } else {
                                         $sid = -1;
                                     }
-                                    echo ('<a class="govuk-link mono" href="/quotas/view.html?mode=view&quota_order_number_sid=' . $sid . '&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
+                                    echo ('<a class="govuk-link" href="/quotas/view.html?mode=view&quota_order_number_sid=' . $sid . '&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "commodity":
                                     echo ('<a class="nodecorate" href="/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $data_item->{$data_column} . '">' . format_goods_nomenclature_item_id($data_item->{$data_column}) . "</a>");

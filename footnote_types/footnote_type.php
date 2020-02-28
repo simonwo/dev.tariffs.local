@@ -273,7 +273,7 @@ class footnote_type
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         # Create the footnote_type record
         $sql = "INSERT INTO footnote_types_oplog (
             footnote_type_id, application_code,

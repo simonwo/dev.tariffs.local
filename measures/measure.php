@@ -316,7 +316,7 @@ class measure
             $operation, $operation_date
         ));
 
-        $url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        $url = "/measures/view.html?modde=view&measure_sid=" . $this->measure_sid;
         header("Location: " . $url);
     }
 
@@ -374,7 +374,7 @@ class measure
             $operation, $operation_date
         ));
 
-        $url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        $url = "/measures/view.html?mode=view&measure_sid=" . $this->measure_sid;
         header("Location: " . $url);
     }
 

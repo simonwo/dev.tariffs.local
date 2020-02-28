@@ -72,6 +72,10 @@
                     "value": "{quota_order_number_sid}"
                 },
                 {
+                    "label": "Mechanism",
+                    "value": "{mechanism}"
+                },
+                {
                     "label": "Description",
                     "value": "{description}"
                 },
@@ -102,7 +106,7 @@
                     "control_scope": "view",
                     "control_name": "origins",
                     "caption": "Origins",
-                    "intro_text": "The following origins are associated or have historcially been associated with this quota.",
+                    "intro_text": "The following origins are associated or have historically been associated with this quota.",
                     "edit_text": "Create a new origin",
                     "edit_url": "/quota_order_number_origins/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
                     "fields": [
@@ -211,9 +215,9 @@
                     "control_name": "quota_commodities",
                     "table_class": "govuk-table--m",
                     "caption": "Commodities",
-                    "intro_text": "Lorem ipsum",
-                    "edit_text": "TBC",
-                    "edit_url": "/tbc",
+                    "intro_text": "The following unique commodities are currently associated with this quota. Please also view the <a class='govuk-link' href='#tab_quota_measures'>measures</a> tab for a historical view of past assignments.",
+                    "edit_text": "",
+                    "edit_url": "",
                     "fields": [
                         {
                             "label": "Commodity code",
@@ -223,6 +227,11 @@
                         {
                             "label": "Description",
                             "value": "description",
+                            "class": ""
+                        },
+                        {
+                            "label": "Measure type",
+                            "value": "measure_type",
                             "class": ""
                         }
                     ]
@@ -243,6 +252,16 @@
                             "class": ""
                         },
                         {
+                            "label": "Regulation",
+                            "value": "regulation_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Measure type",
+                            "value": "measure_type_link",
+                            "class": ""
+                        },
+                        {
                             "label": "Commodity code",
                             "value": "goods_nomenclature_item_id_link",
                             "class": ""
@@ -258,18 +277,28 @@
                             "class": ""
                         },
                         {
-                            "label": "Measure type",
-                            "value": "measure_type_link",
-                            "class": ""
-                        },
-                        {
-                            "label": "Regulation",
-                            "value": "regulation_link",
-                            "class": ""
-                        },
-                        {
-                            "label": "Origin",
+                            "label": "Geography",
                             "value": "geographical_area_link",
+                            "class": ""
+                        },
+                        {
+                            "label": "Exclusions",
+                            "value": "exclusions",
+                            "class": ""
+                        },
+                        {
+                            "label": "Duties",
+                            "value": "duties",
+                            "class": ""
+                        },
+                        {
+                            "label": "Conditions",
+                            "value": "conditions",
+                            "class": ""
+                        },
+                        {
+                            "label": "Footnotes",
+                            "value": "footnotes",
                             "class": ""
                         },
                         {
@@ -277,7 +306,6 @@
                             "value": "status",
                             "class": "nw c"
                         }
-                        
                     ]
                 },
                 {
@@ -889,7 +917,7 @@
                 "control_type": "select_control",
                 "label": "How will the quota balance(s) be measured?",
                 "label_style": "govuk-label--m",
-                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.",
+                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Please ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
                 "control_name": "measurement_unit_code",
                 "default_value": "Unspecified",
                 "default_string": "- Please select a measurement unit code -",

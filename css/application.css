@@ -192,8 +192,8 @@ th[scope=col] {
 
 .c {
     text-align: center !important;
-    padding-left:10px !important;
-    padding-right:10px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
 }
 
 .r {
@@ -334,7 +334,11 @@ span.notch {
 div.arrows {
     position: absolute;
     bottom: 9px;
-    right: 12px;
+    left:0px;
+}
+
+.arrows_indent {
+    padding-left:0.8em;
 }
 
 div.arrows a, div.arrows div {
@@ -847,6 +851,7 @@ form.data_entry_form span.govuk-hint, form.data_entry_form .govuk-inset-text, fo
     font-size: 16px;
     font-weight: bold;
 }
+
 .mono-s {
     font-family: "Courier New";
     font-size: 14px;
@@ -1385,7 +1390,8 @@ li.disabled {
     clear: both;
 }
 
-td.s, .s {
+td.s
+    {
     font-size: 12px !important
 }
 
@@ -1417,6 +1423,7 @@ td.s, .s {
     text-indent: -15px;
     padding-left: 19px !important;
 }
+
 .hanging2 {
     text-indent: -1.3em;
     padding-left: 1.3em !important;
@@ -1430,9 +1437,11 @@ td.s, .s {
 .table_indent {
     padding-left: 5px;
 }
+
 .normal {
     font-weight: 400 !important;
 }
+
 .js-enabled .app-back-to-top--fixed {
     position: fixed;
     top: calc(100% - 50px);
@@ -1442,22 +1451,30 @@ td.s, .s {
 
 .grey {
     background-color: #f0f0f0 !important;
-    padding-left:5px !important;
+    padding-left: 5px !important;
 }
 
 .pad {
-    padding-left:5px !important;
+    padding-left: 5px !important;
 }
-
 
 a img.inline_icon {
     position: relative;
-    top:5px;
-    margin-right:0.3em;
+    top: 5px;
+    margin-right: 0.3em;
 }
 
 .status_image {
+    position: relative;
+    top: -1px;
+}
+
+.conditions_column {
+    min-width: 100px;
+}
+
+.status_cell span {
     position:relative;
-    top:-1px;
-    xmargin-right:10px
+    left:8px;
+    top:-7px;
 }

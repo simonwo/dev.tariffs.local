@@ -125,7 +125,7 @@ require("../includes/metadata.php");
                         <div class="govuk-grid-column-three-quarters">
                             <h2 class="govuk-heading-m" id="details">Commodity code details</h2>
                             <p class="govuk-body">The table below shows the core details of this commodity code.</p>
-                            <table class="govuk-table" cellspacing="0">
+                            <table class="govuk-table govuk-table" cellspacing="0">
                                 <tr class="govuk-table__row">
                                     <th class="govuk-table__header nopad" style="width:30%">Item</th>
                                     <th class="govuk-table__header" style="width:70%">Value</th>
@@ -197,6 +197,7 @@ require("../includes/metadata.php");
                                     <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
                                         Related content
                                     </h2>
+                                    <p class="govuk-body-xs">The following links will open in a new browser window.</p>
                                     <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
                                         <ul class="gem-c-related-navigation__link-list" data-module="track-click">
                                             <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" class="gem-c-related-navigation__section-link" title="Opens in new window" href="https://www.trade-tariff.service.gov.uk/trade-tariff/commodities/<?= $goods_nomenclature_item_id ?>#import" target="_blank" href="#usage_measures">View this commodity on the Trade Tariff Service</a></li>
@@ -443,7 +444,7 @@ require("../includes/metadata.php");
                     <?php
                     } else {
                     ?>
-                        <p>There are no successors for this commodity code.</p>
+                        <p class="govuk-body">There are no successors for this commodity code.</p>
                     <?php
                     }
                     ?>
@@ -566,17 +567,17 @@ require("../includes/metadata.php");
 
                     ?>
                             <p class="govuk-body">The matching measures below have been inherited down to this commodity code.</p>
-                            <table class="govuk-table sticky" cellspacing="0">
+                            <table class="govuk-table govuk-table--m sticky" cellspacing="0">
                                 <tr class="govuk-table__row">
-                                    <th nowrap class="govuk-table__header nopad vsmall">Measure&nbsp;SID&nbsp;<a href="<?= $url . "&so=measure_sid&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=measure_sid&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
-                                    <th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity&nbsp;<a href="<?= $url . "&so=goods_nomenclature_item_id&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=goods_nomenclature_item_id&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
-                                    <th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID&nbsp;<a href="<?= $url . "&so=measure_type_id&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=measure_type_id&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
-                                    <th nowrap class="govuk-table__header vsmall" style="width:15%">Geographical area ID&nbsp;<a href="<?= $url . "&so=geographical_area_id&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=geographical_area_id&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
+                                    <th nowrap class="govuk-table__header nopad vsmall">Measure&nbsp;SID</th>
+                                    <th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity</th>
+                                    <th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID</th>
+                                    <th nowrap class="govuk-table__header vsmall" style="width:15%">Geographical area ID</th>
                                     <th nowrap class="govuk-table__header vsmall c">Add. code</th>
-                                    <th nowrap class="govuk-table__header vsmall">Regulation&nbsp;<a href="<?= $url . "&so=regulation&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=regulation&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
+                                    <th nowrap class="govuk-table__header vsmall">Regulation</th>
                                     <th nowrap class="govuk-table__header vsmall c">Start date</th>
                                     <th nowrap class="govuk-table__header vsmall c">End date</th>
-                                    <th nowrap class="govuk-table__header vsmall c">Order number&nbsp;<a href="<?= $url . "&so=ordernumber&sd=asc#inherited" ?>" class="table_arrow">&uarr;</a><a href="<?= $url . "&so=ordernumber&sd=desc#inherited" ?>" class="table_arrow">&darr;</a></th>
+                                    <th nowrap class="govuk-table__header vsmall c">Order number</th>
                                     <th nowrap class="govuk-table__header vsmall c">Duty</th>
                                 </tr>
                                 <?php
@@ -598,12 +599,12 @@ require("../includes/metadata.php");
                                     if ($goods_nomenclature_item_ix != $goods_nomenclature_item_id) {
                                 ?>
                                         <tr class="<?= $rowclass ?>">
-                                            <td class="govuk-table__cell nopad vsmall"><a href="measure_view.html?measure_sid=<?= $measure_sid ?>"><?= $measure_sid ?></a></td>
+                                            <td class="govuk-table__cell nopad vsmall"><a class="govuk-link" href="measures/view.html?mode=view&measure_sid=<?= $measure_sid ?>"><?= $measure_sid ?></a></td>
                                             <td class="govuk-table__cell vsmall"><a class="nodecorate" href="<?= $url ?>"><?= format_goods_nomenclature_item_id($goods_nomenclature_item_ix) ?></a></td>
-                                            <td class="govuk-table__cell vsmall"><a href="measure_type_view.html?measure_type_id=<?= $measure_type_id ?>"><?= $measure_type_id ?> <?= $measure_type_description ?></a></td>
-                                            <td class="govuk-table__cell vsmall"><a href="geographical_area_view.html?geographical_area_id=<?= $geographical_area_ix ?>"><?= $geographical_area_ix ?>&nbsp;<?= $geo_description ?></a></td>
+                                            <td class="govuk-table__cell vsmall"><a class="govuk-link" href="measure_type_view.html?mode=view&measure_type_id=<?= $measure_type_id ?>"><?= $measure_type_id ?> <?= $measure_type_description ?></a></td>
+                                            <td class="govuk-table__cell vsmall"><a class="govuk-link" href="geographical_area_view.html?mode=view&geographical_area_id=<?= $geographical_area_ix ?>"><?= $geographical_area_ix ?>&nbsp;<?= $geo_description ?></a></td>
                                             <td class="govuk-table__cell vsmall c"><?= $additional_code_type_id ?><?= $additional_code_id ?></td>
-                                            <td class="govuk-table__cell vsmall"><a href="regulation_view.html?regulation_id=<?= $regulation_id_full ?>"><?= $regulation_id_full ?></a></td>
+                                            <td class="govuk-table__cell vsmall"><a class="govuk-link" href="/regulations/view.html?mode=view&base_regulation_id=<?= $regulation_id_full ?>"><?= $regulation_id_full ?></a></td>
                                             <td class="govuk-table__cell vsmall c"><?= $validity_start_date ?></td>
                                             <td class="govuk-table__cell vsmall c"><?= $validity_end_date ?></td>
                                             <td class="govuk-table__cell vsmall c"><?= $quota_order_number_id ?></td>
@@ -622,7 +623,7 @@ require("../includes/metadata.php");
                         }
                         ?>
                 </section>
-                <!-- End assigned tab //-->
+                <!-- End inherited tab //-->
 
                 <!-- Begin footnotes tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="footnotes">

@@ -5,7 +5,9 @@ $application = new application;
 $application->init("measures");
 $application->get_filter_options();
 $submitted = intval(get_formvar("submitted"));
-if ($submitted == 1) {
+$p = intval(get_querystring("p"));
+
+if (($submitted == 1) || ($p != "")) {
     $application->get_measures();
 }
 ?>
@@ -120,8 +122,8 @@ require("../includes/metadata.php");
                                 </div>
                                 <div class="complex_search_form complex_search_form_column1a">
                                     <select class="govuk-select" id="measure_generating_regulation_id_operator" name="measure_generating_regulation_id_operator">
-                                        <option value="starts_with">starts with</option>
                                         <option value="is_one_of">is one of</option>
+                                        <option value="starts_with">starts with</option>
                                     </select>
                                 </div>
                                 <div class="complex_search_form complex_search_form_column2">

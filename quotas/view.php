@@ -23,14 +23,16 @@ require("../includes/metadata.php");
 
         $control_content = array();
 
-        $control_content["origins"] = $quota_order_number->origins;
-        $control_content["quota_definitions"] = $quota_order_number->quota_definitions;
         $control_content["quota_commodities"] = $quota_order_number->quota_commodities;
         $control_content["quota_measures"] = $quota_order_number->quota_measures;
-        $control_content["quota_associations"] = $quota_order_number->quota_associations;
-        $control_content["quota_suspension_periods"] = $quota_order_number->quota_suspension_periods;
-        $control_content["quota_blocking_periods"] = $quota_order_number->quota_blocking_periods;
-        //$control_content["versions"] = $measure->versions;
+        if (!$quota_order_number->licensed) {
+            $control_content["origins"] = $quota_order_number->origins;
+            $control_content["quota_definitions"] = $quota_order_number->quota_definitions;
+            $control_content["quota_associations"] = $quota_order_number->quota_associations;
+            $control_content["quota_suspension_periods"] = $quota_order_number->quota_suspension_periods;
+            $control_content["quota_blocking_periods"] = $quota_order_number->quota_blocking_periods;
+        }
+
         new view_form($control_content, $quota_order_number);
         ?>
 

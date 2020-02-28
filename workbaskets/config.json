@@ -1,16 +1,17 @@
 {
     "workbaskets": {
         "config": {
-            "title": "Find and edit workbaskets",
-            "inset": "Enter criteria to help find a workbasket.",
-            "freetext_fields": "w.status|u.name|w.title|w.reason",
-            "default_sort_fields": "w.title",
+            "title": "Main menu",
+            "inset": "",
+            "freetext_fields": "status|user_name|title|reason",
+            "default_sort_fields": "created_at desc|title",
             "object_name": "Workbaskets",
             "title_create": "",
             "title_edit": "",
             "description_keys": "",
             "validate": false,
-            "buttons": {
+            "hide_export_link": true,
+            "xbuttons": {
                 "heading_text": "Finish now",
                 "submit_button_text_create": "Add to workbasket",
                 "submit_button_text_edit": "Add to workbasket",
@@ -22,8 +23,8 @@
         "filters": [
             {
                 "label": "Created by",
-                "form_value": "user_name",
-                "data_field": "u.id",
+                "form_value": "ownership",
+                "data_field": "ownership",
                 "data_type": "string",
                 "truncate_at": 0,
                 "height": ""
@@ -31,7 +32,7 @@
             {
                 "label": "Status",
                 "form_value": "status",
-                "data_field": "w.status",
+                "data_field": "status",
                 "data_type": "string",
                 "truncate_at": 0,
                 "height": ""
@@ -40,45 +41,52 @@
         "columns": [
             {
                 "column_name": "ID",
-                "data_column": "id",
-                "sort_field": "w.id",
+                "data_column": "workbasket_id",
+                "sort_field": "workbasket_id",
                 "tooltip": "",
                 "align": ""
             },
             {
                 "column_name": "Workbasket name",
-                "data_column": "title",
-                "sort_field": "w.title",
-                "tooltip": "",
-                "align": ""
-            },
-            {
-                "column_name": "Reason for creation",
-                "data_column": "reason",
-                "sort_field": "w.reason",
+                "data_column": "title_link",
+                "sort_field": "title",
                 "tooltip": "",
                 "align": ""
             },
             {
                 "column_name": "Created by",
                 "data_column": "user_name",
-                "sort_field": "u.name",
+                "sort_field": "user_name",
+                "tooltip": "",
+                "align": ""
+            },
+            {
+                "column_name": "Date created",
+                "data_column": "created_at_string",
+                "sort_field": "created_at",
+                "tooltip": "",
+                "align": ""
+            },
+            {
+                "column_name": "Date updated",
+                "data_column": "updated_at_string",
+                "sort_field": "updated_at",
                 "tooltip": "",
                 "align": ""
             },
             {
                 "column_name": "Status",
-                "data_column": "status",
-                "sort_field": "w.status",
+                "data_column": "status_image",
+                "sort_field": "sequence_id",
                 "tooltip": "",
-                "align": ""
+                "align": "status_cell nw"
             },
             {
                 "column_name": "Actions",
                 "data_column": "actions",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "r"
+                "align": "l"
             }
         ]
     }

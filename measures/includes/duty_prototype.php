@@ -1,6 +1,6 @@
 <?php
 global $measure_activity;
-$measure_activity->measure_activity_sid = 110;
+//$measure_activity->measure_activity_sid = 110;
 //h1 ($measure_activity->measure_activity_sid);
 ?>
 <div class="govuk-grid-row">
@@ -36,7 +36,11 @@ $measure_activity->measure_activity_sid = 110;
                 index = 0;
                 Object.keys(prototype).forEach(function(item) {
                     index ++;
-                    title = fmt_title(item);
+                    if ((item == "commodity_code") || (item == "additional_code")) {
+                        title = fmt_title(item);
+                    } else {
+                        title = item;
+                    }
                     var column = new Array();
                     column["title"] = title;
                     column["dataType"] = "string";

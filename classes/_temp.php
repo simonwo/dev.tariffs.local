@@ -1,7 +1,7 @@
 
     public function get_quotas()
     {
-        $this->page_size = 10000;
+        $this->page_size = 100;
         global $conn;
         $sql = "select m.measure_sid, m.measure_generating_regulation_id, m.validity_start_date, m.validity_end_date,
         m.goods_nomenclature_item_id, m.additional_code, m.additional_code_sid,

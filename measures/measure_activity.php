@@ -413,7 +413,7 @@ class measure_activity
         pg_prepare($conn, "create_workbasket_item", $sql);
         $result = pg_execute($conn, "create_workbasket_item", array(
             $application->session->workbasket->workbasket_id, $_SESSION["measure_activity_sid"], "measure_activity", $sub_record_type,
-            "in progress", $date, "C"
+            "In progress", $date, "C"
         ));
     }
 
@@ -950,7 +950,7 @@ class measure_activity
             $operation, $operation_date
         ));
 
-        $url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        $url = "/measures/view.html?mode=view&measure_sid=" . $this->measure_sid;
         header("Location: " . $url);
     }
 
@@ -1008,7 +1008,7 @@ class measure_activity
             $operation, $operation_date
         ));
 
-        $url = "/measure_view.html?measure_sid=" . $this->measure_sid;
+        $url = "/measures/view.html?mode=view&measure_sid=" . $this->measure_sid;
         header("Location: " . $url);
     }
 

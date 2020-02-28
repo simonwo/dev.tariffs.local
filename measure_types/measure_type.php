@@ -29,6 +29,7 @@ class measure_type
     public $measure_type_series_id_url = "";
 
     public $measure_types = array();
+    public $measures = array();
 
     public function __construct()
     {
@@ -359,7 +360,7 @@ class measure_type
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         $sql = "INSERT INTO measure_types_oplog (measure_type_id, validity_start_date,
         validity_end_date, trade_movement_code, priority_code,
         measure_component_applicable_code, origin_dest_code,
@@ -413,7 +414,7 @@ class measure_type
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         $sql = "INSERT INTO measure_types_oplog (measure_type_id, validity_start_date,
         validity_end_date, trade_movement_code, priority_code,
         measure_component_applicable_code, origin_dest_code,

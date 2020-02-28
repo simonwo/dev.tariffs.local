@@ -116,7 +116,7 @@ class additional_code
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         # Create the additional_code record
         $sql = "INSERT INTO additional_codes_oplog (
                 additional_code_sid, additional_code, additional_code_type_id,

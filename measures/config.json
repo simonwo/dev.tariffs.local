@@ -253,7 +253,7 @@
                 "data_column": "conditions",
                 "sort_field": "",
                 "tooltip": "<span class='condition_code'>Condition code</span><br /><span class='condition_reference'>Reference price</span><br /><span class='condition_certificate'>Certificate code</span><br /><span class='condition_action'>Action code</span><br /><span class=''>Applicable duty</span>",
-                "align": "s"
+                "align": "s conditions_column"
             },
             {
                 "column_name": "Footnotes",
@@ -267,7 +267,7 @@
                 "data_column": "status",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "",
+                "align": "c",
                 "treatment": "status"
             }
         ]

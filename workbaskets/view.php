@@ -89,7 +89,7 @@ require("../includes/metadata.php");
                             </tr>
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header nopad">Status</th>
-                                <td class="govuk-table__cell"><?= status_image($workbasket->status) ?><?= $workbasket->status ?><?= $active ?></td>
+                                <td class="govuk-table__cell status_cell"><?= status_image($workbasket->status) ?><span><?= $workbasket->status ?><?= $active ?></span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -99,7 +99,7 @@ require("../includes/metadata.php");
                     //pre($workbasket);
 
                     if ($application->session->uid == $workbasket->user_id) {
-                        if (in_array($workbasket->status, array("In Progress", "Approval Rejected"))) {
+                        if (in_array($workbasket->status, array("In progress", "Approval Rejected"))) {
                     ?>
                             <p class="govuk-body"><a class="govuk-link" href="edit_workbasket.html?workbasket_id=<?= $workbasket->workbasket_id ?>">Edit workbasket detail</a></p>
                             <?php
@@ -940,7 +940,7 @@ require("../includes/metadata.php");
 
                     </div>
 
-                    <form method="post">
+                    <form method="post" action="actions.php">
 
                         <?php
                         if ($workbasket->user_id == $application->session->user_id) {
@@ -948,9 +948,12 @@ require("../includes/metadata.php");
                         }
                         //var_dump ($_SESSION);
                         new hidden_control("workbasket_id", $application->session->workbasket->workbasket_id);
-                        new button_control("Submit workbasket for approval", "submit_workbasket", "primary", true);
-                        new button_control("Reassign workbasket", "reassign_workbasket", "primary", false);
-                        new button_control("Cancel", "cancel", "text", false, "/");
+                        h1($workbasket->status);
+                        switch ($workbasket->status) {
+                            case "In progress":
+                                new hidden_control("action", "submit_for_approval");
+                                new button_control("Submit workbasket for approval", "submit_workbasket", "primary", true);
+                        }
                         ?>
                     </form>
                 </div>

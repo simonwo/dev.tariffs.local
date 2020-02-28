@@ -126,7 +126,7 @@ class quota_suspension_period
             $this->quota_suspension_period_sid = $this->get_next_sid();
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         $sql = "INSERT INTO quota_suspension_periods_oplog (
         quota_suspension_period_sid,
         quota_definition_sid,

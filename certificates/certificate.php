@@ -332,7 +332,7 @@ class certificate
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
         # Create the certificate record
         $sql = "INSERT INTO certificates_oplog (certificate_code, certificate_type_code, 
         validity_start_date, operation, operation_date, workbasket_id, status)

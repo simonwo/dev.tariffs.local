@@ -15,6 +15,7 @@ class misc_data_table_control
 
     public function __construct($control_name, $control_scope, $caption, $intro_text, $edit_text, $edit_url, $dataset, $description_keys, $table_class = "")
     {
+        //H1 ("misc data table control");
         global $application;
         $this->control_name = $control_name;
         $this->control_scope = $control_scope;
@@ -121,12 +122,13 @@ class misc_data_table_control
         if (($this->edit_text != "") && ($this->edit_url != "")) {
             echo ("<p class='govuk-body'><a class='govuk-link' href='" . $this->edit_url . "'><img class='inline_icon' src='/assets/images/new.png'/>" . $this->edit_text . "</a></p>");
         }
-}
+    }
 
 
 
     private function display_resource()
     {
+        echo ("<p class='govuk-body'>" . $this->intro_text . "</p>");
         $data_found = false;
         if ($this->suppress_control == false) {
             if ($this->dataset) {

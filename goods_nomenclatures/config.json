@@ -149,17 +149,17 @@
         "columns": [
             {
                 "column_name": "Commodity code",
-                "data_column": "goods_nomenclature_item_id_formatted",
+                "data_column": "goods_nomenclature_item_link",
                 "sort_field": "gn.goods_nomenclature_item_id",
                 "tooltip": "",
                 "align": ""
             },
             {
-                "column_name": "Suffix",
+                "column_name": "Suffix&nbsp;&nbsp;&nbsp;",
                 "data_column": "productline_suffix",
                 "sort_field": "gn.producline_suffix",
                 "tooltip": "",
-                "align": "c"
+                "align": "c nw"
             },
             {
                 "column_name": "Indent",
@@ -198,10 +198,10 @@
             },
             {
                 "column_name": "Actions",
-                "data_column": "url",
+                "data_column": "actions",
                 "sort_field": "",
                 "tooltip": "",
-                "align": ""
+                "align": "nw r"
             }
         ]
     }

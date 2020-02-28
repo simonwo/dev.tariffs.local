@@ -51,7 +51,7 @@ require("../includes/metadata.php");
                             <th class="govuk-table__header" style="width:15%" scope="col">Section</th>
                             <th class="govuk-table__header" style="width:55%" scope="col">Description</th>
                             <th class="govuk-table__header r" style="width:20%" scope="col">Extract</th>
-                            <th class="govuk-table__header r" style="width:210%" scope="col">Manage</th>
+                            <th class="govuk-table__header c" style="width:10%" scope="col">Manage</th>
                         </tr>
 
                         <?php
@@ -66,7 +66,7 @@ require("../includes/metadata.php");
                                     <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 8) ?>&depth=8">CN8</a>&nbsp;&nbsp;
                                     <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 10) ?>">CN10</a>
                                 </td>
-                                <td class="govuk-table__cell r"><a href="">View commodity</a></td>
+                                <td class="govuk-table__cell c"><a href=""><img src='/assets/images/view.png' alt='View this commodity' /></a></td>
                             </tr>
                         <?php
                         }

@@ -23,9 +23,14 @@ class search_form
         $this->inset = $config["inset"];
         $this->freetext_fields = $config["freetext_fields"];
         $this->default_sort_fields = $config["default_sort_fields"];
+        if (isset($config["hide_export_link"])) {
+            $this->hide_export_link = $config["hide_export_link"];
+        } else {
+            $this->hide_export_link = false;
+        }
         $application->default_sort_fields_array = explode("|", $this->default_sort_fields);
-        //h1 ($this->page_title);
-        if (in_array($this->page_title, array("Measures", "Find and edit a quota"))) {
+
+        if (in_array($this->page_title, array("Measures", "Find and edit a quota", "Find and edit workbaskets", "Main menu"))) {
             $this->suppress_intro = true;
         }
     }
@@ -47,11 +52,11 @@ class search_form
                 </ol>
             </div>
             <!-- End breadcrumbs //-->
-        <?php
-        }
-        ?>
+            <main class="govuk-main-wrapper" id="main-content" role="main">
 
-        <main class="govuk-main-wrapper" id="main-content" role="main">
+            <?php
+        }
+            ?>
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
                     <?php
@@ -74,7 +79,7 @@ class search_form
                         if ((trim($this->freetext_fields) != "") && (count($filter_content) > 0)) {
                             $main_column_style = "govuk-grid-column-four-fifths";
                         ?>
-                            <div class="govuk-grid-column-one-fifth nav_filter sticky">
+                            <div class="govuk-grid-column-one-fifth nav_filter xsticky">
                                 <form method="post" action="#results">
                                     <?php
                                     $application->display_filters($this->freetext_fields, $this->filter_content);
@@ -93,7 +98,7 @@ class search_form
                         <div class="<?= $main_column_style ?>">
                             <?php
                             // Order number capture code control
-                            $application->show_page_controls($show_paging = false, $this->dataset);
+                            $application->show_page_controls($show_paging = false, $this->dataset, $this->hide_export_link);
                             $class = "";
                             if ($this->dataset) {
                                 $class = get_class($this->dataset[0]);
@@ -118,8 +123,12 @@ class search_form
                     </div>
                 </div>
             </div>
-        </main>
+            <?php
+            if ($this->suppress_intro == false) {
+            ?>
+            </main>
 <?php
+            }
+        }
     }
-}
 ?>

@@ -15,7 +15,7 @@
                 $hint_text = "Please select the condition code from the list below.",
                 $control_name = "condition_code",
                 $dataset = $application->measure_condition_codes,
-                $default_value = 0,
+                $default_value = "0",
                 $default_string = "-- Please select a condition code --",
                 $default_on_insert = "",
                 $selected = "",

@@ -192,7 +192,7 @@ class certificate_type
             $this->validity_end_date = Null;
         }
 
-        $status = 'awaiting approval';
+        $status = 'In progress';
 
         # Create the certificate_type record
         $sql = "INSERT INTO certificate_types_oplog (
