@@ -163,7 +163,7 @@ require("includes/metadata.php");
                     <!--<h2 class="govuk-heading-s">You are logged on as <?= $application->session->user_id ?> with permissions <?= $application->session->permissions ?></h2>//-->
 
                     <!-- End main title //-->
-                    <p class="govuk-body">Use the table below to search for existing workbaskets. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
+                    <p class="govuk-body">Use the form below to search for existing workbaskets. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
 
                     <?php
                     new search_form(
