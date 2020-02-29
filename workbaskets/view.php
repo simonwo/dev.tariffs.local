@@ -9,7 +9,12 @@ if (($workbasket->workbasket_id == "") || ($workbasket->workbasket_id == null)) 
     $workbasket->workbasket_id = $application->session->workbasket->workbasket_id;
 }
 $workbasket->populate();
-if ($workbasket->workbasket_id == $application->session->workbasket->workbasket_id) {
+if (isset($application->session->workbasket->workbasket_id)) {
+    $test = $application->session->workbasket->workbasket_id;
+} else {
+    $test = -1;
+}
+if ($workbasket->workbasket_id == $test) {
     $current = true;
     $active = " (active)";
 } else {
@@ -33,7 +38,6 @@ require("../includes/metadata.php");
         require("../includes/phase_banner.php");
         ?>
 
-
         <!-- Start breadcrumbs //-->
         <div class="govuk-breadcrumbs">
             <ol class="govuk-breadcrumbs__list">
@@ -43,10 +47,11 @@ require("../includes/metadata.php");
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
                 </li>
-                <li class="govuk-breadcrumbs__list-item" aria-current="page">My workbasket</li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">View workbasket</li>
             </ol>
         </div>
         <!-- End breadcrumbs //-->
+
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
@@ -95,17 +100,18 @@ require("../includes/metadata.php");
                     </table>
                     <?php
 
-                    //pre($application->session);
-                    //pre($workbasket);
-
                     if ($application->session->uid == $workbasket->user_id) {
-                        if (in_array($workbasket->status, array("In progress", "Approval Rejected"))) {
+                        if (in_array($workbasket->status, array("In progress", "Rejected"))) {
                     ?>
                             <p class="govuk-body"><a class="govuk-link" href="edit_workbasket.html?workbasket_id=<?= $workbasket->workbasket_id ?>">Edit workbasket detail</a></p>
                             <?php
                             if ($current == false) {
                             ?>
                                 <p class="govuk-body"><a class="govuk-link" title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=<?= $workbasket->workbasket_id ?>'>Open this workbasket</a></p>
+                            <?php
+                            } else {
+                            ?>
+                                <p class="govuk-body"><a class="govuk-link" title='Close this workbasket' href='/workbaskets/actions.php?action=close&workbasket_id=<?= $workbasket->workbasket_id ?>'>Close this workbasket</a></p>
                             <?php
                             }
                             ?>
@@ -115,10 +121,21 @@ require("../includes/metadata.php");
                     }
                     ?>
 
-                    <h2 class="govuk-heading-m">Workbasket activities</h2>
-                    <p class="govuk-body">This workbasket contains contains the following changes:</p>
-                    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
-                        <?php
+                    <h2 id="workbasket_activities" class="govuk-heading-m">Workbasket activities</h2>
+                    <?php
+                    if ($workbasket->activity_count == 0) {
+                        echo ('<p class="govuk-body">No activities have yet been added to this workbasket.</p>');
+                    } else {
+                        $count_by_status_string = "";
+                        foreach ($workbasket->counts_by_status as $item) {
+                            $s = $item->status_count . " x " . $item->status;
+                            $count_by_status_string .= $s . ", ";
+                        }
+                        $count_by_status_string = trim($count_by_status_string);
+                        $count_by_status_string = trim($count_by_status_string, ",");
+
+                        echo ('<p class="govuk-body">This workbasket contains contains the following ' . $workbasket->activity_count . ' changes: (' . $count_by_status_string . ')</p>');
+                        echo ('<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">');
                         $workbasket->workbasket_get_footnote_types();
                         $workbasket->workbasket_get_certificate_types();
                         $workbasket->workbasket_get_additional_code_types();
@@ -131,831 +148,42 @@ require("../includes/metadata.php");
                         $workbasket->workbasket_get_measure_activities();
                         $workbasket->workbasket_get_quota_suspension_periods();
                         $workbasket->workbasket_get_quota_blocking_periods();
-                        ?>
+                        echo ('</div>');
 
-                        <!-- Start accordion section - footnote associations with measures //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        *** Footnote associations with measures (2)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Footnote ID</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Measure SID</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Commodity code</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Measure type</th>
-                                            <th scope="col" class="govuk-table__header r" nowrap>Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">TR101</td>
-                                            <td class="govuk-table__cell" nowrap>1234567</td>
-                                            <td class="govuk-table__cell" nowrap><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                            <td class="govuk-table__cell" nowrap>142</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Delete</td>
-                                            <td class="govuk-table__cell">TR102</td>
-                                            <td class="govuk-table__cell" nowrap>1234568</td>
-                                            <td class="govuk-table__cell" nowrap><?= format_goods_nomenclature_item_id("0102030406") ?></td>
-                                            <td class="govuk-table__cell" nowrap>143</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - footnote associations with measures //-->
+                    ?>
 
-                        <!-- Start accordion section - footnote associations with commodities //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        *** Footnote associations with commodities (2)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Footnote ID</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Commodity code</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                            <th scope="col" class="govuk-table__header r" nowrap>Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">TR101</td>
-                                            <td class="govuk-table__cell" nowrap><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 2021</td>
-                                            <td class="govuk-table__cell" nowrap>-</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Update</td>
-                                            <td class="govuk-table__cell">TR102</td>
-                                            <td class="govuk-table__cell" nowrap><?= format_goods_nomenclature_item_id("0102030406") ?></td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 2021</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jul 2021</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - footnote associations with commodities //-->
-
-
-
-                        <!-- Start accordion section - geographical areas //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        Geographical areas (4)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header">Area ID</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                            <th scope="col" class="govuk-table__header">Description</th>
-                                            <th scope="col" class="govuk-table__header r">Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">5050</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Countries applicable to safeguard duties</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Update</td>
-                                            <td class="govuk-table__cell">5051</td>
-                                            <td class="govuk-table__cell">01 Jan 70</td>
-                                            <td class="govuk-table__cell">31 Dec 20</td>
-                                            <td class="govuk-table__cell">Aenean semper est a scelerisque</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">New description</td>
-                                            <td class="govuk-table__cell">5052</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Aenean eu magna ultrices</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Updated description</td>
-                                            <td class="govuk-table__cell">5053</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Fusce rutrum sapien rhoncus</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - geographical areas //-->
-
-
-                        <!-- Start accordion section - geographical area memberships //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        Geographical area memberships (2)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header">Group</th>
-                                            <th scope="col" class="govuk-table__header">Member</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                            <th scope="col" class="govuk-table__header r">Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">2027 - GSP LDC</td>
-                                            <td class="govuk-table__cell">WS - Samoa</td>
-                                            <td class="govuk-table__cell">10 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Update</td>
-                                            <td class="govuk-table__cell">2020 - GSP Enhanced</td>
-                                            <td class="govuk-table__cell">PY - Paraguay</td>
-                                            <td class="govuk-table__cell">1 Jan 70</td>
-                                            <td class="govuk-table__cell">31 Dec 20</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - geographical area memberships //-->
-
-
-                        <!-- Start accordion section - commodity codes //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        Commodity codes (4)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header">ID</th>
-                                            <th scope="col" class="govuk-table__header c">Suffix</th>
-                                            <th scope="col" class="govuk-table__header">Start date</th>
-                                            <th scope="col" class="govuk-table__header">End date</th>
-                                            <th scope="col" class="govuk-table__header">Description</th>
-                                            <th scope="col" class="govuk-table__header c">Indent</th>
-                                            <th scope="col" class="govuk-table__header r">Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                            <td class="govuk-table__cell c">80</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 21</td>
-                                            <td class="govuk-table__cell" nowrap>-</td>
-                                            <td class="govuk-table__cell">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec
-                                                semper dui augue, vel scelerisque arcu placerat ac.</td>
-                                            <td class="govuk-table__cell c">5</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Update</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030406") ?></td>
-                                            <td class="govuk-table__cell c">80</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 70</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 20</td>
-                                            <td class="govuk-table__cell">
-                                                Duis hendrerit elit eu molestie tristique. Suspendisse laoreet egestas arcu.</td>
-                                            <td class="govuk-table__cell c">5</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">New description</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030407") ?></td>
-                                            <td class="govuk-table__cell c">80</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 21</td>
-                                            <td class="govuk-table__cell" nowrap>-</td>
-                                            <td class="govuk-table__cell">
-                                                Duis hendrerit elit eu molestie tristique. Suspendisse laoreet egestas arcu.</td>
-                                            <td class="govuk-table__cell c">5</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Updated description</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030408") ?></td>
-                                            <td class="govuk-table__cell c">80</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 21</td>
-                                            <td class="govuk-table__cell" nowrap>-</td>
-                                            <td class="govuk-table__cell">
-                                                Duis hendrerit elit eu molestie tristique. Suspendisse laoreet egestas arcu.</td>
-                                            <td class="govuk-table__cell c">5</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - commodity codes //-->
-
-
-
-                        <!-- Start accordion section - new quota //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        Quotas (1)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header">Order number</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                            <th scope="col" class="govuk-table__header">Description</th>
-                                            <th scope="col" class="govuk-table__header">Geography</th>
-                                            <th scope="col" class="govuk-table__header">Exclusions</th>
-                                            <th scope="col" class="govuk-table__header">Type</th>
-                                            <th scope="col" class="govuk-table__header">Fulfilment method</th>
-                                            <th scope="col" class="govuk-table__header r">Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row noborder">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">092010</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Quota for sweetcorn from South Korea</td>
-                                            <td class="govuk-table__cell">South Korea</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Preferential</td>
-                                            <td class="govuk-table__cell">FCFS</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="govuk-table__cell" colspan="10">
-                                                <details class="govuk-details" data-module="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            Quota definition periods
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        <table class="govuk-table">
-                                                            <thead class="govuk-table__head">
-                                                                <tr class="govuk-table__row">
-                                                                    <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                                                    <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                                                    <th scope="col" class="govuk-table__header">Initial volume</th>
-                                                                    <th scope="col" class="govuk-table__header">Measurement unit</th>
-                                                                    <th scope="col" class="govuk-table__header">Critical threshold</th>
-                                                                    <th scope="col" class="govuk-table__header">Critical state</th>
-                                                                    <th scope="col" class="govuk-table__header r">Next step</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="govuk-table__body">
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">31 Mar 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Apr 21</td>
-                                                                    <td class="govuk-table__cell">30 Jun 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Jul 21</td>
-                                                                    <td class="govuk-table__cell">30 Sep 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Oct 21</td>
-                                                                    <td class="govuk-table__cell">31 Dec 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                        </table>
-                                                    </div>
-                                                </details>
-                                                <details class="govuk-details" data-module="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            Measures
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        <table class="govuk-table">
-                                                            <thead class="govuk-table__head">
-                                                                <tr class="govuk-table__row">
-                                                                    <th scope="col" class="govuk-table__header">Commodity</th>
-                                                                    <th scope="col" class="govuk-table__header">Start date</th>
-                                                                    <th scope="col" class="govuk-table__header">End date</th>
-                                                                    <th scope="col" class="govuk-table__header">In-quota duty</th>
-                                                                    <th scope="col" class="govuk-table__header">Conditions</th>
-                                                                    <th scope="col" class="govuk-table__header">Footnotes</th>
-                                                                    <th scope="col" class="govuk-table__header r">Next step</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="govuk-table__body">
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                                                    <td class="govuk-table__cell">01 Oct 21</td>
-                                                                    <td class="govuk-table__cell">31 Dec 21</td>
-                                                                    <td class="govuk-table__cell">0%</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                        </table>
-                                                    </div>
-                                                </details>
-                                            </td>
-                                        </tr>
-
-
-                                        <tr class="govuk-table__row noborder">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">092010</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Quota for sweetcorn from South Korea</td>
-                                            <td class="govuk-table__cell">South Korea</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">Preferential</td>
-                                            <td class="govuk-table__cell">FCFS</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="govuk-table__cell" colspan="10">
-                                                <details class="govuk-details" data-module="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            Quota definition periods
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-                                                        <table class="govuk-table">
-                                                            <thead class="govuk-table__head">
-                                                                <tr class="govuk-table__row">
-                                                                    <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                                                    <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                                                    <th scope="col" class="govuk-table__header">Initial volume</th>
-                                                                    <th scope="col" class="govuk-table__header">Measurement unit</th>
-                                                                    <th scope="col" class="govuk-table__header">Critical threshold</th>
-                                                                    <th scope="col" class="govuk-table__header">Critical state</th>
-                                                                    <th scope="col" class="govuk-table__header r">Next step</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="govuk-table__body">
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">31 Mar 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Apr 21</td>
-                                                                    <td class="govuk-table__cell">30 Jun 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Jul 21</td>
-                                                                    <td class="govuk-table__cell">30 Sep 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">01 Oct 21</td>
-                                                                    <td class="govuk-table__cell">31 Dec 21</td>
-                                                                    <td class="govuk-table__cell">145,000</td>
-                                                                    <td class="govuk-table__cell">KGM</td>
-                                                                    <td class="govuk-table__cell">90</td>
-                                                                    <td class="govuk-table__cell">Critical</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                        </table>
-                                                    </div>
-                                                </details>
-                                                <details class="govuk-details" data-module="govuk-details">
-                                                    <summary class="govuk-details__summary">
-                                                        <span class="govuk-details__summary-text">
-                                                            Measures
-                                                        </span>
-                                                    </summary>
-                                                    <div class="govuk-details__text">
-
-                                                        <table class="govuk-table">
-                                                            <thead class="govuk-table__head">
-                                                                <tr class="govuk-table__row">
-                                                                    <th scope="col" class="govuk-table__header">SID</th>
-                                                                    <th scope="col" class="govuk-table__header">Regulation</th>
-                                                                    <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                                                    <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                                                    <th scope="col" class="govuk-table__header">Commodity code</th>
-                                                                    <th scope="col" class="govuk-table__header">Duties</th>
-                                                                    <th scope="col" class="govuk-table__header">Conditions</th>
-                                                                    <th scope="col" class="govuk-table__header">Footnotes</th>
-                                                                    <th scope="col" class="govuk-table__header r">Next step</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody class="govuk-table__body">
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">3954356</td>
-                                                                    <td class="govuk-table__cell">R1010101</td>
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                                                    <td class="govuk-table__cell">0%</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">TM101</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">3954357</td>
-                                                                    <td class="govuk-table__cell">R1010101</td>
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030406") ?></td>
-                                                                    <td class="govuk-table__cell">2%</td>
-                                                                    <td class="govuk-table__cell">Y102</td>
-                                                                    <td class="govuk-table__cell">TM101</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">3954358</td>
-                                                                    <td class="govuk-table__cell">R1010101</td>
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">1.4%</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">TM101</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">3954359</td>
-                                                                    <td class="govuk-table__cell">R1010101</td>
-                                                                    <td class="govuk-table__cell">01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030408") ?></td>
-                                                                    <td class="govuk-table__cell">4.2%</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">TM101</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr class="govuk-table__row">
-                                                                    <td class="govuk-table__cell">3954360</td>
-                                                                    <td class="govuk-table__cell">R1010101</td>
-                                                                    <td class="govuk-table__cell" nowrap>01 Jan 21</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030409") ?></td>
-                                                                    <td class="govuk-table__cell">1.5% + 3.7 EUR / KGM MAX 4% + 2 EUR / KGM</td>
-                                                                    <td class="govuk-table__cell">-</td>
-                                                                    <td class="govuk-table__cell">TM101</td>
-                                                                    <td class="govuk-table__cell r" nowrap>
-                                                                        <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                                        <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-
-                                                    </div>
-                                                </details>
-                                            </td>
-                                        </tr>
-
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - new quota //-->
-
-                        <!-- Start accordion section - new measures //-->
-                        <!--
-                        <div class="govuk-accordion__section ">
-                            <div class="govuk-accordion__section-header">
-                                <h2 class="govuk-accordion__section-heading">
-                                    <span class="govuk-accordion__section-button" id="accordion-with-summary-sections-heading-1">
-                                        New measures - Tranche 1 for S. Korean agreement (450)
-                                    </span>
-                                </h2>
-                            </div>
-                            <div id="accordion-with-summary-sections-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-1">
-                                <table class="govuk-table">
-                                    <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            <th scope="col" class="govuk-table__header">Action</th>
-                                            <th scope="col" class="govuk-table__header">SID</th>
-                                            <th scope="col" class="govuk-table__header">Regulation</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>Start date</th>
-                                            <th scope="col" class="govuk-table__header" nowrap>End date</th>
-                                            <th scope="col" class="govuk-table__header">Commodity code</th>
-                                            <th scope="col" class="govuk-table__header">Add. code</th>
-                                            <th scope="col" class="govuk-table__header">Geography</th>
-                                            <th scope="col" class="govuk-table__header">Exclusions</th>
-                                            <th scope="col" class="govuk-table__header">Duties</th>
-                                            <th scope="col" class="govuk-table__header">Conditions</th>
-                                            <th scope="col" class="govuk-table__header">Footnotes</th>
-                                            <th scope="col" class="govuk-table__header r" nowrap>Next step</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">3954356</td>
-                                            <td class="govuk-table__cell">R1010101</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030405") ?></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">0%</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">TM101</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">3954357</td>
-                                            <td class="govuk-table__cell">R1010101</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030406") ?></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">2%</td>
-                                            <td class="govuk-table__cell">Y102</td>
-                                            <td class="govuk-table__cell">TM101</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">3954358</td>
-                                            <td class="govuk-table__cell">R1010101</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030407") ?></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">1.4%</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">TM101</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">3954359</td>
-                                            <td class="govuk-table__cell">R1010101</td>
-                                            <td class="govuk-table__cell">01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030408") ?></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">4.2%</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">TM101</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell">Create</td>
-                                            <td class="govuk-table__cell">3954360</td>
-                                            <td class="govuk-table__cell">R1010101</td>
-                                            <td class="govuk-table__cell" nowrap>01 Jan 21</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id("0102030409") ?></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell"><abbr title="South Korea">KR</abbr></td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">1.5% + 3.7 EUR / KGM MAX 4% + 2 EUR / KGM</td>
-                                            <td class="govuk-table__cell">-</td>
-                                            <td class="govuk-table__cell">TM101</td>
-                                            <td class="govuk-table__cell r" nowrap>
-                                                <a title='View or edit this item' href=""><img src="/assets/images/view.png" /></a>
-                                                <a title='Delete this item' href=""><img src="/assets/images/delete.png" /></a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        //-->
-                        <!-- End accordion section - new measures //-->
-
-
-
-                    </div>
-
-                    <form method="post" action="actions.php">
+                        <form method="get" action="actions.php">
 
                         <?php
-                        if ($workbasket->user_id == $application->session->user_id) {
-                            h1("This is my workbasket");
-                        }
-                        //var_dump ($_SESSION);
-                        new hidden_control("workbasket_id", $application->session->workbasket->workbasket_id);
-                        h1($workbasket->status);
+                        new hidden_control("workbasket_id", $workbasket->workbasket_id);
+                        //h1($workbasket->status);
                         switch ($workbasket->status) {
                             case "In progress":
                                 new hidden_control("action", "submit_for_approval");
                                 new button_control("Submit workbasket for approval", "submit_workbasket", "primary", true);
+                                break;
+                            case "Awaiting approval":
+                                if ($application->session->permissions == "Approver") {
+                                    //pre($workbasket->counts_by_status);
+                                    $approved_count = 0;
+                                    foreach ($workbasket->counts_by_status as $item) {
+                                        if ($item->status == 'Approved') {
+                                            $approved_count = $item->status_count;
+                                            break;
+                                        }
+                                    }
+                                    if ($workbasket->activity_count == $approved_count) {
+                                        new hidden_control("action", "send_to_cds");
+                                        new button_control("Send workbasket to CDS", "send_to_cds", "primary", true);
+                                    } else {
+                                        p ("The workbasket cannot be submitted until all activities have been approved.");
+                                    }
+                                }
+                                break;
                         }
+                    }
                         ?>
-                    </form>
+                        </form>
                 </div>
             </div>
         </main>

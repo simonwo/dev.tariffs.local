@@ -17,19 +17,24 @@ require("../includes/metadata.php");
     <div class="govuk-width-container">
         <?php
         require("../includes/phase_banner.php");
-        $workbasket_id = $application->session->workbasket->workbasket_id;
-        $workbasket_item_id = get_querystring("id");
-        $workbasket = $application->session->get_workbasket_for_withdrawal($workbasket_id);
+        $workbasket = new workbasket();
+        $workbasket->workbasket_id = get_querystring("workbasket_id");
+        $workbasket_item_id = get_querystring("workbasket_item_id");
+        $workbasket->populate();
+        //$workbasket = $application->session->get_workbasket_for_withdrawal($workbasket_id);
         //prend ($application->session);
         //h1 ($workbasket_item_id);
         ?>
         <!-- Start breadcrumbs //-->
         <div class="govuk-breadcrumbs">
             <ol class="govuk-breadcrumbs__list">
-                <li class="govuk-breadcrumbs__list-item">
+            <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/">Home</a>
                 </li>
-                <li class="govuk-breadcrumbs__list-item" aria-current="page">Delete workbasket item</li>
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
+                </li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">Delete workbasket activity</li>
             </ol>
         </div>
         <!-- End breadcrumbs //-->
@@ -37,17 +42,21 @@ require("../includes/metadata.php");
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
-                    <h1 class="govuk-heading-xl">Delete workbasket item '<?= $workbasket->get_workbasket_item($workbasket_item_id) ?>'</h1>
+                    <h1 class="govuk-heading-xl">Delete workbasket activity</h1>
                     <!-- End main title //-->
 
 
                     <form action="actions.php" method="get">
 
                         <?php
+                        new warning_control(
+                            $text = "<span class='highlighted_text'>You have opted to delete the activity <strong>" . $workbasket->get_workbasket_item($workbasket_item_id) . "</strong>. By selecting 'Yes' below, you will delete the content of this workbasket activity. This action cannot be undone.</span>",
+                        );
+
                         new radio_control(
                             $label = "Are you sure you want to delete this workbasket activity?",
                             $label_style = "govuk-fieldset__legend--m",
-                            $hint_text = "The content of the activity will be deleted and this action cannot be undone.",
+                            $hint_text = "",
                             $control_name = "withdraw_workbasket_item",
                             $dataset = $application->get_yes_no(),
                             $selected = null,
@@ -61,7 +70,7 @@ require("../includes/metadata.php");
                         new hidden_control("workbasket_item_id", $workbasket_item_id);
                         new hidden_control("action", "delete_workbasket_item");
                         $btn = new button_control("Continue", "withdraw", "primary");
-                        $btn = new button_control("Cancel", "cancel", "text", "", "/");
+                        //$btn = new button_control("Cancel", "cancel", "text", "", "/");
                         ?>
                     </form>
                 </div>

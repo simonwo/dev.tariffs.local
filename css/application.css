@@ -1216,7 +1216,7 @@ td.vertical_align_middle {
 }
 
 .govuk-accordion__section-content table {
-    margin-bottom: 1em !important;
+    margin-bottom: 0px !important;
 }
 
 .govuk-accordion__section-content table tbody tr:last-of-type td.govuk-table__cell {
@@ -1372,6 +1372,10 @@ li.disabled {
     color: #003078 !important;
 }
 
+span.highlighted_text strong {
+    color: #003078 !important;
+}
+
 .inset_1 {
     display: block;
     float: left;
@@ -1477,4 +1481,32 @@ a img.inline_icon {
     position:relative;
     left:8px;
     top:-7px;
+}
+.govuk-header__controls div {
+    float:right;
+    position:relative;
+    top:-2px;
+    margin-left:0.5em;
+}
+ul.measure_activity_action_list {
+    list-style: none;
+    list-style-type: none;
+    margin:0px;
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 0px;
+}
+
+.measure_activity_action_list li {
+    list-style: none;
+    list-style-type: none;
+    margin:0px;
+}
+
+.measure_activity_action_list li span{
+    margin-left:10px;
+    position: relative;
+    top:-5px;
 }

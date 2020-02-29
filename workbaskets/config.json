@@ -22,7 +22,7 @@
         },
         "filters": [
             {
-                "label": "Created by",
+                "label": "Owner",
                 "form_value": "ownership",
                 "data_field": "ownership",
                 "data_type": "string",
@@ -51,24 +51,31 @@
                 "data_column": "title_link",
                 "sort_field": "title",
                 "tooltip": "",
+                "align": "nw"
+            },
+            {
+                "column_name": "Reason",
+                "data_column": "reason",
+                "sort_field": "",
+                "tooltip": "",
                 "align": ""
             },
             {
-                "column_name": "Created by",
+                "column_name": "Owner",
                 "data_column": "user_name",
                 "sort_field": "user_name",
                 "tooltip": "",
                 "align": ""
             },
             {
-                "column_name": "Date created",
+                "column_name": "Created",
                 "data_column": "created_at_string",
                 "sort_field": "created_at",
                 "tooltip": "",
                 "align": ""
             },
             {
-                "column_name": "Date updated",
+                "column_name": "Updated",
                 "data_column": "updated_at_string",
                 "sort_field": "updated_at",
                 "tooltip": "",
@@ -86,7 +93,7 @@
                 "data_column": "actions",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "l"
+                "align": "l nw"
             }
         ]
     }

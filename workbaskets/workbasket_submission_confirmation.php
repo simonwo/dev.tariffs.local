@@ -2,11 +2,11 @@
 require(dirname(__FILE__) . "../../includes/db.php");
 $error_handler = new error_handler();
 $application = new application;
-$submitted = get_formvar("submitted");
+$request_uri = get_querystring("request_uri");
 $workbasket = new workbasket();
-if ($submitted) {
-    $application->session->create_workbasket();
-}
+$workbasket->workbasket_id = get_querystring("workbasket_id");
+$workbasket->populate();
+//pre ($_REQUEST);
 ?>
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -39,21 +39,24 @@ require("../includes/metadata.php");
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-full">
                     <!-- Start panel //-->
                     <div class="govuk-panel govuk-panel--confirmation">
                         <h1 class="govuk-panel__title">
-                            Your workbasket has been reassigned
+                            Your workbasket has been submitted for approval.
                         </h1>
                         <div class="govuk-panel__body">
-                            The workbasket <br><strong>jobby</strong><br />
-                            has been reassigned to Marjorie Antrobus
+                            Workbasket name<br><strong><?= $workbasket->title ?></strong>
                         </div>
                     </div>
                     <!-- End panel //-->
+
                     <h2 class="govuk-heading-m">Next steps</h2>
-                    <li><a href="/workbaskets/view.html">View content of your workbasket</a></li>
-                    <p class="govuk-body">Return to main menu to <a class='govuk-link' href="/">begin making changes</a>.</p>
+                    <ul class="govuk-list">
+                        <li><a class='govuk-link' href="/">Return to main menu</a></li>
+                        <li><a class='govuk-link' href="/#workbaskets">View all workbaskets</a></li>
+                    </ul>
+
                 </div>
             </div>
         </main>

@@ -87,7 +87,7 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "This must be exactly three alpha-numeric characters long.",
                 "control_name": "additional_code",
-                "control_style": "govuk-!-width-one-quarter",
+                "control_style": "govuk-input--width-4",
                 "size": 5,
                 "maxlength": 3,
                 "pattern": "",

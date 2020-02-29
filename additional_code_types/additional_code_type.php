@@ -273,7 +273,7 @@ class additional_code_type
             $this->validity_end_date = Null;
         }
 
-        $status = 'Awaiting approval';
+        $status = 'In progress';
         # Create the additional_code_type record
         $sql = "INSERT INTO additional_code_types_oplog (
             additional_code_type_id, application_code,

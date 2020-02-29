@@ -131,7 +131,7 @@ class session
 
     function sign_out()
     {
-        h1("Signing out");
+        //h1("Signing out");
         $temp = 0;
         if ($this->cookies_accepted == 1) {
             //h1 ("retaining");
@@ -180,7 +180,6 @@ class session
             $workbasket->workbasket_id = $row[5];
             $this->workbasket = $workbasket;
             $_SESSION["workbasket_title"] = $workbasket->title;
-            $_SESSION["workbasket_title_abbreviated"] = substr($workbasket->title, 0, 25) . " ...";
         }
     }
 
@@ -209,25 +208,13 @@ class session
     {
         $_SESSION["workbasket_id"] = $id;
         $_SESSION["workbasket_title"] = $title;
-        if (strlen($_SESSION["workbasket_title"]) > 25) {
-            $_SESSION["workbasket_title_abbreviated"] = substr($title, 0, 25) . " ...";
-        } else {
-            $_SESSION["workbasket_title_abbreviated"] = $title;
-        }
-    }
-
-    public function close_workbasket()
-    {
-        $this->workbasket = null;
-        $_SESSION["workbasket_id"] = "";
-        $_SESSION["workbasket_title"] = "";
-        $url = "/#workbaskets";
-        header("Location: " . $url);
     }
 
     public function open_workbasket($id)
     {
         $_SESSION["workbasket_id"] = $id;
+        $_SESSION["confirm_operate_others_workbasket"] = "";
+
         $request_uri = get_formvar("request_uri");
         $this->get_workbasket();
         if ($request_uri == "") {
@@ -238,19 +225,6 @@ class session
         header("Location: " . $url);
     }
 
-    public function withdraw_workbasket($workbasket_id)
-    {
-        global $conn;
-        if ($workbasket_id == $_SESSION["workbasket_id"]) {
-            $this->close_workbasket();
-        }
-        $sql = "delete from workbaskets where workbasket_id = $1";
-        $stmt = "delete_workbasket";
-        pg_prepare($conn, $stmt, $sql);
-        pg_execute($conn, $stmt, array($workbasket_id));
-        $url = "/#workbaskets";
-        header("Location: " . $url);
-    }
 
     public function accept_cookies()
     {
@@ -273,6 +247,7 @@ class session
     {
         global $conn, $application;
         $errors = array();
+        $_SESSION["confirm_operate_others_workbasket"] = "";
 
         //prend($_REQUEST);
         $request_uri = get_formvar("request_uri");

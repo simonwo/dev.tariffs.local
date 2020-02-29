@@ -26,10 +26,14 @@ require("../includes/metadata.php");
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/">Home</a>
                 </li>
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
+                </li>
                 <li class="govuk-breadcrumbs__list-item" aria-current="page">Withdraw workbasket</li>
             </ol>
         </div>
-        <!-- End breadcrumbs //-->        <main class="govuk-main-wrapper" id="main-content" role="main">
+        <!-- End breadcrumbs //-->
+        <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
@@ -48,7 +52,7 @@ require("../includes/metadata.php");
                         new radio_control(
                             $label = "Are you sure you want to withdraw this workbasket?",
                             $label_style = "govuk-fieldset__legend--m",
-                            $hint_text = "All activities that have been added to this workbasket will be removed, and this action cannot be undone.",
+                            $hint_text = "Any activities that have been approved will be reverted to 'In progress' and this will become your open workbasket.",
                             $control_name = "withdraw_workbasket",
                             $dataset = $application->get_yes_no(),
                             $selected = null,

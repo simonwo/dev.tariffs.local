@@ -66,9 +66,20 @@ require("../includes/metadata.php");
                         );
 
                         new hidden_control(
+                            $control_name = "workbasket_id",
+                            $value = $workbasket->workbasket_id
+                        );
+
+                        new hidden_control(
                             $control_name = "user_id",
                             $value = $_SESSION["uid"]
                         );
+
+                        new hidden_control(
+                            $control_name = "action",
+                            $value = "update_workbasket"
+                        );
+
                         $btn = new button_cluster_control();
                         $btn->submit_button_text = "Create workbasket";
                         ?>

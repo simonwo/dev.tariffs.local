@@ -41,6 +41,7 @@ $title = parse_placeholders($title);
     <!--[if !IE 8]><!-->
     <link href="/css/govuk-frontend-3.4.0.min.css" rel="stylesheet" />
     <link href="/css/application.css" rel="stylesheet" />
+    <link href="/css/modaal.css" rel="stylesheet" />
     <!--<![endif]-->
     <script src="/js/jquery-3.4.1.js"></script>
     <!--
@@ -55,6 +56,7 @@ $title = parse_placeholders($title);
     <script src="/js/date.format.js"></script>
     <script src="/js/cursor.js"></script>
     <script src="/js/moment.js"></script>
+    <script src="/js/modaal.min.js"></script>
 
 
     <!--[if IE 8]>

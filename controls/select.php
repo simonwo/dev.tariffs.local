@@ -82,7 +82,8 @@ class select_control
             <?= $error_handler->display_error_message($this->error_key); ?>
             <select <?= $this->disabled_text ?> <?= $this->required ?> class="govuk-select <?= $this->control_class ?>" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>">
                 <?php
-                if (($this->default_value != "") && ($this->default_value != "")) {
+                //if (($this->default_value != "") && ($this->default_value != "")) {
+                if ($this->default_string != "") {
                     echo '<option ' . $this->default_group . ' value="' . $this->default_value . '">' . $this->default_string . '</option>';
                 }
 

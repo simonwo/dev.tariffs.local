@@ -43,7 +43,6 @@ class character_count_control
         // Get pattern string
         $this->pattern = $pattern;
         $this->group_class  = $group_class;
-        //h1 ($this->group_class);
 
         $this->display();
     }
@@ -65,7 +64,7 @@ class character_count_control
                 <div id="heading_<?= $this->control_name ?>" class="govuk-form-group <?= $this->group_class ?>">
                     <label class="<?= $this->label_style ?>" for="<?= $this->control_name ?>"><?= $this->label ?></label>
                     <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
-                    <textarea pattern="<?= $this->pattern?>" <?= $this->required ?> maxlength="<?= $this->maxlength ?>" class="govuk-textarea" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name ?>"><?= $this->default ?></textarea>
+                    <textarea pattern="<?= $this->pattern ?>" <?= $this->required ?> maxlength="<?= $this->maxlength ?>" class="govuk-textarea" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name ?>"><?= $this->default ?></textarea>
                 </div>
                 <!-- End text area control <?= $this->control_name ?> //-->
 
@@ -78,7 +77,7 @@ class character_count_control
                         <label class="<?= $this->label_style ?>" for="<?= $this->control_name ?>"><?= $this->label ?></label>
                         <span id="<?= $this->hint_name ?>" class="govuk-hint"><?= $this->hint_text ?></span>
                         <?= $error_handler->display_error_message($this->error_key); ?>
-                        <textarea pattern="<?= $this->pattern?>" <?= $this->required ?> <?= $this->maxlength_string ?> class="govuk-textarea govuk-js-character-count" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name2 ?> <?= $this->hint_name ?>"><?= $this->default ?></textarea>
+                        <textarea pattern="<?= $this->pattern ?>" <?= $this->required ?> <?= $this->maxlength_string ?> class="govuk-textarea govuk-js-character-count" id="<?= $this->control_name ?>" name="<?= $this->control_name ?>" rows="<?= $this->rows ?>" aria-describedby="<?= $this->hint_name2 ?> <?= $this->hint_name ?>"><?= $this->default ?></textarea>
                     </div>
 
                     <span id="<?= $this->hint_name2 ?>" class="govuk-hint govuk-character-count__message" aria-live="polite">

@@ -104,6 +104,80 @@ class additional_code
         header("Location: " . $url);
     }
 
+
+    function create_update($operation)
+    {
+        global $conn, $application;
+        $operation_date = $application->get_operation_date();
+        $this->additional_code_description_period_sid = $application->get_next_additional_code_description_period();
+        $this->additional_code_sid = $application->get_next_additional_code();
+
+        if ($this->validity_end_date == "") {
+            $this->validity_end_date = Null;
+        }
+
+        $status = 'In progress';
+        # Create the additional code record
+        $sql = "INSERT INTO additional_codes_oplog (
+            additional_code_sid, additional_code_type_id, additional_code,
+            validity_start_date, validity_end_date,
+            operation, operation_date, workbasket_id, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING oid;";
+        $stmt = "stmt_1_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->additional_code_sid, $this->additional_code_type_id, $this->additional_code,
+            $this->validity_start_date, $this->validity_end_date,
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
+        ));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_row($result);
+            $oid = $row[0];
+        }
+
+        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "additional_code", $status, $operation, $operation_date);
+
+        // Then upate the additional code record with oid of the workbasket item record
+        $sql = "UPDATE additional_codes_oplog set workbasket_item_id = $1 where oid = $2";
+        $stmt = "stmt_2_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $workbasket_item_id, $oid
+        ));
+
+        # Create the additional_code description period record
+        $sql = "INSERT INTO additional_code_description_periods_oplog (
+            additional_code_sid, additional_code_description_period_sid, additional_code,
+            additional_code_type_id, validity_start_date,
+            operation, operation_date, workbasket_id, status, workbasket_item_id)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING oid;";
+        $stmt = "stmt_3_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->additional_code_sid, $this->additional_code_description_period_sid, $this->additional_code,
+            $this->additional_code_type_id, $this->validity_start_date,
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+        ));
+
+        # Create the additional_code description record
+        $sql = "INSERT INTO additional_code_descriptions_oplog (
+            additional_code_sid, additional_code_description_period_sid, additional_code,
+            additional_code_type_id, language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_id)
+            VALUES ($1, $2, $3, $4, 'EN', $5, $6, $7, $8, $9, $10)
+            RETURNING oid;";
+        $stmt = "stmt_4_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->additional_code_sid, $this->additional_code_description_period_sid, $this->additional_code,
+            $this->additional_code_type_id, $this->description,
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+        ));
+    }
+
+
+
     function create()
     {
         global $conn, $application;

@@ -71,10 +71,12 @@
                     } else {
                         echo ('<a href="/workbaskets/create_or_open_workbasket.html">Create or open workbasket</a>&nbsp;&nbsp;');
                     }
+                    //pre ($application->session);
                     echo ('<a href="/session/sign_out.html">Sign out</a>');
+                    echo ("<div><img title='Logged on as " . $application->session->name . "' src='/assets/images/user.png' width='24' /></div>");
                 }
                 ?>
-
+                
             </div>
         </div>
     </header>

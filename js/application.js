@@ -20,11 +20,6 @@ $(document).ready(function () {
 
     url = "/api/v1/geographical_areas/current2.php";
     var geo_data = getJson(url);
-    console.log("above");
-    console.log(geo_data);
-    console.log("below");
-    /*
-    */
 
     /* Begin tooltip related functions */
     $(".tooltip").attr("aria-hidden", "true");
@@ -99,7 +94,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#measure_type_id').typeahead(null, {
+    $('#form_measure_activity #measure_type_id').typeahead(null, {
         name: 'measure_types',
         source: measure_types,
         limit: 20,
@@ -130,6 +125,7 @@ $(document).ready(function () {
 
 
     /* Start geographical area typeahead */
+    /*
     var geographical_areas = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -146,30 +142,8 @@ $(document).ready(function () {
         source: geographical_areas,
         limit: 10,
     });
-    /* End geographical area typeahead */
-
-
-
-    /* Start geographical areas typeahead */
-    /*
-    var geo_bloodhound = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.whitespace,
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        sufficient: 10,
-        prefetch: {
-            url: '../data/geo_bloodhound.json',
-            ttl: 100,
-            cache: true
-        }
-    });
-
-    $('#geographical_area_id').typeahead(null, {
-        name: 'geo_bloodhound',
-        source: geo_bloodhound,
-        limit: 20,
-    });
     */
-    /* End geographical areas typeahead */
+    /* End geographical area typeahead */
 
 
 

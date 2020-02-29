@@ -58,6 +58,8 @@ class application
         if (($this->page == 0) || (!empty($_POST))) {
             $this->page = 1;
         }
+
+        //pre ($_SESSION);
     }
 
     public function create_session()
@@ -70,12 +72,27 @@ class application
     {
         $this->tariff_object = $tariff_object;
         $uri = $_SERVER["REQUEST_URI"];
+        // If the user does not have a workbasket open, then any attempt to create or amend data should result in redirecting
+        // to the create or open workbasket page; 
+
+        // But if the workbasket belongs to someone else, then there needs to be a check, so that the user does not
+        // accidentally move from approval into creation mode.
+
         if (strpos($uri, 'create') !== false) {
             if ($this->session->workbasket == null) {
                 //prend ($_SERVER);
                 $request_uri = urlencode($_SERVER["REQUEST_URI"]);
                 $url = "/workbaskets/create_or_open_workbasket.html?request_uri=" . $request_uri;
                 header("Location: " . $url);
+            } elseif ($this->session->workbasket->user_id != $this->session->uid) {
+                // You are in someone else's workbasket
+                // Are you sure you want to carry on
+                if (get_session_variable("confirm_operate_others_workbasket") == "") {
+                    $request_uri = urlencode($_SERVER["REQUEST_URI"]);
+                    $url = "/workbaskets/confirm_operate_others_workbasket.html?request_uri=" . $request_uri;
+                    header("Location: " . $url);
+                }
+                
             }
         }
 
@@ -1820,6 +1837,7 @@ class application
 
     public function get_my_workbaskets_or_new()
     {
+        //prend ($_SESSION);
         global $conn;
         $offset = ($this->page - 1) * $this->page_size;
         $this->workbaskets = array();
@@ -1828,7 +1846,7 @@ class application
         select workbasket_id, title, created_at
         from workbaskets
         where status = 'In progress'
-        and user_id = 1
+        and user_id = $1
         order by created_at desc;";
 
         // pre ($sql);
@@ -1836,7 +1854,7 @@ class application
         $stmt = "get_my_workbaskets_or_new" . uniqid();
         pg_prepare($conn, $stmt, $sql);
         $workbaskets = array();
-        $result = pg_execute($conn, $stmt, array());
+        $result = pg_execute($conn, $stmt, array($this->session->uid));
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
@@ -1914,6 +1932,7 @@ class application
                 $wb = new workbasket;
                 $wb->workbasket_id = $row['workbasket_id'];
                 $wb->title = $row['title'];
+                $wb->reason = $row['reason'];
                 $wb->title_link = "<a class='govuk-link' href='/workbaskets/view.html?workbasket_id=" . $wb->workbasket_id . "'>" . $row['title'] . "</a>";
                 $wb->user_id = $row['user_id'];
                 $wb->user_name = $row['user_name'];
@@ -1926,7 +1945,8 @@ class application
                 $wb->actions = "";
                 $wb->actions .= $wb->show_workbasket_icon_open_close();
                 $wb->actions .= $wb->show_workbasket_icon_withdraw();
-                $wb->actions .= $wb->show_workbasket_icon_submit();
+                //$wb->actions .= $wb->show_workbasket_icon_submit();
+                $wb->actions .= $wb->show_workbasket_icon_delete();
                 $status_text = $wb->status;
 
                 if (isset($this->session->workbasket->workbasket_id)) {
@@ -1979,8 +1999,8 @@ class application
     public function get_workbasket_ownerships()
     {
         $this->workbasket_ownerships = array();
-        array_push($this->workbasket_ownerships, new simple_object("own", "Created by me", "", ""));
-        array_push($this->workbasket_ownerships, new simple_object("other", "Created by others", "", ""));
+        array_push($this->workbasket_ownerships, new simple_object("own", "Owned by me", "", ""));
+        array_push($this->workbasket_ownerships, new simple_object("other", "Owned by others", "", ""));
     }
 
 
@@ -1990,6 +2010,14 @@ class application
         array_push($yes_no, new simple_object("Yes", "Yes", "Yes", ""));
         array_push($yes_no, new simple_object("No", "No", "No", ""));
         return ($yes_no);
+    }
+
+    public function get_yes_no_continue()
+    {
+        $yes_no_continue = array();
+        array_push($yes_no_continue, new simple_object("Yes", "Yes, use this workbasket", "Yes", "Any changes you make will be added to the currently open workbasket."));
+        array_push($yes_no_continue, new simple_object("No", "No, select another workbasket", "No", "Your current workbasket will be closed and you will be able to open or create anothre workbasket."));
+        return ($yes_no_continue);
     }
 
 

@@ -7,6 +7,7 @@ class workbasket
     public $type = "";
     public $status = "";
     public $user_id = "";
+    public $user_name = "";
     public $date_created = "";
     public $date_last_updated = "";
 
@@ -32,8 +33,13 @@ class workbasket
     function populate()
     {
         global $conn;
-        $sql = "select title, reason, user_id, status, created_at, last_status_change_at, last_update_by_id 
-        from workbaskets w where w.workbasket_id = $1;";
+
+        // Get the basic details
+        $sql = "select title, reason, user_id, status, w.created_at,
+        last_status_change_at, last_update_by_id, u.name
+        from workbaskets w, users u
+        where w.user_id = u.id
+        and w.workbasket_id = $1;";
         $stmt = "populate_workbasket_" . $this->workbasket_id;
         pg_prepare($conn, $stmt, $sql);
         $result = pg_execute($conn, $stmt, array(
@@ -48,34 +54,61 @@ class workbasket
             $this->created_at = $row[4];
             $this->last_status_change = $row[5];
             $this->last_updated_by = $row[6];
+            $this->user_name = $row[7];
+        }
+
+        // Get the count of items
+        $sql = "select status, count(*) as status_count
+        from workbasket_items
+        where workbasket_id = $1
+        group by status;";
+        $stmt = "populate_workbasket_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->workbasket_id
+        ));
+
+        $this->activity_count = 0;
+        if ($result) {
+            $this->counts_by_status = array();
+            $row_count = pg_num_rows($result);
+            if ($row_count > 0) {
+                while ($row = pg_fetch_array($result)) {
+                    $item = new reusable();
+                    $item->status =  $row["status"];
+                    $item->status_count =  $row["status_count"];
+                    $this->activity_count += $item->status_count;
+                    array_push($this->counts_by_status, $item);
+                }
+            }
         }
     }
 
     public function show_section($object_type, $result)
     {
+        global $application;
         $id = "accordion-with-summary-sections-" . underscore($object_type);
         $row_count = pg_num_rows($result);
         if ($row_count == 0) {
             return;
         }
         $field_count = pg_num_fields($result) - 3;
+        //h1("Field count is " . $field_count);
         switch ($field_count) {
-            case 5:
-                $widths = [10, 10, 12, 12, 46, 10];
-                break;
+                // These should add up to 90, and the status, whjich is always last needs to be 5% always
             case 6:
-                $widths = [10, 12, 12, 12, 12, 32, 10];
+                $widths = [20, 10, 10, 10, 32, 10];
                 break;
-            case 8:
-                switch ($object_type) {
-                    case "regulations":
-                        $widths = [10, 10, 10, 30, 10, 10, 10, 10, 10];
-                        break;
-                    default:
-                        $widths = [10, 10, 10, 10, 10, 10, 10, 30, 10];
-                        break;
+            case 7:
+                // footnotes & regulations
+                $widths = [10, 10, 10, 10, 10, 32, 10];
+                break;
+            default:
+                $cell_width = floor(100 / $field_count);
+                $widths = array();
+                for ($i = 0; $i < $cell_width; $i++) {
+                    array_push($widths, $cell_width);
                 }
-                break;
         }
 
 ?>
@@ -95,25 +128,46 @@ class workbasket
                             <?php
                             for ($i = 0; $i < $field_count; $i++) {
                                 $field = pg_field_name($result, $i);
-                                echo ('<th width="' . $widths[$i] . '%" scope="col" class="govuk-table__header">' . format_field_name($field) . '</th>');
+                                if ($field == "status") {
+                                    $align = "c";
+                                } else {
+                                    $align = "";
+                                }
+                                echo ('<th width="' . $widths[$i] . '%" scope="col" class="govuk-table__header ' . $align . '">' . format_field_name($field) . '</th>');
                             }
                             ?>
-                            <th scope="col" class="govuk-table__header r">Next step</th>
+                            <th scope="col" class="govuk-table__header nw l">Action</th>
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                         <?php
                         while ($row = pg_fetch_object($result)) {
                             //prend ($row);
-                            echo ('<tr class="govuk-table__row">');
+                            echo ('<tr id="workbasket_item_id_' . $row->id . '" class="govuk-table__row">');
                             for ($i = 0; $i < $field_count; $i++) {
                                 $field = pg_field_name($result, $i);
-                                echo ('<td class="govuk-table__cell">' . format_value($row, $field) . '</td>');
+                                if ($field == "status") {
+                                    $align = "c";
+                                } else {
+                                    $align = "";
+                                }
+                                echo ('<td class="govuk-table__cell ' . $align . '">' . format_value($row, $field, $workbasket = true) . '</td>');
                             }
-                            $delete_url = "workbasket_item_delete.php?action=delete_workbasket_item&id=" . $row->id;
-                            echo ('<td class="govuk-table__cell r" nowrap>');
-                            echo ('<a title="View or edit this item" href="' . $row->view_url . '"><img src="/assets/images/view.png" /></a>');
-                            echo ('<a title="Delete this item" href="' . $delete_url . '"><img src="/assets/images/delete.png" /></a>');
+                            // Now do the action cells
+                            $delete_url = "workbasket_item_delete.php?action=delete_workbasket_item&workbasket_id=" . $this->workbasket_id . "&workbasket_item_id=" . $row->id;
+                            $approve_url = "actions.php?action=approve_workbasket_item&workbasket_id=" . $this->workbasket_id . "&workbasket_item_id=" . $row->id;
+                            //$reject_url = "actions.php?action=reject_workbasket_item&workbasket_id=" . $this->workbasket_id . "&workbasket_item_id=" . $row->id;
+                            $reject_url = "reject.html?action=reject_workbasket_item&workbasket_id=" . $this->workbasket_id . "&workbasket_item_id=" . $row->id;
+
+                            echo ('<td class="govuk-table__cell nw" style="width:8%">');
+                            echo ('<ul class="measure_activity_action_list">');
+                            echo ('<li><a class="govuk-link" title="View or edit this activity" href="' . $row->view_url . '"><img src="/assets/images/view.png" /><span>View</span></a></li>');
+                            if ($application->session->permissions == "Approver") {
+                                echo ('<li><a class="govuk-link" title="Approve this activity" href="' . $approve_url . '"><img src="/assets/images/approve.png" /><span>Approve</span></a></li>');
+                                echo ('<li><a class="govuk-link modaal-ajax" title="Reject this activity" href="' . $reject_url . '"><img src="/assets/images/reject.png" /><span>Reject</span></a></li>');
+                            }
+                            echo ('<li><a class="govuk-link" title="Delete this activity" href="' . $delete_url . '"><img src="/assets/images/delete.png" /><span>Delete</span></a></li>');
+                            echo ('</ul>');
                             echo ('</td>');
                             echo ('</tr>');
                         }
@@ -122,6 +176,12 @@ class workbasket
                 </table>
             </div>
         </div>
+        <script>
+            $('.modaal-ajax').modaal({
+                type: 'ajax'
+            });
+        </script>
+
         <!-- End accordion section - <?= $object_type ?> //-->
 <?php
     }
@@ -134,7 +194,8 @@ class workbasket
     public function workbasket_get_footnote_types()
     {
         global $conn;
-        $sql = "select wi.operation, ft.footnote_type_id, ft.validity_start_date, ft.validity_end_date, ftd.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, ft.footnote_type_id, ft.validity_start_date, ft.validity_end_date,
+        ftd.description as footnote_type_description, wi.status, wi.id, wi.record_id,
         '/footnote_types/view.html?mode=view&footnote_type_id=' || ft.footnote_type_id as view_url
         from workbasket_items wi, footnote_types ft, footnote_type_descriptions ftd
         where wi.record_id = ft.oid
@@ -155,7 +216,8 @@ class workbasket
     public function workbasket_get_certificate_types()
     {
         global $conn;
-        $sql = "select wi.operation, ct.certificate_type_code, ct.validity_start_date, ct.validity_end_date, ctd.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, ct.certificate_type_code, ct.validity_start_date, ct.validity_end_date,
+        ctd.description as certificate_description, wi.status, wi.id, wi.record_id,
         '/certificate_types/view.html?mode=view&certificate_type_code=' || ct.certificate_type_code as view_url
         from workbasket_items wi, certificate_types ct, certificate_type_descriptions ctd
         where wi.record_id = ct.oid
@@ -173,7 +235,8 @@ class workbasket
     public function workbasket_get_additional_code_types()
     {
         global $conn;
-        $sql = "select wi.operation, act.additional_code_type_id, act.validity_start_date, act.validity_end_date, actd.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, act.additional_code_type_id, act.validity_start_date, act.validity_end_date,
+        actd.description as additional_code_type_description, wi.status, wi.id, wi.record_id,
         '/additional_code_types/view.html?mode=view&additional_code_type_id=' || act.additional_code_type_id as view_url
         from workbasket_items wi, additional_code_types act, additional_code_type_descriptions actd
         where wi.record_id = act.oid
@@ -191,12 +254,16 @@ class workbasket
     public function workbasket_get_measure_types()
     {
         global $conn;
-        $sql = "select wi.operation, mt.measure_type_id, mt.validity_start_date,
-        (mt.measure_type_series_id || ' ' || mtsd.description) as series,
-        (mt.trade_movement_code || ' ' || tmc.description) as trade_movement_code,
-        (mt.measure_component_applicable_code || ' ' || mcac.description) as measure_component_applicable_code,
-        (mt.order_number_capture_code || ' ' || oncc.description) as order_number_capture_code,
-        mtd.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, (mt.measure_type_series_id || ' ' || mtsd.description) as series,
+        mt.measure_type_id, mt.validity_start_date, mt.validity_end_date,
+        (
+            '<b>Description</b>: ' || mtd.description  ||
+            '<br /><b>Import / export</b>: ' || mt.trade_movement_code || ' ' || tmc.description ||
+            '<br /><b>Requires duties</b>: ' || mt.measure_component_applicable_code || ' ' || mcac.description ||
+            '<br /><b>Requires order number</b>: ' || mt.order_number_capture_code || ' ' || oncc.description
+        ) as measure_type_description_and_key_fields,
+        wi.status,
+        wi.id, wi.record_id,
         '/measure_types/view.html?mode=view&measure_type_id=' || mt.measure_type_id as view_url
         from workbasket_items wi, measure_types mt, measure_type_descriptions mtd,
         measure_type_series_descriptions mtsd, trade_movement_codes tmc,
@@ -217,12 +284,13 @@ class workbasket
         $this->show_section("measure types", $result);
     }
 
+
     public function workbasket_get_footnotes()
     {
         global $conn;
         $sql = "select wi.operation, f.footnote_type_id || ' ' || ftd.description as footnote_type_id,
         (f.footnote_type_id || ' ' || f.footnote_id) as footnote_id,
-        f.validity_start_date, f.validity_end_date, fd.description, wi.id, wi.record_id,
+        f.validity_start_date, f.validity_end_date, fd.description as footnote_description, wi.status, wi.id, wi.record_id,
         '/footnotes/view.html?mode=view&footnote_id=' || f.footnote_id || '&footnote_type_id=' || f.footnote_type_id as view_url
         from workbasket_items wi, footnotes f, footnote_descriptions fd, footnote_type_descriptions ftd
         where wi.record_id = f.oid
@@ -246,7 +314,7 @@ class workbasket
         global $conn;
         $sql = "select wi.operation, f.certificate_type_code || ' ' || ftd.description as certificate_type_code,
         (f.certificate_type_code || ' ' || f.certificate_code) as certificate_code,
-        f.validity_start_date, f.validity_end_date, fd.description, wi.id, wi.record_id,
+        f.validity_start_date, f.validity_end_date, fd.description as certificate_description, wi.status, wi.id, wi.record_id,
         '' as view_url
         from workbasket_items wi, certificates f, certificate_descriptions fd, certificate_type_descriptions ftd
         where wi.record_id = f.oid
@@ -268,7 +336,7 @@ class workbasket
         global $conn;
         $sql = "select wi.operation, f.additional_code_type_id || ' ' || ftd.description as additional_code_type_id,
         (f.additional_code_type_id || ' ' || f.additional_code) as additional_code,
-        f.validity_start_date, f.validity_end_date, fd.description, wi.id, wi.record_id,
+        f.validity_start_date, f.validity_end_date, fd.description, wi.status, wi.id, wi.record_id,
         '' as view_url
         from workbasket_items wi, additional_codes f, additional_code_descriptions fd, additional_code_type_descriptions ftd
         where wi.record_id = f.oid
@@ -289,9 +357,13 @@ class workbasket
     public function workbasket_get_regulations()
     {
         global $conn;
-        $sql = "select wi.operation, br.base_regulation_id, br.validity_start_date, br.information_text,
-        br.url, br.public_identifier, br.trade_remedies_case,
-        (br.regulation_group_id || ' - ' || rgd.description) as regulation_group_id, wi.id, wi.record_id,
+        $sql = "select wi.operation, (br.regulation_group_id || ' - ' || rgd.description) as regulation_group_id,
+        br.base_regulation_id, br.validity_start_date, br.validity_end_date, 
+        ('<b>Description</b>: ' || br.information_text ||
+        '<br /><br /><b>URL</b>: ' || br.url ||
+        '<br /><br /><b>Public identifier</b>: ' || br.public_identifier ||
+        '<br /><br /><b>Trade Remedies case</b>: ' || coalesce(br.trade_remedies_case, 'n/a')) as regulation_description_and_key_fields,
+        wi.status, wi.id, wi.record_id,
         '' as view_url
         from workbasket_items wi, base_regulations br, regulation_group_descriptions rgd 
         where wi.record_id = br.oid
@@ -310,9 +382,9 @@ class workbasket
     public function workbasket_get_geographical_areas()
     {
         global $conn;
-        $sql = "select wi.operation, ga.geographical_area_id, ga.validity_start_date, ga.validity_end_date,
-        ga.geographical_code || ' - ' || gc.description as geographical_code, gad.description,
-        wi.id, wi.record_id,
+        $sql = "select wi.operation, ga.geographical_code || ' - ' || gc.description as geographical_code,
+        ga.geographical_area_id, ga.validity_start_date, ga.validity_end_date, gad.description as geographical_area_description,
+        wi.status, wi.id, wi.record_id,
         '/geographical_areas/view.html?mode=view&geographical_area_id=' || ga.geographical_area_id || '&geographical_area_sid=' || ga.geographical_area_sid  as view_url
         from workbasket_items wi, geographical_areas ga, geographical_area_descriptions gad, geographical_codes gc 
         where wi.record_id = ga.oid
@@ -333,7 +405,7 @@ class workbasket
         global $conn;
         $sql = "select ma.activity_name, wi.sub_record_type, ma.validity_start_date, ma.validity_end_date,
         ma.measure_generating_regulation_id, /* ma.commodity_list, */
-        wi.id, wi.record_id,
+        wi.status, wi.id, wi.record_id,
         '/measures/create_edit_summary.html?mode=view&measure_activity_sid=' || wi.record_id as view_url
         from workbasket_items wi, measure_activities ma
         where wi.record_id = ma.measure_activity_sid 
@@ -350,7 +422,7 @@ class workbasket
     public function workbasket_get_quota_suspension_periods()
     {
         global $conn;
-        $sql = "select wi.operation, qd.quota_order_number_id, qsp.suspension_start_date, qsp.suspension_end_date, qsp.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, qd.quota_order_number_id, qsp.suspension_start_date, qsp.suspension_end_date, qsp.description, wi.status, wi.id, wi.record_id,
         'test.html' as view_url
         from workbasket_items wi, quota_suspension_periods qsp, quota_definitions qd
         where wi.record_id = qsp.oid
@@ -371,7 +443,7 @@ class workbasket
     public function workbasket_get_quota_blocking_periods()
     {
         global $conn;
-        $sql = "select wi.operation, qd.quota_order_number_id, qsp.blocking_start_date, qsp.blocking_end_date, qsp.description, wi.id, wi.record_id,
+        $sql = "select wi.operation, qd.quota_order_number_id, qsp.blocking_start_date, qsp.blocking_end_date, qsp.description, wi.status, wi.id, wi.record_id,
         'test.html' as view_url
         from workbasket_items wi, quota_blocking_periods qsp, quota_definitions qd
         where wi.record_id = qsp.oid
@@ -412,7 +484,7 @@ class workbasket
             return "";
         }
         $record_type = "";
-        $sql = "select record_id, record_type from workbasket_items wi where id = $1;";
+        $sql = "select record_id, record_type, title from workbasket_items wi where id = $1;";
         pg_prepare($conn, "get_workbasket_item" . $workbasket_item_id, $sql);
         $result = pg_execute($conn, "get_workbasket_item" . $workbasket_item_id, array(
             $workbasket_item_id
@@ -420,8 +492,9 @@ class workbasket
         if (($result) && (pg_num_rows($result) > 0)) {
             $row = pg_fetch_row($result);
             $record_type = $row[1];
+            $title = $row[2];
         }
-        return ($record_type);
+        return ($title);
     }
 
     public function delete_workbasket_item($workbasket_item_id)
@@ -546,12 +619,23 @@ class workbasket
         if ($this->workbasket_id == $test) {
             $ret = "<a title='Close this workbasket' href='/workbaskets/actions.php?action=close'><img alt='Close workbasket' src='/assets/images/close.png' /></a>\r\n";
         } else {
-            if ($this->status == 'In progress') {
-                $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
-            } elseif ($this->status == 'Published') {
-                $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+            //h1 ($application->session->permissions);
+            if ($application->session->permissions == "Approver") {
+                if (($this->status == 'In progress') || ($this->status == 'Awaiting approval')) {
+                    $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
+                } elseif ($this->status == 'Published') {
+                    $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+                } else {
+                    $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                }
             } else {
-                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                if ($this->status == 'In progress') {
+                    $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
+                } elseif ($this->status == 'Published') {
+                    $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+                } else {
+                    $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                }
             }
         }
         return ($ret);
@@ -559,11 +643,13 @@ class workbasket
 
     function show_workbasket_icon_withdraw()
     {
+        // Withdraw is used to withdraw workbasket from "Awaiting approval" back to "In progress"
         global $application;
         $ret = "";
 
         if ($this->user_id == $application->session->user_id) {
-            if (($this->status == 'In progress') || ($this->status == 'Awaiting Approval') || ($this->status == 'Approval Rejected') || ($this->status == 'Re-editing')) {
+            //if (($this->status == 'In progress') || ($this->status == 'Awaiting approval') || ($this->status == 'Rejected') || ($this->status == 'Re-editing')) {
+            if ($this->status == 'Awaiting approval') {
                 $ret = "<a title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $this->workbasket_id . "'><img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /></a>\r\n";
             } else {
                 $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
@@ -582,7 +668,7 @@ class workbasket
 
         if ($this->user_id == $application->session->user_id) {
             if (($this->status == 'In progress') || ($this->status == 'Re-editing')) {
-                $ret = "<a title='Submit workbasket for approval' href=''><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n";
+                $ret = "<a title='Submit workbasket for approval' href='/workbaskets/actions.php?action=submit_for_approval&workbasket_id=" . $this->workbasket_id . "'><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n";
             } else {
                 $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
             }
@@ -590,5 +676,112 @@ class workbasket
             $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
         }
         return ($ret);
+    }
+
+
+    function show_workbasket_icon_delete()
+    {
+        global $application;
+        $ret = "";
+
+        if ($this->user_id == $application->session->user_id) {
+            if (($this->status == 'In progress') || ($this->status == 'Re-editing')) {
+                $ret = "<a title='Delete this workbasket' href=''><img alt='Delete workbasket' src='/assets/images/delete.png' /></a>\r\n";
+            } else {
+                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            }
+        } else {
+            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+        }
+        return ($ret);
+    }
+
+    function submit_workbasket_for_approval()
+    {
+        global $conn;
+
+        $sql = "select * from ml.update_status($1, $2);";
+        $stmt = "change_status";
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array('Awaiting approval', $this->workbasket_id));
+
+
+        $url = "./workbasket_submission_confirmation.html?workbasket_id=" . $this->workbasket_id;
+        header("Location: " . $url);
+    }
+
+    public function update_workbasket()
+    {
+        global $conn;
+        //prend ($_REQUEST);
+        $this->workbasket_id = get_formvar("workbasket_id");
+        $this->title = get_formvar("title");
+        $this->reason = get_formvar("reason");
+        $sql = "update workbaskets set title = $1, reason = $2 where workbasket_id = $3";
+        $stmt = "update_workbasket_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->title, $this->reason, $this->workbasket_id));
+
+        $url = "./view.html?workbasket_id=" . $this->workbasket_id;
+        header("Location: " . $url);
+    }
+
+    public function close_workbasket()
+    {
+        global $application;
+        $application->session->workbasket = null;
+        $_SESSION["confirm_operate_others_workbasket"] = "";
+        $_SESSION["workbasket_id"] = "";
+        $_SESSION["workbasket_title"] = "";
+        $url = "/#workbaskets";
+        header("Location: " . $url);
+    }
+
+
+    public function withdraw_workbasket()
+    {
+        global $conn;
+
+        $sql = "select * from ml.update_status($1, $2);";
+        $stmt = "change_status";
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array('In progress', $this->workbasket_id));
+
+        $url = "/#workbaskets";
+        header("Location: " . $url);
+    }
+
+
+    public function delete_workbasket($workbasket_id)
+    {
+        // This actually does a delete
+        global $conn;
+        if ($workbasket_id == $_SESSION["workbasket_id"]) {
+            $this->close_workbasket();
+        }
+        $sql = "delete from workbaskets where workbasket_id = $1";
+        $stmt = "delete_workbasket";
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($workbasket_id));
+        $url = "/#workbaskets";
+        header("Location: " . $url);
+    }
+
+    public function approve_workbasket_item($workbasket_item_id)
+    {
+        global $conn;
+        $sql = "update workbasket_items set status = 'Approved' where id = $1";
+        $stmt = "approve_workbasket_item_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($workbasket_item_id));
+    }
+
+    public function reject_workbasket_item($workbasket_item_id)
+    {
+        global $conn;
+        $sql = "update workbasket_items set status = 'Rejected' where id = $1";
+        $stmt = "approve_workbasket_item_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($workbasket_item_id));
     }
 }

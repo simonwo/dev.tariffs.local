@@ -229,6 +229,34 @@ function get_querystring($key)
     }
 }
 
+function get_request($key)
+{
+    if (isset($_REQUEST[$key])) {
+        if (!is_array($_REQUEST[$key])) {
+            $s = trim($_REQUEST[$key]);
+        } else {
+            $s = $_REQUEST[$key];
+        }
+        return ($s);
+    } else {
+        return ("");
+    }
+}
+
+function get_session_variable($key)
+{
+    if (isset($_SESSION[$key])) {
+        if (!is_array($_SESSION[$key])) {
+            $s = trim($_SESSION[$key]);
+        } else {
+            $s = $_SESSION[$key];
+        }
+        return ($s);
+    } else {
+        return ("");
+    }
+}
+
 function geographical_code($id)
 {
     switch ($id) {
@@ -860,8 +888,8 @@ function format_field_name($s)
 {
     $s = str_replace('measure_sid', 'Measure', $s);
     $s = str_replace('goods_nomenclature_item_id', 'Commodity code', $s);
-    $s = str_replace('geographical_area_description', 'Geography', $s);
-    $s = str_replace('measure_type_description', 'Measure type', $s);
+    //$s = str_replace('geographical_area_description', 'Geography', $s);
+    //$s = str_replace('measure_type_description', 'Measure type', $s);
     $s = str_replace('ordernumber', 'Order number', $s);
     $s = str_replace('base_regulation_id', 'Regulation id', $s);
     $s = str_replace('regulation_group_id', 'regulation_group', $s);
@@ -881,11 +909,15 @@ function format_field_name($s)
     return ($s);
 }
 
-function format_value($row, $field)
+function format_value($row, $field, $workbasket = false)
 {
     switch ($field) {
         case "status":
-            return (status_image($row->{$field}) . $row->{$field});
+            if ($workbasket) {
+                return (status_image($row->{$field}, $workbasket));
+            } else {
+                return (status_image($row->{$field}) . $row->{$field});
+            }
             break;
         case "operation_date":
         case "validity_start_date":
@@ -999,7 +1031,7 @@ function db_execute($sql, $array)
     pg_execute($conn, $stmt, $array);
 }
 
-function status_image($status)
+function status_image($status, $show_text = false)
 {
     switch ($status) {
         case "In progress":
@@ -1008,8 +1040,11 @@ function status_image($status)
         case "Awaiting approval":
             $status_image = "awaiting_approval.png";
             break;
-        case "Approval rejected":
-            $status_image = "approval_rejected.png";
+        case "Approved":
+            $status_image = "approved.png";
+            break;
+        case "Rejected":
+            $status_image = "rejected.png";
             break;
         case "Sent to CDS":
             $status_image = "sent_to_cds.png";
@@ -1026,7 +1061,11 @@ function status_image($status)
         default:
             $status_image = "";
     }
-    return ("<img class='status_image' alt='Status: " . $status . "' title='Status: " . $status . "' src='/assets/images/" . $status_image . "' />");
+    $s = "<img class='status_image' alt='Status: " . $status . "' title='Status: " . $status . "' src='/assets/images/" . $status_image . "' />";
+    if ($show_text) {
+        $s .= "<br />" . $status;
+    }
+    return ($s);
 }
 
 function contains_string($haystack, $needle)
