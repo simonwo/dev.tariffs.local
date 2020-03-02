@@ -91,7 +91,7 @@ require("../includes/metadata.php");
                                     </td>
                                     <td class="govuk-table__cell c"><?= $heading->productline_suffix_display() ?></td>
                                     <td class="govuk-table__cell c"><?= $heading->number_indents ?></td>
-                                    <td class="govuk-table__cell c" nowrap><a class="govuk-link" href="goods_nomenclature_item_view.php?goods_nomenclature_item_id=<?=$heading->goods_nomenclature_item_id?>&productline_suffix=<?=$heading->productline_suffix?>"><img src='/assets/images/view.png' alt='View this commodity' /></a></td>
+                                    <td class="govuk-table__cell c" nowrap><a class="govuk-link" href="goods_nomenclature_item_view.php?goods_nomenclature_sid=<?=$heading->goods_nomenclature_sid?>&goods_nomenclature_item_id=<?=$heading->goods_nomenclature_item_id?>&productline_suffix=<?=$heading->productline_suffix?>"><img src='/assets/images/view.png' alt='View this commodity' /></a></td>
                                 </tr>
                         <?php
                             }

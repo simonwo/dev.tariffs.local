@@ -30,77 +30,31 @@ require("../includes/metadata.php");
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl">Sign in to the application</h1>
                     <form action="" method="post">
-                    <!-- End main title //-->
-                    <?php
+                        <!-- End main title //-->
+                        <?php
                         new inset_control(
                             $text = "Please note: this is a dummy page. Logging in will not be required in the real application, as single-sign on will be operational."
                         );
-                    new input_control(
-                        $label = "User ID",
-                        $label_style = "govuk-label--m",
-                        $hint_text = "",
-                        $control_name = "user_id",
-                        $control_style = "govuk-input--width-10",
-                        $size = 50,
-                        $maxlength = 50,
-                        $pattern = "",
-                        $required = "required",
-                        $default = "",
-                        $disabled = false,
-                        $custom_errors = ""
-                    );
 
-                    /*
-                    new input_control(
-                        $label = "Email address",
-                        $label_style = "govuk-label--m",
-                        $hint_text = "",
-                        $control_name = "email",
-                        $control_style = "govuk-input--width-20",
-                        $size = 100,
-                        $maxlength = 100,
-                        $pattern = "",
-                        $required = "required",
-                        $default = "",
-                        $disabled = false,
-                        $custom_errors = ""
-                    );
+                        new input_control(
+                            $label = "User ID",
+                            $label_style = "govuk-label--m",
+                            $hint_text = "",
+                            $control_name = "user_login",
+                            $control_style = "govuk-input--width-10",
+                            $size = 50,
+                            $maxlength = 50,
+                            $pattern = "",
+                            $required = "required",
+                            $default = "",
+                            $disabled = false,
+                            $custom_errors = ""
+                        );
 
-                    new input_control(
-                        $label = "First name",
-                        $label_style = "govuk-label--m",
-                        $hint_text = "",
-                        $control_name = "first_name",
-                        $control_style = "govuk-input--width-10",
-                        $size = 50,
-                        $maxlength = 50,
-                        $pattern = "",
-                        $required = "",
-                        $default = "",
-                        $disabled = false,
-                        $custom_errors = ""
-                    );
+                        $btn = new button_cluster_control("Sign in");
+                        $btn->submit_button_text = "Sign in";
 
-                    new input_control(
-                        $label = "Last name",
-                        $label_style = "govuk-label--m",
-                        $hint_text = "",
-                        $control_name = "last_name",
-                        $control_style = "govuk-input--width-10",
-                        $size = 50,
-                        $maxlength = 50,
-                        $pattern = "",
-                        $required = false,
-                        $default = "",
-                        $disabled = false,
-                        $custom_errors = ""
-                    );
-                    */
-
-                    $btn = new button_cluster_control("Sign in");
-                    $btn->submit_button_text = "Sign in";
-                    
-                    ?>
+                        ?>
                     </form>
                 </div>
             </div>

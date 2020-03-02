@@ -74,7 +74,7 @@ class footnote_assignment_table_control
                 $custom_errors = ""
             );
             new button_control("Associate footnote", "associate_footnotes", "primary", true, "");
-            new back_to_top_control();
+            //new back_to_top_control();
             ?>
         </form>
         <?php
@@ -171,8 +171,6 @@ class footnote_assignment_table_control
                     <tbody class="govuk-table__body">
                         <?php
                         foreach ($this->dataset as $item) {
-                            //$this->edit_url .= "&validity_start_date=" .  $item->validity_start_date;
-                            //$terminate_url = $this->terminate_url . "&sid=" .  $item->geographical_area_sid . "&id=" . $item->geographical_area_id;
                         ?>
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">
@@ -212,7 +210,7 @@ class footnote_assignment_table_control
             <!--<p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>">Create a new membership</a></p>//-->
 
 <?php
-            new back_to_top_control();
+            //new back_to_top_control();
         }
     }
 }

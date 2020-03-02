@@ -80,7 +80,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Use this form to terminate a geographical area and to <a class='govuk-link' href='#geographical_area_descriptions'>modify its description</a> or <a class='govuk-link' href='#geographical_area_memberships'>country memberships</a>.[WORKBASKET]"
+                "text": "Use this form to edit an existing geographical area.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -95,7 +95,7 @@
                 "selected": "",
                 "radio_control_style": "stacked_detail",
                 "required": true,
-                "disabled_on_edit": true
+                "disabled_on_edit": false
             },
             {
                 "control_type": "input_control",
@@ -151,7 +151,8 @@
             {
                 "control_type": "hidden_control",
                 "control_name": "geographical_area_sid",
-                "value": "???"
+                "control_scope": "update",
+                "value": "{geographical_area_sid}"
             },
             {
                 "control_type": "button_cluster_control"
@@ -207,6 +208,20 @@
                 "column_name": "Start date",
                 "data_column": "validity_start_date",
                 "sort_field": "ga.validity_start_date",
+                "tooltip": "",
+                "align": "l"
+            },
+            {
+                "column_name": "End date",
+                "data_column": "validity_end_date",
+                "sort_field": "ga.validity_end_date",
+                "tooltip": "",
+                "align": "l"
+            },
+            {
+                "column_name": "Status",
+                "data_column": "status",
+                "sort_field": "ga.status",
                 "tooltip": "",
                 "align": "l"
             }

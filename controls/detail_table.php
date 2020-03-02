@@ -35,6 +35,7 @@ class detail_table_control
 
         $this->create_url = "/" . str_replace(" ", "_", $this->object_name) . "_descriptions/create_edit.html?" . $this->querystring;
         $this->edit_url = "/" . str_replace(" ", "_", $this->object_name) . "_descriptions/create_edit.html?mode=update&" . $this->querystring;
+        $this->delete_url = "/" . str_replace(" ", "_", $this->object_name) . "_descriptions/delete.html?mode=update&" . $this->querystring;
 
         $this->display();
     }
@@ -61,20 +62,21 @@ class detail_table_control
                     $index = 0;
                     foreach ($this->dataset as $item) {
                         $index += 1;
-                        $edit_url = $this->edit_url .= "&validity_start_date=" .  $item->validity_start_date;
+                        $edit_url = $this->edit_url . "&period_sid=" . $item->period_sid;
+                        $delete_url = $this->delete_url . "&period_sid=" . $item->period_sid;
                     ?>
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><?= short_date($item->validity_start_date) ?></td>
                             <td class="govuk-table__cell"><?= $item->description ?></td>
                             <td class="govuk-table__cell r" nowrap>
+                                <a class="govuk-link" title="Edit this <?= $this->object_description ?>" href="<?= $edit_url ?>"><img src="/assets/images/edit.png" alt="Edit" /></a>
                                 <?php
                                 if ($index != $count) {
                                 ?>
-                                    <a class="govuk-link" title="Delete this <?= $this->object_description ?>" href="<?= $this->delete_url ?>">Delete</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="govuk-link" title="Delete this <?= $this->object_description ?>" href="<?= $delete_url ?>"><img src="/assets/images/delete.png" alt="Delete" /></a>
                                 <?php
                                 }
                                 ?>
-                                <a class="govuk-link" title="Edit this <?= $this->object_description ?>" href="<?= $edit_url ?>">Edit</a>
                             </td>
                         </tr>
                     <?php
@@ -82,7 +84,7 @@ class detail_table_control
                     ?>
                 </tbody>
             </table>
-            <p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>">Create a new <?= strtolower($this->object_description) ?></a></p>
+            <p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>"><img class='inline_icon' src='/assets/images/new.png'/>Create a new <?= strtolower($this->object_description) ?></a></p>
             <!-- End detail table control //-->
 <?php
         }

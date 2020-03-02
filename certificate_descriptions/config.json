@@ -1,5 +1,5 @@
 {
-    "additional_code_descriptions": {
+    "certificate_descriptions": {
         "config": {
             "title": "n/a",
             "inset": "n/a",
@@ -24,6 +24,22 @@
                 "control_type": "inset_control",
                 "control_scope": "",
                 "text": "You are editing an certificate description for certificate <b>{certificate_type_code}{certificate_code}</b>.[WORKBASKET]"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "certificate_type_code",
+                "value": "{certificate_type_code}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "certificate_code",
+                "value": "{certificate_code}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_scope": "update",
+                "control_name": "certificate_description_period_sid",
+                "value": "{period_sid}"
             },
             {
                 "control_type": "error_block"

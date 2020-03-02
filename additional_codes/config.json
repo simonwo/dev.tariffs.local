@@ -72,7 +72,7 @@
                 "control_type": "select_control",
                 "label": "What is the type of this additional code?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Select the additional code type first. The next available code in sequence will then be suggested",
+                "hint_text": "Select the additional code type first. The next available code in sequence will then be suggested.",
                 "control_name": "additional_code_type_id",
                 "default_value": "",
                 "default_string": "- Please select an additional code type -",
@@ -80,6 +80,11 @@
                 "required": true,
                 "group_by": "",
                 "disabled_on_edit": true
+            },
+            {
+                "control_type": "span_control",
+                "control_scope": "insert",
+                "text": ""
             },
             {
                 "control_type": "input_control",
@@ -133,13 +138,13 @@
                 "path": "/includes/common/formatting_help.html"
             },
             {
-                "control_type": "button_cluster_control"
+                "control_type": "hidden_control",
+                "control_name": "additional_code_sid",
+                "control_scope": "update",
+                "value": "{additional_code_sid}"
             },
             {
-                "control_type": "detail_table_control",
-                "control_name": "additional_code_descriptions",
-                "control_scope": "update",
-                "caption": "Descriptions"
+                "control_type": "button_cluster_control"
             }
         ],
         "filters": [

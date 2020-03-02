@@ -6,7 +6,7 @@ $error_handler = new error_handler();
 $submitted = intval(get_formvar("submitted"));
 if ($submitted == 1) {
     $additional_code = new additional_code();
-    $additional_code->validate_form();
+    $additional_code->validate_description_form();
 } else {
     $additional_code = new additional_code();
     $additional_code->get_parameters($description = true);

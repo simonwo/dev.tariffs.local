@@ -3,7 +3,6 @@ require(dirname(__FILE__) . "../../includes/db.php");
 $error_handler = new error_handler();
 $application = new application;
 ?>
-
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <?php
@@ -18,25 +17,35 @@ require("../includes/metadata.php");
         <?php
         require("../includes/phase_banner.php");
         ?>
+        <!-- Start breadcrumbs //-->
+        <div class="govuk-breadcrumbs">
+            <ol class="govuk-breadcrumbs__list">
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/">Home</a>
+                </li>
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
+                </li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">Delete workbasket</li>
+            </ol>
+        </div>
+        <!-- End breadcrumbs //-->
+
 
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-three-quarters">
+                <div class="govuk-grid-column-full">
                     <!-- Start panel //-->
                     <div class="govuk-panel govuk-panel--confirmation">
                         <h1 class="govuk-panel__title">
-                            Geographical area description created
+                            Your workbasket has been deleted.
                         </h1>
-                        <div class="govuk-panel__body">
-                            A new description has been entered for Antigua and Barbuda (AG), subject to approval.
-                        </div>
                     </div>
                     <!-- End panel //-->
                     <h2 class="govuk-heading-m">Next steps</h2>
                     <ul class="govuk-list">
-                        <li><a href="/">View / edit Antigua and Barbuda</a></li>
-                        <li><a href="/geographical_areas/">Manage more geographical areas</a></li>
                         <li><a href="/">Return to main menu</a></li>
+                        <li><a href="/#workbaskets">View workbaskets</a></li>
                     </ul>
                 </div>
             </div>

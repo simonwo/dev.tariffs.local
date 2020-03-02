@@ -30,7 +30,7 @@ $(document).ready(function () {
     $("#form_quota_order_number_origin .exclusions").css("display", "none");
 
     $(".new_workbasket").css("display", "none");
-    
+
 
 
     $("th.tip").mouseover(function () {
@@ -791,6 +791,44 @@ $(document).ready(function () {
         console.log("success");
         footnote_id = $("#next_id").text();
         $("#footnote_id").val(footnote_id);
+        //console.log(footnote_id);
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
+
+    // END - footnote type ID
+    /***************************************************************************************************************/
+
+
+    /***************************************************************************************************************/
+    // START - additional code type ID
+    $("#additional_code_type_id").on("change", function () {
+        var additional_code_type_id = $(this).val();
+        var next_id = "";
+        //console.log("Changing additional code type ID to " + additional_code_type_id);
+        var opt = $("#additional_code_type_id option:selected").attr("group").toLowerCase();
+        if (opt === "unspecified") {
+            $(".conditional_span").text("");
+        } else {
+            url = '/api/v1/additional_code_types?additional_code_type_id=' + additional_code_type_id;
+            var data = getJson(url);
+            console.log(data);
+            var results = data.results[0];
+            next_id = results.next_id;
+            //console.log(next_id);
+
+            //var txt = "You have selected a <b>" + opt + "</b>.";
+            txt = "The next available additional code ID is <span id='next_id'>" + next_id + "</span>. <a class='govuk-link' href='#' id='use_next_id'>Use this ID</a>.";
+            $(".conditional_span").html(txt);
+        }
+
+    });
+
+    $(document).on("click", "#use_next_id", function (e) {
+        console.log("success");
+        footnote_id = $("#next_id").text();
+        $("#additional_code").val(footnote_id);
         //console.log(footnote_id);
         e.preventDefault();
         e.stopPropagation();
@@ -1563,7 +1601,7 @@ $(document).ready(function () {
     }
 
     $(document).on("click", "#copy_commodity_list", function (e) {
-        alert ("Copy function would go here.");
+        alert("Copy function would go here.");
         //copy_commodities();
 
         e.preventDefault();
@@ -1575,7 +1613,7 @@ $(document).ready(function () {
 
     $(document).on("click", "#create_or_add_to_existing input[type=radio]", function (e) {
         obj_id = $(this).prop("id");
-        console.log (obj_id);
+        console.log(obj_id);
         if (obj_id == "workbasket_id_-1") {
             $(".new_workbasket").fadeIn(200);
             $("#btn_create_or_open_workbasket").text("Create workbasket");
@@ -1584,9 +1622,60 @@ $(document).ready(function () {
             $("#btn_create_or_open_workbasket").text("Open workbasket");
         }
     });
-    
+
 
     // END - quota definition helpers
     /***************************************************************************************************************/
+
+
+    $.notify.addStyle('govuk-body', {
+        html: "<div><span data-notify-text/></div>",
+        classes: {
+            base: {
+                "color": "#0b0c0c",
+                "font-family": "GDS Transport, Arial, sans-serif",
+                "-webkit-font-smoothing": "antialiased",
+                "-moz-osx-font-smoothing": "grayscale",
+                "font-weight": "400",
+                "font-size": "16px",
+                "font-size": ".875rem",
+                "line-height": "1.14286",
+                "margin-top": "0",
+                "margin-bottom": "15px",
+                "white-space": "nowrap",
+                "background-color": "#B9D4EA",
+                "padding": "15px"
+            },
+            superblue: {
+                "color": "white",
+                "background-color": "blue"
+            }
+        }
+    });
+
+    /*
+    $.notify(
+        "Ownership of workbasket x has been handed over to Matt Lavis",
+        {
+            position: "right bottom",
+            autoHide: true,
+            autoHideDelay: 3000,
+            arrowShow: true,
+            arrowSize: 5,
+            style: 'govuk-body'            },
+    );
+    $(document).on("click", "#logged_in_user", function (e) {
+        $.notify(
+            "Ownership of workbasket x has been handed over to Matt Lavis",
+            {
+                position: "right bottom",
+                autoHide: true,
+                autoHideDelay: 3000,
+                arrowShow: true,
+                arrowSize: 5,
+                style: 'govuk-body'            },
+        );
+    });
+    */
 
 });

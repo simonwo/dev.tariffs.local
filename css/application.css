@@ -334,11 +334,11 @@ span.notch {
 div.arrows {
     position: absolute;
     bottom: 9px;
-    left:0px;
+    left: 0px;
 }
 
 .arrows_indent {
-    padding-left:0.8em;
+    padding-left: 0.8em;
 }
 
 div.arrows a, div.arrows div {
@@ -1394,8 +1394,7 @@ span.highlighted_text strong {
     clear: both;
 }
 
-td.s
-    {
+td.s {
     font-size: 12px !important
 }
 
@@ -1478,20 +1477,22 @@ a img.inline_icon {
 }
 
 .status_cell span {
-    position:relative;
-    left:8px;
-    top:-7px;
+    position: relative;
+    left: 8px;
+    top: -7px;
 }
+
 .govuk-header__controls div {
-    float:right;
-    position:relative;
-    top:-2px;
-    margin-left:0.5em;
+    float: right;
+    position: relative;
+    top: -2px;
+    margin-left: 0.5em;
 }
+
 ul.measure_activity_action_list {
     list-style: none;
     list-style-type: none;
-    margin:0px;
+    margin: 0px;
     margin-block-start: 0px;
     margin-block-end: 0px;
     margin-inline-start: 0px;
@@ -1502,11 +1503,37 @@ ul.measure_activity_action_list {
 .measure_activity_action_list li {
     list-style: none;
     list-style-type: none;
-    margin:0px;
+    margin: 0px;
 }
 
-.measure_activity_action_list li span{
-    margin-left:10px;
+.measure_activity_action_list li span {
+    margin-left: 10px;
     position: relative;
-    top:-5px;
+    top: -5px;
+}
+
+.json_key {
+    width: 40%;
+    float: left;
+}
+
+.json_value {
+    float: left;
+    width: 60%;
+}
+
+.json {
+    width: 100%;
+    clear: both;
+    border-bottom: 1px solid #ebf4fc;
+    padding-top: 2px;
+    padding-bottom: 3px;
+    float:left;
+}
+td .json:first-of-type {
+    padding-top: 0px;
+}
+
+xsection {
+    min-height:420px;
 }

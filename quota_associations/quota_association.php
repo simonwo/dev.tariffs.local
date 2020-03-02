@@ -105,9 +105,11 @@ class quota_association
             $this->blocking_end_date = Null;
         }
 
+        /*
         if ($operation == "C") {
             $this->quota_blocking_period_sid = $this->get_next_sid();
         }
+        */
 
         $status = 'In progress';
         $sql = "INSERT INTO quota_blocking_periods_oplog (
@@ -135,7 +137,8 @@ class quota_association
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "quota_blocking_period", $status, $operation, $operation_date);
+        $description = $this->quota_definition_sid . " - " . $this->description;
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "quota blocking period", $status, $operation, $operation_date, $description);
     }
 
     public function get_active_definitions()

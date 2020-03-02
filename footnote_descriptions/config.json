@@ -36,6 +36,12 @@
                 "value": "{footnote_id}"
             },
             {
+                "control_type": "hidden_control",
+                "control_scope": "update",
+                "control_name": "footnote_description_period_sid",
+                "value": "{period_sid}"
+            },
+            {
                 "control_type": "error_block"
             },
             {
@@ -49,10 +55,22 @@
             },
             {
                 "control_type": "character_count_control",
-                "control_scope": "",
+                "control_scope": "insert",
                 "label": "Please enter the footnote description",
                 "label_style": "govuk-label--m",
-                "hint_text": "The latest certificate description is included. Please edit or overwrite the existing description.",
+                "hint_text": "The latest footnote description is included. Please edit or overwrite the existing description.",
+                "control_name": "description",
+                "rows": 5,
+                "maxlength": 2000,
+                "required": true,
+                "default": ""
+            },
+            {
+                "control_type": "character_count_control",
+                "control_scope": "update",
+                "label": "Please enter the footnote description",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
                 "control_name": "description",
                 "rows": 5,
                 "maxlength": 2000,

@@ -21,6 +21,20 @@ require("../includes/metadata.php");
         <?php
         require("../includes/phase_banner.php");
         ?>
+        <!-- Start breadcrumbs //-->
+        <div class="govuk-breadcrumbs">
+            <ol class="govuk-breadcrumbs__list">
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/">Home</a>
+                </li>
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
+                </li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">Edit workbasket</li>
+            </ol>
+        </div>
+        <!-- End breadcrumbs //-->
+
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
@@ -72,7 +86,7 @@ require("../includes/metadata.php");
 
                         new hidden_control(
                             $control_name = "user_id",
-                            $value = $_SESSION["uid"]
+                            $value = $_SESSION["user_id"]
                         );
 
                         new hidden_control(

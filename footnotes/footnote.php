@@ -93,7 +93,7 @@ class footnote
                 // Do edit scripts
                 $this->create_update("U");
             }
-            $url = "./confirmation.html?mode=" . $application->mode;
+            $url = "./confirmation.html?footnote_id=" . $this->footnote_id . "&footnote_type_id=" . $this->footnote_type_id . "&mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
@@ -101,6 +101,7 @@ class footnote
 
     function validate_description_form()
     {
+        //prend ($_REQUEST);
         global $application;
         $errors = array();
         $this->footnote_type_id = strtoupper(get_formvar("footnote_type_id", "", True));
@@ -147,16 +148,23 @@ class footnote
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             $url = "create_edit.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
         } else {
+            //h1($application->mode);
+            //die();
             if ($application->mode == "insert") {
                 // Do create scripts
-                $this->create_description();
+                $this->create_update_description("C");
             } else {
                 // Do edit scripts
-                $this->update();
+                $this->create_update_description("U");
             }
-            $url = "./confirmation.html?mode=" . $application->mode;
+            $url = "./confirmation.html?footnote_id=" . $this->footnote_id . "&footnote_type_id=" . $this->footnote_type_id . "&mode=" . $application->mode;
         }
         header("Location: " . $url);
+    }
+
+    public function view_url()
+    {
+        return ("/footnotes/view.html?mode=view&footnote_type_id=" . $this->footnote_type_id . "&footnote_id=" . $this->footnote_id);
     }
 
     public function get_parameters($description = false)
@@ -166,7 +174,7 @@ class footnote
 
         $this->footnote_type_id = trim(get_querystring("footnote_type_id"));
         $this->footnote_id = trim(get_querystring("footnote_id"));
-        $this->validity_start_date = trim(get_querystring("validity_start_date"));
+        $this->period_sid = trim(get_querystring("period_sid"));
 
         if (empty($_GET)) {
             $this->clear_cookies();
@@ -177,8 +185,7 @@ class footnote
                 if ($description == false) {
                     $ret = $this->populate_from_db();
                 } else {
-                    $ret = $this->get_specific_description($this->validity_start_date);
-                    //prend ($_REQUEST);
+                    $ret = $this->get_specific_description($this->period_sid);
                 }
                 if (!$ret) {
                     h1("An error has occurred - no such footnote");
@@ -214,25 +221,13 @@ class footnote
         $result = pg_execute($conn, $stmt, array($this->footnote_type_id, $this->footnote_id));
         if ($result) {
             $this->versions = $result;
-            return;
-            $row_count = pg_num_rows($result);
-            if (($row_count > 0) && (pg_num_rows($result))) {
-                while ($row = pg_fetch_array($result)) {
-                    $version = new footnote_type();
-                    $version->validity_start_date = $row["validity_start_date"];
-                    $version->validity_end_date = $row["validity_start_date"];
-                    $version->validity_start_date = $row["validity_start_date"];
-                    $version->validity_start_date = $row["validity_start_date"];
-                    array_push($this->versions, $version);
-                }
-            }
         }
     }
 
     public function get_descriptions()
     {
         global $conn;
-        $sql = "select validity_start_date, fd.description
+        $sql = "select validity_start_date, fd.description, fdp.footnote_description_period_sid
         from footnote_description_periods fdp, footnote_descriptions fd
         where fd.footnote_type_id = $1 and fd.footnote_id = $2
         and fd.footnote_description_period_sid = fdp.footnote_description_period_sid
@@ -242,18 +237,18 @@ class footnote
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
-                $description = new description($row['validity_start_date'], $row['description']);
+                $description = new description($row['validity_start_date'], $row['description'], $row['footnote_description_period_sid']);
                 array_push($this->descriptions, $description);
             }
         }
         return ($row_count);
     }
 
-    public function get_specific_description($validity_start_date)
+    public function get_specific_description($period_sid)
     {
         global $conn;
-        if ($this->validity_start_date == null) {
-            $sql = "select fd.description
+        if ($period_sid == null) {
+            $sql = "select fd.description, null as validity_start_date
             from footnote_description_periods fdp, footnote_descriptions fd
             where fd.footnote_type_id = $1 and fd.footnote_id = $2
             and fd.footnote_description_period_sid = fdp.footnote_description_period_sid
@@ -263,21 +258,22 @@ class footnote
 
             $result = pg_execute($conn, "get_specific_description", array($this->footnote_type_id, $this->footnote_id));
         } else {
-            $sql = "select fd.description
+            $sql = "select fd.description, fdp.validity_start_date
             from footnote_description_periods fdp, footnote_descriptions fd
             where fd.footnote_type_id = $1 and fd.footnote_id = $2
             and fd.footnote_description_period_sid = fdp.footnote_description_period_sid
-            and fdp.validity_start_date = $3
+            and fdp.footnote_description_period_sid = $3
             order by validity_start_date desc;";
 
             pg_prepare($conn, "get_specific_description", $sql);
 
-            $result = pg_execute($conn, "get_specific_description", array($this->footnote_type_id, $this->footnote_id, $validity_start_date));
+            $result = pg_execute($conn, "get_specific_description", array($this->footnote_type_id, $this->footnote_id, $period_sid));
         }
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_array($result);
             $this->description = $row['description'];
+            $this->validity_start_date = $row['validity_start_date'];
             return (true);
         }
         return (false);
@@ -385,6 +381,11 @@ class footnote
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
         }
+        if ($operation == "C") {
+            $action = "NEW FOOTNOTE";
+        } else {
+            $action = "UPDATE TO FOOTNOTE";
+        }
 
         $status = 'In progress';
         # Create the footnote record
@@ -403,84 +404,112 @@ class footnote
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "footnote", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Footnote type ID": "' . $this->footnote_type_id . '",';
+        $description .= '"Footnote ID": "' . $this->footnote_id . '",';
+        if ($operation == "C") {
+            $description .= '"Description": "' . $this->description . '",';
+        }
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "footnote", $status, $operation, $operation_date, $description);
 
-        // Then upate the footnote record with oid of the workbasket item record
-        $sql = "UPDATE footnotes_oplog set workbasket_item_id = $1 where oid = $2";
+        // Then update the primary record with unique ID of the workbasket item record
+        $sql = "UPDATE footnotes_oplog set workbasket_item_sid = $1 where oid = $2";
         pg_prepare($conn, "stmt_2", $sql);
         $result = pg_execute($conn, "stmt_2", array(
-            $workbasket_item_id, $oid
+            $workbasket_item_sid, $oid
         ));
 
-        //if ($operation == "U") {
-        # Create the footnote description period record
-        $sql = "INSERT INTO footnote_description_periods_oplog (footnote_description_period_sid, footnote_id,
-            footnote_type_id, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_id)
+        if ($operation == "C") {
+            # Create the description period record
+            $sql = "INSERT INTO footnote_description_periods_oplog (footnote_description_period_sid, footnote_id,
+            footnote_type_id, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING oid;";
-        pg_prepare($conn, "stmt_3", $sql);
-        $result = pg_execute($conn, "stmt_3", array(
-            $this->footnote_description_period_sid, $this->footnote_id,
-            $this->footnote_type_id, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
+            pg_prepare($conn, "stmt_3", $sql);
+            $result = pg_execute($conn, "stmt_3", array(
+                $this->footnote_description_period_sid, $this->footnote_id,
+                $this->footnote_type_id, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
 
-        # Create the footnote description record
-        $sql = "INSERT INTO footnote_descriptions_oplog (footnote_description_period_sid, footnote_id,
-            footnote_type_id, language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_id)
+            # Create the description record
+            $sql = "INSERT INTO footnote_descriptions_oplog (footnote_description_period_sid, footnote_id,
+            footnote_type_id, language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_sid)
             VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8, $9)
             RETURNING oid;";
-        pg_prepare($conn, "stmt_4", $sql);
-        $result = pg_execute($conn, "stmt_4", array(
-            $this->footnote_description_period_sid, $this->footnote_id,
-            $this->footnote_type_id, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-        //}
+            pg_prepare($conn, "stmt_4", $sql);
+            $result = pg_execute($conn, "stmt_4", array(
+                $this->footnote_description_period_sid, $this->footnote_id,
+                $this->footnote_type_id, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
     }
 
-    function create_description()
+    function create_update_description($operation)
     {
         global $conn, $application;
-        $operation = "C";
         $operation_date = $application->get_operation_date();
-        $this->footnote_description_period_sid = $application->get_next_footnote_description_period();
-
+        if ($operation == "C") {
+            $this->footnote_description_period_sid = $application->get_next_footnote_description_period();
+            $action = "NEW FOOTNOTE DESCRIPTION";
+        } else {
+            $this->footnote_description_period_sid = get_formvar("footnote_description_period_sid");
+            $action = "UPDATE TO FOOTNOTE DESCRIPTION";
+        }
         $status = 'In progress';
 
         # Create the footnote description record
         $sql = "INSERT INTO footnote_descriptions_oplog (footnote_description_period_sid, footnote_id,
-            footnote_type_id, language_id, description, operation, operation_date, workbasket_id, status)
-            VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8)
-            RETURNING oid;";
-        pg_prepare($conn, "create_footnote_description", $sql);
-        $result = pg_execute($conn, "create_footnote_description", array(
+        footnote_type_id, language_id, description, operation, operation_date, workbasket_id, status)
+        VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8)
+        RETURNING oid;";
+        $stmt = "create_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
             $this->footnote_description_period_sid, $this->footnote_id,
-            $this->footnote_type_id, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
+            $this->footnote_type_id, $this->description, $operation, $operation_date,
+            $application->session->workbasket->workbasket_id, $status
         ));
         if (($result) && (pg_num_rows($result) > 0)) {
             $row = pg_fetch_row($result);
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "footnote_description", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Footnote type ID": "' . $this->footnote_type_id . '",';
+        $description .= '"Footnote ID": "' . $this->footnote_id . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Period start date": "' . $this->validity_start_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "footnote description", $status, $operation, $operation_date, $description);
 
-        // Then upate the footnote description record with oid of the workbasket item record
-        $sql = "UPDATE footnote_descriptions_oplog set workbasket_item_id = $1 where oid = $2";
-        pg_prepare($conn, "update_footnote", $sql);
-        $result = pg_execute($conn, "update_footnote", array(
-            $workbasket_item_id, $oid
+        // Then update the footnote description record with unique ID of the workbasket item record
+        $sql = "UPDATE footnote_descriptions_oplog set workbasket_item_sid = $1 where oid = $2";
+        $stmt = "update_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $workbasket_item_sid, $oid
         ));
 
         # Create the footnote description period record
-        $sql = "INSERT INTO footnote_description_periods_oplog (footnote_description_period_sid, footnote_id,
-            footnote_type_id, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_id)
+        if ($operation == "C") {
+            $sql = "INSERT INTO footnote_description_periods_oplog (footnote_description_period_sid, footnote_id,
+            footnote_type_id, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING oid;";
-        pg_prepare($conn, "create_footnote_description_period", $sql);
-        $result = pg_execute($conn, "create_footnote_description_period", array(
-            $this->footnote_description_period_sid, $this->footnote_id,
-            $this->footnote_type_id, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-
+            $stmt = "create_description_period" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array(
+                $this->footnote_description_period_sid, $this->footnote_id,
+                $this->footnote_type_id, $this->validity_start_date, $operation, $operation_date,
+                $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
+        //die();
     }
 
 
@@ -489,56 +518,89 @@ class footnote
         global $conn;
         $application = new application;
         $operation = "D";
+        $action = "DELETE FOOTNOTE DESCRIPTION";
+        $status = 'In progress';
         $operation_date = $application->get_operation_date();
 
         # Get the missing details
-        $this->get_missing_details();
+        $this->get_description_period_details();
 
-        # Insert the footnote
-        $sql = "INSERT INTO footnotes_oplog
- (footnote_type_id, footnote_id, validity_start_date, operation, operation_date)
- VALUES ($1, $2, $3, 'U', $4)";
-        pg_prepare($conn, "footnote_insert", $sql);
-        pg_execute($conn, "footnote_insert", array(
-            $this->footnote_type_id,
-            $this->footnote_id, $this->validity_start_date, $operation_date
+
+        # Insert the footnote description
+        $sql = "INSERT INTO footnote_descriptions_oplog
+        (footnote_description_period_sid, language_id, footnote_type_id, footnote_id,
+        description, operation, operation_date,
+        workbasket_id, status
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING oid;";
+        $stmt = "description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->footnote_description_period_sid, "EN",
+            $this->footnote_type_id, $this->footnote_id,
+            $this->description, $operation, $operation_date,
+            $application->session->workbasket->workbasket_id, $status
+        ));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_row($result);
+            $oid = $row[0];
+        }
+        
+
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Footnote type ID": "' . $this->footnote_type_id . '",';
+        $description .= '"Footnote ID": "' . $this->footnote_id . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Description start date": "' . $this->period_validity_start_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "footnote description", $status, $operation, $operation_date, $description);
+
+
+        // Then update the footnote description record with unique ID of the workbasket item record
+        $sql = "UPDATE footnote_descriptions_oplog set workbasket_item_sid = $1 where oid = $2";
+        $stmt = "update_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $workbasket_item_sid, $oid
         ));
 
         # Insert the footnote description period
         $sql = "INSERT INTO footnote_description_periods_oplog
- (footnote_description_period_sid, footnote_type_id, footnote_id, validity_start_date, operation, operation_date)
- VALUES ($1, $2, $3, $4, $5, $6)";
-        pg_prepare($conn, "footnote_description_period_insert", $sql);
-        pg_execute($conn, "footnote_description_period_insert", array(
-            $this->footnote_description_period_sid, $this->footnote_type_id,
-            $this->footnote_id, $this->period_validity_start_date, $operation, $operation_date
+        (footnote_description_period_sid, footnote_type_id, footnote_id,
+        validity_start_date, operation, operation_date,
+        workbasket_id, status, workbasket_item_sid)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING oid;";
+        $stmt = "description_period_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array(
+            $this->footnote_description_period_sid, $this->footnote_type_id, $this->footnote_id,
+            $this->period_validity_start_date, $operation, $operation_date,
+            $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
         ));
+        
 
-        # Insert the footnote description
-        $sql = "INSERT INTO footnote_descriptions_oplog
- (footnote_description_period_sid, language_id, footnote_type_id, footnote_id, description, operation, operation_date)
- VALUES ($1, $2, $3, $4, $5, $6, $7)";
-        pg_prepare($conn, "footnote_description_insert", $sql);
-        pg_execute($conn, "footnote_description_insert", array(
-            $this->footnote_description_period_sid, "EN",
-            $this->footnote_type_id, $this->footnote_id, $this->description, $operation, $operation_date
-        ));
-        return (True);
+
+
+        //die();
     }
 
-    function get_missing_details()
+    function get_description_period_details()
     {
         global $conn;
-        $sql = "SELECT description, cdp.validity_start_date as period_validity_start_date, c.validity_start_date as c_validity_start_date
-        FROM footnote_descriptions cd, footnote_description_periods cdp, footnotes c
-        WHERE cd.footnote_description_period_sid = cdp.footnote_description_period_sid
-        AND c.footnote_id = cd.footnote_id
-        AND c.footnote_type_id = cd.footnote_type_id
-        AND c.footnote_id = cdp.footnote_id
-        AND c.footnote_type_id = cdp.footnote_type_id
-        AND cd.footnote_description_period_sid = $1";
-        pg_prepare($conn, "get_missing_details", $sql);
-        $result = pg_execute($conn, "get_missing_details", array($this->footnote_id, $this->footnote_type_id));
+        $sql = "SELECT description, fdp.validity_start_date as period_validity_start_date, f.validity_start_date as c_validity_start_date
+        FROM footnote_descriptions fd, footnote_description_periods fdp, footnotes f
+        WHERE fd.footnote_description_period_sid = fdp.footnote_description_period_sid
+        AND f.footnote_id = fd.footnote_id
+        AND f.footnote_type_id = fd.footnote_type_id
+        AND f.footnote_id = fdp.footnote_id
+        AND f.footnote_type_id = fdp.footnote_type_id
+        AND fd.footnote_description_period_sid = $1";
+        $stmt = "get_description_period_details_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->footnote_description_period_sid));
 
         if ($result) {
             $row = pg_fetch_row($result);
@@ -551,8 +613,6 @@ class footnote
             $this->validity_start_date = "";
         }
     }
-
-
 
     function get_start_date()
     {
@@ -570,139 +630,7 @@ class footnote
             return ("");
         }
     }
-    /*
-    function insert_description($footnote_id, $footnote_type_id, $validity_start_date, $description)
-    {
-        global $conn;
-        $application = new application;
-        $operation = "C";
-        $footnote_description_period_sid = $application->get_next_footnote_description_period();
-        $operation_date = $application->get_operation_date();
 
-        $this->footnote_id = $footnote_id;
-        $this->footnote_type_id = $footnote_type_id;
-        $this->validity_start_date = $validity_start_date;
-        $this->description = $description;
-        $this->footnote_description_period_sid = $footnote_description_period_sid;
-
-        $this->f_validity_start_date = $this->get_start_date();
-        $status = 'In progress';
-
-        # Insert the footnote description period
-        $sql = "INSERT INTO footnote_description_periods_oplog
-        (footnote_description_period_sid, footnote_type_id, footnote_id, validity_start_date, operation, operation_date, workbasket_id, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8
-            RETURNING oid;";
-        pg_prepare($conn, "footnote_description_period_insert", $sql);
-        $result = pg_execute($conn, "footnote_description_period_insert", array(
-            $this->footnote_description_period_sid, $this->footnote_type_id,
-            $this->footnote_id, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
-        ));
-        $application->session->workbasket->insert_workbasket_item($oid, "footnote_description_period", $status, $operation, $operation_date);
-
-        # Insert the footnote description
-        $sql = "INSERT INTO footnote_descriptions_oplog
-        (footnote_description_period_sid, language_id, footnote_type_id, footnote_id, description, operation, operation_date, workbasket_id, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9
-            RETURNING oid;";
-        pg_prepare($conn, "footnote_description_insert", $sql);
-        $result = pg_execute($conn, "footnote_description_insert", array(
-            $this->footnote_description_period_sid, "EN",
-            $this->footnote_type_id, $this->footnote_id, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
-        ));
-        //$application->session->workbasket->insert_workbasket_item($oid, "footnote_description_period", $status, $operation, $operation_date);
-        return (true);
-    }
-    */
-
-    function update_description($footnote_id, $footnote_type_id, $validity_start_date, $description, $footnote_description_period_sid)
-    {
-        global $conn;
-        $application = new application;
-        $operation = "U";
-        $operation_date = $application->get_operation_date();
-
-        $this->footnote_id = $footnote_id;
-        $this->footnote_type_id = $footnote_type_id;
-        $this->validity_start_date = $validity_start_date;
-        $this->description = $description;
-        $this->footnote_description_period_sid = $footnote_description_period_sid;
-
-        $this->f_validity_start_date = $this->get_start_date();
-
-        # Insert the footnote
-        $sql = "INSERT INTO footnotes_oplog
- (footnote_type_id, footnote_id, validity_start_date, operation, operation_date)
- VALUES ($1, $2, $3, 'U', $4)";
-        pg_prepare($conn, "footnote_insert", $sql);
-        pg_execute($conn, "footnote_insert", array(
-            $this->footnote_type_id,
-            $this->footnote_id, $this->f_validity_start_date, $operation_date
-        ));
-
-        # Insert the footnote description period
-        $sql = "INSERT INTO footnote_description_periods_oplog
- (footnote_description_period_sid, footnote_type_id, footnote_id, validity_start_date, operation, operation_date)
- VALUES ($1, $2, $3, $4, $5, $6)";
-        pg_prepare($conn, "footnote_description_period_insert", $sql);
-        pg_execute($conn, "footnote_description_period_insert", array(
-            $footnote_description_period_sid, $footnote_type_id,
-            $footnote_id, $validity_start_date, $operation, $operation_date
-        ));
-
-        # Insert the footnote description
-        $sql = "INSERT INTO footnote_descriptions_oplog
- (footnote_description_period_sid, language_id, footnote_type_id, footnote_id, description, operation, operation_date)
- VALUES ($1, $2, $3, $4, $5, $6, $7)";
-        pg_prepare($conn, "footnote_description_insert", $sql);
-        pg_execute($conn, "footnote_description_insert", array(
-            $footnote_description_period_sid, "EN",
-            $footnote_type_id, $footnote_id, $description, $operation, $operation_date
-        ));
-        return (True);
-    }
-
-
-    function update()
-    {
-        global $conn;
-        $application = new application;
-        $operation = "U";
-        $operation_date = $application->get_operation_date();
-        if ($this->validity_start_date == "") {
-            $this->validity_start_date = Null;
-        }
-        if ($this->validity_end_date == "") {
-            $this->validity_end_date = Null;
-        }
-
-        $sql = "INSERT INTO footnotes_oplog (footnote_id, validity_start_date,
- validity_end_date, trade_movement_code, priority_code,
- measure_component_applicable_code, origin_dest_code,
- order_number_capture_code, measure_explosion_level, footnote_series_id,
- operation, operation_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)";
-
-        pg_prepare($conn, "create_footnote", $sql);
-
-        $result = pg_execute($conn, "create_footnote", array(
-            $this->footnote_id, $this->validity_start_date,
-            $this->validity_end_date, $this->trade_movement_code, $this->priority_code,
-            $this->measure_component_applicable_code, $this->origin_dest_code,
-            $this->order_number_capture_code, $this->measure_explosion_level, $this->footnote_series_id,
-            $operation, $operation_date
-        ));
-
-
-        $sql = "INSERT INTO footnote_descriptions_oplog (footnote_id, language_id, description,
- operation, operation_date) VALUES ($1, 'EN', $2, $3, $4)";
-
-        pg_prepare($conn, "create_footnote_description", $sql);
-
-        $result = pg_execute($conn, "create_footnote_description", array(
-            $this->footnote_id, $this->description,
-            $operation, $operation_date
-        ));
-    }
 
     function populate_from_db()
     {

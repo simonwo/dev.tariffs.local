@@ -152,7 +152,8 @@ class quota_suspension_period
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "quota_suspension_period", $status, $operation, $operation_date);
+        $description = $this->quota_definition_sid . " - " . $this->description;
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "quota suspension period", $status, $operation, $operation_date, $description);
     }
 
     public function get_active_definitions()

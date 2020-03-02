@@ -9,6 +9,7 @@ class table_control
     {
         global $application;
         $this->dataset = $dataset;
+        //pre ($dataset);
         $this->custom_no_results_message = $custom_no_results_message;
         $this->group_by = $group_by;
 

@@ -49,7 +49,8 @@ class additional_code_type
         }
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as (select operation, operation_date,
         validity_start_date, validity_end_date, status, null as description, '0' as object_precedence
@@ -103,7 +104,6 @@ class additional_code_type
         $this->description = get_cookie("description");
         $this->application_code = get_cookie("application_code");
         $this->id_disabled = false;
-
     }
 
     function populate_from_db()
@@ -165,7 +165,7 @@ class additional_code_type
                 $temp->description = $row[1];
                 $temp->validity_start_date = $row[2];
                 $temp->validity_end_date = $row[3];
-                
+
                 array_push($this->measure_types, $temp);
             }
         }
@@ -272,6 +272,11 @@ class additional_code_type
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
         }
+        if ($operation == "C") {
+            $action = "NEW FOOTNOTE TYPE";
+        } else {
+            $action = "UPDATE TO FOOTNOTE TYPE";
+        }
 
         $status = 'In progress';
         # Create the additional_code_type record
@@ -293,19 +298,27 @@ class additional_code_type
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "additional_code_type", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Additional code type ID": "' . $this->additional_code_type_id . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Application code": "' . $this->application_code . '",';
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "additional code type", $status, $operation, $operation_date, $description);
 
-        // Then upate the additional code type record with oid of the workbasket item record
-        $sql = "UPDATE additional_code_types_oplog set workbasket_item_id = $1 where oid = $2";
+        // Then update the additional code type record with unique ID of the workbasket item record
+        $sql = "UPDATE additional_code_types_oplog set workbasket_item_sid = $1 where oid = $2";
         pg_prepare($conn, "stmt_2", $sql);
         $result = pg_execute($conn, "stmt_2", array(
-            $workbasket_item_id, $oid
+            $workbasket_item_sid, $oid
         ));
- 
+
         # Create the additional_code_type description record
         $sql = "INSERT INTO additional_code_type_descriptions_oplog (
             additional_code_type_id, language_id, description,
-            operation, operation_date, workbasket_id, status, workbasket_item_id
+            operation, operation_date, workbasket_id, status, workbasket_item_sid
             )
             VALUES ($1, 'EN', $2, $3, $4, $5, $6, $7)
             RETURNING oid;";
@@ -313,7 +326,7 @@ class additional_code_type
         pg_prepare($conn, "stmt_3", $sql);
         $result = pg_execute($conn, "stmt_3", array(
             $this->additional_code_type_id, $this->description,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
         ));
     }
 

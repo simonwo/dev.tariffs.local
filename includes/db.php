@@ -696,6 +696,8 @@ function short_date($s, $keep_spaces = false)
 {
     if ($s == "") {
         $s2 = "-";
+    } elseif ($s == "n/a") {
+        $s2 = "n/a";
     } else {
         $s2 = date("d M y", strtotime($s));
         if (!$keep_spaces) {
@@ -916,7 +918,8 @@ function format_value($row, $field, $workbasket = false)
             if ($workbasket) {
                 return (status_image($row->{$field}, $workbasket));
             } else {
-                return (status_image($row->{$field}) . $row->{$field});
+                //return (status_image($row->{$field}, $workbasket));
+                return (status_image($row->{$field}) . "<span>" . $row->{$field} . "</span>");
             }
             break;
         case "operation_date":
@@ -941,7 +944,11 @@ function format_value($row, $field, $workbasket = false)
             return (format_goods_nomenclature_item_id($row->{$field}));
             break;
         case "operation":
-            return (expand_operation($row->{$field}));
+            $s = expand_operation($row->{$field});
+            if (isset($row->record_type)) {
+                $s .= " " . $row->record_type;
+            }
+            return ($s);
             break;
         default:
             return ($row->{$field});
@@ -1100,4 +1107,27 @@ function parse_placeholders($s, $obj = null)
         }
     }
     return ($s);
+}
+
+function format_json_key_value_pairs($obj)
+{
+    $array = json_decode($obj, true);
+
+    $out = "";
+    if (is_array($array)) {
+        foreach ($array[0] as $key => $value) {
+            if ($value == "") {
+                $value = "_";
+            }
+            if ($key == "Action") {
+                $out .= "<span class='json b'>" . $value . "</span>";
+            } else {
+                $out .= "<span class='json'>";
+                $out .= "<span class='json_key'>" . $key . ":</span>";
+                $out .= "<span class='json_value'>" . $value . "</span>";
+                $out .= "</span>";
+            }
+        }
+    }
+    return ($out);
 }

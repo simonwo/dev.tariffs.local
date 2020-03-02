@@ -144,12 +144,6 @@
             },
             {
                 "control_type": "button_cluster_control"
-            },
-            {
-                "control_type": "detail_table_control",
-                "control_scope": "update",
-                "control_name": "certificate_descriptions",
-                "caption": "Descriptions"
             }
         ],
         "filters": [

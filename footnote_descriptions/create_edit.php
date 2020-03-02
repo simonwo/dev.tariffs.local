@@ -12,13 +12,11 @@ if ($submitted == 1) {
     $footnote->get_parameters($description = true);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
 <?php
 require("../includes/metadata.php");
 ?>
-
 <body class="govuk-template__body">
     <?php
     require("../includes/header.php");
@@ -28,14 +26,10 @@ require("../includes/metadata.php");
         require("../includes/phase_banner.php");
         $control_content = array();
         new data_entry_form($control_content, $footnote, $left_nav = "");
-
         ?>
-
     </div>
     <?php
     require("../includes/footer.php");
     ?>
-
 </body>
-
 </html>

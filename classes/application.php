@@ -31,6 +31,7 @@ class application
     public $tariff_object = "";
     public $sort_clause = "";
     public $mode = "";
+    public $notification_text = "";
     public $row_count = 0;
     public $session = null;
     public $conditional_duty_application_options = array();
@@ -53,13 +54,34 @@ class application
 
 
         // Paging parameters
-        $this->page_size = 200;
+        $this->page_size = 50;
         $this->page = intval(get_querystring("p"));
         if (($this->page == 0) || (!empty($_POST))) {
             $this->page = 1;
         }
 
-        //pre ($_SESSION);
+        $notify = get_querystring("notify");
+        if ($notify != "") {
+            $this->notify($notify);
+        }
+    }
+
+    public function notify($notify)
+    {
+        $this->notification_text = "<script>";
+        $this->notification_text .= "$(document).ready(function () {";
+        $this->notification_text .= '$.notify(';
+        $this->notification_text .= '"' . $notify . '",';
+        $this->notification_text .= '{';
+        $this->notification_text .= 'position: "right bottom",';
+        $this->notification_text .= 'autoHide: true,';
+        $this->notification_text .= 'autoHideDelay: 3000,';
+        $this->notification_text .= 'arrowShow: true,';
+        $this->notification_text .= 'arrowSize: 5,';
+        $this->notification_text .= "style: 'govuk-body'},";
+        $this->notification_text .= ');';
+        $this->notification_text .= '});';
+        $this->notification_text .= "</script>";
     }
 
     public function create_session()
@@ -84,7 +106,7 @@ class application
                 $request_uri = urlencode($_SERVER["REQUEST_URI"]);
                 $url = "/workbaskets/create_or_open_workbasket.html?request_uri=" . $request_uri;
                 header("Location: " . $url);
-            } elseif ($this->session->workbasket->user_id != $this->session->uid) {
+            } elseif ($this->session->workbasket->user_id != $this->session->user_id) {
                 // You are in someone else's workbasket
                 // Are you sure you want to carry on
                 if (get_session_variable("confirm_operate_others_workbasket") == "") {
@@ -92,7 +114,6 @@ class application
                     $url = "/workbaskets/confirm_operate_others_workbasket.html?request_uri=" . $request_uri;
                     header("Location: " . $url);
                 }
-                
             }
         }
 
@@ -507,7 +528,7 @@ class application
         case
             when ga.validity_end_date is not null then 'Terminated'
         else 'Active'
-        end as active_state
+        end as active_state, status
         FROM ml.ml_geographical_areas ga
         --WHERE (validity_end_date IS NULL OR validity_end_date > CURRENT_DATE)
         )
@@ -531,6 +552,7 @@ class application
                 $validity_end_date = short_date($row['validity_end_date']);
 
                 $geographical_area = new geographical_area;
+                $geographical_area->status = $row['status'];
                 $geographical_area->set_properties(
                     $geographical_area_sid,
                     $geographical_area_id,
@@ -989,7 +1011,6 @@ class application
                 $additional_code_type->string = $additional_code_type->additional_code_type_id . " - " . $additional_code_type->description;
                 $workbasket->status = $row['status'];
                 $additional_code_type->status = status_image($workbasket->status);
-                //$url = "/additional_code_types/create_edit.html?mode=update&additional_code_type_id=" . $additional_code_type->additional_code_type_id;
                 $url = "/additional_code_types/view.html?mode=view&additional_code_type_id=" . $additional_code_type->additional_code_type_id;
                 $additional_code_type->description_url = '<a class="govuk-link" href="' . $url . '">' . $additional_code_type->description . '</a>';
 
@@ -1000,6 +1021,28 @@ class application
                 array_push($temp, $additional_code_type);
             }
             $this->additional_code_types = $temp;
+        }
+
+
+        foreach ($this->additional_code_types as $additional_code_type) {
+            if (!in_array($additional_code_type->additional_code_type_id, array('V', 'X'))) {
+                $additional_code_type_id = $additional_code_type->additional_code_type_id;
+                $sql = "select lpad(additional_code::text, 3, '0') as next_id
+                from ( select generate_series (1, 999) as additional_code
+                except select additional_code::int from additional_codes where additional_code_type_id = '" . $additional_code_type_id . "') s
+                order by additional_code limit 1;
+                ";
+                $result = pg_query($conn, $sql);
+                $temp = array();
+                if ($result) {
+                    while ($row = pg_fetch_array($result)) {
+                        $additional_code_type->next_id = $row['next_id'];
+                    }
+                }
+            }
+            else {
+                $additional_code_type->next_id = 999;
+            }
         }
     }
 
@@ -1430,10 +1473,13 @@ class application
     public function clear_filter_cookies()
     {
         $match = "filter_";
+        $match2 = "workbaskets";
         //$match = "filter_" . $this->tariff_object . "_";
         foreach ($_COOKIE as $key => $value) {
             if (contains($match, $key)) {
-                setcookie($key, "", time() + (86400 * 30), "/");
+                if (!contains($match2, $key)) {
+                    setcookie($key, "", time() + (86400 * 30), "/");
+                }
             }
         }
         /*
@@ -1655,7 +1701,7 @@ class application
     {
         global $conn;
         $users = array();
-        $sql = "select uid, name from users where uid != $1 order by name";
+        $sql = "select user_id, name from users where user_id != $1 order by name";
         pg_prepare($conn, "get_other_users", $sql);
         $result = pg_execute($conn, "get_other_users", array($this->session->user_id));
         $row_count = pg_num_rows($result);
@@ -1675,7 +1721,8 @@ class application
     {
         global $conn;
         $this->users = array();
-        $sql = "select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email from users u order by 1;";
+        $sql = "select u.name as user_name, u.user_id, u.user_login, u.email as user_email
+        from users u order by 1;";
         pg_prepare($conn, "get_users", $sql);
         $result = pg_execute($conn, "get_users", array());
         $row_count = pg_num_rows($result);
@@ -1684,10 +1731,10 @@ class application
                 //$row = pg_fetch_row($result);
                 $user = new user();
                 $user->user_name = $row[0];
-                $user->uid = $row[1];
-                $user->user_id = $row[2];
+                $user->user_id = $row[1];
+                $user->user_login = $row[2];
                 $user->user_email = $row[3];
-                $user->id = $user->uid;
+                $user->id = $user->user_id;
                 $user->string = $user->user_name;
                 array_push($this->users, $user);
             }
@@ -1751,90 +1798,6 @@ class application
     }
 
 
-
-
-    public function get_workbaskets()
-    {
-        global $conn;
-        $filter_clause = $this->get_filter_clause();
-        $offset = ($this->page - 1) * $this->page_size;
-        $this->workbaskets = array();
-        $sql = "select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
-        w.title, w.reason, w.type, w.status, w.updated_at, w.id,
-        count(*) OVER() AS full_count
-        from workbaskets w, users  u
-        where w.user_id = u.id ";
-
-        $sql .= $filter_clause;
-
-        $sql .= $this->sort_clause;
-        $sql .= " limit $this->page_size offset $offset";
-
-        pg_prepare($conn, "get_workbaskets", $sql);
-        $result = pg_execute($conn, "get_workbaskets", array());
-        $row_count = pg_num_rows($result);
-        if (($result) && ($row_count > 0)) {
-            while ($row = pg_fetch_array($result)) {
-                $workbasket = new workbasket();
-                $workbasket->user_name = $row[0];
-                $workbasket->uid = $row[1];
-                $workbasket->user_id = $row[2];
-                $workbasket->user_email = $row[3];
-                $workbasket->title = $row[4];
-                $workbasket->reason = $row[5];
-                $workbasket->type = $row[6];
-                $workbasket->status = $row[7];
-                $workbasket->updated_at = $row[8];
-                $workbasket->workbasket_id = $row[9];
-                $workbasket->actions = "<a class='govuk-link' href='reassign.html'>Reassign workbasket</a><br /><a class='govuk-link' href='view.html'>View workbasket</a><br /><a class='govuk-link' href='view.html'>Approve workbasket</a>";
-                array_push($this->workbaskets, $workbasket);
-            }
-            return ($this->workbaskets);
-        }
-    }
-
-
-    public function get_all_workbaskets()
-    {
-        global $conn;
-        //pre ($this->session);
-        $offset = ($this->page - 1) * $this->page_size;
-        $this->workbaskets = array();
-        $sql = "select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
-        w.title, w.reason, w.type, w.status, w.created_at, w.updated_at, w.id,
-        count(*) OVER() AS full_count
-        from workbaskets w, users  u
-        where w.user_id = u.id order by w.created_at desc";
-
-        pg_prepare($conn, "get_all_workbaskets", $sql);
-        $result = pg_execute($conn, "get_all_workbaskets", array());
-        $row_count = pg_num_rows($result);
-        if (($result) && ($row_count > 0)) {
-            while ($row = pg_fetch_array($result)) {
-                $workbasket = new workbasket();
-                $workbasket->user_name = $row[0];
-                $workbasket->uid = $row[1];
-                $workbasket->user_id = $row[2];
-                $workbasket->user_email = $row[3];
-                $workbasket->title = $row[4];
-                $workbasket->reason = $row[5];
-                $workbasket->type = $row[6];
-                $workbasket->status = $row[7];
-                $workbasket->created_at = string_to_time($row[8]);
-                $workbasket->updated_at = string_to_time($row[9]);
-                $workbasket->workbasket_id = $row[10];
-                array_push($this->workbaskets, $workbasket);
-            }
-            return ($this->workbaskets);
-        }
-    }
-
-
-
-
-
-
-
     public function get_my_workbaskets_or_new()
     {
         //prend ($_SESSION);
@@ -1854,7 +1817,7 @@ class application
         $stmt = "get_my_workbaskets_or_new" . uniqid();
         pg_prepare($conn, $stmt, $sql);
         $workbaskets = array();
-        $result = pg_execute($conn, $stmt, array($this->session->uid));
+        $result = pg_execute($conn, $stmt, array($this->session->user_id));
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
@@ -1872,11 +1835,11 @@ class application
         global $conn;
         $offset = ($this->page - 1) * $this->page_size;
         $this->workbaskets = array();
-        $sql = "select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+        $sql = "select u.name as user_name, u.user_id, u.user_login, u.email as user_email,
         w.title, w.reason, w.type, w.status, w.created_at, w.updated_at, w.workbasket_id,
         count(*) OVER() AS full_count
         from workbaskets w, users  u
-        where w.user_id = u.id and w.user_id = '" . $this->session->uid . "' order by w.created_at desc";
+        where w.user_id = u.user_id and w.user_id = '" . $this->session->user_id . "' order by w.created_at desc";
         //prend ($sql);
         pg_prepare($conn, "get_my_workbaskets", $sql);
         $result = pg_execute($conn, "get_my_workbaskets", array());
@@ -1885,8 +1848,8 @@ class application
             while ($row = pg_fetch_array($result)) {
                 $workbasket = new workbasket();
                 $workbasket->user_name = $row[0];
-                $workbasket->uid = $row[1];
-                $workbasket->user_id = $row[2];
+                $workbasket->user_id = $row[1];
+                $workbasket->user_login = $row[2];
                 $workbasket->user_email = $row[3];
                 $workbasket->title = $row[4];
                 $workbasket->reason = $row[5];
@@ -1901,20 +1864,20 @@ class application
         }
     }
 
-    public function get_workbaskets_by_filter()
+    public function get_workbaskets()
     {
         global $conn;
         $workbasket = new workbasket();
         $filter_clause = $this->get_filter_clause();
         $offset = ($this->page - 1) * $this->page_size;
-        $sql = "with cte as (select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+        $sql = "with cte as (select u.name as user_name, u.user_login, u.user_id, u.email as user_email,
         w.title, w.reason, w.status, w.created_at, w.updated_at, w.workbasket_id, ws.sequence_id, 
         case 
-        when u.id = " . $this->session->uid . " then 'own'
+        when u.user_id = " . $this->session->user_id . " then 'own'
         else 'other'
         end as ownership        
         from workbaskets w, users u, workbasket_statuses ws
-        where w.user_id = u.id 
+        where w.user_id = u.user_id 
         and w.status = ws.status)
         select *, count(*) OVER() AS full_count from cte where 1 > 0 ";
 
@@ -1954,7 +1917,7 @@ class application
                 } else {
                     $test = -1;
                 }
-        
+
                 if ($wb->workbasket_id == $test) {
                     $status_text .= " (active)";
                     $wb->row_class = "b";
@@ -1967,14 +1930,27 @@ class application
         }
     }
 
-
+    public function get_workbasket_count()
+    {
+        global $conn;
+        $sql = "SELECT count(*) from workbaskets;";
+        $result = pg_query($conn, $sql);
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            $row = pg_fetch_row($result);
+            $count = $row[0];
+        } else {
+            $count = 0;
+        }
+        return ($count);
+    }
 
     public function get_workbasket_statuses()
     {
         global $conn;
 
         $this->workbasket_statuses = array();
-        $sql = "SELECT status from workbasket_statuses order by sequence_id;";
+        $sql = "SELECT status from workbasket_statuses where workbasket_scope = true order by sequence_id;";
         $result = pg_query($conn, $sql);
         $this->workbasket_statuses = array();
         if ($result) {

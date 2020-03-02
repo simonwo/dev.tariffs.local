@@ -2468,8 +2468,172 @@ and br.base_regulation_role = mr.base_regulation_role
 and mr.modification_regulation_id = 'A9500010';
 
 
-select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
-w.title, w.reason, w.type, w.status, w.created_at, w.updated_at, w.workbasket_id,
-count(*) OVER() AS full_count
-from workbaskets w, users  u
-where w.user_id = u.id  -- and w.user_id = '1' order by w.created_at desc order by w.status asc, w.created_at desc, w.title limit 4 offset 0
+with cte as (select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+        w.title, w.reason, w.status, w.created_at, w.updated_at, w.workbasket_id, ws.sequence_id, 
+        case 
+        when u.id = 1 then 'own'
+        else 'other'
+        end as ownership        
+        from workbaskets w, users u, workbasket_statuses ws
+        where w.user_id = u.id 
+        and w.status = ws.status)
+        select *, count(*) OVER() AS full_count from cte where 1 > 0 
+
+
+        
+update workbasket_items set status = 'In progress' where status = 'in progress';
+update workbasket_items set status = 'Awaiting approval' where status = 'awaiting approval';
+update workbasket_items set status = 'Published' where status = 'published';
+update workbasket_items set status = 'Sent to CDS' where status = 'sent to CDS';
+
+
+update additional_code_description_periods_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update additional_code_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update additional_code_type_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update additional_code_type_measure_types_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update additional_code_types_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update additional_codes_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update base_regulations_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update certificate_description_periods_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update certificate_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update certificate_type_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update certificate_types_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update certificates_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update complete_abrogation_regulations_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update duty_expressions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update explicit_abrogation_regulations_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_association_additional_codes_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_association_erns_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_association_goods_nomenclatures_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_association_measures_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_association_meursing_headings_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_description_periods_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_type_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnote_types_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update footnotes_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update fts_regulation_actions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update full_temporary_stop_regulations_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update geographical_area_description_periods_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update geographical_area_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update geographical_area_memberships_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update geographical_areas_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_description_periods_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_group_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_groups_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_indents_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_origins_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclature_successors_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update goods_nomenclatures_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update language_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update languages_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update licensed_quotas_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update measure_action_descriptions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+update measure_actions_oplog  set status = 'Approval rejected' where status = 'approval rejected';
+
+update workbaskets set status = 'In progress' where workbasket_id = 51; -- status = 'Awaiting approval';
+update workbasket_items set status = 'In progress' where workbasket_id = 51; -- status = 'Awaiting approval';
+
+
+select wi.operation, f.additional_code_type_id || ' ' || ftd.description as additional_code_type_id,
+        (f.additional_code_type_id || ' ' || f.additional_code) as additional_code,
+        f.validity_start_date, f.validity_end_date, fd.description, wi.status, wi.id, wi.record_id,
+        '' as view_url
+        from workbasket_items wi, additional_codes f, additional_code_descriptions fd, additional_code_type_descriptions ftd
+        where wi.record_id = f.oid
+        and f.additional_code = fd.additional_code
+        and f.additional_code_type_id = fd.additional_code_type_id
+        and f.additional_code_type_id = ftd.additional_code_type_id
+        and wi.record_type = 'additional_code'
+        and wi.workbasket_id = 52
+        order by wi.created_at
+        
+select title, reason, user_id, status, w.created_at,
+last_status_change_at, last_update_by_id, u.name
+from workbaskets w, users u
+where w.user_id = u.id
+and w.workbasket_id = 52;
+
+
+
+with cte as (select u.name as user_name, u.id as uid, u.uid as user_id, u.email as user_email,
+w.title, w.reason, w.status, w.created_at, w.updated_at, w.workbasket_id, ws.sequence_id, 
+case 
+when u.id = 1 then 'own'
+else 'other'
+end as ownership        
+from workbaskets w, users u, workbasket_statuses ws
+where w.user_id = u.id 
+and w.status = ws.status)
+select *, count(*) OVER() AS full_count from cte where 1 > 0
+
+
+select count(*) from workbasket_items where workbasket_id = 54;
+
+select status, count(*), count(*) OVER() AS full_count
+from workbasket_items
+where workbasket_id = 54
+group by status;
+
+
+select wi.operation, (mt.measure_type_series_id || ' ' || mtsd.description) as series,
+        mt.measure_type_id, mt.validity_start_date, mt.validity_end_date,
+        (
+            '<b>Description</b>: ' || mtd.description  ||
+            '<br /><b>Import / export</b>: ' || mt.trade_movement_code || ' ' || tmc.description ||
+            '<br /><b>Requires duties</b>: ' || mt.measure_component_applicable_code || ' ' || mcac.description ||
+            '<br /><b>Requires order number</b>: ' || mt.order_number_capture_code || ' ' || oncc.description
+        ) as measure_type_description_and_key_fields,
+        wi.status,
+        wi.id, wi.record_id,
+        '/measure_types/view.html?mode=view&measure_type_id=' || mt.measure_type_id as view_url
+        from workbasket_items wi, measure_types mt, measure_type_descriptions mtd,
+        measure_type_series_descriptions mtsd, trade_movement_codes tmc,
+        measure_component_applicable_codes mcac, order_number_capture_codes oncc
+        where wi.record_id = mt.oid
+        and mt.measure_type_id = mtd.measure_type_id 
+        and mt.measure_type_series_id = mtsd.measure_type_series_id
+        and mt.trade_movement_code = tmc.trade_movement_code
+        and mt.measure_component_applicable_code = mcac.measure_component_applicable_code
+        and mt.order_number_capture_code = oncc.order_number_capture_code
+        and wi.record_type = 'measure_type'
+        and wi.workbasket_id =54
+        order by wi.created_at
+        
+        
+        
+select * from ml.clear_data('2020-01-10', 'xxx');
+
+
+
+
+
+select wi.operation, acd.additional_code_type_id || ' ' || actd.description as additional_code_type_id,
+(acd.additional_code_type_id || ' ' || acd.additional_code) as additional_code,
+acdp.validity_start_date, null as validity_end_date,
+acd.description as additional_code_description, wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+'/additional_codes/view.html?mode=view&additional_code=' || acd.additional_code || '&additional_code_type_id=' || acd.additional_code_type_id as view_url,
+wi.record_type, wi.created_at 
+from workbasket_items wi, additional_code_descriptions_oplog acd, additional_code_type_descriptions actd, additional_code_description_periods_oplog acdp
+where wi.record_id = acd.oid
+and acdp.additional_code_description_period_sid = acd.additional_code_description_period_sid
+and acd.additional_code_type_id = actd.additional_code_type_id
+and acd.workbasket_item_sid = acd.workbasket_item_sid
+and wi.record_type = 'additional code description'
+and wi.workbasket_id = 118;
+
+
+select * from additional_codes_oplog order by oid desc limit 10;
+select * from additional_code_descriptions_oplog order by oid desc limit 10;
+select * from additional_code_description_periods_oplog order by oid desc limit 10;
+
+
+
+select cd.description, cdp.validity_start_date
+from certificate_description_periods cdp, certificate_descriptions cd
+where cd.certificate_type_code = $1 and cd.certificate_code = $2
+and cd.certificate_description_period_sid = cdp.certificate_description_period_sid
+and cdp.certificate_description_period_sid = $3
+order by validity_start_date desc;
+

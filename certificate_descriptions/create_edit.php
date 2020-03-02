@@ -1,12 +1,12 @@
 <?php
 require(dirname(__FILE__) . "../../includes/db.php");
 $application = new application;
-$application->init("additional_code_descriptions");
+$application->init("certificate_descriptions");
 $error_handler = new error_handler();
 $submitted = intval(get_formvar("submitted"));
 if ($submitted == 1) {
     $certificate = new certificate();
-    $certificate->validate_form();
+    $certificate->validate_description_form();
 } else {
     $certificate = new certificate();
     $certificate->get_parameters($description = true);

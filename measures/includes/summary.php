@@ -147,7 +147,7 @@ if (count($measure_activity->measure_conditions) == 0) {
         <dt class="govuk-summary-list__key">TM002</dt>
         <dd class="govuk-summary-list__value">Efficiens dici potest. A mene tu? Non potes, nisi retexueris illa. Ut optime,
             secundum naturam affectum esse possit. Et non ex maxima parte de tota iudicabis? Idem iste, inquam, de voluptate
-            quid sentit? </dd>
+            xxx sentit? </dd>
     </div>
 </dl>
 

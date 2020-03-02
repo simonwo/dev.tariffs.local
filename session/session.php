@@ -32,7 +32,7 @@ class session
         // Check user ID
         if (isset($_SESSION["user_id"])) {
             if ($_SESSION["user_id"] != null) {
-                $this->uid = $_SESSION["uid"];
+                $this->user_login = $_SESSION["user_login"];
                 $this->user_id = $_SESSION["user_id"];
                 $this->name = $_SESSION["name"];
                 $this->permissions = $_SESSION["permissions"];
@@ -78,26 +78,23 @@ class session
     {
         global $conn;
 
-        $user_id = get_formvar("user_id");
-        $email = get_formvar("email");
-        $first_name = get_formvar("first_name");
-        $last_name = get_formvar("last_name");
+        $user_login = get_formvar("user_login");
 
-        $sql = "select id, uid, name, email, permissions from users where uid = $1;";
+        $sql = "select user_id, user_login, name, email, permissions from users where user_login = $1;";
         pg_prepare($conn, "get_user", $sql);
-        $result = pg_execute($conn, "get_user", array($user_id));
+        $result = pg_execute($conn, "get_user", array($user_login));
         $row_count = pg_num_rows($result);
 
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_row($result);
-            $this->uid = $row[0];
-            $this->user_id = $row[1];
+            $this->user_id = $row[0];
+            $this->user_login = $row[1];
             $this->name = $row[2];
             $this->email = $row[3];
             $this->permissions = $row[4];
 
-            $_SESSION["uid"] = $this->uid;
             $_SESSION["user_id"] = $this->user_id;
+            $_SESSION["user_login"] = $this->user_login;
             $_SESSION["name"] = $this->name;
             $_SESSION["email"] = $this->email;
             $_SESSION["permissions"] = $this->permissions;
@@ -106,7 +103,7 @@ class session
             // Check for any incomplete workbaskets associated with this user
             $sql = "select * from workbaskets where user_id = $1 and status = 'open'";
             pg_prepare($conn, "get_workbasket", $sql);
-            $result = pg_execute($conn, "get_workbasket", array($_SESSION["uid"]));
+            $result = pg_execute($conn, "get_workbasket", array($_SESSION["user_id"]));
             $row_count = pg_num_rows($result);
             //var_dump($result);
             if (($result) && ($row_count > 0)) {
@@ -218,9 +215,13 @@ class session
         $request_uri = get_formvar("request_uri");
         $this->get_workbasket();
         if ($request_uri == "") {
-            $url = "/#workbaskets";
+            $url = "/?notify=The+workbasket+has+been+opened";
         } else {
-            $url = $request_uri;
+            $connector = "?";
+            if (contains("?", $request_uri)) {
+                $connector = "&";
+            }
+            $url = $request_uri; // . $connector . "notify=The+workbasket+has+been+opened";
         }
         header("Location: " . $url);
     }
@@ -248,20 +249,16 @@ class session
         global $conn, $application;
         $errors = array();
         $_SESSION["confirm_operate_others_workbasket"] = "";
-
-        //prend($_REQUEST);
         $request_uri = get_formvar("request_uri");
-        //prend ($request_uri);
 
-        $this->title = get_formvar("title");
-        $this->reason = get_formvar("reason");
-        //$this->user_id = get_formvar("user_id");
+        $workbasket_title = get_formvar("title");
+        $workbasket_reason = get_formvar("reason");
 
-        if ($this->title == "") {
+        if ($workbasket_title == "") {
             array_push($errors, "workbasket_title");
         }
 
-        if ($this->title == "") {
+        if ($workbasket_reason == "") {
             array_push($errors, "workbasket_reason");
         }
 
@@ -271,20 +268,41 @@ class session
             $url = "create_edit.html?err=1";
         } else {
             $operation_date = $application->get_operation_date();
+
+            // Begin the Postgres transaction
+            pg_query("BEGIN");
+
+            // Create the workbasket
             $sql = "insert into workbaskets (title, reason, user_id, status, created_at) values ($1, $2, $3, 'In progress', $4) RETURNING workbasket_id;";
-            pg_prepare($conn, "workbasket_insert", $sql);
-            $result = pg_execute($conn, "workbasket_insert", array($this->title, $this->reason, $this->uid, $operation_date));
+            $stmt = "workbasket_insert_" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array($workbasket_title, $workbasket_reason, $this->user_id, $operation_date));
             if ($result) {
                 $row = pg_fetch_row($result);
-                $this->id = $row[0];
-                $this->set_workbasket_id($this->id, $this->title);
+                $workbasket_id = $row[0];
+                $this->set_workbasket_id($workbasket_id, $workbasket_title);
             } else {
                 h1("No result");
             }
 
+            // Create the 'create workbasket' event
+            $description = '[{';
+            $description .= '"Action": "CREATE WORKBASKET",';
+            $description .= '"Title": "' . $workbasket_title . '",';
+            $description .= '"Reason for creation": "' . $workbasket_reason . '"';
+            $description .= '}]';
+            $sql = "insert into workbasket_events (workbasket_id, user_id, event_type, created_at, description) values ($1, $2, $3, $4, $5);";
+            $stmt = "workbasket_event_insert_" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array($workbasket_id, $this->user_id, "Create workbasket", $operation_date, $description));
+            // Commit the Postgres transaction
+            pg_query("COMMIT");
+
+
 
             $url = "workbasket_confirmation.html?request_uri=" . urlencode($request_uri);
         }
+        //die();
         header("Location: " . $url);
     }
 }

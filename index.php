@@ -1,11 +1,11 @@
 <?php
 require(dirname(__FILE__) . "/includes/db.php");
 $application = new application;
-//$application->clear_filter_cookies();
+$application->clear_filter_cookies();
 $application->init("workbaskets", "/workbaskets/config.json");
 $application->get_filter_options();
 $application->get_workbasket_statuses();
-$application->get_workbaskets_by_filter();
+$application->get_workbaskets();
 $application->get_workbasket_ownerships();
 $filter_content = array();
 array_push($filter_content, $application->workbasket_ownerships);
@@ -41,12 +41,6 @@ require("includes/metadata.php");
             <div class="govuk-grid-row">
                 <!-- Start column one //-->
                 <div class="govuk-grid-column-one-quarter">
-                    <!--
-                    <h2 class="govuk-heading-m govuk-!-margin-0">Workbaskets</h2>
-                    <?php
-                    $application->session->show_workbasket_component_home();
-                    ?>
-                    //-->
 
                     <h2 class="govuk-heading-m govuk-!-margin-0">Manage regulations</h2>
                     <ul class="menu">
@@ -161,16 +155,23 @@ require("includes/metadata.php");
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-m" id="workbaskets">Workbaskets</h1>
                     <!--<h2 class="govuk-heading-s">You are logged on as <?= $application->session->user_id ?> with permissions <?= $application->session->permissions ?></h2>//-->
-
-                    <!-- End main title //-->
-                    <p class="govuk-body">Use the form below to search for existing workbaskets. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
+                    <?php
+                    $workbasket_count = $application->get_workbasket_count();
+                    if ($workbasket_count > 0) {
+                    ?>
+                        <!-- End main title //-->
+                        <p class="govuk-body">Use the form below to search for existing workbaskets. Alternatively, <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
 
                     <?php
-                    new search_form(
-                        $application->workbaskets,
-                        $filter_content
-                    );
-
+                        new search_form(
+                            $application->workbaskets,
+                            $filter_content
+                        );
+                    } else {
+                        ?>
+                        <p class="govuk-body">There are currently no workbaskets. Click to <a class="govuk-link" href="/workbaskets/create_edit.html">create new workbasket</a>.</p>
+                        <?php
+                    }
                     ?>
                 </div>
             </div>

@@ -25,7 +25,7 @@ class certificate
     public function get_descriptions()
     {
         global $conn;
-        $sql = "select cdp.validity_start_date, cd.description
+        $sql = "select cdp.validity_start_date, cd.description, cdp.certificate_description_period_sid
         from certificate_description_periods cdp, certificate_descriptions cd
         where cd.certificate_description_period_sid = cdp.certificate_description_period_sid
         and cd.certificate_type_code = $1 and cd.certificate_code = $2
@@ -35,7 +35,7 @@ class certificate
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
-                $description = new description($row['validity_start_date'], $row['description']);
+                $description = new description($row['validity_start_date'], $row['description'], $row['certificate_description_period_sid']);
                 array_push($this->descriptions, $description);
             }
         }
@@ -48,7 +48,7 @@ class certificate
         $errors = array();
         $this->certificate_type_code = strtoupper(get_formvar("certificate_type_code", "", True));
         $this->certificate_code = strtoupper(get_formvar("certificate_code", "", True));
-        
+
         $this->description = get_formvar("description", "", True);
 
         $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
@@ -65,7 +65,6 @@ class certificate
 
         $this->set_dates();
 
-        //prend ($_REQUEST);
         # Check on the certificate_type_code
         if (strlen($this->certificate_type_code) != 1) {
             array_push($errors, "certificate_type_code");
@@ -101,13 +100,11 @@ class certificate
         }
 
         # Check on the description
-        if (($this->description == "") || (strlen($this->description) > 500)) {
-            array_push($errors, "description");
+        if ($application->mode == "insert") {
+            if (($this->description == "") || (strlen($this->description) > 500)) {
+                array_push($errors, "description");
+            }
         }
-
-
-        //pre ($_REQUEST);
-        //prend ($errors);
 
         if (count($errors) > 0) {
             $error_string = serialize($errors);
@@ -116,15 +113,88 @@ class certificate
         } else {
             if ($application->mode == "insert") {
                 // Do create scripts
-                $this->create();
+                $this->create_update("C");
             } else {
                 // Do edit scripts
-                $this->update();
+                $this->create_update("U");
             }
-            $url = "./confirmation.html?mode=" . $application->mode;
+            $url = "./confirmation.html?certificate_type_code=" . $this->certificate_type_code . "&certificate_code=" . $this->certificate_code . "&mode=" . $application->mode;
         }
+        //die();
         header("Location: " . $url);
     }
+
+    function validate_description_form()
+    {
+        //prend ($_REQUEST);
+        global $application;
+        $errors = array();
+        $this->certificate_type_code = strtoupper(get_formvar("certificate_type_code", "", True));
+        $this->certificate_code = strtoupper(get_formvar("certificate_code", "", True));
+        $this->description = get_formvar("description", "", True);
+
+        $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
+        $this->validity_start_date_month = get_formvar("validity_start_date_month", "", True);
+        $this->validity_start_date_year = get_formvar("validity_start_date_year", "", True);
+        $this->validity_start_date_string = $this->validity_start_date_day . "|" . $this->validity_start_date_month . "|" . $this->validity_start_date_year;
+        setcookie("validity_start_date_string", $this->validity_start_date_string, time() + (86400 * 30), "/");
+
+        $this->validity_end_date_day = get_formvar("validity_end_date_day", "", True);
+        $this->validity_end_date_month = get_formvar("validity_end_date_month", "", True);
+        $this->validity_end_date_year = get_formvar("validity_end_date_year", "", True);
+        $this->validity_end_date_string = $this->validity_end_date_day . "|" . $this->validity_end_date_month . "|" . $this->validity_end_date_year;
+        setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
+
+        $this->set_dates();
+
+        /*
+        # Check on the certificate_type_code
+        if (strlen($this->certificate_type_code) != 2) {
+            array_push($errors, "certificate_type_code");
+        }
+
+        # Check on the certificate_code code
+        if ((strlen($this->certificate_code) != 3) && (strlen($this->certificate_code) != 5)) {
+            array_push($errors, "certificate_code");
+        }
+        */
+
+        # Check on the validity start date
+        $valid_start_date = checkdate($this->validity_start_date_month, $this->validity_start_date_day, $this->validity_start_date_year);
+        if ($valid_start_date != 1) {
+            array_push($errors, "validity_start_date");
+        }
+
+        # Check on the description
+        if (($this->description == "") || (strlen($this->description) > 5000)) {
+            array_push($errors, "description");
+        }
+
+        if (count($errors) > 0) {
+            $error_string = serialize($errors);
+            setcookie("errors", $error_string, time() + (86400 * 30), "/");
+            $url = "create_edit.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+        } else {
+            //h1($application->mode);
+            //die();
+            if ($application->mode == "insert") {
+                // Do create scripts
+                $this->create_update_description("C");
+            } else {
+                // Do edit scripts
+                $this->create_update_description("U");
+            }
+            $url = "./confirmation.html?certificate_code=" . $this->certificate_code . "&certificate_type_code=" . $this->certificate_type_code . "&mode=" . $application->mode;
+        }
+        //die();
+        header("Location: " . $url);
+    }
+
+    public function view_url()
+    {
+        return ("/certificates/view.html?mode=view&certificate_type_code=" . $this->certificate_type_code . "&certificate_code=" . $this->certificate_code);
+    }
+
 
     public function get_parameters($description = false)
     {
@@ -133,7 +203,7 @@ class certificate
 
         $this->certificate_type_code = trim(get_querystring("certificate_type_code"));
         $this->certificate_code = trim(get_querystring("certificate_code"));
-        $this->validity_start_date = trim(get_querystring("validity_start_date"));
+        $this->period_sid = trim(get_querystring("period_sid"));
 
         if (empty($_GET)) {
             $this->clear_cookies();
@@ -144,7 +214,7 @@ class certificate
                 if ($description == false) {
                     $ret = $this->populate_from_db();
                 } else {
-                    $ret = $this->get_specific_description($this->validity_start_date);
+                    $ret = $this->get_specific_description($this->period_sid);
                 }
                 if (!$ret) {
                     h1("An error has occurred - no such certificate");
@@ -157,7 +227,8 @@ class certificate
         }
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as
         (
@@ -179,51 +250,46 @@ class certificate
         $result = pg_execute($conn, $stmt, array($this->certificate_type_code, $this->certificate_code));
         if ($result) {
             $this->versions = $result;
-            return;
-            $row_count = pg_num_rows($result);
-            if (($row_count > 0) && (pg_num_rows($result))) {
-                while ($row = pg_fetch_array($result)) {
-                    $version = new footnote_type();
-                    $version->validity_start_date = $row["validity_start_date"];
-                    $version->validity_end_date = $row["validity_start_date"];
-                    $version->validity_start_date = $row["validity_start_date"];
-                    $version->validity_start_date = $row["validity_start_date"];
-                    array_push($this->versions, $version);
-                }
-            }
         }
     }
 
-    public function get_specific_description($validity_start_date)
+    public function get_specific_description($period_sid)
     {
         global $conn;
-        if ($this->validity_start_date == null) {
-            $sql = "select description from certificate_description_periods cdp, certificate_descriptions cd
-            where cd.certificate_description_period_sid = cdp.certificate_description_period_sid
-            and cd.certificate_type_code = $1 and cd.certificate_code = $2 order by validity_start_date desc limit 1
-            ";
-    
+        //h1 ("Period SID = " . $period_sid);
+        if ($period_sid == null) {
+            $sql = "select cd.description, null as validity_start_date
+            from certificate_description_periods cdp, certificate_descriptions cd
+            where cd.certificate_type_code = $1 and cd.certificate_code = $2
+            and cd.certificate_description_period_sid = cdp.certificate_description_period_sid
+            order by validity_start_date desc limit 1;";
+
             pg_prepare($conn, "get_specific_description", $sql);
-    
+
             $result = pg_execute($conn, "get_specific_description", array($this->certificate_type_code, $this->certificate_code));
         } else {
-            $sql = "select description from certificate_description_periods cdp, certificate_descriptions cd
-            where cd.certificate_description_period_sid = cdp.certificate_description_period_sid
-            and cd.certificate_type_code = $1 and cd.certificate_code = $2 and validity_start_date = $3;
-            ";
-    
+            $sql = "select cd.description, cdp.validity_start_date
+            from certificate_description_periods cdp, certificate_descriptions cd
+            where cd.certificate_type_code = $1 and cd.certificate_code = $2
+            and cd.certificate_description_period_sid = cdp.certificate_description_period_sid
+            and cdp.certificate_description_period_sid = $3
+            order by validity_start_date desc;";
+
             pg_prepare($conn, "get_specific_description", $sql);
-    
-            $result = pg_execute($conn, "get_specific_description", array($this->certificate_type_code, $this->certificate_code, $this->validity_start_date));
+
+            $result = pg_execute($conn, "get_specific_description", array($this->certificate_type_code, $this->certificate_code, $period_sid));
         }
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_array($result);
             $this->description = $row['description'];
+            $this->validity_start_date = $row['validity_start_date'];
             return (true);
         }
         return (false);
     }
+
+
 
     public function get_certificate_types()
     {
@@ -236,8 +302,8 @@ class certificate
         if ($result) {
             while ($row = pg_fetch_array($result)) {
                 $certificate_type       = new certificate_type;
-                $certificate_type->certificate_type_code	= $row['certificate_type_code'];
-                $certificate_type->description      	    = $row['description'];
+                $certificate_type->certificate_type_code    = $row['certificate_type_code'];
+                $certificate_type->description              = $row['description'];
                 array_push($temp, $certificate_type);
             }
             $this->certificate_types = $temp;
@@ -261,34 +327,34 @@ class certificate
         $description,
         $is_quota
     ) {
-        $this->certificate_code						= $certificate_code;
-        $this->validity_start_date				    = $validity_start_date;
-        $this->validity_end_date				    = $validity_end_date;
-        $this->trade_movement_code				    = $trade_movement_code;
-        $this->priority_code				        = $priority_code;
+        $this->certificate_code                        = $certificate_code;
+        $this->validity_start_date                    = $validity_start_date;
+        $this->validity_end_date                    = $validity_end_date;
+        $this->trade_movement_code                    = $trade_movement_code;
+        $this->priority_code                        = $priority_code;
         $this->measure_component_applicable_code    = $measure_component_applicable_code;
-        $this->origin_dest_code				        = $origin_dest_code;
-        $this->order_number_capture_code			= $order_number_capture_code;
-        $this->measure_explosion_level				= $measure_explosion_level;
-        $this->certificate_series_id				= $certificate_series_id;
-        $this->description				        	= $description;
-        $this->description_truncated        	    = substr($description, 0, 75);
-        $this->is_quota				        		= $is_quota;
+        $this->origin_dest_code                        = $origin_dest_code;
+        $this->order_number_capture_code            = $order_number_capture_code;
+        $this->measure_explosion_level                = $measure_explosion_level;
+        $this->certificate_series_id                = $certificate_series_id;
+        $this->description                            = $description;
+        $this->description_truncated                = substr($description, 0, 75);
+        $this->is_quota                                = $is_quota;
     }
 
     function populate_from_cookies()
     {
         #$this->certificate_code						    = get_cookie("certificate_code");
         #$this->certificate_type_code						= get_cookie("certificate_type_code");
-        $this->validity_start_date_day					= get_cookie("certificate_validity_start_date_day");
-        $this->validity_start_date_month					= get_cookie("certificate_validity_start_date_month");
-        $this->validity_start_date_year					= get_cookie("certificate_validity_start_date_year");
-        $this->validity_end_date_day						= get_cookie("certificate_validity_end_date_day");
-        $this->validity_end_date_month					= get_cookie("certificate_validity_end_date_month");
-        $this->validity_end_date_year					= get_cookie("certificate_validity_end_date_year");
-        $this->description							= get_cookie("certificate_description");
-        $this->heading          					= "Create new certificate";
-        $this->disable_certificate_code_field		= "";
+        $this->validity_start_date_day                    = get_cookie("certificate_validity_start_date_day");
+        $this->validity_start_date_month                    = get_cookie("certificate_validity_start_date_month");
+        $this->validity_start_date_year                    = get_cookie("certificate_validity_start_date_year");
+        $this->validity_end_date_day                        = get_cookie("certificate_validity_end_date_day");
+        $this->validity_end_date_month                    = get_cookie("certificate_validity_end_date_month");
+        $this->validity_end_date_year                    = get_cookie("certificate_validity_end_date_year");
+        $this->description                            = get_cookie("certificate_description");
+        $this->heading                              = "Create new certificate";
+        $this->disable_certificate_code_field        = "";
     }
 
     function exists()
@@ -311,120 +377,161 @@ class certificate
         if (($this->validity_start_date_day == "") || ($this->validity_start_date_month == "") || ($this->validity_start_date_year == "")) {
             $this->validity_start_date = Null;
         } else {
-            $this->validity_start_date	= to_date_string($this->validity_start_date_day,	$this->validity_start_date_month, $this->validity_start_date_year);
+            $this->validity_start_date    = to_date_string($this->validity_start_date_day,    $this->validity_start_date_month, $this->validity_start_date_year);
         }
 
         if (($this->validity_end_date_day == "") || ($this->validity_end_date_month == "") || ($this->validity_end_date_year == "")) {
             $this->validity_end_date = Null;
         } else {
-            $this->validity_end_date	= to_date_string($this->validity_end_date_day, $this->validity_end_date_month, $this->validity_end_date_year);
+            $this->validity_end_date    = to_date_string($this->validity_end_date_day, $this->validity_end_date_month, $this->validity_end_date_year);
         }
     }
 
-    function create()
+    function create_update($operation)
     {
         global $conn, $application;
-        $operation = "C";
         $operation_date = $application->get_operation_date();
-        $this->certificate_description_period_sid  = $application->get_next_certificate_description_period();
+        $this->certificate_description_period_sid = $application->get_next_certificate_description_period();
 
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
         }
+        if ($operation == "C") {
+            $action = "NEW CERTIFICATE";
+        } else {
+            $action = "UPDATE TO CERTIFICATE";
+        }
 
         $status = 'In progress';
         # Create the certificate record
-        $sql = "INSERT INTO certificates_oplog (certificate_code, certificate_type_code, 
-        validity_start_date, operation, operation_date, workbasket_id, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        $sql = "INSERT INTO certificates_oplog (
+            certificate_code, certificate_type_code, validity_start_date, validity_end_date,
+            operation, operation_date, workbasket_id, status)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING oid;";
-        pg_prepare($conn, "create_certificate", $sql);
-        $result = pg_execute($conn, "create_certificate", array(
-            $this->certificate_code, $this->certificate_type_code,
-            $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
+        pg_prepare($conn, "stmt_1", $sql);
+        $result = pg_execute($conn, "stmt_1", array(
+            $this->certificate_code, $this->certificate_type_code, $this->validity_start_date, $this->validity_end_date,
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
         ));
         if (($result) && (pg_num_rows($result) > 0)) {
             $row = pg_fetch_row($result);
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "certificate", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Certificate type ID": "' . $this->certificate_type_code . '",';
+        $description .= '"Certificate ID": "' . $this->certificate_code . '",';
+        if ($operation == "C") {
+            $description .= '"Description": "' . $this->description . '",';
+        }
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "certificate", $status, $operation, $operation_date, $description);
 
-        // Then upate the certificate record with oid of the workbasket item record
-        $sql = "UPDATE certificates_oplog set workbasket_item_id = $1 where oid = $2";
-        pg_prepare($conn, "update_certificate", $sql);
-        $result = pg_execute($conn, "update_certificate", array(
-            $workbasket_item_id, $oid
+        // Then update the certificate record with unique ID of the workbasket item record
+        $sql = "UPDATE certificates_oplog set workbasket_item_sid = $1 where oid = $2";
+        pg_prepare($conn, "stmt_2", $sql);
+        $result = pg_execute($conn, "stmt_2", array(
+            $workbasket_item_sid, $oid
         ));
- 
-        # Create the certificate description period record
-        $sql = "INSERT INTO certificate_description_periods_oplog (certificate_description_period_sid, certificate_code,
-        certificate_type_code, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+
+        if ($operation == "C") {
+            # Create the certificate description period record
+            $sql = "INSERT INTO certificate_description_periods_oplog (certificate_description_period_sid, certificate_code,
+            certificate_type_code, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING oid;";
-        pg_prepare($conn, "create_certificate_description_period", $sql);
-        $result = pg_execute($conn, "create_certificate_description_period", array(
-            $this->certificate_description_period_sid, $this->certificate_code,
-            $this->certificate_type_code, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-        //$application->session->workbasket->insert_workbasket_item($oid, "certificate_description_period", $status, $operation, $operation_date);
+            pg_prepare($conn, "stmt_3", $sql);
+            $result = pg_execute($conn, "stmt_3", array(
+                $this->certificate_description_period_sid, $this->certificate_code,
+                $this->certificate_type_code, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+
+            # Create the certificate description record
+            $sql = "INSERT INTO certificate_descriptions_oplog (certificate_description_period_sid, certificate_code,
+            certificate_type_code, language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8, $9)
+            RETURNING oid;";
+            pg_prepare($conn, "stmt_4", $sql);
+            $result = pg_execute($conn, "stmt_4", array(
+                $this->certificate_description_period_sid, $this->certificate_code,
+                $this->certificate_type_code, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
+    }
+
+
+    function create_update_description($operation)
+    {
+        global $conn, $application;
+        //h1 ($operation);
+        $operation_date = $application->get_operation_date();
+        if ($operation == "C") {
+            $this->certificate_description_period_sid = $application->get_next_certificate_description_period();
+            $action = "NEW CERTIFICATE DESCRIPTION";
+        } else {
+            $this->certificate_description_period_sid = get_formvar("certificate_description_period_sid");
+            $action = "UPDATE TO CERTIFICATE DESCRIPTION";
+        }
+        // prend($this);
+        //prend($_REQUEST);
+
+        $status = 'In progress';
 
         # Create the certificate description record
         $sql = "INSERT INTO certificate_descriptions_oplog (certificate_description_period_sid, certificate_code,
-        certificate_type_code, language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_id)
-        VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8, $9)
-            RETURNING oid;";
-        pg_prepare($conn, "create_certificate_description", $sql);
-        $result = pg_execute($conn, "create_certificate_description", array(
+        certificate_type_code, language_id, description, operation, operation_date, workbasket_id, status)
+        VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8)
+        RETURNING oid;";
+        $stmt = "create_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
             $this->certificate_description_period_sid, $this->certificate_code,
-            $this->certificate_type_code, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+            $this->certificate_type_code, $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
         ));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_row($result);
+            $oid = $row[0];
+        }
+
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Certificate type ID": "' . $this->certificate_type_code . '",';
+        $description .= '"Certificate ID": "' . $this->certificate_code . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "certificate description", $status, $operation, $operation_date, $description);
+
+        // Then update the certificate description record with unique ID of the workbasket item record
+        $sql = "UPDATE certificate_descriptions_oplog set workbasket_item_sid = $1 where oid = $2";
+        $stmt = "update_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $workbasket_item_sid, $oid
+        ));
+
+        # Create the certificate description period record
+        if ($operation == "C") {
+            $sql = "INSERT INTO certificate_description_periods_oplog (certificate_description_period_sid, certificate_code,
+            certificate_type_code, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING oid;";
+            $stmt = "create_description_period" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array(
+                $this->certificate_description_period_sid, $this->certificate_code,
+                $this->certificate_type_code, $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
         //die();
     }
 
-    public function old_delete_description()
-    {
-        global $conn;
-        $application = new application;
 
-        # Before I can delete anything, I need to retrieve the data, so that a "D" type instruction
-        # with full data can be sent
-        $sql = "SELECT fd.certificate_type_code, fd.certificate_code, fd.description, fdp.validity_start_date,
-        fdp.validity_end_date FROM certificate_descriptions fd, certificate_description_periods fdp
-        WHERE fd.certificate_description_period_sid = fdp.certificate_description_period_sid
-        AND fd.certificate_description_period_sid = $1";
-        pg_prepare($conn, "get_description", $sql);
-        $this->operation = "D";
-        $this->operation_date = $application->get_operation_date();
-        $result = pg_execute($conn, "get_description", array($this->certificate_description_period_sid));
-        if ($result) {
-            $row = pg_fetch_row($result);
-            $this->certificate_type_code  	= $row[0];
-            $this->certificate_code  		= $row[1];
-            $this->description  		= $row[2];
-            $this->validity_start_date	= $row[3];
-            $this->validity_end_date  	= $row[4];
-        } else {
-            exit();
-        }
-        # The I can do the deletes, which are actually not deletes, but inserts with a type of "D"
-        # I need an instruction for both the period and the description
-        $sql = "INSERT INTO certificate_description_periods_oplog (certificate_description_period_sid, certificate_type_code, 
-        validity_start_date, certificate_code, validity_end_date, operation, operation_date) VALUES ($1, $2, $3, $4, $5, $6, $7)";
-        pg_prepare($conn, "delete_description_period", $sql);
-        pg_execute($conn, "delete_description_period", array(
-            $this->certificate_description_period_sid, $this->certificate_type_code,
-            $this->validity_start_date, $this->certificate_code, $this->validity_end_date, $this->operation, $this->operation_date
-        ));
-
-        $sql = "INSERT INTO certificate_descriptions_oplog (certificate_description_period_sid, language_id, certificate_type_code, 
-        certificate_code, operation, operation_date) VALUES ($1, 'EN', $2, $3, $4, $5)";
-        pg_prepare($conn, "delete_description", $sql);
-        pg_execute($conn, "delete_description", array(
-            $this->certificate_description_period_sid, $this->certificate_type_code,
-            $this->certificate_code, $this->operation, $this->operation_date
-        ));
-    }
 
 
     function get_start_date()
@@ -445,7 +552,7 @@ class certificate
     }
 
 
-    function get_missing_details()
+    function get_description_period_details()
     {
         global $conn;
         $sql = "SELECT description, cdp.validity_start_date as period_validity_start_date, c.validity_start_date as c_validity_start_date
@@ -456,8 +563,8 @@ class certificate
         AND c.certificate_code = cdp.certificate_code
         AND c.certificate_type_code = cdp.certificate_type_code
         AND cd.certificate_description_period_sid = $1";
-        pg_prepare($conn, "get_missing_details", $sql);
-        $result = pg_execute($conn, "get_missing_details", array($this->certificate_code, $this->certificate_type_code));
+        pg_prepare($conn, "get_description_period_details", $sql);
+        $result = pg_execute($conn, "get_description_period_details", array($this->certificate_code, $this->certificate_type_code));
 
         if ($result) {
             $row = pg_fetch_row($result);
@@ -574,7 +681,7 @@ class certificate
         $operation_date = $application->get_operation_date();
 
         # Get the missing details
-        $this->get_missing_details();
+        $this->get_description_period_details();
 
         # Insert the certificate
         $sql = "INSERT INTO certificates_oplog
@@ -609,82 +716,42 @@ class certificate
     }
 
 
-    function update()
-    {
-        global $conn;
-        $application = new application;
-        $operation = "U";
-        $operation_date = $application->get_operation_date();
-        if ($this->validity_start_date == "") {
-            $this->validity_start_date = Null;
-        }
-        if ($this->validity_end_date == "") {
-            $this->validity_end_date = Null;
-        }
-
-        $sql = "INSERT INTO certificates_oplog (certificate_code, validity_start_date,
-        validity_end_date, trade_movement_code, priority_code,
-        measure_component_applicable_code, origin_dest_code,
-        order_number_capture_code, measure_explosion_level, certificate_series_id,
-        operation, operation_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)";
-
-        pg_prepare($conn, "create_certificate", $sql);
-
-        $result = pg_execute($conn, "create_certificate", array(
-            $this->certificate_code, $this->validity_start_date,
-            $this->validity_end_date, $this->trade_movement_code, $this->priority_code,
-            $this->measure_component_applicable_code, $this->origin_dest_code,
-            $this->order_number_capture_code, $this->measure_explosion_level, $this->certificate_series_id,
-            $operation, $operation_date
-        ));
-
-
-        $sql = "INSERT INTO certificate_descriptions_oplog (certificate_code, language_id, description,
-        operation, operation_date) VALUES ($1, 'EN', $2, $3, $4)";
-
-        pg_prepare($conn, "create_certificate_description", $sql);
-
-        $result = pg_execute($conn, "create_certificate_description", array(
-            $this->certificate_code, $this->description,
-            $operation, $operation_date
-        ));
-        #echo ($result);
-        #exit();
-    }
-
     function populate_from_db()
     {
         global $conn;
-        $sql = "SELECT cd.description, validity_start_date, validity_end_date, ctd.description as certificate_type_description
-        FROM certificates c, certificate_descriptions cd, certificate_type_descriptions ctd
-        WHERE c.certificate_code = cd.certificate_code
+        $sql = "select cd.description, c.validity_start_date, c.validity_end_date, ctd.description as certificate_type_description
+        from  certificates c, certificate_description_periods cdp, certificate_descriptions cd, certificate_type_descriptions ctd
+        where c.certificate_type_code = cdp.certificate_type_code
         and c.certificate_type_code = ctd.certificate_type_code 
-        AND c.certificate_type_code = $1 AND c.certificate_code = $2";
+        and c.certificate_code = cdp.certificate_code 
+        and cd.certificate_description_period_sid = cdp.certificate_description_period_sid 
+        AND c.certificate_type_code = $1 AND c.certificate_code = $2
+        order by cdp.validity_start_date desc limit 1;";
 
         pg_prepare($conn, "get_certificate", $sql);
         $result = pg_execute($conn, "get_certificate", array($this->certificate_type_code, $this->certificate_code));
 
         if ($result) {
             $row = pg_fetch_row($result);
-            $this->description  						= $row[0];
-            $this->validity_start_date					= $row[1];
-            $this->validity_start_date_day   				= date('d', strtotime($this->validity_start_date));
-            $this->validity_start_date_month 				= date('m', strtotime($this->validity_start_date));
-            $this->validity_start_date_year  				= date('Y', strtotime($this->validity_start_date));
-            $this->validity_end_date					= $row[2];
+            $this->description                          = $row[0];
+            $this->validity_start_date                    = $row[1];
+            $this->validity_start_date_day                   = date('d', strtotime($this->validity_start_date));
+            $this->validity_start_date_month                 = date('m', strtotime($this->validity_start_date));
+            $this->validity_start_date_year                  = date('Y', strtotime($this->validity_start_date));
+            $this->validity_end_date                    = $row[2];
             if ($this->validity_end_date == "") {
-                $this->validity_end_date_day   					= "";
-                $this->validity_end_date_month 					= "";
-                $this->validity_end_date_year  					= "";
+                $this->validity_end_date_day                       = "";
+                $this->validity_end_date_month                     = "";
+                $this->validity_end_date_year                      = "";
             } else {
-                $this->validity_end_date_day   					= date('d', strtotime($this->validity_end_date));
-                $this->validity_end_date_month 					= date('m', strtotime($this->validity_end_date));
-                $this->validity_end_date_year  					= date('Y', strtotime($this->validity_end_date));
+                $this->validity_end_date_day                       = date('d', strtotime($this->validity_end_date));
+                $this->validity_end_date_month                     = date('m', strtotime($this->validity_end_date));
+                $this->validity_end_date_year                      = date('Y', strtotime($this->validity_end_date));
             }
 
-            $this->certificate_type_description  						= $row[3];
-            $this->certificate_heading					= "Edit measure type " . $this->certificate_code;
-            $this->disable_certificate_code_field		= " disabled";
+            $this->certificate_type_description                          = $row[3];
+            $this->certificate_heading                    = "Edit measure type " . $this->certificate_code;
+            $this->disable_certificate_code_field        = " disabled";
             $this->get_descriptions();
             return (true);
         } else {
@@ -705,13 +772,13 @@ class certificate
 
         if ($result) {
             $row = pg_fetch_row($result);
-            $this->description  						= $row[2];
-            $this->validity_start_date					= $row[3];
-            $this->validity_start_date_day   				= date('d', strtotime($this->validity_start_date));
-            $this->validity_start_date_month 				= date('m', strtotime($this->validity_start_date));
-            $this->validity_start_date_year  				= date('Y', strtotime($this->validity_start_date));
-            $this->certificate_heading					= "Edit measure type " . $this->certificate_code;
-            $this->disable_certificate_code_field		= " disabled";
+            $this->description                          = $row[2];
+            $this->validity_start_date                    = $row[3];
+            $this->validity_start_date_day                   = date('d', strtotime($this->validity_start_date));
+            $this->validity_start_date_month                 = date('m', strtotime($this->validity_start_date));
+            $this->validity_start_date_year                  = date('Y', strtotime($this->validity_start_date));
+            $this->certificate_heading                    = "Edit measure type " . $this->certificate_code;
+            $this->disable_certificate_code_field        = " disabled";
         }
     }
 
@@ -785,7 +852,8 @@ class certificate
         return ($succeeds);
     }
 
-    public function parse($s) {
+    public function parse($s)
+    {
         $this->code = trim($s);
         $hyphen_pos = strpos($this->code, "-");
         if ($hyphen_pos !== -1) {

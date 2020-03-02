@@ -51,7 +51,7 @@
                 "data_column": "title_link",
                 "sort_field": "title",
                 "tooltip": "",
-                "align": "nw"
+                "align": ""
             },
             {
                 "column_name": "Reason",
@@ -95,6 +95,70 @@
                 "tooltip": "",
                 "align": "l nw"
             }
+        ]
+    },
+    "workbasket_versions": {
+        "config": {
+            "title": "Main menu",
+            "inset": "",
+            "freetext_fields": "status|user_name|title|reason",
+            "default_sort_fields": "description",
+            "object_name": "Workbasket history",
+            "title_create": "",
+            "title_edit": "",
+            "description_keys": "",
+            "validate": false,
+            "hide_export_link": true
+        },
+        "filters": [],
+        "xfilters": [
+            {
+                "label": "Owner",
+                "form_value": "ownership",
+                "data_field": "ownership",
+                "data_type": "string",
+                "truncate_at": 0,
+                "height": ""
+            },
+            {
+                "label": "Status",
+                "form_value": "status",
+                "data_field": "status",
+                "data_type": "string",
+                "truncate_at": 0,
+                "height": ""
+            }
+        ],
+        "columns": [
+            {
+                "column_name": "Date",
+                "data_column": "created_at",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "nw"
+            },
+            {
+                "column_name": "User",
+                "data_column": "user_name",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "nw"
+            },
+            {
+                "column_name": "Event type",
+                "data_column": "event_type",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "nw"
+            },
+            {
+                "column_name": "Description",
+                "data_column": "description",
+                "sort_field": "",
+                "tooltip": "",
+                "align": ""
+            }
+
         ]
     }
 }

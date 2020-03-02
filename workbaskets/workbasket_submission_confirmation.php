@@ -32,7 +32,6 @@ require("../includes/metadata.php");
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/#workbaskets">Workbaskets</a>
                 </li>
-                <li class="govuk-breadcrumbs__list-item" aria-current="page">My workbasket</li>
             </ol>
         </div>
         <!-- End breadcrumbs //-->

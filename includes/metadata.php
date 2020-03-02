@@ -57,6 +57,7 @@ $title = parse_placeholders($title);
     <script src="/js/cursor.js"></script>
     <script src="/js/moment.js"></script>
     <script src="/js/modaal.min.js"></script>
+    <script src="/js/notify.min.js"></script>
 
 
     <!--[if IE 8]>
@@ -69,4 +70,5 @@ $title = parse_placeholders($title);
 <![endif]-->
 
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png">
+    <?= $application->notification_text ?>
 </head>

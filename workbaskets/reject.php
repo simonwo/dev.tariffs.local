@@ -4,7 +4,7 @@ $application = new application;
 $error_handler = new error_handler();
 //pre ($_REQUEST);
 $workbasket_id = get_querystring("workbasket_id");
-$workbasket_item_id = get_querystring("workbasket_item_id");
+$workbasket_item_sid = get_querystring("workbasket_item_sid");
 ?>
 <html>
 
@@ -25,8 +25,8 @@ $workbasket_item_id = get_querystring("workbasket_item_id");
     );
 
     new hidden_control(
-        $control_name = "workbasket_item_id",
-        $value = $workbasket_item_id
+        $control_name = "workbasket_item_sid",
+        $value = $workbasket_item_sid
     );
 
     new hidden_control(

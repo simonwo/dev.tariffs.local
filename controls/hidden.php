@@ -12,6 +12,7 @@ class hidden_control
         }
         $this->control_name = $control_name;
 
+        /*
         preg_match_all('/{(.*?)}/', $value, $matches);
         foreach ($matches[1] as $match) {
             if (isset($_GET[$match])) {
@@ -23,6 +24,8 @@ class hidden_control
         $value = str_replace("{", "", $value);
         $value = str_replace("}", "", $value);
         $this->value = $value;
+        */
+        $this->value = parse_placeholders($value);
         $this->display();
     }
 

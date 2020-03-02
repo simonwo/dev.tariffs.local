@@ -155,7 +155,8 @@ class quota_order_number_origin
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "quota_definition", $status, $operation, $operation_date);
+        $description = $this->quota_definition_sid . " - " . $this->description;
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "quota definition", $status, $operation, $operation_date, $description);
     }
 
     public function get_parameters()

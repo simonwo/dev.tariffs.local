@@ -55,7 +55,7 @@ class version_control
                         <?php
                         for ($i = 0; $i < $field_count; $i++) {
                             $field = pg_field_name($this->dataset, $i);
-                            echo ('<th  scope="col" class="govuk-table__header">' . format_field_name($field) . '</th>');
+                            echo ('<th scope="col" class="govuk-table__header">' . format_field_name($field) . '</th>');
                         }
                         ?>
                     </tr>
@@ -66,7 +66,12 @@ class version_control
                         echo ('<tr class="govuk-table__row">');
                         for ($i = 0; $i < $field_count; $i++) {
                             $field = pg_field_name($this->dataset, $i);
-                            echo ('<td class="govuk-table__cell">' . format_value($row, $field) . '</td>');
+                            if ($field == "status") {
+                                $cell_css = "nw status_cell";
+                            } else {
+                                $cell_css = "";
+                            }
+                            echo ('<td class="govuk-table__cell ' . $cell_css . '">' . format_value($row, $field) . '</td>');
                         }
                         echo ('</tr>');
                     }

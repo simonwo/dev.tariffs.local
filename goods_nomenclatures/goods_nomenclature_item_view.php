@@ -49,15 +49,15 @@ require("../includes/metadata.php");
         <?php
         if ($obj_goods_nomenclature_item->exists == true) {
             $sql = "SELECT gn.goods_nomenclature_item_id, gn.producline_suffix as productline_suffix,
-            gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description, at_risk_product
-            FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
-            left outer join ml.commodity_friendly_names f on left(gn.goods_nomenclature_item_id, 8) = f.goods_nomenclature_item_id
-            WHERE gn.goods_nomenclature_item_id = gnd1.goods_nomenclature_item_id AND gn.producline_suffix = gnd1.productline_suffix
-            AND gn.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' AND gn.producline_suffix = '" . $productline_suffix . "'
-            AND (gnd1.goods_nomenclature_description_period_sid IN ( SELECT max(gnd2.goods_nomenclature_description_period_sid) AS max
-            FROM goods_nomenclature_descriptions gnd2
-            WHERE gnd1.goods_nomenclature_item_id = gnd2.goods_nomenclature_item_id AND gnd1.productline_suffix = gnd2.productline_suffix))
-            ORDER BY validity_start_date DESC LIMIT 1";
+ gn.goods_nomenclature_sid, gn.validity_start_date, gn.validity_end_date, gnd1.description, f.description as friendly_description
+ FROM goods_nomenclature_descriptions gnd1, goods_nomenclatures gn 
+ left outer join ml.commodity_friendly_names f on left(gn.goods_nomenclature_item_id, 8) = f.goods_nomenclature_item_id
+ WHERE gn.goods_nomenclature_item_id = gnd1.goods_nomenclature_item_id AND gn.producline_suffix = gnd1.productline_suffix
+ AND gn.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' AND gn.producline_suffix = '" . $productline_suffix . "'
+ AND (gnd1.goods_nomenclature_description_period_sid IN ( SELECT max(gnd2.goods_nomenclature_description_period_sid) AS max
+ FROM goods_nomenclature_descriptions gnd2
+ WHERE gnd1.goods_nomenclature_item_id = gnd2.goods_nomenclature_item_id AND gnd1.productline_suffix = gnd2.productline_suffix))
+ ORDER BY validity_start_date DESC LIMIT 1";
 
             $result = pg_query($conn, $sql);
             if ($result) {
@@ -67,7 +67,6 @@ require("../includes/metadata.php");
                     $productline_suffix = $row['productline_suffix'];
                     $description = $row['description'];
                     $friendly_description = $row['friendly_description'];
-                    $at_risk_product = yn3($row['at_risk_product']);
                     if (substr($goods_nomenclature_item_id, -2) != "00") {
                         $friendly_description .= " : " . $row['description'];
                     }
@@ -77,7 +76,7 @@ require("../includes/metadata.php");
                 }
             }
 
-            new title_control("", "", "", "Commodity code " . $goods_nomenclature_item_id);
+            new title_control("", "", "", "Commodity code " . $goods_nomenclature_item_id . " (" . $productline_suffix . ")");
 
             if ($validity_end_date != "") {
                 echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code has an end-date. Please be careful when assigning duties to this commodity.</p></div>");
@@ -123,7 +122,7 @@ require("../includes/metadata.php");
 
                     <div class="govuk-grid-row">
                         <div class="govuk-grid-column-three-quarters">
-                            <h2 class="govuk-heading-m" id="details">Commodity code details</h2>
+                            <h2 class="govuk-heading-m">Commodity code details</h2>
                             <p class="govuk-body">The table below shows the core details of this commodity code.</p>
                             <table class="govuk-table govuk-table" cellspacing="0">
                                 <tr class="govuk-table__row">
@@ -147,16 +146,6 @@ require("../includes/metadata.php");
                                     <td class="govuk-table__cell nopad">Description</td>
                                     <td class="govuk-table__cell"><?= $description ?></td>
                                 </tr>
-                                <!--
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell nopad">Friendly description</td>
-                                    <td class="govuk-table__cell"><?= $friendly_description ?></td>
-                                </tr>
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell nopad">At risk product</td>
-                                    <td class="govuk-table__cell"><?= $at_risk_product ?></td>
-                                </tr>
-                                //-->
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell nopad">Validity start date</td>
                                     <td class="govuk-table__cell"><?= $validity_start_date ?></td>
@@ -166,21 +155,9 @@ require("../includes/metadata.php");
                                     <td class="govuk-table__cell"><?= short_date($validity_end_date) ?></td>
                                 </tr>
                             </table>
-                            <!--
-                            <form action="/actions/goods_nomenclature_actions.html" method="get">
-                                <input type="hidden" name="phase" value="goods_nomenclature_item_edit" />
-                                <input type="hidden" name="goods_nomenclature_sid" value="<?= $goods_nomenclature_sid ?>" />
-                                <input type="hidden" name="goods_nomenclature_item_id" value="<?= $goods_nomenclature_item_id ?>" />
-                                <input type="hidden" name="productline_suffix" value="<?= $productline_suffix ?>" />
-                                <button type="submit" class="govuk-button small" )>Edit this commodity code</button>
-                            </form>
-                            //-->
                         </div>
                         <div class="govuk-grid-column-one-quarter">
                             <div class="gem-c-contextual-sidebar">
-
-
-
                                 <div class="gem-c-related-navigation">
                                     <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
                                         Actions
@@ -213,7 +190,7 @@ require("../includes/metadata.php");
 
                 <!-- Begin description periods tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="description_periods">
-                    <h2 class="govuk-heading-m" id="description_periods">Description periods</h2>
+                    <h2 class="govuk-heading-m">Description periods</h2>
                     <form action="/goods_nomenclature_add_description.html" method="get" class="inline_form">
                         <input type="hidden" name="phase" value="goods_nomenclature_add_description" />
                         <input type="hidden" name="action" value="new" />
@@ -232,12 +209,12 @@ require("../includes/metadata.php");
                         <?php
                         // Get historical commodity code descriptions
                         $sql = "SELECT gndp.validity_start_date, gnd.description, gndp.goods_nomenclature_description_period_sid
-                        FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
-                        WHERE gndp.goods_nomenclature_description_period_sid = gnd.goods_nomenclature_description_period_sid
-                        AND gnd.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
-                        AND gnd.productline_suffix = '" . $productline_suffix . "'
-                        AND gnd.goods_nomenclature_sid = " . $goods_nomenclature_sid . "
-                        ORDER BY 1 DESC";
+ FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
+ WHERE gndp.goods_nomenclature_description_period_sid = gnd.goods_nomenclature_description_period_sid
+ AND gnd.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
+ AND gnd.productline_suffix = '" . $productline_suffix . "'
+ AND gnd.goods_nomenclature_sid = " . $goods_nomenclature_sid . "
+ ORDER BY 1 DESC";
                         $result = pg_query($conn, $sql);
                         if ($result) {
                             $row_count = pg_num_rows($result);
@@ -291,7 +268,7 @@ require("../includes/metadata.php");
 
                 <!-- Begin hierarchy tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="hierarchy">
-                    <h2 class="govuk-heading-m" id="hierarchy">Position in hierarchy</h2>
+                    <h2 class="govuk-heading-m">Position in hierarchy</h2>
                     <p class="govuk-body">The table below shows the position of this commodity code in the hierarchy. Lines that are greyed out are those
                         that use a product line suffix that is not "80". These are structural elements only and cannot be declared against.</p>
                     <table class="govuk-table xgovuk-table--m sticky" cellspacing="0">
@@ -320,7 +297,6 @@ require("../includes/metadata.php");
                                 $suffix_class = "";
                             }
                             if (($t->goods_nomenclature_item_id == $goods_nomenclature_item_id) && ($t->productline_suffix == $productline_suffix)) {
-                                #$class .= " selected";
                                 $suffix_class .= " selected";
                             }
                             if ($concat < $my_concat) {
@@ -350,18 +326,12 @@ require("../includes/metadata.php");
                         $parent_string = trim($parent_string, ",");
                         ?>
                     </table>
-                    <?php
-                    //}
-                    ?>
                 </section>
                 <!-- End hierarchy tab //-->
 
                 <!-- Begin origins tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="origins">
-
-
-                    <h2 class="govuk-heading-m" id="origins">Origins</h2>
-
+                    <h2 class="govuk-heading-m">Origins</h2>
                     <p class="govuk-body">When a new goods nomenclature code is created, this record provides details of the goods
                         nomenclature code from which the new code originated.</p>
                     <?php
@@ -411,12 +381,12 @@ require("../includes/metadata.php");
                     <?php
                     // Get successors
                     $sql = "select distinct gns.absorbed_goods_nomenclature_item_id, gns.absorbed_productline_suffix, gnd.description
-                    from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
-                    where gns.productline_suffix = gnd.productline_suffix
-                    and gns.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
-                    and gns.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
-                    and gns.productline_suffix = '" . $productline_suffix . "'
-                    order by 1, 2";
+ from goods_nomenclature_successors gns, goods_nomenclature_descriptions gnd
+ where gns.productline_suffix = gnd.productline_suffix
+ and gns.goods_nomenclature_item_id = gnd.goods_nomenclature_item_id
+ and gns.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'
+ and gns.productline_suffix = '" . $productline_suffix . "'
+ order by 1, 2";
                     $result = pg_query($conn, $sql);
                     if (($result) && (pg_num_rows($result) > 0)) {
                     ?>
@@ -454,26 +424,360 @@ require("../includes/metadata.php");
 
                 <!-- Begin assigned tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="assigned">
-                    <h2 class="govuk-heading-m" id="assigned">Assigned measures</h2>
-                    <p class="govuk-body">The measures below have been directly assigned to this commodity code.</p>
-
+                    <h2 class="govuk-heading-m">Assigned measures</h2>
                     <?php
-                    require(dirname(__FILE__) . "../../includes/measure_table.php");
+                    if ($productline_suffix == "80") {
                     ?>
+                        <p class="govuk-body">The measures below have been directly assigned to this commodity code.</p>
+
+
+                        <?php
+                        $current_file_name = basename($_SERVER['PHP_SELF']);
+                        $productline_suffix = get_querystring("productline_suffix");
+                        $goods_nomenclature_item_id = get_querystring("goods_nomenclature_item_id");
+                        $geographical_area_id = strtoupper(get_querystring("geographical_area_id"));
+                        $measure_type_id = get_querystring("measure_type_id");
+                        $base_regulation_id = get_querystring("base_regulation_id");
+                        if ($productline_suffix == "") {
+                            $productline_suffix = "80";
+                        }
+                        ?>
+
+                        <?php
+                        // Firstly, get all the duties to put in the duty column
+                        $sql = "SELECT m.additional_code_type_id, m.additional_code_id, m.measure_type_id,
+                    mc.measure_sid, duty_expression_id, duty_amount, monetary_unit_code, measurement_unit_code, measurement_unit_qualifier_code
+                    FROM ml.measures_real_end_dates m, measure_components mc WHERE m.measure_sid = mc.measure_sid ";
+                        if ($goods_nomenclature_item_id != "") {
+                            $sql .= " AND m.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "' ";
+                        }
+                        if ($geographical_area_id != "") {
+                            $geographical_area_string = explode_string($geographical_area_id);
+                            $sql .= " AND m.geographical_area_id in (" . $geographical_area_string . ") ";
+                        }
+
+
+                        $sql .= "ORDER BY m.measure_sid, mc.duty_expression_id";
+
+                        $result = pg_query($conn, $sql);
+                        $duty_list = array();
+                        if (($result) && (pg_num_rows($result) > 0)) {
+                            while ($row = pg_fetch_array($result)) {
+                                $measure_sid = $row['measure_sid'];
+                                $additional_code_type_id = $row['additional_code_type_id'];
+                                $additional_code_id = $row['additional_code_id'];
+                                $measure_type_ix = $row['measure_type_id'];
+                                $duty_expression_id = $row['duty_expression_id'];
+                                $duty_amount = $row['duty_amount'];
+                                $monetary_unit_code = $row['monetary_unit_code'];
+                                $measurement_unit_code = $row['measurement_unit_code'];
+                                $measurement_unit_qualifier_code = $row['measurement_unit_qualifier_code'];
+
+                                $duty = new duty;
+                                $duty->set_properties(
+                                    $goods_nomenclature_item_id,
+                                    $additional_code_type_id,
+                                    $additional_code_id,
+                                    $measure_type_ix,
+                                    $duty_expression_id,
+                                    $duty_amount,
+                                    $monetary_unit_code,
+                                    $measurement_unit_code,
+                                    $measurement_unit_qualifier_code,
+                                    $measure_sid,
+                                    "",
+                                    "",
+                                    "",
+                                    ""
+                                );
+                                array_push($duty_list, $duty);
+                            }
+                        }
+
+                        // Secondly, get the measure components explicitly related to SIVs
+                        $sql = "SELECT mc.measure_sid, mcc.duty_amount FROM measure_conditions mc,
+                    measure_condition_components mcc, /* measures */ ml.measures_real_end_dates m
+                    WHERE mcc.measure_condition_sid = mc.measure_condition_sid
+                    AND m.measure_sid = mc.measure_sid
+                    AND mcc.duty_expression_id = '01'
+                    AND m.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'";
+                        if ($geographical_area_id != "") {
+                            $sql .= " AND m.geographical_area_id in (" . $geographical_area_string . ") ";
+                        }
+                        $sql .= "ORDER BY m.measure_sid, component_sequence_number";
+                        $result = pg_query($conn, $sql);
+                        $siv_component_list = array();
+                        if (($result) && (pg_num_rows($result) > 0)) {
+                            while ($row = pg_fetch_array($result)) {
+                                $measure_sid = $row['measure_sid'];
+                                $duty_amount = $row['duty_amount'];
+                                $siv_component = new siv_component;
+                                $siv_component->set_properties($measure_sid, $duty_amount);
+                                array_push($siv_component_list, $siv_component);
+                            }
+                        }
+
+
+                        // Thirdly, get the measures
+                        $sql = "SELECT m.*, mtd.description as measure_type_description, g.description as geographical_area_description
+                    FROM ml.measures_real_end_dates m, measure_type_descriptions mtd, ml.ml_geographical_areas g
+                    WHERE m.measure_type_id = mtd.measure_type_id
+                    AND m.geographical_area_sid = g.geographical_area_sid";
+                        if ($goods_nomenclature_item_id != "") {
+                            $sql .= " AND m.goods_nomenclature_item_id = '" . $goods_nomenclature_item_id . "'";
+                        }
+                        if ($geographical_area_id != "") {
+                            $sql .= " AND m.geographical_area_id in (" . $geographical_area_string . ")";
+                        }
+                        if ($measure_type_id != "") {
+                            if (strpos($measure_type_id, ",") > 0) {
+                                $measure_type_id = str_replace(" ", "", $measure_type_id);
+                                $ar = explode(",", $measure_type_id);
+                                $measure_type_string = "";
+                                foreach ($ar as $m) {
+                                    $measure_type_string .= "'" . $m . "', ";
+                                }
+                                $measure_type_string = trim($measure_type_string);
+                                $measure_type_string = trim($measure_type_string, ",");
+                                $sql .= " AND m.measure_type_id IN (" . $measure_type_string . ")";
+                            } else {
+                                $sql .= " AND m.measure_type_id = '" . $measure_type_id . "'";
+                            }
+                        }
+
+                        // Get sort order
+                        switch ($sort_order) {
+                            case "measure_sid":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.measure_sid";
+                                } else {
+                                    $sql .= " ORDER BY m.measure_sid DESC";
+                                }
+                                break;
+                            case "goods_nomenclature_item_id":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.goods_nomenclature_item_id, m.validity_start_date DESC";
+                                } else {
+                                    $sql .= " ORDER BY m.goods_nomenclature_item_id DESC, m.validity_start_date DESC";
+                                }
+                                break;
+                            case "measure_type_id":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.measure_type_id, m.validity_start_date DESC";
+                                } else {
+                                    $sql .= " ORDER BY m.measure_type_id DESC, m.validity_start_date DESC";
+                                }
+                                break;
+                            case "geographical_area_id":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.geographical_area_id, m.validity_start_date DESC";
+                                } else {
+                                    $sql .= " ORDER BY m.geographical_area_id DESC, m.validity_start_date DESC";
+                                }
+                                break;
+                            case "regulation":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.measure_generating_regulation_id, m.validity_start_date DESC";
+                                } else {
+                                    $sql .= " ORDER BY m.measure_generating_regulation_id DESC, m.validity_start_date DESC";
+                                }
+                                break;
+                            case "ordernumber":
+                                if ($sort_direction == "asc") {
+                                    $sql .= " ORDER BY m.ordernumber, m.validity_start_date DESC";
+                                } else {
+                                    $sql .= " ORDER BY m.ordernumber DESC, m.validity_start_date DESC";
+                                }
+                                break;
+                            default:
+                                $sql .= " ORDER BY m.validity_start_date DESC, goods_nomenclature_item_id";
+                                break;
+                        }
+
+                        $result = pg_query($conn, $sql);
+                        if (($result) && (pg_num_rows($result) > 0)) {
+                            $measure_list = array();
+                            while ($row = pg_fetch_array($result)) {
+                                $measure_sid = $row['measure_sid'];
+                                $goods_nomenclature_item_ix = $row['goods_nomenclature_item_id'];
+                                $measure_type_ix = $row['measure_type_id'];
+                                $measure_type_description = $row['measure_type_description'];
+                                $geographical_area_idx = $row['geographical_area_id'];
+                                $geographical_area_description = $row['geographical_area_description'];
+                                $additional_code_type_id = $row['additional_code_type_id'];
+                                $additional_code_id = $row['additional_code_id'];
+                                $quota_order_number_id = $row['ordernumber'];
+                                $regulation_id_full = $row['measure_generating_regulation_id'];
+                                $validity_start_date = short_date($row['validity_start_date']);
+                                $validity_end_date = short_date($row['validity_end_date']);
+
+                                $measure = new measure;
+                                $measure->set_properties(
+                                    $measure_sid,
+                                    $goods_nomenclature_item_id,
+                                    $quota_order_number_id,
+                                    $validity_start_date,
+                                    $validity_end_date,
+                                    $geographical_area_idx,
+                                    $measure_type_ix,
+                                    $additional_code_type_id,
+                                    $additional_code_id,
+                                    $regulation_id_full,
+                                    $measure_type_description
+                                );
+                                $measure->geographical_area_description = $geographical_area_description;
+
+                                // Assign the relevant duties to the measures
+                                if (count($duty_list) > 0) {
+                                    foreach ($duty_list as $d) {
+                                        if ($d->measure_sid == $measure_sid) {
+                                            array_push($measure->duty_list, $d);
+                                        }
+                                    }
+                                }
+                                $measure->combine_duties();
+
+                                if ($measure->combined_duty == "") {
+                                    // Assign the relevant SIV components to the measures
+                                    if (count($siv_component_list) > 0) {
+                                        foreach ($siv_component_list as $s) {
+                                            if ($s->measure_sid == $measure_sid) {
+                                                array_push($measure->siv_component_list, $s);
+                                            }
+                                        }
+                                    }
+                                    $measure->get_siv_specific();
+                                }
+                                array_push($measure_list, $measure);
+                            }
+
+
+                            // Only show the duty for duty measures
+                            $duty_array = array("142", "143", "145", "146", "103", "105", "653", "654");
+                            if (count($measure_list) > 0) {
+                                # Get the base URL for the sorting
+                                $base_url = str_replace("?" . $_SERVER['QUERY_STRING'], "", $_SERVER['REQUEST_URI']);
+
+                                $qs = "";
+                                if ($goods_nomenclature_item_id != "") {
+                                    $qs .= "goods_nomenclature_item_id=" . $goods_nomenclature_item_id;
+                                }
+                                if ($measure_type_id != "") {
+                                    if ($qs != "") {
+                                        $qs .= "&";
+                                    }
+                                    $qs .= "measure_type_id=" . $measure_type_id;
+                                }
+                                if ($geographical_area_id != "") {
+                                    if ($qs != "") {
+                                        $qs .= "&";
+                                    }
+                                    $qs .= "geographical_area_id=" . $geographical_area_id;
+                                }
+                                if ($qs != "") {
+                                    $qs = "?" . $qs;
+                                }
+                                $url = $base_url . $qs;
+                        ?>
+                                <table class="govuk-table govuk-table--m" cellspacing="0">
+                                    <tr class="govuk-table__row">
+                                        <th nowrap class="govuk-table__header nopad vsmall">Measure SID</th>
+                                        <th nowrap class="govuk-table__header vsmall" style="width:10%">Commodity</th>
+                                        <th nowrap class="govuk-table__header vsmall" style="width:15%">Measure type ID</th>
+                                        <th nowrap class="govuk-table__header vsmall l" style="width:15%">Geographical area</th>
+                                        <th nowrap class="govuk-table__header vsmall c nw">Add. code</th>
+                                        <th nowrap class="govuk-table__header vsmall">Regulation</th>
+                                        <th nowrap class="govuk-table__header vsmall l">Start date</th>
+                                        <th nowrap class="govuk-table__header vsmall l">End&nbsp;date</th>
+                                        <th nowrap class="govuk-table__header vsmall c">Order number&nbsp;</th>
+                                        <th nowrap class="govuk-table__header vsmall r">Duty</th>
+                                    </tr>
+                                    <?php
+                                    foreach ($measure_list as $m) {
+                                        if (in_array($m->measure_type_id, $duty_array) == False) {
+                                            $m->combined_duty = "&nbsp;";
+                                        }
+                                        $rowclass = rowclass($m->validity_start_date, $m->validity_end_date);
+                                    ?>
+                                        <tr class="<?= $rowclass ?>">
+                                            <td class="govuk-table__cell nopad vsmall"><a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=<?= $m->measure_sid ?>"><?= $m->measure_sid ?></a></td>
+                                            <!-- Show nomenclature cell //-->
+                                            <?php
+                                            $pos = strpos($current_file_name, "goods_nomenclature_item_view");
+                                            if ($pos != 0) {
+                                            ?>
+                                                <td class="govuk-table__cell vsmall" nowrap>
+                                                    <a class="nodecorate" class="govuk-link" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?= $m->goods_nomenclature_item_id ?>"><?= format_goods_nomenclature_item_id($goods_nomenclature_item_id) ?></a>
+                                                </td>
+                                            <?php
+                                            } else {
+                                            ?>
+                                                <td class="govuk-table__cell vsmall" nowrap class="nodecorate">
+                                                    <?= format_goods_nomenclature_item_id($goods_nomenclature_item_id) ?>
+                                                </td>
+                                            <?php
+                                            }
+                                            ?>
+                                            <!-- End show nomenclature cell //-->
+
+
+                                            <!-- Start show measure type cell //-->
+                                            <td class="govuk-table__cell vsmall"><a class="govuk-link" href="/measure_types/view.html?measure_type_id=<?= $m->measure_type_id ?>"><?= $m->measure_type_id ?>&nbsp;<?= $m->measure_type_description ?></a></td>
+                                            <!-- End show measure type cell //-->
+
+
+                                            <!-- Start show geographical area cell //-->
+                                            <?php
+                                            if ($current_file_name != "geographical_area_view.html") {
+                                            ?>
+                                                <td class="govuk-table__cell vsmall">
+                                                    <a class="govuk-link" href="/geographical_areas/view.html?geographical_area_id=<?= $m->geographical_area_id ?>"><?= $m->geographical_area_id ?>&nbsp;<?= $m->geographical_area_description ?></a>
+                                                </td>
+                                            <?php
+                                            } else {
+                                            ?>
+                                                <td class="govuk-table__cell vsmall"><?= $m->geographical_area_id ?></td>
+                                                <td class="govuk-table__cell vsmall"><?= $m->geographical_area_description ?></td>
+                                            <?php
+                                            }
+                                            ?>
+                                            <!-- End show geographical area cell //-->
+
+
+                                            <td class="govuk-table__cell vsmall c"><?= $m->additional_code_type_id ?><?= $m->additional_code_id ?></td>
+                                            <td class="govuk-table__cell vsmall"><a class="govuk-link" href="/regulations/view.html?base_regulation_id=<?= $m->regulation_id_full ?>"><?= $m->regulation_id_full ?></a></td>
+                                            <td nowrap class="govuk-table__cell vsmall l"><?= $m->validity_start_date ?></td>
+                                            <td nowrap class="govuk-table__cell vsmall l"><?= $m->validity_end_date ?></td>
+                                            <td nowrap class="govuk-table__cell vsmall c"><a class="govuk-link" href="/quota_order_number_view.html?quota_order_number_id=<?= $m->quota_order_number_id ?>"><?= $m->quota_order_number_id ?></a></td>
+                                            <td class="govuk-table__cell vsmall r"><?= $m->combined_duty ?></td>
+                                        </tr>
+                                <?php
+                                    }
+                                }
+                                ?>
+                                </table>
+                        <?php
+                        } else {
+                            echo ("<p class='govuk-body'>There are no measures assigned that match the chosen criteria.</p>");
+                        }
+                    } else {
+                        echo ("<p class='govuk-body'>There are no measures assigned to this commodity code, as it is an intermediate line with a product line suffix other than 80.</p>");
+                    }
+                        ?>
+
                 </section>
                 <!-- End assigned tab //-->
 
                 <!-- Begin inherited tab //-->
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="inherited">
-
-                    <h2 class="govuk-heading-m" id="inherited">Inherited measures</h2>
+                    <h2 class="govuk-heading-m">Inherited measures</h2>
                     <?php
                     if (($productline_suffix == "80") && ($parent_string != "")) {
                         $sql = "SELECT m.*, g.description as geo_description, mtd.description as measure_type_description
-                        FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g, measure_type_descriptions mtd
-                        WHERE m.geographical_area_id = g.geographical_area_id
-                        AND m.measure_type_id = mtd.measure_type_id
-                        AND goods_nomenclature_item_id IN (" . $parent_string . ") ";
+ FROM ml.measures_real_end_dates m, ml.ml_geographical_areas g, measure_type_descriptions mtd
+ WHERE m.geographical_area_id = g.geographical_area_id
+ AND m.measure_type_id = mtd.measure_type_id
+ AND goods_nomenclature_item_id IN (" . $parent_string . ") ";
                         if ($geographical_area_id != "") {
                             $sql .= " AND m.geographical_area_id in (" . $geographical_area_string . ")";
                         }
@@ -619,9 +923,12 @@ require("../includes/metadata.php");
                         } else {
                         ?>
                             <p class="govuk-body">There are no measures inherited down to this commodity code.</p>
-                        <?php
+                    <?php
                         }
-                        ?>
+                    } else {
+                        echo ("<p class='govuk-body'>There are no measures inherited down to this commodity code, as it is an intermediate line with a product line suffix other than 80.</p>");
+                    }
+                    ?>
                 </section>
                 <!-- End inherited tab //-->
 
@@ -629,7 +936,7 @@ require("../includes/metadata.php");
                 <section class="govuk-tabs__panel govuk-tabs__panel--hidden" id="footnotes">
                     <h2 class="govuk-heading-m">Footnotes</h2>
                     <?php
-                        if (count($obj_goods_nomenclature_item->footnotes) > 0) {
+                    if (count($obj_goods_nomenclature_item->footnotes) > 0) {
                     ?>
                         <p class="govuk-body">The following footnotes are or have been assigned to this commodity code:</p>
                         <table class="govuk-table">
@@ -662,31 +969,29 @@ require("../includes/metadata.php");
                             </tbody>
                         </table>
                     <?php
-                        } else {
+                    } else {
                     ?>
                         <p class="govuk-body">There are no footnotes assigned to this commodity code.</p>
                     <?php
-                        }
+                    }
+                    if ($productline_suffix == '80') {
                     ?>
-                    <p class="govuk-body"><a href="/">Assign a new footnote to this commodity code</a></p>
+                        <p class="govuk-body"><a href="/">Assign a new footnote to this commodity code</a></p>
+                    <?php
+                    }
+                    ?>
                 </section>
                 <!-- End inherited tab //-->
             </div>
 
 
+        <?php
 
+        } else {
+            echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code does not exist on this database.</p></div>");
+        }
 
-
-
-
-    <?php
-                    } else {
-                        echo ("<p class='govuk-body'>No measures, as this does not have a product line suffix of '80'.</p>");
-                    }
-                } else {
-                    echo ("<div class='warning'><p><strong>Warning</strong><br />This commodity code does not exist on this database.</p></div>");
-                }
-    ?>
+        ?>
 
     </div>
     </div>

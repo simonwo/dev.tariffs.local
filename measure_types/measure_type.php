@@ -75,7 +75,8 @@ class measure_type
         }
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as (select operation, operation_date,
         validity_start_date, validity_end_date, status, null as description, '0' as object_precedence
@@ -244,7 +245,7 @@ class measure_type
             }
         }
     }
-    
+
     public function get_measure_type_series()
     {
         global $conn;
@@ -347,64 +348,6 @@ class measure_type
         }
     }
 
-    function create()
-    {
-        global $conn;
-        $application = new application;
-        $operation = "C";
-        $operation_date = $application->get_operation_date();
-        if ($this->validity_start_date == "") {
-            $this->validity_start_date = Null;
-        }
-        if ($this->validity_end_date == "") {
-            $this->validity_end_date = Null;
-        }
-
-        $status = 'In progress';
-        $sql = "INSERT INTO measure_types_oplog (measure_type_id, validity_start_date,
-        validity_end_date, trade_movement_code, priority_code,
-        measure_component_applicable_code, origin_dest_code,
-        order_number_capture_code, measure_explosion_level, measure_type_series_id,
-        operation, operation_date, workbasket_id, status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-        RETURNING oid;";
-
-        pg_prepare($conn, "create_measure_type", $sql);
-
-        $result = pg_execute($conn, "create_measure_type", array(
-            $this->measure_type_id, $this->validity_start_date,
-            $this->validity_end_date, $this->trade_movement_code, $this->priority_code,
-            $this->measure_component_applicable_code, $this->origin_dest_code,
-            $this->order_number_capture_code, $this->measure_explosion_level, $this->measure_type_series_id,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
-        ));
-        if (($result) && (pg_num_rows($result) > 0)) {
-            $row = pg_fetch_row($result);
-            $oid = $row[0];
-        }
-        
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "measure_type", $status, $operation, $operation_date);
-
-        // Then upate the measure type record with oid of the workbasket item record
-        $sql = "UPDATE measure_types_oplog set workbasket_item_id = $1 where oid = $2";
-        pg_prepare($conn, "update_measure_type", $sql);
-        $result = pg_execute($conn, "update_measure_type", array(
-            $workbasket_item_id, $oid
-        ));
- 
-        $sql = "INSERT INTO measure_type_descriptions_oplog (measure_type_id, language_id, description,
-        operation, operation_date, workbasket_id, status, workbasket_item_id)
-        VALUES ($1, 'EN', $2, $3, $4, $5, $6, $7)
-        RETURNING oid;";
-
-        pg_prepare($conn, "create_measure_type_description", $sql);
-
-        $result = pg_execute($conn, "create_measure_type_description", array(
-            $this->measure_type_id, $this->description,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-    }
-
     function create_update($operation)
     {
         global $conn;
@@ -412,6 +355,11 @@ class measure_type
         $operation_date = $application->get_operation_date();
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
+        }
+        if ($operation == "C") {
+            $action = "NEW MEASURE TYPE";
+        } else {
+            $action = "UPDATE TO MEASURE TYPE";
         }
 
         $status = 'In progress';
@@ -436,24 +384,36 @@ class measure_type
             $row = pg_fetch_row($result);
             $oid = $row[0];
         }
-        
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "measure_type", $status, $operation, $operation_date);
 
-        // Then upate the measure type record with oid of the workbasket item record
-        $sql = "UPDATE measure_types_oplog set workbasket_item_id = $1 where oid = $2";
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Measure type ID": "' . $this->measure_type_id . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '",';
+        $description .= '"Trade movement code": "' . $this->trade_movement_code . '",';
+        $description .= '"Measure component applicable code": "' . $this->measure_component_applicable_code . '",';
+        $description .= '"Order number capture code": "' . $this->order_number_capture_code . '",';
+        $description .= '"Measure type series": "' . $this->measure_type_series_id . '"';
+        $description .= '}]';
+
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "measure type", $status, $operation, $operation_date, $description);
+
+        // Then update the measure type record with unique ID of the workbasket item record
+        $sql = "UPDATE measure_types_oplog set workbasket_item_sid = $1 where oid = $2";
         pg_prepare($conn, "stmt_2", $sql);
         $result = pg_execute($conn, "stmt_2", array(
-            $workbasket_item_id, $oid
+            $workbasket_item_sid, $oid
         ));
- 
+
         $sql = "INSERT INTO measure_type_descriptions_oplog (measure_type_id, language_id, description,
-        operation, operation_date, workbasket_id, status, workbasket_item_id)
+        operation, operation_date, workbasket_id, status, workbasket_item_sid)
         VALUES ($1, 'EN', $2, $3, $4, $5, $6, $7)
         RETURNING oid;";
         pg_prepare($conn, "stmt_3", $sql);
         $result = pg_execute($conn, "stmt_3", array(
             $this->measure_type_id, $this->description,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
         ));
     }
 

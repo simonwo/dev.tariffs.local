@@ -73,7 +73,7 @@
                     }
                     //pre ($application->session);
                     echo ('<a href="/session/sign_out.html">Sign out</a>');
-                    echo ("<div><img title='Logged on as " . $application->session->name . "' src='/assets/images/user.png' width='24' /></div>");
+                    echo ("<div><img id='logged_in_user' title='Logged on as " . $application->session->name . "' src='/assets/images/user.png' width='24' /></div>");
                 }
                 ?>
                 

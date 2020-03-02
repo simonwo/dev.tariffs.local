@@ -151,53 +151,71 @@ class view_form
                             ?>
                         </ul>
                         <section class="govuk-tabs__panel" id="core">
-                            <h2 class="govuk-heading-l">Core <?= $this->singularise($config["object_name"]) ?> data</h2>
-                            <!-- Start primary fields //-->
-                            <table class="govuk-table">
-                                <thead class="govuk-table__head">
-                                    <tr class="govuk-table__row">
-                                        <th scope="col" class="govuk-table__header govuk-visually-hidden">Field</th>
-                                        <th scope="col" class="govuk-table__header govuk-visually-hidden">Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="govuk-table__body">
-                                    <?php
-                                    foreach ($my_field_content as $item) {
-                                        $label = $item["label"];
-                                        $value = $item["value"];
-                                        $value = $this->detokenise($value);
+                            <div class="govuk-grid-row">
+
+                                <div class="govuk-grid-column-three-quarters">
+
+                                    <h2 class="govuk-heading-l">Core <?= $this->singularise($config["object_name"]) ?> data</h2>
+                                    <!-- Start primary fields //-->
+                                    <table class="govuk-table">
+                                        <thead class="govuk-table__head">
+                                            <tr class="govuk-table__row">
+                                                <th scope="col" class="govuk-table__header govuk-visually-hidden">Field</th>
+                                                <th scope="col" class="govuk-table__header govuk-visually-hidden">Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="govuk-table__body">
+                                            <?php
+                                            foreach ($my_field_content as $item) {
+                                                $label = $item["label"];
+                                                $value = $item["value"];
+                                                $value = $this->detokenise($value);
 
 
-                                    ?>
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell b" style="width:30%"><?= $label ?></td>
-                                            <td class="govuk-table__cell" style="width:70%"><?= $value ?></td>
-                                        </tr>
-                                    <?php
-                                    }
-                                    ?>
-                                </tbody>
-                            </table>
-                            <?php
-                            $warning_array = array("Footnotes", "Additional codes", "Geographical areas", "Certificates");
-                            if (in_array($config["object_name"], $warning_array)) {
-                                $tab_name = "#tab_" . $this->singularise($config["object_name"], true) . "_descriptions";
-                            ?>
-                                <!-- Start warning //-->
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        Please note that you are unable to modify descriptions on this tab.
-                                        Please select the '<a href="<?= $tab_name ?>">Descriptions</a>' tab to create and modify descriptions.
-                                    </strong>
+                                            ?>
+                                                <tr class="govuk-table__row">
+                                                    <td class="govuk-table__cell b" style="width:30%"><?= $label ?></td>
+                                                    <td class="govuk-table__cell" style="width:70%"><?= $value ?></td>
+                                                </tr>
+                                            <?php
+                                            }
+                                            ?>
+                                        </tbody>
+                                    </table>
+
                                 </div>
-                                <!-- End warning //-->
-                            <?php
-                            }
-                            ?>
-                            <!-- End primary fields //-->
+                                <!-- End primary fields //-->
 
+                                <div class="govuk-grid-column-one-quarter">
+                                    <div class="gem-c-contextual-sidebar">
+                                        <div class="gem-c-related-navigation">
+                                            <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
+                                                Actions
+                                            </h2>
+                                            <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
+                                                <ul class="gem-c-related-navigation__link-list" data-module="track-click">
+                                                    <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                    <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Delete this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                </ul>
+                                            </nav>
+                                            <?php
+                                            $warning_array = array("Footnotes", "Additional codes", "Geographical areas", "Certificates");
+                                            if (in_array($config["object_name"], $warning_array)) {
+                                                $tab_name = "#tab_" . $this->singularise($config["object_name"], true) . "_descriptions";
+                                            ?>
+
+                                                <p class="govuk-body">
+                                                    Please note that you are unable to modify descriptions on this tab.
+                                                    Please select the '<a class="govuk-link" href="<?= $tab_name ?>">Descriptions</a>' tab to create and modify descriptions.
+                                                </p>
+
+                                            <?php
+                                            }
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </section>
 
 
@@ -296,7 +314,6 @@ class view_form
                         }
                         ?>
                         <!-- End secondary fields //-->
-                        <p class='govuk-body' style='margin-top:1em'><a class="govuk-link" href="<?= $this->url_edit ?>">Edit this <?= $this->singularise($config["object_name"]) ?></a></p>
                     </div>
                 </div>
             </div>

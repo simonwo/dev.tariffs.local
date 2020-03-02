@@ -26,6 +26,27 @@
                 "text": "You are editing an additional code description for additional code <b>{additional_code_type_id}{additional_code}</b>.[WORKBASKET]"
             },
             {
+                "control_type": "hidden_control",
+                "control_name": "additional_code_type_id",
+                "value": "{additional_code_type_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "additional_code",
+                "value": "{additional_code}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "additional_code_sid",
+                "value": "{additional_code_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_scope": "update",
+                "control_name": "additional_code_description_period_sid",
+                "value": "{period_sid}"
+            },
+            {
                 "control_type": "error_block"
             },
             {

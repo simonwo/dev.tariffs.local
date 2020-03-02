@@ -182,7 +182,7 @@ class certificate_type
         }
         header("Location: " . $url);
     }
-    
+
     function create_update($operation)
     {
         global $conn, $application;
@@ -190,6 +190,11 @@ class certificate_type
 
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
+        }
+        if ($operation == "C") {
+            $action = "NEW CERTIFICATE TYPE";
+        } else {
+            $action = "UPDATE TO CERTIFICATE TYPE";
         }
 
         $status = 'In progress';
@@ -213,19 +218,27 @@ class certificate_type
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "certificate_type", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Certificate type code": "' . $this->certificate_type_code . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
 
-        // Then upate the certificate type record with oid of the workbasket item record
-        $sql = "UPDATE certificate_types_oplog set workbasket_item_id = $1 where oid = $2";
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "certificate type", $status, $operation, $operation_date, $description);
+
+        // Then update the certificate type record with unique ID of the workbasket item record
+        $sql = "UPDATE certificate_types_oplog set workbasket_item_sid = $1 where oid = $2";
         pg_prepare($conn, "stmt_2", $sql);
         $result = pg_execute($conn, "stmt_2", array(
-            $workbasket_item_id, $oid
+            $workbasket_item_sid, $oid
         ));
-        
+
         # Create the certificate_type description record
         $sql = "INSERT INTO certificate_type_descriptions_oplog (
             certificate_type_code, language_id, description,
-            operation, operation_date, workbasket_id, status, workbasket_item_id
+            operation, operation_date, workbasket_id, status, workbasket_item_sid
             )
             VALUES ($1, 'EN', $2, $3, $4, $5, $6, $7)
             RETURNING oid;";
@@ -233,11 +246,12 @@ class certificate_type
         pg_prepare($conn, "stmt_3", $sql);
         $result = pg_execute($conn, "stmt_3", array(
             $this->certificate_type_code, $this->description,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
         ));
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as (select operation, operation_date,
         validity_start_date, validity_end_date, status, null as description, '0' as object_precedence
@@ -259,7 +273,7 @@ class certificate_type
             $row_count = pg_num_rows($result);
             if (($row_count > 0) && (pg_num_rows($result))) {
                 while ($row = pg_fetch_array($result)) {
-                    $version = new footnote_type();
+                    $version = new certificate();
                     $version->validity_start_date = $row["validity_start_date"];
                     $version->validity_end_date = $row["validity_start_date"];
                     $version->validity_start_date = $row["validity_start_date"];

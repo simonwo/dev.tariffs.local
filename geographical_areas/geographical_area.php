@@ -28,7 +28,7 @@ class geographical_area
 
         $this->geographical_area_id = trim(get_querystring("geographical_area_id"));
         $this->geographical_area_sid = trim(get_querystring("geographical_area_sid"));
-        $this->validity_start_date = trim(get_querystring("validity_start_date"));
+        $this->period_sid = trim(get_querystring("period_sid"));
 
         if (empty($_GET)) {
             $this->clear_cookies();
@@ -39,7 +39,7 @@ class geographical_area
                 if ($description == false) {
                     $ret = $this->populate_from_db();
                 } else {
-                    $ret = $this->get_specific_description($this->validity_start_date);
+                    $ret = $this->get_specific_description($this->period_sid);
                 }
                 if (!$ret) {
                     h1("An error has occurred - no such geographical area");
@@ -52,7 +52,8 @@ class geographical_area
         }
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as
         (
@@ -78,7 +79,7 @@ class geographical_area
             $row_count = pg_num_rows($result);
             if (($row_count > 0) && (pg_num_rows($result))) {
                 while ($row = pg_fetch_array($result)) {
-                    $version = new footnote_type();
+                    $version = new geographical_area();
                     $version->validity_start_date = $row["validity_start_date"];
                     $version->validity_end_date = $row["validity_start_date"];
                     $version->validity_start_date = $row["validity_start_date"];
@@ -121,21 +122,37 @@ class geographical_area
         return ($row_count);
     }
 
-    public function get_specific_description($validity_start_date)
+    public function get_specific_description($period_sid)
     {
         global $conn;
-        $sql = "select description from geographical_area_description_periods gadp, geographical_area_descriptions gad
-        where gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
-        and gad.geographical_area_sid = $1 and validity_start_date = $2;
-        ";
+        //h1 ("Period SID " . $period_sid);
 
-        pg_prepare($conn, "get_specific_description", $sql);
+        $stmt = "get_specific_description_" . uniqid();
+        if ($period_sid == null) {
+            $sql = "select gad.description, null as validity_start_date
+            from geographical_area_description_periods gadp, geographical_area_descriptions gad
+            where gad.geographical_area_sid = $1
+            and gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
+            order by gadp.validity_start_date desc limit 1;";
 
-        $result = pg_execute($conn, "get_specific_description", array($this->geographical_area_sid, $this->validity_start_date));
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array($this->geographical_area_sid));
+        } else {
+            $sql = "select gad.description, gadp.validity_start_date
+            from geographical_area_description_periods gadp, geographical_area_descriptions gad
+            where gad.geographical_area_sid = $1
+            and gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
+            and gadp.geographical_area_description_period_sid = $2
+            order by validity_start_date desc;";
+
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array($this->geographical_area_sid, $period_sid));
+        }
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_array($result);
             $this->description = $row['description'];
+            $this->validity_start_date = $row['validity_start_date'];
             return (true);
         }
         return (false);
@@ -145,6 +162,7 @@ class geographical_area
     {
         global $application;
         $errors = array();
+        $this->geographical_area_sid = strtoupper(get_formvar("geographical_area_sid", "", True));
         $this->geographical_area_id = strtoupper(get_formvar("geographical_area_id", "", True));
         $this->geographical_code = get_formvar("geographical_code", "", True);
 
@@ -195,13 +213,11 @@ class geographical_area
         }
 
         # Check on the description
-        if (($this->description == "") || (strlen($this->description) > 500)) {
-            array_push($errors, "description");
+        if ($application->mode == "insert") {
+            if (($this->description == "") || (strlen($this->description) > 500)) {
+                array_push($errors, "description");
+            }
         }
-
-
-        //pre ($_REQUEST);
-        //prend ($errors);
 
         if (count($errors) > 0) {
             $error_string = serialize($errors);
@@ -210,41 +226,101 @@ class geographical_area
         } else {
             if ($application->mode == "insert") {
                 // Do create scripts
-                $this->create();
+                $this->create_update("C");
             } else {
                 // Do edit scripts
-                //$this->update();
+                $this->create_update("U");
             }
             $url = "./confirmation.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
 
-
-    function create()
+    function validate_description_form()
     {
+        //prend ($_REQUEST);
+        global $application;
+        $errors = array();
+        $this->geographical_area_id = strtoupper(get_formvar("geographical_area_id", "", True));
+        $this->geographical_area_sid = strtoupper(get_formvar("geographical_area_sid", "", True));
+        $this->description = get_formvar("description", "", True);
+
+        $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
+        $this->validity_start_date_month = get_formvar("validity_start_date_month", "", True);
+        $this->validity_start_date_year = get_formvar("validity_start_date_year", "", True);
+        $this->validity_start_date_string = $this->validity_start_date_day . "|" . $this->validity_start_date_month . "|" . $this->validity_start_date_year;
+        setcookie("validity_start_date_string", $this->validity_start_date_string, time() + (86400 * 30), "/");
+
+        $this->set_dates();
+
+        # Check on the geographical_area_id code
+        if ((strlen($this->geographical_area_id) != 2) && (strlen($this->geographical_area_id) != 4)) {
+            array_push($errors, "geographical_area_id");
+        }
+
+        # Check on the validity start date
+        $valid_start_date = checkdate($this->validity_start_date_month, $this->validity_start_date_day, $this->validity_start_date_year);
+        if ($valid_start_date != 1) {
+            array_push($errors, "validity_start_date");
+        }
+
+        # Check on the description
+        if (($this->description == "") || (strlen($this->description) > 5000)) {
+            array_push($errors, "description");
+        }
+
+        if (count($errors) > 0) {
+            $error_string = serialize($errors);
+            setcookie("errors", $error_string, time() + (86400 * 30), "/");
+            $url = "create_edit.html?err=1&mode=" . $application->mode . "&geographical_area_id=" . $this->geographical_area_id . "&geographical_area_sid=" . $this->geographical_area_sid;
+        } else {
+            //h1($application->mode);
+            //die();
+            if ($application->mode == "insert") {
+                // Do create scripts
+                $this->create_update_description("C");
+            } else {
+                // Do edit scripts
+                $this->create_update_description("U");
+            }
+            $url = "./confirmation.html?geographical_area_sid=" . $this->geographical_area_sid . "&geographical_area_id=" . $this->geographical_area_id . "&mode=" . $application->mode;
+        }
+        header("Location: " . $url);
+    }
+
+    public function view_url()
+    {
+        return ("/geographical_areas/view.html?mode=view&geographical_area_sid=" . $this->geographical_area_sid . "&geographical_area_id=" . $this->geographical_area_id);
+    }
+
+
+    function create_update($operation)
+    {
+        //prend ($_REQUEST);
         global $conn, $application;
-        $operation = "C";
         $operation_date = $application->get_operation_date();
         $this->geographical_area_description_period_sid = $application->get_next_geographical_area_description_period();
-        $this->geographical_area_sid = $application->get_next_geographical_area();
 
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
+        }
+        if ($operation == "C") {
+            $this->geographical_area_sid = $application->get_next_geographical_area();
+            $action = "NEW GEOGRAPHICAL AREA";
+        } else {
+            $action = "UPDATE TO GEOGRAPHICAL AREA";
         }
 
         $status = 'In progress';
         # Create the geographical_area record
         $sql = "INSERT INTO geographical_areas_oplog (
-            geographical_area_sid, geographical_area_id, geographical_code, validity_start_date,
+            geographical_area_sid, geographical_area_id, geographical_code, validity_start_date, validity_end_date,
             operation, operation_date, workbasket_id, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING oid;";
-
-        pg_prepare($conn, "create_geographical_area", $sql);
-
-        $result = pg_execute($conn, "create_geographical_area", array(
-            $this->geographical_area_sid, $this->geographical_area_id, $this->geographical_code, $this->validity_start_date,
+        pg_prepare($conn, "stmt_1", $sql);
+        $result = pg_execute($conn, "stmt_1", array(
+            $this->geographical_area_sid, $this->geographical_area_id, $this->geographical_code, $this->validity_start_date, $this->validity_end_date,
             $operation, $operation_date, $application->session->workbasket->workbasket_id, $status
         ));
         if (($result) && (pg_num_rows($result) > 0)) {
@@ -252,44 +328,120 @@ class geographical_area
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "geographical_area", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Geographical area SID": "' . $this->geographical_area_sid . '",';
+        $description .= '"Geographical area ID": "' . $this->geographical_area_id . '",';
+        $description .= '"Geographical area code": "' . $this->geographical_code . '",';
+        if ($operation == "C") {
+            $description .= '"Description": "' . $this->description . '",';
+        }
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "geographical area", $status, $operation, $operation_date, $description);
 
-        // Then upate the additional code record with oid of the workbasket item record
-        $sql = "UPDATE geographical_areas_oplog set workbasket_item_id = $1 where oid = $2";
-        pg_prepare($conn, "update_geographical_area", $sql);
-        $result = pg_execute($conn, "update_geographical_area", array(
-            $workbasket_item_id, $oid
+        // Then update the geographical_area record with unique ID of the workbasket item record
+        $sql = "UPDATE geographical_areas_oplog set workbasket_item_sid = $1 where oid = $2";
+        pg_prepare($conn, "stmt_2", $sql);
+        $result = pg_execute($conn, "stmt_2", array(
+            $workbasket_item_sid, $oid
         ));
 
-
-        # Create the geographical_area description period record
-        $sql = "INSERT INTO geographical_area_description_periods_oplog (
+        if ($operation == "C") {
+            # Create the geographical_area description period record
+            $sql = "INSERT INTO geographical_area_description_periods_oplog (
             geographical_area_description_period_sid, geographical_area_sid, geographical_area_id,
-            validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_id)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
+            validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING oid;";
+            pg_prepare($conn, "stmt_3", $sql);
+            $result = pg_execute($conn, "stmt_3", array(
+                $this->geographical_area_description_period_sid, $this->geographical_area_sid, $this->geographical_area_id,
+                $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
 
-        pg_prepare($conn, "create_geographical_area_description_period", $sql);
-
-        $result = pg_execute($conn, "create_geographical_area_description_period", array(
-            $this->geographical_area_description_period_sid, $this->geographical_area_sid, $this->geographical_area_id,
-            $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-
-        # Create the geographical_area description record
-        $sql = "INSERT INTO geographical_area_descriptions_oplog (
+            # Create the geographical_area description record
+            $sql = "INSERT INTO geographical_area_descriptions_oplog (
             geographical_area_description_period_sid, geographical_area_sid, geographical_area_id,
-            language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_id)
-        VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8, $9)";
-
-        pg_prepare($conn, "create_geographical_area_description", $sql);
-
-        $result = pg_execute($conn, "create_geographical_area_description", array(
-            $this->geographical_area_description_period_sid, $this->geographical_area_sid, $this->geographical_area_id,
-            $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
-        ));
-
+            language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            RETURNING oid;";
+            pg_prepare($conn, "stmt_4", $sql);
+            $result = pg_execute($conn, "stmt_4", array(
+                $this->geographical_area_description_period_sid, $this->geographical_area_sid, $this->geographical_area_id, 'EN',
+                $this->description, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
+        //die();
     }
 
+
+    function create_update_description($operation)
+    {
+        global $conn, $application;
+        $operation_date = $application->get_operation_date();
+        if ($operation == "C") {
+            $this->geographical_area_description_period_sid = $application->get_next_geographical_area_description_period();
+            $action = "NEW GEOGRAPHICAL AREA DESCRIPTION";
+        } else {
+            $this->geographical_area_description_period_sid = get_formvar("geographical_area_description_period_sid");
+            $action = "UPDATE TO GEOGRAPHICAL AREA DESCRIPTION";
+        }
+        $status = 'In progress';
+
+        # Create the geographical_area description record
+        $sql = "INSERT INTO geographical_area_descriptions_oplog (geographical_area_description_period_sid, geographical_area_id,
+        geographical_area_sid, language_id, description, operation, operation_date, workbasket_id, status)
+        VALUES ($1, $2, $3, 'EN', $4, $5, $6, $7, $8)
+        RETURNING oid;";
+        $stmt = "create_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->geographical_area_description_period_sid, $this->geographical_area_id,
+            $this->geographical_area_sid, $this->description, $operation, $operation_date,
+            $application->session->workbasket->workbasket_id, $status
+        ));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_row($result);
+            $oid = $row[0];
+        }
+
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Footnote ID": "' . $this->geographical_area_id . '",';
+        $description .= '"Footnote SID": "' . $this->geographical_area_sid . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Period start date": "' . $this->validity_start_date . '"';
+        $description .= '}]';
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "geographical area description", $status, $operation, $operation_date, $description);
+
+        // Then update the geographical_area description record with unique ID of the workbasket item record
+        $sql = "UPDATE geographical_area_descriptions_oplog set workbasket_item_sid = $1 where oid = $2";
+        $stmt = "update_description_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $workbasket_item_sid, $oid
+        ));
+
+        # Create the geographical_area description period record
+        if ($operation == "C") {
+            $sql = "INSERT INTO geographical_area_description_periods_oplog (geographical_area_description_period_sid, geographical_area_id,
+            geographical_area_sid, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            RETURNING oid;";
+            $stmt = "create_description_period" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            $result = pg_execute($conn, $stmt, array(
+                $this->geographical_area_description_period_sid, $this->geographical_area_id,
+                $this->geographical_area_sid, $this->validity_start_date, $operation, $operation_date,
+                $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
+            ));
+        }
+        //die();
+    }
+
+    
     function exists()
     {
         global $conn;
@@ -637,18 +789,18 @@ class geographical_area
             $sql = "select geographical_area_sid, geographical_area_id, description, geographical_code, validity_start_date, validity_end_date, parent_geographical_area_group_sid
             from ml.ml_geographical_areas mga where geographical_area_sid = $1;";
             $stmt = "get_geographical_area" . strval($this->geographical_area_sid);
-    
+
             pg_prepare($conn, $stmt, $sql);
             $result = pg_execute($conn, $stmt, array($this->geographical_area_sid));
         } else {
             $sql = "select geographical_area_sid, geographical_area_id, description, geographical_code, validity_start_date, validity_end_date, parent_geographical_area_group_sid
             from ml.ml_geographical_areas mga where geographical_area_id = $1;";
             $stmt = "get_geographical_area" . strval($this->geographical_area_id);
-    
+
             pg_prepare($conn, $stmt, $sql);
             $result = pg_execute($conn, $stmt, array($this->geographical_area_id));
         }
-        
+
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_row($result);
@@ -700,7 +852,7 @@ class geographical_area
     public function get_descriptions()
     {
         global $conn;
-        $sql = "select gadp.validity_start_date, gad.description
+        $sql = "select gadp.validity_start_date, gad.description, gadp.geographical_area_description_period_sid
         from geographical_area_description_periods gadp, geographical_area_descriptions gad
         where gad.geographical_area_description_period_sid = gadp.geographical_area_description_period_sid
         and gad.geographical_area_sid = $1
@@ -711,7 +863,7 @@ class geographical_area
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
-                $description = new description($row['validity_start_date'], $row['description']);
+                $description = new description($row['validity_start_date'], $row['description'], $row['geographical_area_description_period_sid']);
                 array_push($this->descriptions, $description);
             }
         }

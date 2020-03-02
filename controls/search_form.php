@@ -5,14 +5,24 @@ class search_form
     public $dataset = Null;
     public $filter_content = Null;
 
-    public function __construct($dataset, $filter_content)
+    public function __construct($dataset, $filter_content, $zero_dataset_message = "")
     {
         $this->suppress_intro = false;
         $this->dataset = $dataset;
+        $this->zero_dataset_message = $zero_dataset_message;
+        $this->data_size = count($dataset);
         $this->filter_content = $filter_content;
         //var_dump ($this->filter_content);
         $this->get_config();
-        $this->display();
+        if (($this->data_size == 990) && ($this->zero_dataset_message != "")) {
+            $this->display_zero_dataset_message();
+        } else {
+            $this->display();
+        }
+    }
+
+    private function display_zero_dataset_message() {
+        echo ("<p class='govuk-body'>" . $this->zero_dataset_message . "</p>");
     }
 
     private function get_config()

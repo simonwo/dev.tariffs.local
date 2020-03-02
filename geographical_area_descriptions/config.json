@@ -26,6 +26,22 @@
                 "text": "You are editing an geographical area description for geographical area <b>{geographical_area_id}</b><b>{description}</b>.[WORKBASKET]"
             },
             {
+                "control_type": "hidden_control",
+                "control_name": "geographical_area_id",
+                "value": "{geographical_area_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "geographical_area_sid",
+                "value": "{geographical_area_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_scope": "update",
+                "control_name": "geographical_area_description_period_sid",
+                "value": "{period_sid}"
+            },
+            {
                 "control_type": "error_block"
             },
             {

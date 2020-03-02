@@ -223,7 +223,8 @@ class goods_nomenclature
     public function get_descriptions()
     {
         global $conn;
-        $sql = "select validity_start_date, acd.description
+        // THIS IS ALL WRONG
+        $sql = "select validity_start_date, acd.description, acd.additional_code_description_period_sid
         from additional_code_description_periods acdp, additional_code_descriptions acd
         where acdp.additional_code_description_period_sid = acd.additional_code_description_period_sid
         and acd.additional_code_sid = $1
@@ -233,7 +234,7 @@ class goods_nomenclature
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
-                $description = new description($row['validity_start_date'], $row['description']);
+                $description = new description($row['validity_start_date'], $row['description'], $row['additional_code_description_period_sid']);
                 array_push($this->descriptions, $description);
             }
         }
@@ -536,7 +537,7 @@ class goods_nomenclature
         $operation_date = $application->get_operation_date();
 
         # Get the missing details
-        $this->get_missing_details();
+        $this->get_description_period_details();
 
         # Insert the goods_nomenclature description period
         $sql = "INSERT INTO goods_nomenclature_description_periods_oplog
@@ -643,7 +644,7 @@ class goods_nomenclature
         return ($s);
     }
 
-    function get_missing_details()
+    function get_description_period_details()
     {
         global $conn;
         $sql = "SELECT description, gndp.validity_start_date as period_validity_start_date,
@@ -655,8 +656,8 @@ class goods_nomenclature
  AND gn.goods_nomenclature_item_id = gndp.goods_nomenclature_item_id
  AND gn.producline_suffix = gndp.productline_suffix
  AND gnd.goods_nomenclature_description_period_sid = $1";
-        pg_prepare($conn, "get_missing_details", $sql);
-        $result = pg_execute($conn, "get_missing_details", array($this->goods_nomenclature_description_period_sid));
+        pg_prepare($conn, "get_description_period_details", $sql);
+        $result = pg_execute($conn, "get_description_period_details", array($this->goods_nomenclature_description_period_sid));
 
         if ($result) {
             $row = pg_fetch_row($result);
@@ -677,8 +678,8 @@ class goods_nomenclature
         global $conn;
         $sql = "SELECT gn.validity_start_date as validity_start_date, gn.goods_nomenclature_sid FROM goods_nomenclatures gn
  WHERE gn.goods_nomenclature_item_id = $1 AND gn.producline_suffix = $2";
-        pg_prepare($conn, "get_missing_details", $sql);
-        $result = pg_execute($conn, "get_missing_details", array($this->goods_nomenclature_item_id, $this->productline_suffix));
+        pg_prepare($conn, "get_description_period_details", $sql);
+        $result = pg_execute($conn, "get_description_period_details", array($this->goods_nomenclature_item_id, $this->productline_suffix));
 
         if ($result) {
             $row = pg_fetch_row($result);

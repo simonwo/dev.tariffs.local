@@ -8,9 +8,6 @@ $measure_activity = new measure_activity();
 if (isset($_SESSION["measure_activity_sid"])) {
     $measure_activity->measure_activity_sid = $_SESSION["measure_activity_sid"];
     $measure_activity->populate_core_from_db();
-} else {
-    H1("should never be doing this");
-    //$measure_activity_sid = $application->session->workbasket->create_measure();
 }
 ?>
 <!DOCTYPE html>

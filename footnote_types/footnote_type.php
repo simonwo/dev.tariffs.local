@@ -57,7 +57,8 @@ class footnote_type
         }
     }
 
-    public function get_version_control() {
+    public function get_version_control()
+    {
         global $conn;
         $sql = "with cte as (select operation, operation_date,  ft.application_code || ' - ' || description as application_code,
         validity_start_date, validity_end_date, status, null as description, '0' as object_precedence
@@ -272,6 +273,11 @@ class footnote_type
         if ($this->validity_end_date == "") {
             $this->validity_end_date = Null;
         }
+        if ($operation == "C") {
+            $action = "NEW FOOTNOTE TYPE";
+        } else {
+            $action = "UPDATE TO FOOTNOTE TYPE";
+        }
 
         $status = 'In progress';
         # Create the footnote_type record
@@ -293,19 +299,28 @@ class footnote_type
             $oid = $row[0];
         }
 
-        $workbasket_item_id = $application->session->workbasket->insert_workbasket_item($oid, "footnote_type", $status, $operation, $operation_date);
+        $description = '[{';
+        $description .= '"Action": "' . $action . '",';
+        $description .= '"Footnote type ID": "' . $this->footnote_type_id . '",';
+        $description .= '"Description": "' . $this->description . '",';
+        $description .= '"Application code": "' . $this->application_code . '",';
+        $description .= '"Validity start date": "' . $this->validity_start_date . '",';
+        $description .= '"Validity end date": "' . $this->validity_end_date . '"';
+        $description .= '}]';
 
-        // Then upate the footnote type record with oid of the workbasket item record
-        $sql = "UPDATE footnote_types_oplog set workbasket_item_id = $1 where oid = $2";
+        $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "footnote type", $status, $operation, $operation_date, $description);
+
+        // Then update the footnote type record with unique ID of the workbasket item record
+        $sql = "UPDATE footnote_types_oplog set workbasket_item_sid = $1 where oid = $2";
         pg_prepare($conn, "stmt_2", $sql);
         $result = pg_execute($conn, "stmt_2", array(
-            $workbasket_item_id, $oid
+            $workbasket_item_sid, $oid
         ));
 
         # Create the footnote_type description record
         $sql = "INSERT INTO footnote_type_descriptions_oplog (
             footnote_type_id, language_id, description,
-            operation, operation_date, workbasket_id, status, workbasket_item_id
+            operation, operation_date, workbasket_id, status, workbasket_item_sid
             )
             VALUES ($1, 'EN', $2, $3, $4, $5, $6, $7)
             RETURNING oid;";
@@ -313,7 +328,7 @@ class footnote_type
         pg_prepare($conn, "stmt_3", $sql);
         $result = pg_execute($conn, "stmt_3", array(
             $this->footnote_type_id, $this->description,
-            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_id
+            $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
         ));
     }
 
