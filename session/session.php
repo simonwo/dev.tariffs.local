@@ -30,6 +30,12 @@ class session
         }
 
         // Check user ID
+        /*
+        $_SESSION["user_login"] = "matt.lavis";
+        $_SESSION["user_id"] = 1;
+        $_SESSION["name"] = "Matt Lavis";
+        $_SESSION["permissions"] = "Tariff manager";
+        */
         if (isset($_SESSION["user_id"])) {
             if ($_SESSION["user_id"] != null) {
                 $this->user_login = $_SESSION["user_login"];

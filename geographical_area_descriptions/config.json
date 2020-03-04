@@ -9,6 +9,8 @@
             "override_root": "/geographical_areas/",
             "title_create": "Create a new geographical area description",
             "title_edit": "Edit geographical area description",
+            "url_view": "/geographical_areas/view.html?mode=view&geographical_area_id={geographical_area_id}&geographical_area_sid={geographical_area_sid}",
+            "title_view": "Geographical area {geographical_area_id}",
             "validate": true,
             "buttons": {
                 "heading_text": "Finish now",

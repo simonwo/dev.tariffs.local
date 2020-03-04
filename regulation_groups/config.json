@@ -2,6 +2,7 @@
     "regulation_groups": {
         "config": {
             "object_name": "Regulation groups",
+            "editable": false,
             "title": "Find and edit regulation groups",
             "title_create": "Create a new regulation group",
             "title_edit": "Edit regulation group {regulation_group_id}",

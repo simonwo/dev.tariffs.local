@@ -9,6 +9,8 @@
             "override_root": "/certificates/",
             "title_create": "Create a new certificate description",
             "title_edit": "Edit certificate description",
+            "url_view": "/certificates/view.html?mode=view&certificate_type_code={certificate_type_code}&certificate_code={certificate_code}",
+            "title_view": "Certificate {certificate_type_code}{certificate_code}",
             "validate": true,
             "buttons": {
                 "heading_text": "Finish now",

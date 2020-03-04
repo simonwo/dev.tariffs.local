@@ -2,9 +2,13 @@
     "measure_type_series": {
         "config": {
             "object_name": "Measure type series",
+            "editable": false,
             "title": "Find and edit measure type series",
             "title_create": "Create a new measure type",
-            "title_edit": "Edit measure type series {measure_type_series_id}",
+            "title_edit": "Edit measure type series",
+            "url_edit": "./create_edit.html?mode=update&measure_type_series_id={measure_type_series_id}",
+            "title_view": "Measure type series {measure_type_series_id}",
+            "description_keys": "measure_type_series_id",
             "validate": false,
             "inset": "Enter criteria to help find a measure type series.",
             "freetext_fields": "",
@@ -18,7 +22,38 @@
                 "cancel_button_href": "./"
             }
         },
-        "form": [
+        "view": {
+            "fields": [
+                {
+                    "label": "Measure type series ID",
+                    "value": "{measure_type_series_id}"
+                },
+                {
+                    "label": "Description",
+                    "value": "{description}"
+                },
+                {
+                    "label": "Measure type combination",
+                    "value": "{measure_type_combination_string}"
+                },
+                {
+                    "label": "Start date",
+                    "value": "{validity_start_date}"
+                },
+                {
+                    "label": "End date",
+                    "value": "{validity_end_date}"
+                }
+            ],
+            "controls": [
+                {
+                    "control_type": "version_control",
+                    "control_scope": "view",
+                    "control_name": "versions",
+                    "caption": "Version control"
+                }    
+            ]
+        },        "form": [
             {
                 "control_type": "inset_control",
                 "control_scope": "",

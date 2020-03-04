@@ -10,6 +10,7 @@ class measure_type_series
     public $validity_start_date_string = "";
     public $validity_end_date_string = "";
     public $measure_type_combination = "";
+    public $measure_type_combination_string = "";
 
     public function get_parameters()
     {
@@ -103,7 +104,12 @@ class measure_type_series
                 $this->validity_end_date_string = $this->validity_end_date_day . "|" . $this->validity_end_date_month . "|" . $this->validity_end_date_year;
             }
             $this->measure_type_combination = $row[3];
-            $this->id_disabled = true;
+            if ($this->measure_type_combination == 0) {
+                $this->measure_type_combination_string = "0 - Only 1 measure at export and 1 at import from the series";
+            } else {
+                $this->measure_type_combination_string = "1 - All measure types in the series to be considered";
+            }
+        $this->id_disabled = true;
             return (true);
         } else {
             return (false);

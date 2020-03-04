@@ -103,7 +103,9 @@ require("includes/metadata.php");
                 <div class="govuk-grid-column-one-quarter">
                     <h2 class="govuk-heading-m govuk-!-margin-0">Reference data</h2>
                     <ul class="menu">
+                        <!--
                         <li><a class="govuk-link" href="/rules_of_origin_schemes/">Rules of origin schemes</a></li>
+                        //-->
                         <li><a class="govuk-link" href="/measure_types/">Measure types</a></li>
                         <li><a class="govuk-link" href="/certificate_types/">Certificate types</a></li>
                         <li><a class="govuk-link" href="/additional_code_types/">Additional code types</a></li>
@@ -143,6 +145,11 @@ require("includes/metadata.php");
                     <h2 class="govuk-heading-m govuk-!-margin-0">Help</h2>
                     <ul class="menu">
                         <li><a class="govuk-link" href="/help">Help</a></li>
+                    </ul>
+
+                    <h2 class="govuk-heading-m govuk-!-margin-0">Prototype links</h2>
+                    <ul class="menu">
+                        <li><a class="govuk-link" href="/global_tariff/">The UK Global Tariff</a></li>
                     </ul>
                 </div>
                 <!-- End column four //-->

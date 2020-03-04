@@ -3,6 +3,7 @@ class view_form
 {
     // Class properties and methods go here
     public $dataset = Null;
+    public $editable = true;
     public $control_content = Null;
     public $workbasket_advisory = "xx";
     public $root = "./";
@@ -21,6 +22,10 @@ class view_form
     {
         global $application;
         $config = $application->data[$application->tariff_object]["config"];
+
+        if (isset($config["editable"])) {
+            $this->editable = $config["editable"];
+        }
 
         $this->object_name = $config["object_name"];
         $this->url_edit = $this->detokenise($config["url_edit"]);
@@ -71,6 +76,7 @@ class view_form
         if ($replace_spaces) {
             $s = str_replace(" ", "_", $s);
         }
+        $s = str_replace("serie", "series", $s);
         return ($s);
     }
 
@@ -95,6 +101,7 @@ class view_form
         $my_field_content = $application->data[$application->tariff_object]["view"]["fields"];
         $control_list = $application->data[$application->tariff_object]["view"]["controls"];
         $config = $application->data[$application->tariff_object]["config"];
+        //h1 ("Showing view form");
 ?>
         <!-- Start breadcrumbs //-->
         <div class="govuk-breadcrumbs">
@@ -187,33 +194,39 @@ class view_form
                                 <!-- End primary fields //-->
 
                                 <div class="govuk-grid-column-one-quarter">
-                                    <div class="gem-c-contextual-sidebar">
-                                        <div class="gem-c-related-navigation">
-                                            <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
-                                                Actions
-                                            </h2>
-                                            <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
-                                                <ul class="gem-c-related-navigation__link-list" data-module="track-click">
-                                                    <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
-                                                    <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Delete this <?= $this->singularise($config["object_name"]) ?></a></li>
-                                                </ul>
-                                            </nav>
-                                            <?php
-                                            $warning_array = array("Footnotes", "Additional codes", "Geographical areas", "Certificates");
-                                            if (in_array($config["object_name"], $warning_array)) {
-                                                $tab_name = "#tab_" . $this->singularise($config["object_name"], true) . "_descriptions";
-                                            ?>
+                                    <?php
+                                    if ($this->editable) {
+                                    ?>
+                                        <div class="gem-c-contextual-sidebar">
+                                            <div class="gem-c-related-navigation">
+                                                <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
+                                                    Actions
+                                                </h2>
+                                                <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
+                                                    <ul class="gem-c-related-navigation__link-list" data-module="track-click">
+                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Delete this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                    </ul>
+                                                </nav>
+                                                <?php
+                                                $warning_array = array("Footnotes", "Additional codes", "Geographical areas", "Certificates");
+                                                if (in_array($config["object_name"], $warning_array)) {
+                                                    $tab_name = "#tab_" . $this->singularise($config["object_name"], true) . "_descriptions";
+                                                ?>
 
-                                                <p class="govuk-body">
-                                                    Please note that you are unable to modify descriptions on this tab.
-                                                    Please select the '<a class="govuk-link" href="<?= $tab_name ?>">Descriptions</a>' tab to create and modify descriptions.
-                                                </p>
+                                                    <p class="govuk-body">
+                                                        Please note that you are unable to modify descriptions on this tab.
+                                                        Please select the '<a class="govuk-link" href="<?= $tab_name ?>">Descriptions</a>' tab to create and modify descriptions.
+                                                    </p>
 
-                                            <?php
-                                            }
-                                            ?>
+                                                <?php
+                                                }
+                                                ?>
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </section>

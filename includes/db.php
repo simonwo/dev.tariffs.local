@@ -87,10 +87,32 @@ if (isset($_COOKIE["showing"])) {
 $critical_date = "2020-01-31";
 $critical_date_plus_one = "2020-02-01";
 
-$msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
+//$msg = "All data displayed uses the <strong>" . $dbase . "</strong> database";
 
 $pagesize = 100;
-$conn = pg_connect("host=127.0.0.1 port=5432 dbname=" . $dbase . " user=postgres password=" . $pwd);
+
+$server_name = $_SERVER["SERVER_NAME"];
+
+if ($server_name == "tariff-prototype.london.cloudapps.digital") {
+    $dbCredentialsUrl = $_ENV['DATABASE_URL'];
+    $credentials = parse_url($dbCredentialsUrl);
+    /*
+    pre($dbCredentialsUrl);
+    pre($credentials);
+    */
+
+    $host = $credentials['host'];
+    $dbase = trim($credentials['path'], '/');
+    $dbuser = $credentials['user'];
+    $pwd = $credentials['pass'];
+} else {
+    $host = $host_local;
+    $dbase = $dbase_local;
+    $dbuser = $dbuser_local;
+    $pwd = $pwd_local;
+}
+$conn = pg_connect("host=" . $host . " port=5432 dbname=" . $dbase . " user=" . $dbuser . " password=" . $pwd);
+
 $page = intval(get_querystring("page"));
 if ($page == 0) {
     $page = 1;

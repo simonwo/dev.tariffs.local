@@ -115,7 +115,7 @@ $application->get_duty_expressions();
                                             <td class="govuk-table__cell"><?= $duty_expression->duty_expression_id ?></td>
                                             <td class="govuk-table__cell" nowrap><?= $duty_expression->description ?></td>
                                             <td class="govuk-table__cell"><?= $duty_expression->duty_amount_applicability_code ?> - <?= $duty_expression->duty_amount_applicability_code_description ?></td>
-                                            <td class="govuk-table__cell"><?= $duty_expression->measurement_unit_applicability_code ?> -<?= $duty_expression->measurement_unit_applicability_code_description ?> </td>
+                                            <td class="govuk-table__cell"><?= $duty_expression->measurement_unit_applicability_code ?> - <?= $duty_expression->measurement_unit_applicability_code_description ?> </td>
                                             <td class="govuk-table__cell"><?= $duty_expression->monetary_unit_applicability_code ?> - <?= $duty_expression->monetary_unit_applicability_code_description ?></td>
                                             <td class="govuk-table__cell"><?= $duty_expression->validity_start_date ?></td>
                                             <td class="govuk-table__cell"><?= $duty_expression->validity_end_date ?></td>

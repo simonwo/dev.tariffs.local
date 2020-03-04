@@ -1,0 +1,9 @@
+---
+applications:
+    - name: tariff-prototype
+      buildpack: php_buildpack
+      memory: 1024M
+      instances: 1
+      host: tariff-prototype
+      services:
+      - tariff-prototype-db

@@ -117,7 +117,7 @@ class workbasket
                 break;
             case 7:
                 // footnotes & regulations
-                $widths = [10, 10, 10, 10, 10, 32, 10];
+                $widths = [10, 10, 32, 10, 10, 10, 10];
                 break;
             default:
                 $cell_width = floor(100 / $field_count);
@@ -282,14 +282,16 @@ class workbasket
     public function workbasket_get_measure_types()
     {
         global $conn;
-        $sql = "select wi.operation, (mt.measure_type_series_id || ' ' || mtsd.description) as series,
-        mt.measure_type_id, mt.validity_start_date, mt.validity_end_date,
+        $sql = "select wi.operation,
+        mt.measure_type_id,
         (
             '<b>Description</b>: ' || mtd.description  ||
             '<br /><b>Import / export</b>: ' || mt.trade_movement_code || ' ' || tmc.description ||
             '<br /><b>Requires duties</b>: ' || mt.measure_component_applicable_code || ' ' || mcac.description ||
             '<br /><b>Requires order number</b>: ' || mt.order_number_capture_code || ' ' || oncc.description
         ) as measure_type_description_and_key_fields,
+        mt.validity_start_date, mt.validity_end_date,
+        (mt.measure_type_series_id || ' ' || mtsd.description) as series,
         wi.status,
         wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
         '/measure_types/view.html?mode=view&measure_type_id=' || mt.measure_type_id as view_url,
@@ -303,7 +305,7 @@ class workbasket
         and mt.trade_movement_code = tmc.trade_movement_code
         and mt.measure_component_applicable_code = mcac.measure_component_applicable_code
         and mt.order_number_capture_code = oncc.order_number_capture_code
-        and wi.record_type = 'measure_type'
+        and wi.record_type = 'measure type'
         and wi.workbasket_id = $1
         order by wi.created_at";
         pg_prepare($conn, "workbasket_get_measure_types", $sql);
@@ -319,9 +321,12 @@ class workbasket
         global $conn;
         $sql = "with cte as (
             select 
-            wi.operation, f.footnote_type_id || ' ' || ftd.description as footnote_type_id,
+            wi.operation,
             (f.footnote_type_id || ' ' || f.footnote_id) as footnote_id,
-            f.validity_start_date, f.validity_end_date, Coalesce(fd.description, 'Not updated') as footnote_description, wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+            Coalesce(fd.description, 'Not updated') as footnote_description,
+            f.footnote_type_id || ' ' || ftd.description as footnote_type_id,
+            f.validity_start_date, f.validity_end_date,
+            wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
             '/footnotes/view.html?mode=view&footnote_id=' || f.footnote_id || '&footnote_type_id=' || f.footnote_type_id as view_url,
             wi.record_type, wi.created_at 
             from workbasket_items wi, footnote_type_descriptions ftd, footnotes_oplog f
@@ -332,10 +337,12 @@ class workbasket
             and wi.record_type = 'footnote'
             and wi.workbasket_id = $1
             union 
-            select wi.operation, fd.footnote_type_id || ' ' || ftd.description as footnote_type_id,
+            select wi.operation,
             (fd.footnote_type_id || ' ' || fd.footnote_id) as footnote_id,
+            fd.description as footnote_description,
+            fd.footnote_type_id || ' ' || ftd.description as footnote_type_id,
             fdp.validity_start_date, null as validity_end_date,
-            fd.description as footnote_description, wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+            wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
             '/footnotes/view.html?mode=view&footnote_id=' || fd.footnote_id || '&footnote_type_id=' || fd.footnote_type_id as view_url,
             wi.record_type, wi.created_at 
             from workbasket_items wi, footnote_descriptions_oplog fd, footnote_type_descriptions ftd, footnote_description_periods_oplog fdp
@@ -361,9 +368,12 @@ class workbasket
         global $conn;
         $sql = "with cte as (
             select 
-            wi.operation, c.certificate_type_code || ' ' || ctd.description as certificate_type_code,
+            wi.operation,
             (c.certificate_type_code || ' ' || c.certificate_code) as certificate_code,
-            c.validity_start_date, c.validity_end_date, Coalesce(cd.description, 'Not updated') as certificate_code_description, wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+            Coalesce(cd.description, 'Not updated') as certificate_code_description,
+            c.certificate_type_code || ' ' || ctd.description as certificate_type_code,
+            c.validity_start_date, c.validity_end_date,
+            wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
             '/certificates/view.html?mode=view&certificate_code=' || c.certificate_code || '&certificate_type_code=' || c.certificate_type_code as view_url,
             wi.record_type, wi.created_at 
             from workbasket_items wi, certificate_type_descriptions ctd, certificates_oplog c
@@ -376,10 +386,12 @@ class workbasket
             
             union 
             
-            select wi.operation, cd.certificate_type_code || ' ' || ctd.description as certificate_type_code,
+            select wi.operation,
+            cd.certificate_type_code || ' ' || ctd.description as certificate_type_code,
+            cd.description as certificate_description,
             (cd.certificate_type_code || ' ' || cd.certificate_code) as certificate_code,
             cdp.validity_start_date, null as validity_end_date,
-            cd.description as certificate_description, wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+            wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
             '/certificates/view.html?mode=view&certificate_code=' || cd.certificate_code || '&certificate_type_code=' || cd.certificate_type_code as view_url,
             wi.record_type, wi.created_at 
             from workbasket_items wi, certificate_descriptions_oplog cd, certificate_type_descriptions ctd, certificate_description_periods_oplog cdp
@@ -444,12 +456,15 @@ class workbasket
     public function workbasket_get_regulations()
     {
         global $conn;
-        $sql = "select wi.operation, (br.regulation_group_id || ' - ' || rgd.description) as regulation_group_id,
-        br.base_regulation_id, br.validity_start_date, br.validity_end_date, 
-        ('<b>Description</b>: ' || br.information_text ||
-        '<br /><br /><b>URL</b>: ' || br.url ||
-        '<br /><br /><b>Public identifier</b>: ' || br.public_identifier ||
-        '<br /><br /><b>Trade Remedies case</b>: ' || coalesce(br.trade_remedies_case, 'n/a')) as regulation_description_and_key_fields,
+        $sql = "select wi.operation,
+        br.base_regulation_id,
+        (
+        '<b>Public identifier</b>: ' || br.public_identifier ||
+        '<br /><b>Description</b>: ' || br.information_text ||
+        '<br /><b>URL</b>: ' || br.url ||
+        '<br /><b>Trade Remedies case</b>: ' || coalesce(br.trade_remedies_case, 'n/a')) as regulation_description_and_key_fields,
+        br.validity_start_date, br.validity_end_date, 
+        (br.regulation_group_id || ' - ' || rgd.description) as regulation_group_id,
         wi.status, wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
         '' as view_url,
         wi.record_type, wi.created_at 

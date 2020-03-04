@@ -142,7 +142,8 @@ class application
         duty_amount_applicability_code, measurement_unit_applicability_code, monetary_unit_applicability_code
         FROM duty_expressions de, duty_expression_descriptions ded
         WHERE de.duty_expression_id = ded.duty_expression_id
-        AND validity_end_date IS NULL AND de.duty_expression_id NOT IN ('37')
+        --AND validity_end_date IS NULL
+        AND de.duty_expression_id NOT IN ('37')
         ORDER BY 1;";
 
         $result = pg_query($conn, $sql);
@@ -795,7 +796,7 @@ class application
                 $measure_type->measure_type_series_description = $measure_type_series_description;
                 $measure_type->measure_type_series_id_description = $measure_type_series_id . '&nbsp;' . $measure_type_series_description;
 
-                $measure_type->measure_type_series_url = '<a class="govuk-link" href="/measure_type_series/create_edit.html?mode=update&measure_type_series_id=' . $measure_type_series_id . '">' . $measure_type->measure_type_series_id_description . '</a>';
+                $measure_type->measure_type_series_url = '<a class="govuk-link" href="/measure_type_series/view.html?mode=view&measure_type_series_id=' . $measure_type_series_id . '">' . $measure_type->measure_type_series_id_description . '</a>';
                 //$measure_type->measure_type_url = '<a class="govuk-link" href="/measure_types/create_edit.html?mode=update&measure_type_id=' . $measure_type_id . '">' . $measure_type->description . '</a>';
                 $measure_type->measure_type_url = '<a class="govuk-link" href="/measure_types/view.html?mode=view&measure_type_id=' . $measure_type_id . '">' . $measure_type->description . '</a>';
 
@@ -928,6 +929,11 @@ class application
                 $measure_type_series->validity_start_date = $validity_start_date;
                 $measure_type_series->validity_end_date = $validity_end_date;
                 $measure_type_series->measure_type_combination = $measure_type_combination;
+                if ($measure_type_series->measure_type_combination == 0) {
+                    $measure_type_series->measure_type_combination_string = $measure_type_combination . " - Only 1 measure at export and 1 at import from the series";
+                } else {
+                    $measure_type_series->measure_type_combination_string = $measure_type_combination . " - All measure types in the series to be considered";
+                }
                 $measure_type_series->id = $measure_type_series->measure_type_series_id;
                 $measure_type_series->string = $measure_type_series->measure_type_series_id . " - " . $measure_type_series->description;
 

@@ -2637,3 +2637,35 @@ and cd.certificate_description_period_sid = cdp.certificate_description_period_s
 and cdp.certificate_description_period_sid = $3
 order by validity_start_date desc;
 
+select * from footnote_descriptions fd order by length(description) desc limit 10
+
+
+select wi.operation,
+(mt.measure_type_series_id || ' ' || mtsd.description) as series,
+mt.measure_type_id, mt.validity_start_date, mt.validity_end_date,
+(
+'<b>Description</b>: ' || mtd.description  ||
+'<br /><b>Import / export</b>: ' || mt.trade_movement_code || ' ' || tmc.description ||
+'<br /><b>Requires duties</b>: ' || mt.measure_component_applicable_code || ' ' || mcac.description ||
+'<br /><b>Requires order number</b>: ' || mt.order_number_capture_code || ' ' || oncc.description
+) as measure_type_description_and_key_fields,
+wi.status,
+wi.workbasket_item_sid, wi.record_id, wi.rejection_reason,
+'/measure_types/view.html?mode=view&measure_type_id=' || mt.measure_type_id as view_url,
+wi.record_type, wi.created_at 
+from workbasket_items wi, measure_types mt, measure_type_descriptions mtd,
+measure_type_series_descriptions mtsd, trade_movement_codes tmc,
+measure_component_applicable_codes mcac, order_number_capture_codes oncc
+where wi.record_id = mt.oid
+and mt.measure_type_id = mtd.measure_type_id 
+and mt.measure_type_series_id = mtsd.measure_type_series_id
+and mt.trade_movement_code = tmc.trade_movement_code
+and mt.measure_component_applicable_code = mcac.measure_component_applicable_code
+and mt.order_number_capture_code = oncc.order_number_capture_code
+and wi.record_type = 'measure type'
+and wi.workbasket_id = 124
+order by wi.created_at;
+
+select * from ml.chapters
+
+select * from goods

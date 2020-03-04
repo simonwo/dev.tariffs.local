@@ -58,6 +58,11 @@ class data_entry_form
         } else {
             $this->page_title_edit = "";
         }
+        if (isset($config["title_view"])) {
+            $this->page_title_view = $config["title_view"];
+        } else {
+            $this->page_title_view = "";
+        }
         if (isset($config["title_duplicate"])) {
             $this->page_title_duplicate = $config["title_duplicate"];
         } else {
@@ -97,7 +102,17 @@ class data_entry_form
             $this->breadcrumb_insert_url = parse_placeholders($this->breadcrumb_insert_url, $this->object);
         }
 
+        if (isset($config["url_view"])) {
+            $this->url_view = $config["url_view"];
+        } else {
+            $this->url_view = parse_placeholders($this->url_view, $this->object);
+
+            $this->url_view = "";
+        }
+
         $this->page_title = parse_placeholders($this->page_title, $this->object);
+        $this->page_title_view = parse_placeholders($this->page_title_view, $this->object);
+        $this->url_view = parse_placeholders($this->url_view, $this->object);
     }
 
     private function display()
@@ -122,6 +137,14 @@ class data_entry_form
                     <a class="govuk-breadcrumbs__link" href="<?= $this->root ?>"><?= $this->object_name ?></a>
                 </li>
                 <?php
+                //pre ($this->page_title_create);
+                if (($application->mode == "update") || (strpos($this->page_title_create, "description") !== false)) {
+                ?>
+                    <li class="govuk-breadcrumbs__list-item">
+                        <a class="govuk-breadcrumbs__link" href="<?= $this->url_view ?>"><?= $this->page_title_view ?></a>
+                    </li>
+                <?php
+                }
                 if (($this->breadcrumb_insert_text != null) && ($this->breadcrumb_insert_url != null)) {
                 ?>
                     <li class="govuk-breadcrumbs__list-item">
@@ -299,7 +322,7 @@ class data_entry_form
                                                 $text = $item["text"],
                                                 $control_scope = $control_scope,
                                                 $control_name = $control_name,
-                                                $group_class = $group_class,
+                                                $group_class = $group_class
                                             );
                                             break;
                                         case "start_form":
@@ -320,7 +343,7 @@ class data_entry_form
                                             break;
                                         case "warning_control":
                                             new warning_control(
-                                                $text = $item["text"],
+                                                $text = $item["text"]
                                             );
                                             break;
                                         case "back_control":

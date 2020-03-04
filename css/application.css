@@ -455,13 +455,15 @@ table.confirm tr td input {
 }
 
 nav.nomenclature_nav {
-    background-color: #f0f0f0 !important;
+    /*background-color: #f0f0f0 !important;*/
+    background-color: #f9f9f9 !important;
     padding: 0.5em 1em;
     font-family: GDS Transport, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0.5em 0px 1em 0px;
     font-size: 14px;
+    /*border:1px solid #BEC1C3;*/
 }
 
 nav.nomenclature_nav ul {
@@ -1534,6 +1536,50 @@ td .json:first-of-type {
     padding-top: 0px;
 }
 
-xsection {
-    min-height:420px;
+.gt_indent {
+    background-image: url('/assets/images/nav_step.png');
+    background-repeat: no-repeat;
+    background-position-y: 1em;
+}
+
+.gt_indent_0 {
+    background-position-x: 0.6em;
+    padding-left:24px;
+}
+.gt_indent_1 {
+    background-position-x: 1.6em;
+    padding-left:40px;
+}
+.gt_indent_2 {
+    background-position-x: 2.6em;
+    padding-left:56px;
+
+}
+.gt_indent_3 {
+    background-position-x: 3.6em;
+    padding-left:72px;
+
+}
+.gt_indent_4 {
+    background-position-x: 4.6em;
+    padding-left:88px;
+
+}
+.gt_indent_5 {
+    background-position-x: 5.6em;
+    padding-left:104px;
+
+}
+.gt_indent_6 {
+    background-position-x: 6.6em;
+    padding-left:120px;
+
+}
+.gt_indent_7 {
+    background-position-x: 7.6em;
+    padding-left:134px;
+
+}
+.pls_intermediate {
+    color:#666;
 }

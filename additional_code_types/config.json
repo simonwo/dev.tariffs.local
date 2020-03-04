@@ -6,6 +6,7 @@
             "title_create": "Create a new additional code type",
             "title_edit": "Edit additional code type",
             "url_edit": "./create_edit.html?mode=update&additional_code_type_id={additional_code_type_id}",
+            "url_view": "./view.html?mode=view&additional_code_type_id={additional_code_type_id}",
             "title_view": "Additional code type {additional_code_type_id}",
             "validate": false,
             "inset": "View existing additional code types. Alternatively, <a class='govuk-link' href='create_edit.html'>create a new additional code type</a>.",

@@ -9,6 +9,8 @@
             "override_root": "/additional_codes/",
             "title_create": "Create a new additional code description",
             "title_edit": "Edit additional code description",
+            "url_view": "/additional_codes/view.html?mode=view&additional_code_type_id={additional_code_type_id}&additional_code={additional_code}&additional_code_sid={additional_code_sid}",
+            "title_view": "Additional code {additional_code_type_id}{additional_code}",
             "validate": true,
             "buttons": {
                 "heading_text": "Finish now",
