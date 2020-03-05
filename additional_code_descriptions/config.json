@@ -24,7 +24,12 @@
         "form": [
             {
                 "control_type": "inset_control",
-                "control_scope": "",
+                "control_scope": "insert",
+                "text": "You are creating an additional code description for additional code <b>{additional_code_type_id}{additional_code}</b>.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
                 "text": "You are editing an additional code description for additional code <b>{additional_code_type_id}{additional_code}</b>.[WORKBASKET]"
             },
             {
@@ -68,7 +73,7 @@
                 "hint_text": "The latest additional code description is included. Please edit or overwrite the existing description.",
                 "control_name": "description",
                 "rows": 5,
-                "maxlength": 2000,
+                "maxlength": 10000,
                 "required": true,
                 "default": ""
             },

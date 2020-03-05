@@ -53,8 +53,8 @@ require("../includes/metadata.php");
                             <th class="govuk-table__header r" style="width:20%" scope="col">Extract</th>
                             <th class="govuk-table__header c" style="width:10%" scope="col">Manage</th>
                             //-->
-                            <th class="govuk-table__header" style="width:15%" scope="col">Section</th>
-                            <th class="govuk-table__header" style="width:85%" scope="col">Description</th>
+                            <th scope="col" class="govuk-table__header" style="width:15%" scope="col">Section</th>
+                            <th scope="col" class="govuk-table__header" style="width:85%" scope="col">Description</th>
                         </tr>
 
                         <?php

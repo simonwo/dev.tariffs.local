@@ -1578,7 +1578,30 @@ td .json:first-of-type {
 .gt_indent_7 {
     background-position-x: 7.6em;
     padding-left:134px;
-
+}
+.gt_indent_8 {
+    background-position-x: 8.6em;
+    padding-left:150px;
+}
+.gt_indent_9 {
+    background-position-x: 9.6em;
+    padding-left:166px;
+}
+.gt_indent_10 {
+    background-position-x: 10.6em;
+    padding-left:182px;
+}
+.gt_indent_11 {
+    background-position-x: 11.6em;
+    padding-left:198px;
+}
+.gt_indent_12 {
+    background-position-x: 12.6em;
+    padding-left:214px;
+}
+.gt_indent_13 {
+    background-position-x: 13.6em;
+    padding-left:230px;
 }
 .pls_intermediate {
     color:#666;

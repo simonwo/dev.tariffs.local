@@ -1,7 +1,7 @@
 <?php
 class snapshot
 {
-	// Class properties and methods go here
+    // Class properties and methods go here
     public $scope = "";
     public $range = "";
     public $format = "html";
@@ -16,11 +16,13 @@ class snapshot
     public $depth = 8;
     public $omit_duties = 0;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->error_handler = new error_handler;
-	}
+    }
 
-	public function get_parameters() {
+    public function get_parameters()
+    {
         if (!empty($_REQUEST)) {
             $this->form_submitted = true;
             $this->get_start_date();
@@ -33,15 +35,15 @@ class snapshot
                 $this->get_data();
                 if ($this->format == "csv") {
                     $this->simple_write_csv();
-                }
-                elseif ($this->format == "json") {
+                } elseif ($this->format == "json") {
                     $this->simple_write_json();
                 }
             }
         }
     }
 
-    private function simple_write_csv() {
+    private function simple_write_csv()
+    {
         echo "Commodity code,Suffix,Indent,End-line?,Description,Assigned,Measure type,Origin,Origin exclusions,Duties,EPS,Start,End";
         echo ($this->delimiter);
         foreach ($this->commodities as $commodity) {
@@ -83,10 +85,11 @@ class snapshot
         die();
     }
 
-    private function simple_write_json() {
+    private function simple_write_json()
+    {
         //h1 ("simple_write_json");
         $pairs = array();
-        
+
         $commodity_count = count($this->commodities);
         //h1 ($commodity_count);
         $commodity_index = 0;
@@ -117,7 +120,7 @@ class snapshot
                                         }
 
                                         // Loop through the child codes of the CN8 and create an array of their duty strings and perceived values
-                                        if (count($next_commodity->measure_list) > 0){
+                                        if (count($next_commodity->measure_list) > 0) {
                                             if ($next_commodity->measure_list[0]->combined_duty != "") {
                                                 $temp_duty = new temp_object();
                                                 $temp_duty->perceived_value = $next_commodity->measure_list[0]->perceived_value;
@@ -227,11 +230,12 @@ class snapshot
             }
             echo ("]" . $this->delimiter);
         }
-        echo($this->end_string);
+        echo ($this->end_string);
         die();
     }
 
-    private function filter_for_json($s) {
+    private function filter_for_json($s)
+    {
         $s = str_replace('"', "'", $s);
         $s = str_replace('-', "-", $s);
         $s = str_replace('<br>', " ", $s);
@@ -245,19 +249,20 @@ class snapshot
         $s = str_replace("\n", " ", $s);
         $s = str_replace("\r", " ", $s);
         $s = str_replace(array("\n", "\r"), '', $s);
-        
+
         $s = str_replace("  ", " ", $s);
         $s = str_replace(PHP_EOL, '', $s);
         $s = trim(preg_replace('/\s\s+/', ' ', $s));
         //$s = preg_replace('/\s+/', '', $s); 
         $s = preg_replace('!\s+!', ' ', $s);
-        $s = strtr($s,"\n\r","  ");
+        $s = strtr($s, "\n\r", "  ");
         $s = stripcslashes($s);
         $s = trim($s);
         return ($s);
     }
 
-    private function get_start_date() {
+    private function get_start_date()
+    {
         // Get snapshot day start
         $this->day_start = intval(get_querystring("day_start") . "");
         $this->month_start = intval(get_querystring("month_start") . "");
@@ -267,9 +272,10 @@ class snapshot
         if ($valid_date_start != 1) {
             array_push($this->error_handler->error_list, "snapshot_date_start");
         }
-	}
+    }
 
-	private function get_end_date() {
+    private function get_end_date()
+    {
         // Get snapshot day end
         $this->day_end = intval(get_querystring("day_end") . "");
         $this->month_end = intval(get_querystring("month_end") . "");
@@ -285,7 +291,8 @@ class snapshot
         }
     }
 
-	private function get_range() {
+    private function get_range()
+    {
         // Get commodity range
         $this->range = get_querystring("range") . "";
         $this->get_geographical_area_description();
@@ -300,9 +307,10 @@ class snapshot
             $this->get_geographical_area_description();
         }
         */
-	}
+    }
 
-	private function get_geographical_area_description() {
+    private function get_geographical_area_description()
+    {
         global $conn;
         $sql = "select description from ml.ml_geographical_areas mga where geographical_area_id = $1;";
         pg_prepare($conn, "get_description", $sql);
@@ -311,19 +319,21 @@ class snapshot
             $row = pg_fetch_row($result);
             $this->geographical_area_description = $row[0];
         }
-	}
+    }
 
-	private function get_scope() {
-	    // Get scope
+    private function get_scope()
+    {
+        // Get scope
         $this->scope = strtoupper(get_querystring("scope") . "");
-        if ($this->scope == "" ) {
+        if ($this->scope == "") {
             if ($this->format == "html") {
                 array_push($this->error_handler->error_list, "scope");
             }
         }
     }
 
-	private function get_format() {
+    private function get_format()
+    {
         // Get format, JSON, CSV or screen
         $fmt = get_querystring("fmt");
 
@@ -334,11 +344,9 @@ class snapshot
 
         if ($fmt == "csv") {
             $this->format = "csv";
-        }
-        elseif ($fmt == "json") {
+        } elseif ($fmt == "json") {
             $this->format = "json";
-        }
-        else {
+        } else {
             $this->format = "html";
         }
 
@@ -368,7 +376,8 @@ class snapshot
         }
     }
 
-    public function set_delimiters(){
+    public function set_delimiters()
+    {
         // If writing to CSV, do we want to actually write the CSV to screen instead
         if ($this->format != "html") {
             $this->write_to_screen = get_querystring("wts");
@@ -389,7 +398,8 @@ class snapshot
         }
     }
 
-    public function get_data() {
+    public function get_data()
+    {
         global $conn;
 
         $range_len = strlen($this->range);
@@ -412,7 +422,7 @@ class snapshot
                 and mc.component_sequence_number = 1
                 and mcc.duty_expression_id = '01'
                 and m.measure_type_id in ('103', '105')" . $range_clause .
-                " order by m.measure_sid, mcc.duty_expression_id, mcc.duty_amount";
+                    " order by m.measure_sid, mcc.duty_expression_id, mcc.duty_amount";
             } else {
                 $sql = "select m.measure_sid, mc.measure_condition_sid, mcc.duty_expression_id, mcc.duty_amount,
                 mcc.monetary_unit_code, mcc.measurement_unit_code, mcc.measurement_unit_qualifier_code
@@ -424,8 +434,8 @@ class snapshot
                 and mc.component_sequence_number = 1
                 and mcc.duty_expression_id = '01'
                 and m.measure_type_id in ('142', '145')" . $range_clause .
-                "and geographical_area_id = '" . $this->scope . "' " .
-                " order by m.measure_sid, mcc.duty_expression_id, mcc.duty_amount";
+                    "and geographical_area_id = '" . $this->scope . "' " .
+                    " order by m.measure_sid, mcc.duty_expression_id, mcc.duty_amount";
             }
             $result = pg_query($conn, $sql);
             $measure_condition_components = array();
@@ -446,7 +456,7 @@ class snapshot
             if (($this->scope == "mfn") || ($this->scope == "1011")) {
                 $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, mc.duty_expression_id,
                 mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
-                m.validity_start_date, m.validity_end_date, mtd.description as measure_type_description
+                m.validity_start_date, m.validity_end_date, mtd.description as measure_type_description, m.additional_code
                 from measure_type_descriptions mtd, ml.measures_real_end_dates m
                 left outer join measure_components mc
                 on m.measure_sid = mc.measure_sid
@@ -454,58 +464,65 @@ class snapshot
                 and m.validity_start_date <= '" . $this->snapshot_date_end . "'
                 and (m.validity_end_date is null or m.validity_end_date >= '" . $this->snapshot_date_start . "')
                 and m.measure_type_id in ('103', '105') " . $range_clause .
-                " order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id;";
+                    " order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id;";
             } else {
                 $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, mc.duty_expression_id,
                 mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
-                m.validity_start_date, m.validity_end_date, mtd.description as measure_type_description
+                m.validity_start_date, m.validity_end_date, mtd.description as measure_type_description, m.additional_code
                 from measure_type_descriptions mtd, ml.measures_real_end_dates m
                 left outer join measure_components mc
                 on m.measure_sid = mc.measure_sid
                 where m.measure_type_id = mtd.measure_type_id
                 and m.validity_start_date <= '" . $this->snapshot_date_end . "' and (m.validity_end_date is null or m.validity_end_date >= '" . $this->snapshot_date_start . "')
                 and m.measure_type_id in ('142', '145') " . $range_clause .
-                "and geographical_area_id = '" . $this->scope . "'
+                    "and geographical_area_id = '" . $this->scope . "'
                 order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id";
             }
+
+            //prend($sql);
 
             $result = pg_query($conn, $sql);
             $duties = array();
             if ($result) {
                 while ($row = pg_fetch_array($result)) {
-                    $duty = new duty();
-                    $duty->measure_condition_components     = array();
-                    $duty->measure_sid                      = $row['measure_sid'];
-                    $duty->goods_nomenclature_item_id       = $row['goods_nomenclature_item_id'];
-                    $duty->measure_type_id                  = $row['measure_type_id'];
-                    $duty->duty_expression_id               = $row['duty_expression_id'];
-                    $duty->duty_amount                      = $row['duty_amount'];
-                    $duty->monetary_unit_code               = $row['monetary_unit_code'];
-                    $duty->measurement_unit_code            = $row['measurement_unit_code'];
-                    $duty->measurement_unit_qualifier_code  = $row['measurement_unit_qualifier_code'];
-                    $duty->measure_type_description         = $row['measure_type_description'];
-                    $duty->validity_start_date              = $row['validity_start_date'];
-                    $duty->validity_end_date                = $row['validity_end_date'];
-                    $duty->geographical_area_id             = $this->scope;
+                    if ($row['additional_code'] != "2500") {
+                        $duty = new duty();
+                        $duty->measure_condition_components     = array();
+                        $duty->measure_sid                      = $row['measure_sid'];
+                        $duty->goods_nomenclature_item_id       = $row['goods_nomenclature_item_id'];
+                        $duty->measure_type_id                  = $row['measure_type_id'];
+                        $duty->duty_expression_id               = $row['duty_expression_id'];
+                        $duty->duty_amount                      = $row['duty_amount'];
+                        $duty->monetary_unit_code               = $row['monetary_unit_code'];
+                        $duty->measurement_unit_code            = $row['measurement_unit_code'];
+                        $duty->measurement_unit_qualifier_code  = $row['measurement_unit_qualifier_code'];
+                        $duty->measure_type_description         = $row['measure_type_description'];
+                        $duty->validity_start_date              = $row['validity_start_date'];
+                        $duty->validity_end_date                = $row['validity_end_date'];
+                        $duty->additional_code                  = $row['additional_code'];
+                        $duty->geographical_area_id             = $this->scope;
 
-                    if ($duty->duty_expression_id == Null) {
-                        $duty->entry_price_applies              = true;
-                        foreach ($measure_condition_components as $mcc) {
-                            if ($mcc->measure_sid == $duty->measure_sid) {
-                                array_push($duty->measure_condition_components, $mcc);
+                        if ($duty->duty_expression_id == Null) {
+                            $duty->entry_price_applies              = true;
+                            foreach ($measure_condition_components as $mcc) {
+                                if ($mcc->measure_sid == $duty->measure_sid) {
+                                    array_push($duty->measure_condition_components, $mcc);
+                                }
                             }
+                            $duty->duty_string = "";
+                            foreach ($duty->measure_condition_components as $mcc) {
+                                $duty->duty_string .= number_format($mcc->duty_amount, 3) . "%";
+                                $duty->entry_price_string = "Y";
+                            }
+                        } else {
+                            $duty->get_duty_string(1);
                         }
-                        $duty->duty_string = "";
-                        foreach ($duty->measure_condition_components as $mcc) {
-                            $duty->duty_string .= number_format($mcc->duty_amount, 3) . "%";
-                            $duty->entry_price_string = "Y";
-                        }
-                    } else {
-                        $duty->get_duty_string(1);
+                        array_push($duties, $duty);
                     }
-                    array_push($duties, $duty);
                 }
             }
+
+            //pre ($duties);
 
             // Form the duties into measure objects
             $measures = array();
@@ -547,7 +564,7 @@ class snapshot
             description, leaf, significant_digits, validity_start_date, validity_end_date, node
             from ml.goods_nomenclature_export_new ('" . $this->range . "%', '" . $this->snapshot_date_start . "')
             where significant_digits <= " . $this->depth . "
-            order by goods_nomenclature_item_id, producline_suffix;";    
+            order by goods_nomenclature_item_id, producline_suffix;";
         } else {
             $sql = "select goods_nomenclature_item_id, producline_suffix, number_indents,
             description, leaf, significant_digits, validity_start_date, validity_end_date, node
@@ -555,13 +572,11 @@ class snapshot
             order by goods_nomenclature_item_id, producline_suffix;";
         }
 
-        //prend ($sql);
-
         $result = pg_query($conn, $sql);
         $this->commodities = array();
         if ($result) {
             while ($row = pg_fetch_array($result)) {
-                $commodity	= new goods_nomenclature;
+                $commodity    = new goods_nomenclature;
                 $commodity->goods_nomenclature_item_id  = $row['goods_nomenclature_item_id'];
                 $commodity->productline_suffix          = $row['producline_suffix'];
                 $commodity->number_indents              = $row['number_indents'];
@@ -596,7 +611,7 @@ class snapshot
         foreach ($this->commodities as $commodity) {
             if ($commodity->significant_digits < 10) {
                 if ($commodity->goods_nomenclature_item_id <= "9800000000") {
-                    if (array_key_exists($commodity->node, $this->friendly_names)){ 
+                    if (array_key_exists($commodity->node, $this->friendly_names)) {
                         $commodity->friendly_description = $this->friendly_names[$commodity->node];
                     } else {
                         $commodity->friendly_description = "";
@@ -650,7 +665,8 @@ class snapshot
     }
 }
 
-class temp_object {
+class temp_object
+{
     public $perceived_value = 0;
     public $commodity_description = "";
     public $duty_string = "";

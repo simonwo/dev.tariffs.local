@@ -32,7 +32,7 @@ require("../includes/metadata.php");
                     <a class="govuk-breadcrumbs__link" href="/additional_codes">Additional codes</a>
                 </li>
                 <li class="govuk-breadcrumbs__list-item">
-                    <a class="govuk-breadcrumbs__link" href="<?= $additional_code->view_url() ?>#tab_additional_code_descriptions">additional_code <?=$additional_code->additional_code_type_id?><?=$additional_code->additional_code?></a>
+                    <a class="govuk-breadcrumbs__link" href="<?= $additional_code->view_url() ?>#tab_additional_code_descriptions">Additional code <?=$additional_code->additional_code_type_id?><?=$additional_code->additional_code?></a>
                 </li>
                 <li class="govuk-breadcrumbs__list-item" aria-current="page">Delete additional code description</li>
             </ol>
@@ -42,7 +42,7 @@ require("../includes/metadata.php");
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
-                    <h1 class="govuk-heading-xl">Delete additional_code description</h1>
+                    <h1 class="govuk-heading-xl">Delete additional code description</h1>
                     <!-- End main title //-->
 
 
@@ -72,7 +72,6 @@ require("../includes/metadata.php");
                         new hidden_control("period_sid", $additional_code->additional_code_description_period_sid);
                         new hidden_control("action", "delete_additional_code_description");
                         $btn = new button_control("Continue", "continue", "primary");
-                        //$btn = new button_control("Cancel", "cancel", "text", "", "/");
                         ?>
                     </form>
                 </div>

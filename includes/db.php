@@ -800,6 +800,7 @@ function format_goods_nomenclature_item_id($s, $size_class = "")
     $s2 = "";
     $len = strlen($s);
 
+
     switch ($len) {
         case 10:
             $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 4, 2) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 6, 2) . "</span><span class='rpad green " . $size_class . "'>" . substr($s, 8, 2) . "</span>";
@@ -812,6 +813,38 @@ function format_goods_nomenclature_item_id($s, $size_class = "")
             break;
         case 4:
             $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 4) . "</span>";
+            break;
+        case 2:
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span>";
+            break;
+    }
+    return ($s2);
+}
+
+
+function format_goods_nomenclature_item_id2($s, $leaf, $size_class = "")
+{
+    //h1 ($leaf);
+    $gn = new goods_nomenclature();
+    $s2 = "";
+    if ($leaf == "N") {
+        $s = $gn->trim_zeroes($s);
+    }
+    $len = strlen($s);
+
+
+    switch ($len) {
+        case 10:
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 4, 2) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 6, 2) . "</span><span class='rpad green " . $size_class . "'>" . substr($s, 8, 2) . "</span>";
+            break;
+        case 8:
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 4, 2) . "</span><span class='rpad blue " . $size_class . "'>" . substr($s, 6, 2) . "</span>";
+            break;
+        case 6:
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 4, 2) . "</span>";
+            break;
+        case 4:
+            $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span><span class='rpad mauve " . $size_class . "'>" . substr($s, 2, 2) . "</span>";
             break;
         case 2:
             $s2 = "<span class='rpad mauve " . $size_class . "'>" . substr($s, 0, 2) . "</span>";

@@ -258,10 +258,10 @@
                                 ?>
                                 <table cellspacing="0" class="govuk-table govuk-table sticky" id="table">
                                     <tr class="govuk-table__row">
-                                        <th class="govuk-table__header nopad small" style="width:10%">Commodity</th>
-                                        <th class="govuk-table__header small" style="width:66%">Description</th>
-                                        <th class="govuk-table__header r small" style="width:12%">CET tariff rate</th>
-                                        <th class="govuk-table__header r small" style="width:12%">Future UKGT tariff rate</th>
+                                        <th class="govuk-table__header nopad small" scope="col" style="width:10%">Commodity</th>
+                                        <th class="govuk-table__header small" scope="col" style="width:66%">Description</th>
+                                        <th class="govuk-table__header r small" scope="col" style="width:12%">CET tariff rate</th>
+                                        <th class="govuk-table__header r small" scope="col" style="width:12%">Future UKGT tariff rate</th>
                                     </tr>
                                     <?php
                                     foreach ($snapshot->commodities as $commodity) {
@@ -282,7 +282,7 @@
                                                 <td class="govuk-table__cell vsmall nopad">
                                                     <?php
                                                     if ($commodity->productline_suffix == "80") {
-                                                        echo (format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id));
+                                                        echo (format_goods_nomenclature_item_id2($commodity->goods_nomenclature_item_id, $commodity->leaf));
                                                     } else {
                                                         echo ("&nbsp;");
                                                     }
@@ -300,15 +300,31 @@
                                                     <td class="govuk-table__cell vsmall nopad">
                                                         <?php
                                                         if ($commodity->productline_suffix == "80") {
-                                                            echo (format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id));
+                                                            echo (format_goods_nomenclature_item_id2($commodity->goods_nomenclature_item_id, $commodity->leaf));
                                                         } else {
                                                             echo ("&nbsp;");
                                                         }
                                                         ?>
                                                     </td>
                                                     <td class="govuk-table__cell gt_indent gt_indent_<?= $number_indents_real ?> <?= $pls_class ?>"><?= $commodity->format_description() ?></td>
-                                                    <td class="govuk-table__cell vsmall nw r"><?= $measure->combined_duty ?></td>
-                                                    <td class="govuk-table__cell vsmall r">UK duty here</td>
+                                                    <td class="govuk-table__cell vsmall nw r">
+                                                        <?php
+                                                        if (($commodity->productline_suffix == "80") && ($commodity->leaf == "Y")) {
+                                                            echo ($measure->combined_duty);
+                                                        } else {
+                                                            echo ("&nbsp;");
+                                                        }
+                                                        ?>
+                                                    </td>
+                                                    <td class="govuk-table__cell vsmall nw r">
+                                                        <?php
+                                                        if (($commodity->productline_suffix == "80") && ($commodity->leaf == "Y")) {
+                                                            echo ("UK duty here");
+                                                        } else {
+                                                            echo ("&nbsp;");
+                                                        }
+                                                        ?>
+                                                    </td>
                                                 </tr>
                                     <?php
                                             }

@@ -68,6 +68,11 @@
                 "text": "Additional codes are used in the creation of measures that cannot be fulfilled solely with the use of commodity codes. Their primary use is in the management of trade remedies (anti-dumping and anti-subsidy measures). An additional code is made up of a single letter or digit (<a class='govuk-link' href='/additional_code_types'>additional code type</a>), followed by three alpha-numeric digits (the code) to make a four digit phrase.[WORKBASKET]"
             },
             {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Use this screen to modify the dates of an existing additional code.[WORKBASKET]"
+            },
+            {
                 "control_type": "error_block"
             },
             {
@@ -114,7 +119,7 @@
             },
             {
                 "control_type": "date_picker_control",
-                "label": "When does this additional code be terminated?",
+                "label": "When is this additional code to be terminated?",
                 "label_style": "govuk-label--m",
                 "hint_text": "This is optional and should usually be left unset (open-ended) unless you know the additional code is only needed for a limited time.",
                 "control_name": "validity_end_date",
@@ -130,7 +135,7 @@
                 "control_name": "description",
                 "control_scope": "insert",
                 "rows": 5,
-                "maxlength": 5000,
+                "maxlength": 10000,
                 "required": true,
                 "default": ""
             },

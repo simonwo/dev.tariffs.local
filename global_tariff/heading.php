@@ -54,8 +54,8 @@ require("../includes/metadata.php");
                     ?>
                     <table cellspacing="0" class="govuk-table sticky">
                         <tr class="govuk-table__row">
-                            <th class="govuk-table__header" scope="col" style="width:10%">Code</th>
-                            <th class="govuk-table__header" scope="col" style="width:75%">Description</th>
+                            <th scope="col" class="govuk-table__header" scope="col" style="width:10%">Code</th>
+                            <th scope="col" class="govuk-table__header" scope="col" style="width:75%">Description</th>
                             <!--
                             <th class="govuk-table__header c tip" scope="col" style="width:5%" aria-describedby="tip_suffix">
                                 Suffix
