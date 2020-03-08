@@ -14,16 +14,16 @@ class measure_type_series
 
     public function get_parameters()
     {
-        global $error_handler;
+        global $error_handler, $application;
         $this->measure_type_series_id = trim(get_querystring("measure_type_series_id"));
-        $this->mode = trim(get_querystring("mode"));
-        if ($this->mode == "") {
-            $this->mode = "insert";
+        $application->mode = trim(get_querystring("mode"));
+        if ($application->mode == "") {
+            $application->mode = "insert";
         }
 
         if (empty($_GET)) {
             $this->clear_cookies();
-        } elseif ($this->mode == "insert") {
+        } elseif ($application->mode == "insert") {
             $this->populate_from_cookies();
         } else {
             if (empty($error_handler->error_string)) {
@@ -138,7 +138,7 @@ class measure_type_series
         setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
 
         $this->measure_type_combination = get_formvar("measure_type_combination", "", True);
-        $this->mode = get_formvar("mode");
+        $application->mode = get_formvar("mode");
         $this->set_dates();
 
         # Check on the measure type series id
@@ -147,7 +147,7 @@ class measure_type_series
         }
 
         # If we are creating, check that the measure type ID does not already exist
-        if ($this->mode == "insert") {
+        if ($application->mode == "insert") {
             if ($this->exists()) {
                 array_push($errors, "measure_type_series_exists");
             }
@@ -195,7 +195,7 @@ class measure_type_series
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit.html?err=1&mode=" . $this->mode . "&measure_type_id=" . $this->measure_type_id;
+            $url = "create_edit.html?err=1&mode=" . $application->mode . "&measure_type_id=" . $this->measure_type_id;
         } else {/*
  if ($create_edit == "create") {
  // Do create scripts

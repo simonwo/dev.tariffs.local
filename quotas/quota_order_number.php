@@ -93,7 +93,7 @@ class quota_order_number
         }
 
         # If we are creating, check that the quota order number ID does not already exist
-        if ($this->mode == "insert") {
+        if ($application->mode == "insert") {
             if ($this->exists()) {
                 array_push($errors, "quota_order_number_exists");
             }

@@ -3,6 +3,7 @@
         "config": {
             "object_name": "Measures",
             "title_create": "Work with selected measures",
+            "url_view": "",
             "validate": true,
             "buttons": {
                 "heading_text": "Next steps",

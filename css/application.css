@@ -986,6 +986,12 @@ td.vertical_align_middle {
     padding-left: 1em;
 }
 
+.env_gt {
+    font-weight: normal;
+    font-size: 24px;
+    border-left: 1em black solid;
+}
+
 .app-subnav {
     font-size: 16px;
     font-size: 1rem;
@@ -1509,7 +1515,7 @@ ul.measure_activity_action_list {
 }
 
 .measure_activity_action_list li span {
-    margin-left: 10px;
+    margin-left: 8px;
     position: relative;
     top: -5px;
 }
@@ -1605,4 +1611,8 @@ td .json:first-of-type {
 }
 .pls_intermediate {
     color:#666;
+}
+.change img {
+    /*position: relative;*/
+    height:20px;
 }

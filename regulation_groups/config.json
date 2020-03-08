@@ -6,6 +6,7 @@
             "title": "Find and edit regulation groups",
             "title_create": "Create a new regulation group",
             "title_edit": "Edit regulation group {regulation_group_id}",
+            "title_view": "Regulation group {regulation_group_id}",
             "validate": true,
             "inset": "Enter criteria to help find a regulation group.",
             "freetext_fields": "",

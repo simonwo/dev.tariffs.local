@@ -75,7 +75,7 @@ class additional_code_measure_type_table_control
                     ?>
                 </tbody>
             </table>
-            <p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>">Create a new relationship</a></p>
+            <p class="govuk-body"><a class="govuk-link" href="<?= $this->create_url ?>"><img class='inline_icon' src='/assets/images/new.png'/>Create a new relationship</a></p>
             <!-- End detail table control //-->
 <?php
         }

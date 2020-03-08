@@ -1417,4 +1417,13 @@ class measure
         header("Location: " . $url);
         */
     }
+
+    function check_ad_valorem() {
+        $s = $this->combined_duty;
+        if (substr($s, -1, 1) == "%") {
+            return (true);
+        } else {
+            return (false);
+        }
+    }
 }

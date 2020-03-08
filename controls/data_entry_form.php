@@ -102,6 +102,7 @@ class data_entry_form
             $this->breadcrumb_insert_url = parse_placeholders($this->breadcrumb_insert_url, $this->object);
         }
 
+        //pre ($this);
         if (isset($config["url_view"])) {
             $this->url_view = $config["url_view"];
         } else {

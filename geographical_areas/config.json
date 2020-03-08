@@ -2,16 +2,15 @@
     "geographical_areas": {
         "config": {
             "title": "Find and edit geographical areas",
+            "title_create": "Create a new geographical area",
+            "title_edit": "Edit geographical area",
+            "title_view": "Geographical area {geographical_area_id}",
             "inset": "Enter criteria to help find a geographical area. Alternatively, <a class='govuk-link' href='/geographical_areas/create_edit.html'>create a new geographical area</a>.",
             "freetext_fields": "description|geographical_area_id|geographical_area_sid::text",
             "default_sort_fields": "geographical_area_id",
             "object_name": "Geographical areas",
-            "title_create": "Create a new geographical area",
-            "xtitle_edit": "Edit geographical area {geographical_area_id}",
-            "title_edit": "Edit geographical area",
             "url_edit": "./create_edit.html?mode=update&geographical_area_id={geographical_area_id}&geographical_area_sid={geographical_area_sid}",
             "url_view": "./view.html?mode=view&geographical_area_id={geographical_area_id}&geographical_area_sid={geographical_area_sid}",
-            "title_view": "Geographical area {geographical_area_id}",
             "description_keys": "geographical_area_sid|geographical_area_id",
             "validate": false,
             "buttons": {

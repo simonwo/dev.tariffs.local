@@ -1,5 +1,7 @@
 <?php
 // Get the page title
+//h1 ("MODE = " . $application->mode . " on " . $application->data[$application->tariff_object]["config"]["object_name"]);
+$title = "";
 if ($application->tariff_object != "") {
     $config = $application->data[$application->tariff_object]["config"];
     switch ($application->mode) {
@@ -11,6 +13,11 @@ if ($application->tariff_object != "") {
         case "update":
             if (isset($config["title_edit"])) {
                 $title = $config["title_edit"] . " : " . $application->name;
+            }
+            break;
+        case "view":
+            if (isset($config["title_view"])) {
+                $title = $config["title_view"] . " : " . $application->name;
             }
             break;
         default:

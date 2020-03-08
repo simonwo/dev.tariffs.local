@@ -1,6 +1,7 @@
     <?php
     require(dirname(__FILE__) . "../../includes/db.php");
     $application = new application;
+    $application->init("goods_nomenclatures");
     $snapshot = new snapshot();
     $snapshot->get_parameters();
     $section = new section(get_querystring("section_id"));
@@ -11,6 +12,8 @@
     $goods_nomenclature->goods_nomenclature_sid = get_querystring("goods_nomenclature_sid");
     $goods_nomenclature->producline_suffix = get_querystring("producline_suffix");
     $goods_nomenclature->populate();
+    $heading_text = new heading_text();
+
     ?>
     <!DOCTYPE html>
     <html lang="en" class="govuk-template">
@@ -33,7 +36,9 @@
                     <div class="govuk-grid-column-full">
                         <?php
                         new title_control("", "", "", "The UK Global Tariff");
-                        new inset_control("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Honesta oratio, Socratica, Platonis etiam. Equidem etiam Epicurum, in physicis quidem, Democriteum puto. Quamquam tu hanc copiosiorem etiam soles dicere. Duo Reges: constructio interrete. Idemque diviserunt naturam hominis in animum et corpus. Sed videbimus. ");
+                        if ($heading_text->text != "") {
+                            new inset_control($heading_text->text);
+                        }
 
                         ?>
 
@@ -259,9 +264,10 @@
                                 <table cellspacing="0" class="govuk-table govuk-table sticky" id="table">
                                     <tr class="govuk-table__row">
                                         <th class="govuk-table__header nopad small" scope="col" style="width:10%">Commodity</th>
-                                        <th class="govuk-table__header small" scope="col" style="width:66%">Description</th>
-                                        <th class="govuk-table__header r small" scope="col" style="width:12%">CET tariff rate</th>
-                                        <th class="govuk-table__header r small" scope="col" style="width:12%">Future UKGT tariff rate</th>
+                                        <th class="govuk-table__header small" scope="col" style="width:61%">Description</th>
+                                        <th class="govuk-table__header r small" scope="col" style="width:12%">Common External Tariff rate</th>
+                                        <th class="govuk-table__header r small" scope="col" style="width:12%">Future UK Global Tariff rate</th>
+                                        <th class="govuk-table__header r small" scope="col" style="width:5%">Change</th>
                                     </tr>
                                     <?php
                                     foreach ($snapshot->commodities as $commodity) {
@@ -289,6 +295,7 @@
                                                     ?>
                                                 </td>
                                                 <td class="govuk-table__cell gt_indent gt_indent_<?= $number_indents_real ?> <?= $pls_class ?>"><?= $commodity->format_description() ?></td>
+                                                <td class="govuk-table__cell vsmall r">&nbsp;</td>
                                                 <td class="govuk-table__cell vsmall r">&nbsp;</td>
                                                 <td class="govuk-table__cell vsmall r">&nbsp;</td>
                                             </tr>
@@ -319,7 +326,35 @@
                                                     <td class="govuk-table__cell vsmall nw r">
                                                         <?php
                                                         if (($commodity->productline_suffix == "80") && ($commodity->leaf == "Y")) {
-                                                            echo ("UK duty here");
+                                                            if ($measure->check_ad_valorem() == true) {
+                                                                if ($measure->combined_duty == "0.0%") {
+                                                                    $uk_duty = "0.0%";
+                                                                } else {
+                                                                    $temp = floatval(str_replace("%", "", $measure->combined_duty));
+                                                                    if (rand(0, 1) == 0) {
+                                                                        $uk_duty = ($temp - 1) . "%";
+                                                                    } else {
+                                                                        $uk_duty = ($temp + 1) . "%";
+                                                                    }
+                                                                    // $uk_duty = "Ad valorem";
+                                                                }
+                                                            } else {
+                                                                $uk_duty = $measure->combined_duty;
+                                                            }
+                                                        } else {
+                                                            $uk_duty = "";
+                                                        }
+
+                                                        //echo rand(0, 1);
+                                                        echo ($uk_duty);
+                                                        ?>
+                                                    </td>
+                                                    <td class="govuk-table__cell vsmall nw c change">
+                                                        <?php
+                                                        if (floatval($measure->combined_duty) > floatval($uk_duty)) {
+                                                            echo ('<img src="/assets/images/down.png" />');
+                                                        } elseif (floatval($measure->combined_duty) < floatval($uk_duty)) {
+                                                            echo ('<img src="/assets/images/up.png" />');
                                                         } else {
                                                             echo ("&nbsp;");
                                                         }

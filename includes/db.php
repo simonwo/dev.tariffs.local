@@ -53,6 +53,7 @@ require(dirname(__FILE__) . "../../classes/member.php");
 require(dirname(__FILE__) . "../../classes/cryptor.php");
 require(dirname(__FILE__) . "../../classes/link.php");
 require(dirname(__FILE__) . "../../rules_of_origin_schemes/rules_of_origin_scheme.php");
+require(dirname(__FILE__) . "../../global_tariff/heading_text.php");
 
 /* Extract classes */
 require(dirname(__FILE__) . "../../classes/extract.php");

@@ -5,6 +5,8 @@ $application->init("goods_nomenclatures");
 $section = new section(get_querystring("section_id"));
 $section->get_section();
 $section->get_chapters();
+$heading_text = new heading_text();
+
 ?>
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -37,7 +39,9 @@ require("../includes/metadata.php");
                 <div class="govuk-grid-column-full">
                     <?php
                     new title_control("", "", "", "The UK Global Tariff");
-                    new inset_control("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Honesta oratio, Socratica, Platonis etiam. Equidem etiam Epicurum, in physicis quidem, Democriteum puto. Quamquam tu hanc copiosiorem etiam soles dicere. Duo Reges: constructio interrete. Idemque diviserunt naturam hominis in animum et corpus. Sed videbimus. ");
+                    if ($heading_text->text != "") {
+                        new inset_control($heading_text->text);
+                    }
                     ?>
                     <nav class="nomenclature_nav">
                         <ul>
@@ -53,7 +57,7 @@ require("../includes/metadata.php");
                             <th class="govuk-table__header r" style="width:20%" scope="col">Extract</th>
                             <th class="govuk-table__header c" style="width:10%" scope="col">Manage</th>
                             //-->
-                            <th scope="col" class="govuk-table__header" style="width:15%" scope="col">Section</th>
+                            <th scope="col" class="govuk-table__header" style="width:15%" scope="col">Chapter</th>
                             <th scope="col" class="govuk-table__header" style="width:85%" scope="col">Description</th>
                         </tr>
 

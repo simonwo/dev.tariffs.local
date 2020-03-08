@@ -9,6 +9,7 @@ $goods_nomenclature->goods_nomenclature_sid = get_querystring("goods_nomenclatur
 $goods_nomenclature->producline_suffix = get_querystring("producline_suffix");
 $goods_nomenclature->populate();
 $goods_nomenclature->get_children($goods_nomenclature->goods_nomenclature_item_id, 1);
+$heading_text = new heading_text();
 
 $section = new section(get_querystring("section_id"));
 $section->get_section();
@@ -45,7 +46,9 @@ require("../includes/metadata.php");
                 <div class="govuk-grid-column-full">
                     <?php
                     new title_control("", "", "", "The UK Global Tariff");
-                    new inset_control("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Honesta oratio, Socratica, Platonis etiam. Equidem etiam Epicurum, in physicis quidem, Democriteum puto. Quamquam tu hanc copiosiorem etiam soles dicere. Duo Reges: constructio interrete. Idemque diviserunt naturam hominis in animum et corpus. Sed videbimus. ");
+                    if ($heading_text->text != "") {
+                        new inset_control($heading_text->text);
+                    }
                     ?>
 
                     <?php
@@ -89,7 +92,7 @@ require("../includes/metadata.php");
                                     ?>
                                         <!--<td class="govuk-table__cell"><a class="govuk-link" href="commodity.html?section_id=<?= $goods_nomenclature->section_id ?>&goods_nomenclature_item_id=<?= $heading->goods_nomenclature_item_id ?>&producline_suffix=<?= $heading->producline_suffix ?>&goods_nomenclature_sid=<?= $heading->goods_nomenclature_sid ?>&"><?= $heading->description ?></a></td>//-->
                                         <td class="govuk-table__cell">
-                                            <a class="govuk-link" href="./commodity.html?section_id=<?=$section->section_id?>&goods_nomenclature_item_id=<?= $heading->goods_nomenclature_item_id ?>&wts=1&day_start=1&month_start=1&year_start=2020&day_end=31&month_end=12&year_end=2020&range=<?= substr($heading->goods_nomenclature_item_id, 0, 4) ?>&scope=1011&fmt=screen#table_intro"><?= $heading->description ?></a>
+                                            <a class="govuk-link" href="./commodity.html?section_id=<?= $section->section_id ?>&goods_nomenclature_item_id=<?= $heading->goods_nomenclature_item_id ?>&wts=1&day_start=1&month_start=1&year_start=2020&day_end=31&month_end=12&year_end=2020&range=<?= substr($heading->goods_nomenclature_item_id, 0, 4) ?>&scope=1011&fmt=screen#table_intro"><?= $heading->description ?></a>
                                         </td>
                                     <?php
 

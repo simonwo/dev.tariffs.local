@@ -204,8 +204,8 @@ class view_form
                                                 </h2>
                                                 <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
                                                     <ul class="gem-c-related-navigation__link-list" data-module="track-click">
-                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
-                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>">Delete this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>"><img class='inline_icon' src='/assets/images/edit.png'/>Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
+                                                        <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>"><img class='inline_icon' src='/assets/images/delete.png'/>Delete this <?= $this->singularise($config["object_name"]) ?></a></li>
                                                     </ul>
                                                 </nav>
                                                 <?php

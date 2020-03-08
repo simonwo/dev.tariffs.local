@@ -8,6 +8,7 @@
             "object_name": "Workbaskets",
             "title_create": "",
             "title_edit": "",
+            "title_view": "View workbasket",
             "description_keys": "",
             "validate": false,
             "hide_export_link": true,

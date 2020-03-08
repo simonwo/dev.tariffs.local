@@ -755,25 +755,34 @@ class workbasket
         } else {
             $test = -1;
         }
-        if ($this->workbasket_id == $test) {
-            $ret = "<a title='Close this workbasket' href='/workbaskets/actions.php?action=close'><img alt='Close workbasket' src='/assets/images/close.png' /></a>\r\n";
+
+        if ($application->show_workbasket_icons) {
+            $content_open = "<img alt='Open workbasket' src='/assets/images/open.png' /><span>Open workbasket</span>";
+            $content_close = "<img alt='Close workbasket' src='/assets/images/close.png' /><span>Close workbasket</span>";
+            $content_archive = "<img alt='Archive workbasket' src='/assets/images/archive.png' /><span>Archive workbasket</span>";
         } else {
-            //h1 ($application->session->permissions);
+            $content_open = "Withdraw workbasket";
+            $content_close = "Close workbasket";
+            $content_archive = "Archive workbasket";
+        }
+        if ($this->workbasket_id == $test) {
+            $ret = "<li><a class='govuk-link' title='Close this workbasket' href='/workbaskets/actions.php?action=close'>" . $content_close . "</a></li>\r\n";
+        } else {
             if ($application->session->permissions == "Approver") {
                 if (($this->status == 'In progress') || ($this->status == 'Awaiting approval')) {
-                    $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
+                    $ret = "<li><a class='govuk-link' title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'>" . $content_open . "</a></li>\r\n";
                 } elseif ($this->status == 'Published') {
-                    $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+                    $ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a><li>\r\n";
                 } else {
-                    $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                    $ret = "";
                 }
             } else {
                 if ($this->status == 'In progress') {
-                    $ret = "<a title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'><img alt='Open workbasket' src='/assets/images/open.png' /></a>\r\n";
+                    $ret = "<li><a class='govuk-link' title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'>" . $content_open . "</a></li>\r\n";
                 } elseif ($this->status == 'Published') {
-                    $ret = "<a title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'><img alt='Archive workbasket' src='/assets/images/archive.png' /></a>\r\n";
+                    $ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a></li>\r\n";
                 } else {
-                    $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                    $ret = "";
                 }
             }
         }
@@ -784,18 +793,36 @@ class workbasket
     {
         // Withdraw is used to withdraw workbasket from "Awaiting approval" back to "In progress"
         global $application;
+        if ($application->show_workbasket_icons) {
+            $content = "<img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /><span>Withdraw</span>";
+        } else {
+            $content = "Withdraw workbasket";
+        }
         $ret = "";
 
         if ($this->user_id == $application->session->user_id) {
-            //if (($this->status == 'In progress') || ($this->status == 'Awaiting approval') || ($this->status == 'Rejected') || ($this->status == 'Re-editing')) {
             if ($this->status == 'Awaiting approval') {
-                $ret = "<a title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $this->workbasket_id . "'><img alt='Withdraw workbasket' src='/assets/images/withdraw.png' /></a>\r\n";
+                $ret = "<li><a class='govuk-link' title='Withdraw this workbasket' href='/workbaskets/withdraw.html?workbasket_id=" . $this->workbasket_id . "'>" . $content . "</a></li>\r\n";
             } else {
-                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                $ret = "";
             }
         } else {
-            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            $ret = "";
         }
+
+        return ($ret);
+    }
+
+    function show_workbasket_icon_view()
+    {
+        global $application;
+        if ($application->show_workbasket_icons) {
+            $content = "<img alt='View workbasket' src='/assets/images/view.png' /><span>View</span>";
+        } else {
+            $content = "View workbasket";
+        }
+
+        $ret = "<li><a class='govuk-link' title='View this workbasket' href='/workbaskets/view.html?mode=view&workbasket_id=" . $this->workbasket_id . "'>" . $content . "</a></li>\r\n";
 
         return ($ret);
     }
@@ -803,16 +830,21 @@ class workbasket
     function show_workbasket_icon_submit()
     {
         global $application;
+        if ($application->show_workbasket_icons) {
+            $content = "<img alt='Submit workbasket' src='/assets/images/submit.png' /><span>Submit for approval</span>";
+        } else {
+            $content = "Submit for approval";
+        }
         $ret = "";
 
         if ($this->user_id == $application->session->user_id) {
             if (($this->status == 'In progress') || ($this->status == 'Re-editing')) {
-                $ret = "<a title='Submit workbasket for approval' href='/workbaskets/actions.php?action=submit_for_approval&workbasket_id=" . $this->workbasket_id . "'><img alt='Submit workbasket' src='/assets/images/submit.png' /></a>\r\n";
+                $ret = "<li><a class='govuk-link' title='Submit workbasket for approval' href='/workbaskets/actions.php?action=submit_for_approval&workbasket_id=" . $this->workbasket_id . "'>" . $content . "</a></li>\r\n";
             } else {
-                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                $ret = "";
             }
         } else {
-            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            $ret = "";
         }
         return ($ret);
     }
@@ -821,16 +853,21 @@ class workbasket
     function show_workbasket_icon_delete()
     {
         global $application;
+        if ($application->show_workbasket_icons) {
+            $content = "<img alt='Delete workbasket' src='/assets/images/delete.png' /><span>Delete</span>";
+        } else {
+            $content = "Delete workbasket";
+        }
         $ret = "";
 
         if ($this->user_id == $application->session->user_id) {
             if (($this->status == 'In progress') || ($this->status == 'Re-editing')) {
-                $ret = "<a title='Delete this workbasket' href='/workbaskets/workbasket_delete.html?workbasket_id=" . $this->workbasket_id . "'><img alt='Delete workbasket' src='/assets/images/delete.png' /></a>\r\n";
+                $ret = "<li><a class='govuk-link' title='Delete this workbasket' href='/workbaskets/workbasket_delete.html?workbasket_id=" . $this->workbasket_id . "'>" . $content . "</a></li>\r\n";
             } else {
-                $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+                $ret = "";
             }
         } else {
-            $ret = "<img alt='' src='/assets/images/blank.png' />\r\n";
+            $ret = "";
         }
         return ($ret);
     }

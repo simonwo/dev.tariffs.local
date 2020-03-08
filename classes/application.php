@@ -36,19 +36,22 @@ class application
     public $session = null;
     public $conditional_duty_application_options = array();
     public $quotas = array();
+    public $show_workbasket_icons = false;
 
     public function __construct()
     {
         $this->name = "Manage the UK Tariff";
         $this->create_session();
-        // Insert or edit mode
+        
+        // Insert, edit or view mode
         if (isset($_REQUEST["mode"])) {
             $this->mode = $_REQUEST["mode"];
         } else {
-            if ((strpos($_SERVER['PHP_SELF'], "create_edit") !== false) && (strpos($_SERVER['PHP_SELF'], "confirmation") !== false)) {
-                if ($this->mode == "") {
-                    $this->mode = "insert";
-                }
+            if (strpos($_SERVER['PHP_SELF'], "create_edit") !== false){
+                $this->mode = "insert";
+            }
+            elseif (strpos($_SERVER['PHP_SELF'], "view") !== false){
+                $this->mode = "view";
             }
         }
 
@@ -133,6 +136,8 @@ class application
             $this->data = json_decode($this->filters_content, true);
             $this->object_name =  $this->data[$this->tariff_object]["config"]["object_name"];
         }
+
+
     }
 
     public function get_duty_expressions()
@@ -1045,8 +1050,7 @@ class application
                         $additional_code_type->next_id = $row['next_id'];
                     }
                 }
-            }
-            else {
+            } else {
                 $additional_code_type->next_id = 999;
             }
         }
@@ -1911,11 +1915,13 @@ class application
                 $wb->created_at_string = short_date_time($wb->created_at);
                 $wb->updated_at_string = short_date($wb->updated_at);
                 $wb->status = $row['status'];
-                $wb->actions = "";
+                $wb->actions = "<ul class='measure_activity_action_list'>";
+                $wb->actions .= $wb->show_workbasket_icon_view();
                 $wb->actions .= $wb->show_workbasket_icon_open_close();
                 $wb->actions .= $wb->show_workbasket_icon_withdraw();
                 //$wb->actions .= $wb->show_workbasket_icon_submit();
                 $wb->actions .= $wb->show_workbasket_icon_delete();
+                $wb->actions .= "</ul>";
                 $status_text = $wb->status;
 
                 if (isset($this->session->workbasket->workbasket_id)) {

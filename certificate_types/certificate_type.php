@@ -127,7 +127,7 @@ class certificate_type
         setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
 
         $this->application_code = get_formvar("application_code", "", True);
-        $this->mode = get_formvar("mode");
+        $application->mode = get_formvar("mode");
         $this->set_dates();
 
         # Check on the measure type series id
@@ -135,7 +135,7 @@ class certificate_type
             array_push($errors, "certificate_type_code");
         }
         # If we are creating, check that the measure type ID does not already exist
-        if ($this->mode == "insert") {
+        if ($application->mode == "insert") {
             if ($this->exists()) {
                 array_push($errors, "certificate_type_exists");
             }

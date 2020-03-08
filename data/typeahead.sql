@@ -649,7 +649,7 @@ and producline_suffix = '80'
 ORDER BY random()
 LIMIT 10;
 
--- get 5 random additional codes
+-- get 5 random additional code	s
 select additional_code_type_id || additional_code as additional_code
 from additional_codes where validity_end_date is null
 ORDER BY random()
@@ -2668,4 +2668,21 @@ order by wi.created_at;
 
 select * from ml.chapters
 
-select * from goods
+select additional_code_type_id, additional_code, additional_code_sid, count(*)
+from additional_code_descriptions acd 
+group by additional_code_type_id, additional_code, additional_code_sid 
+order by 4 desc;
+
+
+select * from ml.goods_nomenclature_export_new('2903%', '2020-02-01') order by 2, 3;
+
+select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, mc.duty_expression_id,
+mc.duty_amount, mc.monetary_unit_code, mc.measurement_unit_code, mc.measurement_unit_qualifier_code,
+m.validity_start_date, m.validity_end_date, mtd.description as measure_type_description, m.additional_code_type_id, m.additional_code
+from measure_type_descriptions mtd, ml.measures_real_end_dates m
+left outer join measure_components mc
+on m.measure_sid = mc.measure_sid
+where m.measure_type_id = mtd.measure_type_id
+and m.validity_start_date <= '2020-01-01'
+and (m.validity_end_date is null or m.validity_end_date >= '2020-01-01')
+and m.measure_type_id in ('103', '105')  and left(m.goods_nomenclature_item_id, 4) = '2938'  order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id;

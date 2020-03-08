@@ -2,16 +2,15 @@
     "footnotes": {
         "config": {
             "title": "Find and edit footnotes",
+            "title_create": "Create a new footnote",
+            "title_edit": "Edit footnote",
+            "title_view": "Footnote {footnote_type_id}{footnote_id}",
             "inset": "Enter criteria to help find a footnote. Alternatively, <a class='govuk-link' href='/footnotes/create_edit.html'>create a new footnote</a>.",
             "freetext_fields": "f.description|f.footnote_type_id + f.footnote_id",
             "default_sort_fields": "f.footnote_type_id|f.footnote_id",
             "object_name": "Footnotes",
-            "title_create": "Create a new footnote",
-            "xtitle_edit": "Edit footnote {footnote_type_id}{footnote_id}",
-            "title_edit": "Edit footnote",
             "url_edit": "./create_edit.html?mode=update&footnote_type_id={footnote_type_id}&footnote_id={footnote_id}",
             "url_view": "./view.html?mode=view&footnote_type_id={footnote_type_id}&footnote_id={footnote_id}",
-            "title_view": "Footnote {footnote_type_id}{footnote_id}",
             "description_keys": "footnote_type_id|footnote_id",
             "validate": false,
             "buttons": {

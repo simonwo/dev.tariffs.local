@@ -2,12 +2,13 @@
     "goods_nomenclatures": {
         "config": {
             "title": "Find and edit commodity codes",
+            "title_create": "Create a new goods nomenclature",
+            "title_edit": "Edit goods nomenclature",
+            "title_view": "View commodity code {goods_nomenclature_item_id}",
             "inset": "Enter criteria to help find a commodity code.",
             "freetext_fields": "description|gn.goods_nomenclature_item_id",
             "default_sort_fields": "goods_nomenclature_item_id|producline_suffix",
             "object_name": "Goods nomenclatures",
-            "title_create": "Create a new goods nomenclature",
-            "title_edit": "Edit goods nomenclature",
             "description_keys": "goods_nomenclature_sid|goods_nomenclature_item_id",
             "validate": true,
             "buttons": {

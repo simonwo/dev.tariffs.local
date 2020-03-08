@@ -47,6 +47,7 @@
             "title_create": "New measures",
             "title_edit": "Edit measure",
             "url_edit": "./workwith.html?measure_sid={measure_sid}",
+            "url_view": "",
             "title_view": "Measure {measure_sid}",
             "description_keys": "measure_sid",
             "validate": false,

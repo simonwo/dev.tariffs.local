@@ -40,16 +40,16 @@ class rules_of_origin_scheme
 
     public function get_parameters()
     {
-        global $error_handler;
+        global $error_handler, $application;
         $this->rules_of_origin_scheme_sid = trim(get_querystring("rules_of_origin_scheme_sid"));
-        $this->mode = trim(get_querystring("mode"));
-        if ($this->mode == "") {
-            $this->mode = "insert";
+        $application->mode = trim(get_querystring("mode"));
+        if ($application->mode == "") {
+            $application->mode = "insert";
         }
 
         if (empty($_GET)) {
             $this->clear_cookies();
-        } elseif ($this->mode == "insert") {
+        } elseif ($application->mode == "insert") {
             $this->populate_from_cookies();
         } else {
             if (empty($error_handler->error_string)) {
@@ -163,6 +163,7 @@ class rules_of_origin_scheme
     // Validate form
     function validate_form()
     {
+        global $application;
         $errors = array();
         $this->additional_code_type_id = get_formvar("additional_code_type_id", "", True);
         $this->description = get_formvar("description", "", True);
@@ -180,7 +181,7 @@ class rules_of_origin_scheme
         setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
 
         $this->application_code = get_formvar("application_code", "", True);
-        $this->mode = get_formvar("mode");
+        $application->mode = get_formvar("mode");
         $this->set_dates();
 
         # Check on the measure type series id
@@ -189,7 +190,7 @@ class rules_of_origin_scheme
         }
 
         # If we are creating, check that the measure type ID does not already exist
-        if ($this->mode == "insert") {
+        if ($application->mode == "insert") {
             if ($this->exists()) {
                 array_push($errors, "additional_code_type_exists");
             }
@@ -237,7 +238,7 @@ class rules_of_origin_scheme
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit.html?err=1&mode=" . $this->mode . "&measure_type_id=" . $this->measure_type_id;
+            $url = "create_edit.html?err=1&mode=" . $application->mode . "&measure_type_id=" . $this->measure_type_id;
         } else {/*
  if ($create_edit == "create") {
  // Do create scripts
