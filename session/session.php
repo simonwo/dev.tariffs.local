@@ -16,7 +16,7 @@ class session
             session_start();
         }
         $script_name = $_SERVER["SCRIPT_NAME"];
-        if (strpos($script_name, 'api') !== false) {
+        if ((strpos($script_name, 'api') !== false) || (strpos($script_name, 'global_tariff') !== false) || (strpos($script_name, 'gt') !== false)) {
             $this->api = true;
         }
 

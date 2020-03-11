@@ -69,14 +69,16 @@ class detail_table_control
                             <td class="govuk-table__cell"><?= short_date($item->validity_start_date) ?></td>
                             <td class="govuk-table__cell"><?= $item->description ?></td>
                             <td class="govuk-table__cell r" nowrap>
-                                <a class="govuk-link" title="Edit this <?= $this->object_description ?>" href="<?= $edit_url ?>"><img src="/assets/images/edit.png" alt="Edit" /></a>
+                            <ul class="measure_activity_action_list">
+                                <li><a class="govuk-link" title="Edit this <?= $this->object_description ?>" href="<?= $edit_url ?>"><img src="/assets/images/edit.png" alt="Edit" /><span>Edit description</span></a></li>
                                 <?php
                                 if ($index != $count) {
                                 ?>
-                                    <a class="govuk-link" title="Delete this <?= $this->object_description ?>" href="<?= $delete_url ?>"><img src="/assets/images/delete.png" alt="Delete" /></a>
+                                    <li><a class="govuk-link" title="Delete this <?= $this->object_description ?>" href="<?= $delete_url ?>"><img src="/assets/images/delete.png" alt="Delete" /><span>Delete description</span></a></li>
                                 <?php
                                 }
                                 ?>
+                                </ul>
                             </td>
                         </tr>
                     <?php

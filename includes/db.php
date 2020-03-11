@@ -53,7 +53,7 @@ require(dirname(__FILE__) . "../../classes/member.php");
 require(dirname(__FILE__) . "../../classes/cryptor.php");
 require(dirname(__FILE__) . "../../classes/link.php");
 require(dirname(__FILE__) . "../../rules_of_origin_schemes/rules_of_origin_scheme.php");
-require(dirname(__FILE__) . "../../global_tariff/heading_text.php");
+require(dirname(__FILE__) . "../../global_tariff_old/heading_text.php");
 
 /* Extract classes */
 require(dirname(__FILE__) . "../../classes/extract.php");
@@ -958,7 +958,7 @@ function format_field_name($s)
     $s = str_replace('additional_code_type_id', 'Type', $s);
     $s = str_replace('footnote_type_id', 'Type', $s);
     $s = str_replace('certificate_type_code', 'Code', $s);
-    $s = str_replace('operation', 'action', $s);
+    $s = str_replace('operation', 'activity', $s);
     $s = str_replace('validity_', '', $s);
     $s = str_replace('_', ' ', $s);
     $s = ucfirst($s);

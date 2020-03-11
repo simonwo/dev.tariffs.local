@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+ <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" href="../img/ico.png" sizes="16x16" type="image/ico">        
+       
+        <!--Load JQuery-->
+        <script src="../lib/jquery-3.3.1.js" type="text/javascript"></script> 
+       
+        <!--Load Bootstrap-->
+        <link href="../lib/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="../lib/bootstrap-4.3.1-dist/css/glyphicons.css" rel="stylesheet" type="text/css"/>
+        <script src="../lib/bootstrap-4.3.1-dist/js/bootstrap.min.js" type="text/javascript"></script>
+        <!--Load D3-->
+        <script src="../lib/d3_3.5.17.js" type="text/javascript"></script>
+        <!--Load crossfilter-->
+        <script src="../lib/crossfilter_1_4_6.js" type="text/javascript"></script>
+        
+        <!--Load DC-->
+        <link href="../lib/dc.js-2.1.10/dc.css" rel="stylesheet" type="text/css"/>
+        <script src="../lib/dc.js-2.1.10/dc.js" type="text/javascript"></script>
+
+       <!--Load dataTables-->
+         <script src="../lib/data_table_min.js" type="text/javascript"></script>
+       
+       <!--NOTE: use datatablemin.css else data table icons will not work!--> 
+        <link href="../lib/data_tables/DataTables-1.10.18/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
+        
+        <link href="../lib/data_tables/searchHighlight/dataTables.searchHighlight.css" rel="stylesheet" type="text/css"/>
+        <script src="../lib/data_tables/searchHighlight/dataTables.searchHighlight.min.js" type="text/javascript"></script>                 
+       <script src="../lib/data_tables/searchHighlight/jquery_highlight_plugin.js" type="text/javascript"></script>
+    
+       
+       <script src="../lib/data_tables/export/buttons.html5.min.js" type="text/javascript"></script>
+       <script src="../lib/data_tables/export/buttons.print.min.js" type="text/javascript"></script>
+       <script src="../lib/data_tables/export/dataTables.buttons.min.js" type="text/javascript"></script>
+       <script src="../lib/data_tables/export/jszip.min.js" type="text/javascript"></script>
+       <script src="../lib/data_tables/export/vfs_fonts.js" type="text/javascript"></script>
+
+           
+     
+        <link href="css/myStyle.css" rel="stylesheet" type="text/css"/>
+        <script src="data/myds.js"></script>
+    </head>        
+
+    <body>
+        
+        
+
+        <h1>Trade Tariff: changes to commodity rates</h1>
+        <div id="mytable" class="row container-fluid" >
+            <div class="col-lg-1"></div>
+            
+                <div class="col-lg-10">
+                <table class="table table-striped table-bordered table-hover" id="alltable" cellspacing="0">
+                        <thead>
+                                <tr>
+                                    <th>Tariff name</th>
+                                    <th>Old rate</th>
+                                    <th>New rate</th>
+                                    <th>Change</th>
+                                    <th>Change text</th>
+                                    <th>
+                                        <span class="glyphicon glyphicon-arrow-up" style="color:blue"></span>
+                                        <span class="glyphicon glyphicon-arrow-down" style="color:red"></span>
+                                        </th>
+                                   
+                                 
+                                </tr>
+                        </thead>
+
+                        <tbody class="ds_table">
+                            
+                        </tbody>
+                </table>         
+                </div>
+            <div class="col-lg-1"></div>
+            </div> <!--table end-->
+       
+            
+        
+        <script>
+
+//auto create columns info for dataTables.js
+var colNames = [];
+for (let i = 0; i < Object.keys(tariffDs[0]).length; i++){
+colNames.push({data:Object.keys(tariffDs[0])[i]});
+}
+
+$('#alltable').DataTable({
+            pageLength: 25,
+             "autoWidth": false, //allows bootstrap to manage width by giving table 100% width
+//            scrollX:true,
+//            scrollY:600,
+            searchHighlight: true,
+            data: tariffDs,
+//            'render': function (data, type, full, meta) {
+//      return '<img src="../img/ico.png" style="height:100px;width:100px;"/>';
+//                        },
+//            language:{thousands:","}, 
+            deferRender: true,
+            dom: 'Blfrtip',//need this to ensure buttons below work
+            buttons: [{extend: 'csv',title:"My table".downloadFileName},
+                      {extend: 'excel',title:"My table".downloadFileName}
+            ],
+
+
+// <th>Car</th>
+//                                    <th>Max speed</th>
+//                                    <th>Colour</th>
+//                                    <th>Cost</th>
+
+
+
+
+
+columns:colNames
+,
+"columnDefs": [ {
+                    "targets": 5,
+                    "orderable": false,
+                // "className": "dt-center", "targets": "_all",
+                    "className": "dt-center", //makes image center to page
+                    "data": null,
+                    "render": function ( data, type, row, meta ) {
+                            return row.img;
+                            }
+            } ] //end colDef
+
+
+} ); //end dataTables fun            
+            
+        </script>
+        
+
+
+
+        <script>
+//            NOTES
+//            
+//    
+//columns:[
+//{data:"car",width:"400px"},
+//{data:"max_speed",width:"400px"},
+//{data:"colour",width:"400px"},
+//{data:"cost",width:"400px"},
+//{data:"Img",width:"400px"}
+//]
+//                    
+//"data": null,
+//"render": function ( data, type, row, meta ) {
+//      return '<a href="'+data+'">Download</a>';
+//console.log(row);//gives you each row in ds as object
+//return '<img src="../img/ico.png" style="height:100px;width:100px;"/>';
+//return '<img src="'+row.img+'" style="width:30px;">';
+
+    
+//            
+//columnDefs:[
+//{title:"Response ID",targets:0},
+//{title:"What is the name of your business?",targets:1},
+//{title:"Is your business aware of the Economic Partnership Agreement (EPA) that came into force between the EU and Japan in February this year?", targets:2},
+//{title:"Which of the following trade related areas best describe the areas of the Economic Partnership Agreement that are  important to your business?",targets:3}
+//
+//  ]
+
+        </script>        
+        
+    </body>
+</html>

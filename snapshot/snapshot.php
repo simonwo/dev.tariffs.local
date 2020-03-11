@@ -158,6 +158,8 @@ class snapshot
                         if ($commodity->combined_duty != "leaf - no third country duty") {
                             $pair = new temp_object();
                             $pair->node = $commodity->node;
+                            $pair->commodity = substr($commodity->goods_nomenclature_item_id, 0, 8);
+                            $pair->description = $friendly_description;
                             $pair->commodity_description = substr($commodity->goods_nomenclature_item_id, 0, 8) . ' - ' . $friendly_description;
                             $pair->duty_string = $commodity->combined_duty;
                             array_push($pairs, $pair);
@@ -169,6 +171,8 @@ class snapshot
                             $measure_index += 1;
                             $pair = new temp_object();
                             $pair->node = $commodity->node;
+                            $pair->commodity = substr($commodity->goods_nomenclature_item_id, 0, 8);
+                            $pair->description = $friendly_description;
                             $pair->commodity_description = substr($commodity->goods_nomenclature_item_id, 0, 8) . ' - ' . $friendly_description;
                             $pair->duty_string = $measure->combined_duty;
                             array_push($pairs, $pair);
@@ -177,6 +181,8 @@ class snapshot
                 } else {
                     $pair = new temp_object();
                     $pair->node = $commodity->node;
+                    $pair->commodity = substr($commodity->goods_nomenclature_item_id, 0, 8);
+                    $pair->description = $friendly_description;
                     $pair->commodity_description = substr($commodity->goods_nomenclature_item_id, 0, 8) . ' - ' . $friendly_description;
                     $pair->duty_string = "";
                     array_push($pairs, $pair);
@@ -212,15 +218,18 @@ class snapshot
         $pair_count = count($pairs);
         $pair_index = 0;
         if ($pair_count > 0) {
-            echo ("[" . $this->delimiter);
+            echo ('{"data": [' . $this->delimiter);
             foreach ($pairs as $pair) {
                 $pair_index += 1;
                 echo ('  {' . $this->delimiter);
                 if ($this->omit_duties == 1) {
                     echo ('    "text": "' . $pair->commodity_description . '"' . $this->delimiter);
                 } else {
-                    echo ('    "text": "' . $pair->commodity_description . '",' . $this->delimiter);
-                    echo ('    "bound": "' . $pair->duty_string . '"' . $this->delimiter);
+                    echo ('    "commodity": "' . $pair->commodity . '",' . $this->delimiter);
+                    echo ('    "description": "' . $pair->description . '",' . $this->delimiter);
+                    echo ('    "cet_duty_rate": "' . $pair->duty_string . '",' . $this->delimiter);
+                    echo ('    "ukgt_duty_rate": "' . $pair->duty_string . '",' . $this->delimiter);
+                    echo ('    "change": "' . "Liberalised" . '"' . $this->delimiter);
                 }
                 echo ('  }');
                 if ($pair_index != $pair_count) {
@@ -228,7 +237,7 @@ class snapshot
                 }
                 echo ($this->delimiter);
             }
-            echo ("]" . $this->delimiter);
+            echo ("]}" . $this->delimiter);
         }
         echo ($this->end_string);
         die();

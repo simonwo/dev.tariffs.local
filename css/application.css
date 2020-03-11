@@ -1536,8 +1536,9 @@ ul.measure_activity_action_list {
     border-bottom: 1px solid #ebf4fc;
     padding-top: 2px;
     padding-bottom: 3px;
-    float:left;
+    float: left;
 }
+
 td .json:first-of-type {
     padding-top: 0px;
 }
@@ -1550,69 +1551,127 @@ td .json:first-of-type {
 
 .gt_indent_0 {
     background-position-x: 0.6em;
-    padding-left:24px;
+    padding-left: 24px;
 }
+
 .gt_indent_1 {
     background-position-x: 1.6em;
-    padding-left:40px;
+    padding-left: 40px;
 }
+
 .gt_indent_2 {
     background-position-x: 2.6em;
-    padding-left:56px;
-
+    padding-left: 56px;
 }
+
 .gt_indent_3 {
     background-position-x: 3.6em;
-    padding-left:72px;
-
+    padding-left: 72px;
 }
+
 .gt_indent_4 {
     background-position-x: 4.6em;
-    padding-left:88px;
-
+    padding-left: 88px;
 }
+
 .gt_indent_5 {
     background-position-x: 5.6em;
-    padding-left:104px;
-
+    padding-left: 104px;
 }
+
 .gt_indent_6 {
     background-position-x: 6.6em;
-    padding-left:120px;
-
+    padding-left: 120px;
 }
+
 .gt_indent_7 {
     background-position-x: 7.6em;
-    padding-left:134px;
+    padding-left: 134px;
 }
+
 .gt_indent_8 {
     background-position-x: 8.6em;
-    padding-left:150px;
+    padding-left: 150px;
 }
+
 .gt_indent_9 {
     background-position-x: 9.6em;
-    padding-left:166px;
+    padding-left: 166px;
 }
+
 .gt_indent_10 {
     background-position-x: 10.6em;
-    padding-left:182px;
+    padding-left: 182px;
 }
+
 .gt_indent_11 {
     background-position-x: 11.6em;
-    padding-left:198px;
+    padding-left: 198px;
 }
+
 .gt_indent_12 {
     background-position-x: 12.6em;
-    padding-left:214px;
+    padding-left: 214px;
 }
+
 .gt_indent_13 {
     background-position-x: 13.6em;
-    padding-left:230px;
+    padding-left: 230px;
 }
+
 .pls_intermediate {
-    color:#666;
+    color: #666;
 }
+
 .change img {
     /*position: relative;*/
-    height:20px;
+    height: 20px;
+}
+
+main#main-content table#alltable {
+    width: 100% !important;
+    min-width: 840px !important;
+}
+
+div.dt-buttons {
+    position: relative;
+    float: left;
+    top:3em;
+    left:0px;
+    width:100%;
+}
+#alltable_filter label {
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale
+   
+}
+
+#alltable_length label {
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#alltable_paginate  {
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+div#alltable_length select {
+    margin-left:0.5em;
+    margin-right:0.5em;
+    font-family: GDS Transport, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#alltable {
+    margin-bottom: 1em;
+}
+
+#alltable_paginate a.current {
+    border:1px #1D70B8 solid !important;
+    background: none !important;
+    background-color: #fff !important;
 }

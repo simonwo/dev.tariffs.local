@@ -1,0 +1,597 @@
+{"data": [
+  {
+    "commodity": "01000000",
+    "description": "LIVE ANIMALS",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01010000",
+    "description": "Live horses, asses, mules and hinnies",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012100",
+    "description": "Pure-bred breeding horses",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012900",
+    "description": "Live horses (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012910",
+    "description": "Horses for slaughter",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012990",
+    "description": "Live horses (excl. for slaughter, pure-bred for breeding)",
+    "cet_duty_rate": "11.5%",
+    "ukgt_duty_rate": "11.5%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01013000",
+    "description": "Live asses",
+    "cet_duty_rate": "7.7%",
+    "ukgt_duty_rate": "7.7%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01019000",
+    "description": "Live mules and hinnies",
+    "cet_duty_rate": "10.9%",
+    "ukgt_duty_rate": "10.9%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01020000",
+    "description": "Live bovine animals",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022100",
+    "description": "Pure-bred cattle for breeding",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022110",
+    "description": "Pure-bred breeding heifers 'female bovines that have never calved'",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022130",
+    "description": "Pure-bred breeding cows (excl. heifers)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022190",
+    "description": "Pure-bred cattle for breeding (excl. heifers and cows)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022900",
+    "description": "Live cattle (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022905",
+    "description": "Live cattle of the sub-genus Bibos or Poephagus (excl. pure-bred for breeding)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022910",
+    "description": "Live cattle of a weight <= 80 kg (excl. pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022921",
+    "description": "Cattle of a weight > 80 kg but <= 160 kg, for slaughter",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022929",
+    "description": "Live cattle of a weight > 80 kg but <= 160 kg (excl. for slaughter, pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022941",
+    "description": "Cattle of a weight > 160 kg but <= 300 kg, for slaughter",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022949",
+    "description": "Live cattle of a weight > 160 kg but <= 300 kg (excl. for slaughter, pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022951",
+    "description": "Heifers 'female bovines that have never calved' of a weight > 300 kg, for slaughter",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022959",
+    "description": "Live heifers 'female bovines that have never calved' of a weight > 300 kg (excl. for slaughter and pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022961",
+    "description": "Cows of a weight > 300 kg, for slaughter (excl. heifers)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022969",
+    "description": "Live cows of a weight > 300 kg (excl. for slaughter and pure-bred for breeding and heifers)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022991",
+    "description": "Cattle of a weight > 300 kg, for slaughter (excl. heifers and cows)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01022999",
+    "description": "Live cattle of a weight > 300 kg (excl. for slaughter, pure-bred for breeding and heifers and cows)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01023100",
+    "description": "Pure-bred buffalo for breeding",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01023900",
+    "description": "Live buffalo (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01023910",
+    "description": "Live domestic buffalo (excl. pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01023990",
+    "description": "Live buffalo (excl. domestic species and pure-bred for breeding)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01029000",
+    "description": "Live bovine animals (excl. cattle and buffalo)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01029020",
+    "description": "Bovine pure-bred breeding animals (excl. cattle and buffalo)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01029091",
+    "description": "Live domestic bovine animals (excl. cattle and buffalo and pure-bred for breeding)",
+    "cet_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "ukgt_duty_rate": "10.2%  + 93.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01029099",
+    "description": "Live bovine animals (excl. cattle, buffalo, pure-bred for breeding and domestic species)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01030000",
+    "description": "Live swine",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01031000",
+    "description": "Pure-bred breeding swine",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039100",
+    "description": "Live pure-bred swine, weighing < 50 kg (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039110",
+    "description": "Domestic swine, weighing < 50 kg (excl. pure-bred for breeding)",
+    "cet_duty_rate": "41.2 EUR / 100 kg",
+    "ukgt_duty_rate": "41.2 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039190",
+    "description": "Live non-domestic swine, weighing < 50 kg",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039200",
+    "description": "Live pure-bred swine, weighing >= 50 kg (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039211",
+    "description": "Live domestic sows, having farrowed at least once, weighing >= 160 kg (excl. pure-bred for breeding)",
+    "cet_duty_rate": "35.1 EUR / 100 kg",
+    "ukgt_duty_rate": "35.1 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039219",
+    "description": "Live domestic swine, weighing >= 50 kg (excl. sows having farrowed at least once and weighing >= 160 kg, and those pure-bred for breeding)",
+    "cet_duty_rate": "41.2 EUR / 100 kg",
+    "ukgt_duty_rate": "41.2 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01039290",
+    "description": "Live non-domestic swine, weighing >= 50 kg",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01040000",
+    "description": "Live sheep and goats",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01041000",
+    "description": "Live sheep",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01041010",
+    "description": "Pure-bred sheep for breeding",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01041030",
+    "description": "Live lambs 'sheep up to a year old' (excl. purebred breeding animals)",
+    "cet_duty_rate": "80.5 EUR / 100 kg",
+    "ukgt_duty_rate": "80.5 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01041080",
+    "description": "Live sheep (excl. lambs and pure-bred breeding animals)",
+    "cet_duty_rate": "80.5 EUR / 100 kg",
+    "ukgt_duty_rate": "80.5 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01042000",
+    "description": "Live goats",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01042010",
+    "description": "Pure-bred breeding goats",
+    "cet_duty_rate": "3.2%",
+    "ukgt_duty_rate": "3.2%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01042090",
+    "description": "Live goats (excl. pure-bred for breeding)",
+    "cet_duty_rate": "80.5 EUR / 100 kg",
+    "ukgt_duty_rate": "80.5 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01050000",
+    "description": "Live poultry, 'fowls of the species Gallus domesticus, ducks, geese, turkeys and guinea fowls'",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051100",
+    "description": "Live fowls of the species Gallus domesticus, weighing <= 185 g (excl. turkeys and guinea fowls)",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051111",
+    "description": "Grandparent and parent female chicks of fowls of the species Gallus domesticus laying stocks of a weight of <= 185 g",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051119",
+    "description": "Grandparent and parent female chicks fowls of the species Gallus domesticus of a weight of <= 185 g (excl. laying stocks)",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051191",
+    "description": "Laying stock 'fowls of the species Gallus domesticus' of a weight of <= 185 g (excl. grandparent and parent female chicks)",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051199",
+    "description": "Live fowls of the species Gallus domesticus of a weight of <= 185 g (excl. grandparent and parent female chicks and laying stocks)",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051200",
+    "description": "Live domestic turkeys, weighing <= 185 g",
+    "cet_duty_rate": "152.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "152.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051300",
+    "description": "Live domestic ducks, weighing <= 185 g",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051400",
+    "description": "Live domestic geese, weighing <= 185 g",
+    "cet_duty_rate": "152.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "152.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01051500",
+    "description": "Live domestic guinea fowls, weighing <= 185 g",
+    "cet_duty_rate": "52.0 EUR / 1,000 items",
+    "ukgt_duty_rate": "52.0 EUR / 1,000 items",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059400",
+    "description": "Live fowls of the species Gallus domesticus, weighing > 185",
+    "cet_duty_rate": "20.9 EUR / 100 kg",
+    "ukgt_duty_rate": "20.9 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059900",
+    "description": "Live domestic ducks, geese, turkeys and guinea fowls, weighing > 185 g",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059910",
+    "description": "Live domestic ducks, weighing > 185 g",
+    "cet_duty_rate": "32.3 EUR / 100 kg",
+    "ukgt_duty_rate": "32.3 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059920",
+    "description": "Live domestic geese, weighing > 185 g",
+    "cet_duty_rate": "31.6 EUR / 100 kg",
+    "ukgt_duty_rate": "31.6 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059930",
+    "description": "Live domestic turkeys, weighing > 185 g",
+    "cet_duty_rate": "23.8 EUR / 100 kg",
+    "ukgt_duty_rate": "23.8 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01059950",
+    "description": "Live domestic guinea fowls, weighing > 185 g",
+    "cet_duty_rate": "34.5 EUR / 100 kg",
+    "ukgt_duty_rate": "34.5 EUR / 100 kg",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01060000",
+    "description": "Live animals (excl. horses, asses, mules, hinnies, bovine animals, swine, sheep, goats, poultry, fish, crustaceans, molluscs and other aquatic invertebrates, and microorganic cultures etc.)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061100",
+    "description": "Live primates",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061200",
+    "description": "Live whales, dolphins and porpoises (mammals of the order Cetacea); manatees and dugongs (mammals of the order Sirenia); seals, sea lions and walruses (mammals of the suborder Pinnipedia)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061300",
+    "description": "Live camels and other camelids [Camelidae]",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061400",
+    "description": "Live rabbits and hares",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061410",
+    "description": "Live domestic rabbits",
+    "cet_duty_rate": "3.8%",
+    "ukgt_duty_rate": "3.8%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061490",
+    "description": "Live rabbits and hares (excl. domestic rabbits)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01061900",
+    "description": "Live mammals (excl. primates, whales, dolphins and porpoises, manatees and dugongs, seals, sea lions and walruses, camels and other camelids, rabbits and hares, horses, asses, mules, hinnies, bovines, pigs, sheep and goats)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01062000",
+    "description": "Live reptiles 'e.g. snakes, turtles, alligators, caymans, iguanas, gavials and lizards'",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063100",
+    "description": "Live birds of prey",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063200",
+    "description": "Live psittaciformes 'incl. parrots, parrakeets, macaws and cockatoos'",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063300",
+    "description": "Live ostriches, and emus [Dromaius novaehollandiae]",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063900",
+    "description": "Live birds (excl. birds of prey, psittaciformes, parrots, parrakeets, macaws, cockatoos, ostriches and emus)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063910",
+    "description": "Live pigeons",
+    "cet_duty_rate": "6.4%",
+    "ukgt_duty_rate": "6.4%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01063980",
+    "description": "Live birds (excl. birds of prey, psittaciformes, parrots, parrakeets, macaws, cockatoos, ostriches, emus and pigeons)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01064100",
+    "description": "Live bees",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01064900",
+    "description": "Live insects (excl. bees)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01069000",
+    "description": "Live animals (excl. mammals, reptiles, birds, insects, fish, crustaceans, molluscs and other aquatic invertebrates and cultures of micro-organisms, etc.)",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  }
+]}

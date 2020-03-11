@@ -1,0 +1,30 @@
+{"data": [
+  {
+    "commodity": "01000000",
+    "description": "LIVE ANIMALS",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01010000",
+    "description": "Live horses, asses, mules and hinnies",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012100",
+    "description": "Pure-bred breeding horses",
+    "cet_duty_rate": "0.0%",
+    "ukgt_duty_rate": "0.0%",
+    "change": "Liberalised"
+  },
+  {
+    "commodity": "01012900",
+    "description": "Live horses (excl. pure-bred for breeding)",
+    "cet_duty_rate": "n/a",
+    "ukgt_duty_rate": "n/a",
+    "change": "Liberalised"
+  }
+]}
