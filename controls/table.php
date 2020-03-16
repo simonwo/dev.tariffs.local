@@ -9,7 +9,12 @@ class table_control
     {
         global $application;
         $this->dataset = $dataset;
-        //pre ($dataset);
+        $uri = $_SERVER["REQUEST_URI"];
+        if (strpos($uri, "measures") !== false) {
+            $this->table_class = " govuk-table--s";
+        } else {
+            $this->table_class = " govuk-table--m";
+        }
         $this->custom_no_results_message = $custom_no_results_message;
         $this->group_by = $group_by;
 
@@ -53,7 +58,7 @@ class table_control
 
         ?>
         <!-- Start table control //-->
-        <table class="govuk-table govuk-table--m sticky" id="results">
+        <table class="govuk-table <?= $this->table_class ?> sticky" id="results">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <?php
@@ -64,6 +69,12 @@ class table_control
                         $column_name2 = $this->cleanse_column_name($column_name);
                         $tooltip = $column["tooltip"];
                         $align = $column["align"];
+                        if (isset($column["treatment"])) {
+                            $treatment = $column["treatment"];
+                        } else {
+                            $treatment = "";
+                        }
+                        //h1 ($treatment);
 
                         if ($sort_field == "") {
                             $up_down = "";
@@ -90,7 +101,19 @@ class table_control
                             $described_by = "";
                             $tooltip_content = "";
                         }
-                        echo ('<th scope="col" class="govuk-table__header ' . $arrow_class . ' tip ' . $align_class . '"' . $described_by . '>' . $column_name . $tooltip_content . $up_down . '</th>' . "\xA");
+                        if ($treatment == "checkbox") {
+                            $control_id = "select_all";
+                            echo ('<th scope="col" class="govuk-table__header">');
+                            echo ('<div class="govuk-checkboxes govuk-checkboxes--vsmall">');
+                            echo ('<div class="govuk-checkboxes__item">');
+                            echo ('<input checked class="govuk-checkboxes__input" id="' . $control_id . '" name="' . $control_id . '" type="checkbox" value="alls">');
+                            echo ('<label class="govuk-label govuk-checkboxes__label govuk-checkboxes__label" for="' . $control_id . '">Select&nbsp;all</label>');
+                            echo ('</div>');
+                            echo ('</div>');
+                            echo ('</th>');
+                        } else {
+                            echo ('<th scope="col" class="govuk-table__header ' . $arrow_class . ' tip ' . $align_class . '"' . $described_by . '>' . $column_name . $tooltip_content . $up_down . '</th>' . "\xA");
+                        }
                     }
                     ?>
                 </tr>
@@ -104,6 +127,7 @@ class table_control
                         foreach ($this->columns as $column) {
                             $data_column = $column["data_column"];
                             if ($data_column == $this->group_by) {
+
                                 if ($data_item->{$data_column} != "") {
                                     if ($last_group != $data_item->{$data_column}) {
                                         echo ("<tr>");

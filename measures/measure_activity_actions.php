@@ -1,5 +1,6 @@
 <?php
 require(dirname(__FILE__) . "../../includes/db.php");
+prend ($_REQUEST);
 
 $application = new application;
 $error_handler = new error_handler();

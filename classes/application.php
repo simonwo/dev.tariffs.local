@@ -2330,7 +2330,7 @@ class application
 
     public function get_measures()
     {
-        $this->page_size = 500;
+        $this->page_size = 10;
         global $conn;
         $filter_clause = $this->get_filter_clause();
         $offset = ($this->page - 1) * $this->page_size;

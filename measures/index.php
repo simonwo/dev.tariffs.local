@@ -41,7 +41,7 @@ require("../includes/metadata.php");
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                    <form method="post" action="#results">
+                    <form id="measure_search" method="post" action="#results">
                         <?php
                         new title_control("oc", "", "", "Find and edit measures");
                         new inset_control("Enter search criteria to find measures. Alternatively <a class='govuk-link' href='create_edit.html'>create new measures</a>.")
@@ -166,7 +166,7 @@ require("../includes/metadata.php");
                                 </div>
                                 <div class="complex_search_form complex_search_form_column1a">
                                     <label class="govuk-label" for="geographical_area_id">
-                                        is one of
+                                        is
                                     </label>
                                 </div>
                                 <div class="complex_search_form complex_search_form_column2">

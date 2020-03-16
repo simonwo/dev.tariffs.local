@@ -104,9 +104,10 @@ if (count($measure_activity->additional_code_list) > 0) {
     foreach ($measure_activity->commodity_code_list as $cc) {
         $item = new reusable();
         $item->commodity_code = $cc->goods_nomenclature_item_id;
-        $item->duty001 = "";
-        $item->duty002 = "";
-        $item->duty003 = "";
+        //$item->additional_code = "";
+        foreach ($duty_array as $duty) {
+            $item->{$duty->label} = $duty->value;
+        }
         array_push($measure_activity->duty_list, $item);
     }
 }

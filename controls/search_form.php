@@ -85,6 +85,7 @@ class search_form
                     ?>
                     <div class="govuk-grid-row">
                         <?php
+                        //pre ($this);
                         $filter_content = $application->data[$application->tariff_object]["filters"];
                         if ((trim($this->freetext_fields) != "") && (count($filter_content) > 0)) {
                             $main_column_style = "govuk-grid-column-four-fifths";

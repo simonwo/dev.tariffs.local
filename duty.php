@@ -299,7 +299,7 @@ require("includes/metadata.php");
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
-                    <h1 class="govuk-heading-xl">Duties</h1>
+                    <h1 class="govuk-heading-xl">Duty sentence deconstructor</h1>
                     <!-- End main title //-->
                 </div>
             </div>

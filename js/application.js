@@ -99,6 +99,12 @@ $(document).ready(function () {
         source: measure_types,
         limit: 20,
     });
+
+    $('#measure_type_id').typeahead(null, {
+        name: 'measure_types',
+        source: measure_types,
+        limit: 20,
+    });
     /* End measure types typeahead */
 
 
@@ -125,7 +131,7 @@ $(document).ready(function () {
 
 
     /* Start geographical area typeahead */
-    /*
+    
     var geographical_areas = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -137,13 +143,34 @@ $(document).ready(function () {
         }
     });
 
-    $('#geographical_area_id').typeahead(null, {
+    $('#measure_search #geographical_area_id').typeahead(null, {
         name: 'geographical_areas',
         source: geographical_areas,
         limit: 10,
     });
-    */
+    
     /* End geographical area typeahead */
+
+    /* Start ordernumber typeahead */
+    
+    var order_numbers = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        sufficient: 10,
+        prefetch: {
+            url: '/api/v1/quotas/current.php',
+            ttl: 100,
+            cache: true
+        }
+    });
+
+    $('#measure_search #ordernumber, #form_measure_activity #ordernumber').typeahead(null, {
+        name: 'order_numbers',
+        source: order_numbers,
+        limit: 10,
+    });
+    
+    /* End ordernumber typeahead */
 
 
 
@@ -380,11 +407,19 @@ $(document).ready(function () {
     });
 
 
-
     $(".duty").keyup(function (e) {
         if ((e.keyCode != 8) && (e.keyCode != 46)) {
             parse_duty($(this));
         }
+    });
+
+
+    $("#form_measure_activity button").click(function () {
+        var grid_json = document.getElementById("grid_json");
+        var data = JSON.stringify(grid_json.data);
+        console.log(data);
+        console.log("data");
+        alert ("hello");
     });
 
 

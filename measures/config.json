@@ -168,7 +168,7 @@
             {
                 "column_name": "SID",
                 "data_column": "measure_sid",
-                "sort_field": "measure_sid",
+                "sort_field": "",
                 "tooltip": "",
                 "align": "",
                 "treatment": "checkbox"
@@ -194,14 +194,14 @@
                 "data_column": "validity_start_date",
                 "sort_field": "validity_start_date",
                 "tooltip": "",
-                "align": "nw"
+                "align": ""
             },
             {
                 "column_name": "End date",
                 "data_column": "validity_end_date",
                 "sort_field": "validity_end_date",
                 "tooltip": "",
-                "align": "nw"
+                "align": ""
             },
             {
                 "column_name": "Commodity",
@@ -216,7 +216,7 @@
                 "data_column": "additional_code",
                 "sort_field": "additional_code_type_id|additional_code",
                 "tooltip": "",
-                "align": "nw",
+                "align": "",
                 "treatment": "link_additional_code"
             },
             {
@@ -282,6 +282,7 @@
             "object_name": "Measures",
             "title_create": "New measures",
             "title_edit": "",
+            "url_view": "",
             "description_keys": "",
             "validate": false,
             "buttons": {
@@ -397,6 +398,7 @@
             "object_name": "Measures",
             "title_create": "New measures - core data",
             "title_edit": "Edit quota",
+            "url_view": "",
             "description_keys": "",
             "validate": false,
             "buttons": {
@@ -456,7 +458,7 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "Please type the measure type ID or phrases contained in the measure type description.",
                 "control_name": "measure_type_id",
-                "control_style": "govuk-input tt-input",
+                "control_style": "govuk-input",
                 "size": 100,
                 "maxlength": 100,
                 "pattern": "",
@@ -566,6 +568,7 @@
             "object_name": "Measures",
             "title_create": "New measures - commodities and additional codes",
             "title_edit": "Edit quota",
+            "url_view": "",
             "description_keys": "",
             "validate": false,
             "buttons": {
@@ -744,6 +747,7 @@
             "object_name": "Measures",
             "title_create": "New measures - duties",
             "title_edit": "Edit quota",
+            "url_view": "",
             "description_keys": "",
             "validate": false,
             "buttons": {
@@ -857,6 +861,7 @@
             "object_name": "Measures",
             "title_create": "New measures - conditions",
             "title_edit": "Edit quota",
+            "url_view": "",
             "description_keys": "",
             "validate": false,
             "buttons": {
@@ -1033,7 +1038,7 @@
                 "data_column": "reference_price",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "nw"
+                "align": ""
             },
             {
                 "column_name": "Action code",
@@ -1047,7 +1052,7 @@
                 "data_column": "applicable_duty",
                 "sort_field": "",
                 "tooltip": "",
-                "align": "nw"
+                "align": ""
             },
             {
                 "column_name": "Actions",

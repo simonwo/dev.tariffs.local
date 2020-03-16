@@ -1304,28 +1304,27 @@ table.workbaskets tbody tr td.govuk-table__cell img {
 
 .govuk-checkboxes--vsmall .govuk-checkboxes__label {
     margin-top: -2px;
-    /*padding: 13px 15px 13px 1px;*/
     padding: 4px 15px 13px 1px;
     float: left;
-    font-size: 14px;
+    font-size: 12px;
+}
+th .govuk-checkboxes--vsmall .govuk-checkboxes__label {
+    font-weight:bold;
 }
 
 @media (min-width:40.0625em) {
     .govuk-checkboxes--vsmall .govuk-checkboxes__label {
-        /*padding: 11px 15px 10px 1px;*/
         padding: 2px 15px 10px 1px
     }
 }
 
 .govuk-checkboxes--vsmall .govuk-checkboxes__label:before {
-    /*top: 8px;*/
     top: -2px;
     width: 24px;
     height: 24px
 }
 
 .govuk-checkboxes--vsmall .govuk-checkboxes__label:after {
-    /*top: 15px;*/
     top: 6px;
     left: 6px;
     width: 9px;
