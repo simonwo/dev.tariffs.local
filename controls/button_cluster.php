@@ -5,9 +5,11 @@ class button_cluster_control
     public $heading_text = "";
     public $info_text = "";
     public $submit_button_text = "Submit";
+    public $submit_button_id = "";
     public $cancel_button_text = "Cancel";
     public $cancel_button_href = "javascript:history.back();";
     public $save_progress_button_text = "";
+    public $save_progress_button_id = "";
 
     public function __construct($override_text = "")
     {
@@ -45,6 +47,16 @@ class button_cluster_control
             }
         }
 
+        // Get submit button ID
+        if (isset($config["buttons"]["submit_button_id"])) {
+            $this->submit_button_id = $config["buttons"]["submit_button_id"];
+        }
+
+        // Get save progress button ID
+        if (isset($config["buttons"]["save_progress_button_id"])) {
+            $this->save_progress_button_id = $config["buttons"]["save_progress_button_id"];
+        }
+
         // Get cancel button text
         if (isset($config["buttons"]["cancel_button_text"])) {
             $this->cancel_button_text = $config["buttons"]["cancel_button_text"];
@@ -65,6 +77,16 @@ class button_cluster_control
 
     private function display()
     {
+        if ($this->submit_button_id != "") {
+            $submit_button_id_string = " id='" . $this->submit_button_id . "'";
+        } else {
+            $submit_button_id_string = "";
+        }
+        if ($this->save_progress_button_id != "") {
+            $save_progress_button_id_string = " id='" . $this->save_progress_button_id . "'";
+        } else {
+            $save_progress_button_id_string = "";
+        }
 ?>
         <!-- Start button //-->
         <input type="hidden" name="submitted" id="submitted" value="1" />
@@ -79,11 +101,11 @@ class button_cluster_control
             <?php
             }
             ?>
-            <button class="govuk-button" data-module="govuk-button"><?= $this->submit_button_text ?></button>
+            <button <?= $submit_button_id_string ?> class="govuk-button" data-module="govuk-button"><?= $this->submit_button_text ?></button>
             <?php
             if ($this->save_progress_button_text != "") {
             ?>
-            <button class="govuk-button" data-module="govuk-button"><?= $this->save_progress_button_text ?></button>
+                <button <?= $save_progress_button_id_string ?> class="govuk-button" data-module="govuk-button"><?= $this->save_progress_button_text ?></button>
             <?php
             }
             ?>

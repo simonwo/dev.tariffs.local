@@ -1,6 +1,5 @@
 <?php
 require(dirname(__FILE__) . "../../includes/db.php");
-prend ($_REQUEST);
 
 $application = new application;
 $error_handler = new error_handler();
@@ -58,6 +57,14 @@ switch ($action) {
 
     case "footnotes":
         $measure_activity->validate_form_footnotes();
+        break;
+
+    case "cancel":
+        $measure_activity->cancel();
+        break;
+
+    case "cancel_confirm":
+        $measure_activity->cancel_confirm();
         break;
 
     default:

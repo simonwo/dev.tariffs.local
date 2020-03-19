@@ -21,7 +21,6 @@ class quota_order_number
     public $period_type = null;
     public $maximum_precision = null;
     public $year_count = null;
-    public $duties_same_for_all_commodities = null;
     public $quota_category = "";
     public $mechanism = "";
     public $origins = array();
@@ -211,13 +210,6 @@ class quota_order_number
         # Check on the commodity_codes
         if ((strlen($this->commodity_codes) == "") || ($commodity_errors == true)) {
             array_push($errors, "commodity_codes");
-        }
-
-
-        # Check on the duties_same_for_all_commodities
-        $this->duties_same_for_all_commodities = trim(get_formvar("duties_same_for_all_commodities", "", True));
-        if (strlen($this->duties_same_for_all_commodities) == "") {
-            array_push($errors, "duties_same_for_all_commodities");
         }
 
         if (count($errors) > 0) {

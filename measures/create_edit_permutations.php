@@ -2,7 +2,6 @@
 require(dirname(__FILE__) . "../../includes/db.php");
 $application = new application;
 $application->init("measures_permutations");
-$application->get_duties_same_for_all_commodities();
 
 $error_handler = new error_handler();
 
@@ -43,7 +42,6 @@ if ($measure_activity->suppress_additional_codes_field == true) {
 
         require("../includes/phase_banner.php");
         $control_content = array();
-        $control_content["duties_same_for_all_commodities"] = $application->duties_same_for_all_commodities;
         new data_entry_form($control_content, $measure_activity, $left_nav = "", "measure_activity_actions.php");
         ?>
     </div>

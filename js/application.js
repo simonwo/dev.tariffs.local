@@ -131,7 +131,7 @@ $(document).ready(function () {
 
 
     /* Start geographical area typeahead */
-    
+
     var geographical_areas = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -148,11 +148,11 @@ $(document).ready(function () {
         source: geographical_areas,
         limit: 10,
     });
-    
+
     /* End geographical area typeahead */
 
     /* Start ordernumber typeahead */
-    
+
     var order_numbers = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.whitespace,
         queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -169,7 +169,7 @@ $(document).ready(function () {
         source: order_numbers,
         limit: 10,
     });
-    
+
     /* End ordernumber typeahead */
 
 
@@ -408,23 +408,42 @@ $(document).ready(function () {
 
 
     $(".duty").keyup(function (e) {
+        //alert ("sdf");
         if ((e.keyCode != 8) && (e.keyCode != 46)) {
             parse_duty($(this));
         }
     });
 
 
-    $("#form_measure_activity button").click(function () {
+    $("button#continue_duty_prototype").click(function (e) {
         var grid_json = document.getElementById("grid_json");
-        var data = JSON.stringify(grid_json.data);
-        console.log(data);
-        console.log("data");
-        alert ("hello");
+        var dataModel = $("#grid_json").pqGrid("option", "dataModel");
+        var s = JSON.stringify(dataModel.data);
+        //var table_data = document.getElementById("table_data");
+        $("#table_data").val(s);
+
+        dataModel.data.forEach(function (item) {
+            console.log(item["commodity_code"]);
+            console.log(item["additional_code"]);
+            //console.log(item);
+        });
+        //console.log(dataModel);
+        //console.log(dataModel.data);
+        console.log(s);
+
+
+        //e.preventDefault();
+        //e.stopPropagation();
+
     });
 
 
-    function parse_duty(ctrl) {
-        s = ctrl.val();
+    function parse_duty_value(s) {
+        //alert (s);
+        return s;
+    }
+
+    function parse_duty_valuex(s) {
         s = s.toUpperCase();
         s = s.replace("q", "x"); // Just to check it is working
         s = s.replace(/ %/g, "%");
@@ -455,7 +474,14 @@ $(document).ready(function () {
         s = s.replace(/\//g, " / ");
         s = s.replace(/\+/g, " + ");
         s = s.replace(/\s\s+/g, ' ');
-        ctrl.val(s);
+
+        return (s);
+    }
+
+    function parse_duty(ctrl) {
+        s = ctrl.val();
+        ctrl.val(parse_duty_value(s));
+        //ctrl.val(s);
         //alert (s);
     }
 

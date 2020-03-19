@@ -641,19 +641,19 @@ where mc.measure_sid = m.measure_sid
 and mc.measurement_unit_code is not null;
 
 
--- get 10 random commodity codes
+-- get 5 random commodity codes
 SELECT goods_nomenclature_item_id 
 FROM goods_nomenclatures gn
 WHERE validity_end_date is null
 and producline_suffix = '80'
 ORDER BY random()
-LIMIT 10;
+LIMIT 5;
 
--- get 5 random additional code	s
+-- get 4 random additional code	s
 select additional_code_type_id || additional_code as additional_code
 from additional_codes where validity_end_date is null
 ORDER BY random()
-LIMIT 5;
+LIMIT 4;
 
 select * from goods_nomenclature_descriptions gnd
 where description is not null
@@ -1854,7 +1854,7 @@ order by 3, 1
 
 
 
-select ma.measure_type_id, duties_same_for_all_commodities, mt.order_number_capture_code, certificate_list, activity_name
+select ma.measure_type_id, mt.order_number_capture_code, certificate_list, activity_name
 from measure_activities ma, measure_types mt
 where measure_activity_sid = 107
 and ma.measure_type_id = mt.measure_type_id;
@@ -2700,4 +2700,14 @@ select distinct geographical_area_id from measures where measure_type_id in ('55
 select *  from ml.measures_real_end_dates mred 
 where measure_type_id in ('552', '554')and geographical_area_id = 'UA'
 and validity_end_date is null;
+
+select measure_sid, count(*)
+from footnote_association_measures fam group by measure_sid order by 2 desc limit 20
+
+select measure_activity_condition_sid, condition_code, component_sequence_number, mac.action_code 
+from measure_activity_conditions mac, measure_actions ma 
+where measure_activity_sid = 126
+and mac.action_code = ma.action_code 
+and ma.requires_duty = true
+order by condition_code, component_sequence_number ;
 

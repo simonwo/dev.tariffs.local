@@ -816,19 +816,6 @@
                 "text": ""
             },
             {
-                "control_type": "radio_control",
-                "label": "Will the applicable in-quota duties be the same for all commodities?",
-                "label_style": "govuk-fieldset__legend--m",
-                "hint_text": "For most quotas, the duties are the same for all commodities, however there are occasions where the duties differ.",
-                "control_name": "duties_same_for_all_commodities",
-                "dataset": "",
-                "selected": "",
-                "default": "1",
-                "radio_control_style": "inline",
-                "required": true,
-                "disabled_on_edit": true
-            },
-            {
                 "control_type": "button_cluster_control"
             }
         ]

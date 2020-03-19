@@ -1,63 +1,67 @@
 <?php
 global $measure_activity;
 ?>
-<h2 class="govuk-heading-m">Shared data</h2>
+<h2 class="govuk-heading-m">Core data summary</h2>
+<p class="govuk-body">The following core data has been entered for this measure activity:</p>
+
 <dl class="govuk-summary-list govuk-!-margin-bottom-2">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Measure start date</dt>
-        <dd class="govuk-summary-list__value"><?=short_date($measure_activity->validity_start_date) ?></dd>
+        <dd class="govuk-summary-list__value"><?= short_date($measure_activity->validity_start_date) ?></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Measure end date</dt>
-        <dd class="govuk-summary-list__value"><?=short_date($measure_activity->validity_end_date) ?></dd>
+        <dd class="govuk-summary-list__value"><?= short_date($measure_activity->validity_end_date) ?></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Regulation</dt>
         <dd class="govuk-summary-list__value">
-            <p class="govuk-body"><?=$measure_activity->measure_generating_regulation_id ?></p>
-            <p class="govuk-body"><?=$measure_activity->regulation_information_text ?></p>
+            <p class="govuk-body"><?= $measure_activity->measure_generating_regulation_id ?> - <?= $measure_activity->regulation_information_text ?></p>
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Measure type</dt>
-        <dd class="govuk-summary-list__value"><?=$measure_activity->measure_type_id ?> - <?=$measure_activity->measure_type_description ?></dd>
+        <dd class="govuk-summary-list__value"><?= $measure_activity->measure_type_id ?> - <?= $measure_activity->measure_type_description ?></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Quota order number</dt>
-        <dd class="govuk-summary-list__value"><?=$measure_activity->quota_order_number_id ?></dd>
+        <dd class="govuk-summary-list__value"><?= $measure_activity->quota_order_number_id ?></dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Geography</dt>
         <dd class="govuk-summary-list__value">
-            <p class="govuk-body"><?=$measure_activity->geographical_area_id ?></p>
+            <p class="govuk-body"><?= $measure_activity->geographical_area_id ?></p>
             <p class="govuk-body">IN, TR, EG</p>
         </dd>
     </div>
 </dl>
-<p class="govuk-body"><a class="govuk-link" href="./create_edit_core.html">Edit shared data</a></p>
+<p class="govuk-body"><a class="govuk-link" href="./create_edit_core.html">Edit core data</a></p>
 
 
 
-<h2 class="govuk-heading-m">Commodities and additional codes</h2>
+<h2 class="govuk-heading-m">Commodities &amp; additional code summary</h2>
+<p class="govuk-body">The following commodity codes / additional codes have been entered for this measure activity:</p>
+
 <dl class="govuk-summary-list govuk-!-margin-bottom-2">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Commodities</dt>
         <dd class="govuk-summary-list__value mono-s">
-        <?=$measure_activity->commodity_codes ?>
+            <?= $measure_activity->commodity_codes ?>
         </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Additional codes</dt>
-        <dd class="govuk-summary-list__value mono-s"><?=na($measure_activity->additional_codes, "n/a") ?></dd>
+        <dd class="govuk-summary-list__value mono-s"><?= na($measure_activity->additional_codes, "n/a") ?></dd>
     </div>
 </dl>
-<p class="govuk-body"><a class="govuk-link" href="./create_edit_conditions.html">Edit commodities and additional codes</a></p>
+<p class="govuk-body"><a class="govuk-link" href="./create_edit_conditions.html">Edit commodity codes and additional codes</a></p>
 
 
 
 
-<h2 class="govuk-heading-m">Conditions</h2>
-<?php 
+<h2 class="govuk-heading-m">Measure condition summary</h2>
+<p class="govuk-body">The following conditions have been entered for this measure activity:</p>
+<?php
 if (count($measure_activity->measure_conditions) == 0) {
     p("There are no measure conditions for this activity.");
 } else {
@@ -77,7 +81,7 @@ if (count($measure_activity->measure_conditions) == 0) {
             echo ('<dd class="govuk-summary-list__value">');
             echo ('<ol class="govuk-list govuk-list--number">');
         }
-        if ($c->condition_code_type == 0)  {
+        if ($c->condition_code_type == 0) {
             if ($c->certificate_type_code != '') {
                 $s = "On presentation of document <strong>" . $c->certificate_type_code . $c->certificate_code . "</strong>, ";
             } else {
@@ -99,13 +103,14 @@ if (count($measure_activity->measure_conditions) == 0) {
     echo ('</dl>');
 ?>
 
-<p class="govuk-body"><a class="govuk-link" href="./create_edit_conditions.html">Edit conditions</a></p>
+    <p class="govuk-body"><a class="govuk-link" href="./create_edit_conditions.html">Edit conditions</a></p>
 <?php
 }
 ?>
 
 
-<h2 class="govuk-heading-m">Duties</h2>
+<h2 class="govuk-heading-m">Duty summary</h2>
+<p class="govuk-body">The following duties have been entered for this measure activity:</p>
 <table class="govuk-table govuk-table--m sticky">
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
@@ -136,7 +141,7 @@ if (count($measure_activity->measure_conditions) == 0) {
 
 
 
-<h2 class="govuk-heading-m">Footnotes</h2>
+<h2 class="govuk-heading-m">Footnote summary</h2>
 <dl class="govuk-summary-list govuk-!-margin-bottom-2">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">TM001</dt>
@@ -152,4 +157,3 @@ if (count($measure_activity->measure_conditions) == 0) {
 </dl>
 
 <p class="govuk-body"><a class="govuk-link" href="./create_edit_footnotes.html">Edit footnotes</a></p>
-

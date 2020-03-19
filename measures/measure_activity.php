@@ -62,7 +62,6 @@ class measure_activity
         $this->footnote_id = null;
         $this->commodity_code_list = array();
         $this->additional_code_list = array();
-        $this->duties_same_for_all_commodities = null;
         $this->ordernumber = null;
 
         $this->activity_name = "";
@@ -124,7 +123,7 @@ class measure_activity
                     $("li#duties").addClass("disabled");
                 });
             </script>
-        <?php
+<?php
         }
     }
 
@@ -307,7 +306,7 @@ class measure_activity
         # Check on the activity_name
         $this->activity_name = get_formvar("activity_name");
         $_SESSION["activity_name"] = $this->activity_name;
-        $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+        //$this->measure_activity_sid = $_SESSION["measure_activity_sid"];
         if ($this->activity_name == "") {
             array_push($errors, "activity_name");
         }
@@ -330,12 +329,6 @@ class measure_activity
         header("Location: " . $url);
     }
 
-    function validate_form_duties()
-    {
-        global $application;
-        $url = "./create_edit_footnotes.html?mode=" . $application->mode;
-        header("Location: " . $url);
-    }
 
     function validate_form_footnotes()
     {
@@ -420,13 +413,6 @@ class measure_activity
     function persist_commodities()
     {
         global $conn;
-        $sql = "update measure_activitiess set duties_same_for_all_commodities = $1 where measure_activity_sid = $2";
-        pg_prepare($conn, "update", $sql);
-        pg_execute($conn, "update", array(
-            $this->duties_same_for_all_commodities,
-            $this->measure_activity_sid
-        ));
-
 
         // Delete any existing commodities
         $sql = "delete from measure_activity_commodities where measure_activity_sid = $1";
@@ -477,7 +463,11 @@ class measure_activity
     {
         $temp = get_querystring("measure_activity_sid");
         if ($temp == "") {
-            $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+            if (isset($_SESSION["measure_activity_sid"])) {
+                $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+            } else {
+                $this->measure_activity_sid = null;
+            }
         } else {
             $this->measure_activity_sid = $temp;
         }
@@ -794,7 +784,6 @@ class measure_activity
         $this->commodity_codes = $_REQUEST["commodity_codes"];
         $this->additional_codes = $_REQUEST["additional_codes"];
         $this->certificate_list = $_REQUEST["certificate_list"];
-        $this->duties_same_for_all_commodities = $_REQUEST["duties_same_for_all_commodities"];
 
         $this->get_commodity_code_array();
         $this->get_additional_code_array();
@@ -806,11 +795,6 @@ class measure_activity
         if (!$this->check_additional_codes()) {
             array_push($errors, "additional_codes");
         }
-        /*
-        if ($this->duties_same_for_all_commodities == "") {
-            array_push($errors, "duties_same_for_all_commodities");
-        }
-        */
 
         $this->persist_commodities();
         if (count($errors) > 0) {
@@ -823,23 +807,143 @@ class measure_activity
         header("Location: " . $url);
     }
 
-    /*
+
     public function validate_form_duties()
     {
         global $application;
+        $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+
+        // Go to the database and work out what conditions there are
+        global $conn;
+        $sql = "select measure_activity_condition_sid, condition_code, component_sequence_number,
+        (condition_code || component_sequence_number) as condition_id, mac.action_code 
+        from measure_activity_conditions mac, measure_actions ma 
+        where measure_activity_sid = $1
+        and mac.action_code = ma.action_code 
+        and ma.requires_duty = true
+        order by condition_code, component_sequence_number ;";
+        $stmt = "get_measure_activity_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->measure_activity_sid));
+        $row_count = pg_num_rows($result);
+        $measure_conditions = array();
+        $condition_count = 0;
+        if (($result) && ($row_count > 0)) {
+            while ($row = pg_fetch_array($result)) {
+                $measure_condition = new reusable();
+                $measure_condition->key = "";
+                $measure_condition->measure_activity_condition_sid = $row["measure_activity_condition_sid"];
+                $measure_condition->condition_code = $row["condition_code"];
+                $measure_condition->condition_id = $row["condition_id"];
+                $measure_condition->component_sequence_number = $row["component_sequence_number"];
+                $measure_condition->action_code = $row["action_code"];
+                array_push($measure_conditions, $measure_condition);
+                $condition_count += 1;
+            }
+        }
+
+        $table_data_string = get_formvar("table_data");
+        $table_data = json_decode($table_data_string, true);
+
+        $has_commodity_codes = false;
+        $has_additional_codes = false;
+
+        if (count($table_data) > 0) {
+            // Check the fitrst object to compare the names of the fields against the condition codes
+            $row = $table_data[0];
+            foreach ($row as $key => $value) {
+                if (strpos($key, ":") !== false) {
+                    $key2 = substr($key, 0, strpos($key, ":"));
+                    foreach ($measure_conditions as $measure_condition) {
+                        if ($measure_condition->condition_id == $key2) {
+                            $measure_condition->key = $key;
+                            break;
+                        }
+                    }
+                    $is_conditional = true;
+                } elseif ($key == "Standard (non-conditional) duty") {
+                    $is_conditional = null;
+                } elseif ($key == "commodity_code") {
+                    $has_commodity_codes = true;
+                } elseif ($key == "additional_code") {
+                    $has_additional_codes = true;
+                }
+            }
+
+            //h1 ($is_conditional);
+            //die();
+
+            // Delete the existing records for this measure activity sid
+            $sql = "delete from measure_activity_duties where measure_activity_sid = $1";
+            $stmt = "delete_duties_" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+            // Now we know how to save the data, it's time to save it
+            foreach ($table_data as $table_row) {
+                $commodity_code = null;
+                $additional_code = null;
+                if ($has_commodity_codes == true) {
+                    $commodity_code = $table_row["commodity_code"];
+                }
+                if ($has_additional_codes) {
+                    $additional_code = $table_row["additional_code"];
+                }
+                $measure_activity_condition_sid = null;
+                foreach ($table_row as $key => $value) {
+                    if (($key != "commodity_code") && ($key != "additional_code") && ($key != "pq_cellselect")) {
+                        // Get the condition_sid
+                        if ($is_conditional) {
+                            foreach ($measure_conditions as $measure_condition) {
+                                if ($measure_condition->key == $key) {
+                                    $measure_activity_condition_sid = $measure_condition->measure_activity_condition_sid;
+                                    break;
+                                }
+                            }
+                        } else {
+                            $measure_activity_condition_sid = null;
+                        }
+                        //pre($key);
+                        $sql = "insert into measure_activity_duties (
+                        measure_activity_sid,
+                        duty,
+                        is_conditional,
+                        measure_activity_condition_sid,
+                        commodity_code,
+                        additional_code)
+                        values ($1, $2, $3, $4, $5, $6);";
+                        $stmt = "insert_duty_" . uniqid();
+                        pg_prepare($conn, $stmt, $sql);
+                        pg_execute($conn, $stmt, array(
+                            $this->measure_activity_sid,
+                            $value,
+                            $is_conditional,
+                            $measure_activity_condition_sid,
+                            $commodity_code,
+                            $additional_code
+                        ));
+                    }
+                }
+            }
+        }
+        //pre($measure_conditions);
+        //prend($table_data);
         $errors = array();
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
             $url = "create_edit_duties.html?err=1&mode=" . $application->mode;
         } else {
-            $this->persist_commodities();
+            //$this->persist_commodities();
 
             $url = "./create_edit_conditions.html?mode=" . $application->mode;
         }
+        //die();
+
+        $url = "./create_edit_footnotes.html?mode=" . $application->mode;
         header("Location: " . $url);
     }
-    */
+
 
     public function check_commodities()
     {
@@ -2107,7 +2211,8 @@ class measure_activity
         //die();
     }
 
-    function get_full_summary() {
+    function get_full_summary()
+    {
         global $conn;
         $sql = "select activity_name, ma.validity_start_date, ma.validity_end_date, measure_generating_regulation_id, 
         ma.measure_type_id, geographical_area_id, geographical_area_sid, information_text,
@@ -2122,7 +2227,7 @@ class measure_activity
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             $row = pg_fetch_row($result);
-            
+
             $this->activity_name = $row[0];
             $this->validity_start_date = $row[1];
             $this->validity_end_date = $row[2];
@@ -2185,6 +2290,7 @@ class measure_activity
         and mac.action_code = ma.action_code
         and measure_activity_sid = $1
         order by mac.condition_code, component_sequence_number;";
+        //pre ($sql);
         $query_name = "stmt4_" . $this->measure_activity_sid;
         pg_prepare($conn, $query_name, $sql);
         $result = pg_execute($conn, $query_name, array(
@@ -2216,7 +2322,62 @@ class measure_activity
                 array_push($this->measure_conditions, $mc);
             }
         }
+
+        // Get duties
+        //h1 ($this->measure_activity_sid);
     }
 
-    
+    function cancel () {
+        $url = "./delete_confirmation.html";
+        header("Location: " . $url);
+    }
+
+    function cancel_confirm() {
+        global $conn;
+
+        $this->get_sid();
+
+        // Delete the measure activity duties
+        $sql = "delete from measure_activity_duties where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        // Delete the measure activity conditions
+        $sql = "delete from measure_activity_conditions where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_conditions_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        // Delete the measure activity footnotes
+        $sql = "delete from measure_activity_footnotes where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_footnotees_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        // Delete the measure activity commodities
+        $sql = "delete from measure_activity_commodities where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_commodities_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        // Delete the measure activity additional codes
+        $sql = "delete from measure_activity_additional_codes where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_additional_codes_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        // Delete the measure activity
+        $sql = "delete from measure_activities where measure_activity_sid = $1";
+        $stmt = "delete_measure_activity_" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        pg_execute($conn, $stmt, array($this->measure_activity_sid));
+
+        $this->measure_activity_sid = null;
+        $_SESSION["measure_activity_sid"] = null;
+        unset ($_SESSION["measure_activity_sid"]);
+        $url = "./delete_confirmation2.html";
+        
+        header("Location: " . $url);
+    }
 }

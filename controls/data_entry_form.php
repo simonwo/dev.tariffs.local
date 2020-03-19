@@ -17,6 +17,7 @@ class data_entry_form
         //pre ($object);
         $this->control_content = $control_content;
         $this->object = $object;
+        //pre ($this->object);
         $this->action = $action;
         $this->get_class_name();
 
@@ -106,7 +107,7 @@ class data_entry_form
         if (isset($config["url_view"])) {
             $this->url_view = $config["url_view"];
         } else {
-            $this->url_view = parse_placeholders($this->url_view, $this->object);
+            //$this->url_view = parse_placeholders($this->url_view, $this->object);
 
             $this->url_view = "";
         }

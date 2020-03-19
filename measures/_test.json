@@ -1,0 +1,352 @@
+[
+    {
+        "commodity_code": "0302540000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0304839019",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0804300090",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508100000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508101000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1702301000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "2202991999",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "3808911000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "4101501000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "9105290000",
+        "additional_code": "3200",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0302540000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0304839019",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0804300090",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508100000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508101000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1702301000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "2202991999",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "3808911000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "4101501000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "9105290000",
+        "additional_code": "8330",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0302540000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0304839019",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0804300090",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508100000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508101000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1702301000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "2202991999",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "3808911000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "4101501000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "9105290000",
+        "additional_code": "B790",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0302540000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0304839019",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0804300090",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508100000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508101000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1702301000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "2202991999",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "3808911000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "4101501000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "9105290000",
+        "additional_code": "B857",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0302540000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0304839019",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "0804300090",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508100000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1508101000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "1702301000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "2202991999",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "3808911000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "4101501000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    },
+    {
+        "commodity_code": "9105290000",
+        "additional_code": "B868",
+        "A1: Duty payable on provision of certificate Y908 (variable)": null,
+        "F1: Reference price is greater than 2 EUR DTN (fixed)": "14 GBP TONNE",
+        "F2: Reference price is greater than 0.00 EUR DTN (fixed)": "15.00 EUR DTN"
+    }
+]

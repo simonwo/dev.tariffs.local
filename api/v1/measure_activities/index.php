@@ -38,10 +38,7 @@ if ($condition_count > 0) {
         }
     }
 }
-/*
-h1 ("Contains conditional rates: " . $contains_conditional_rates);
-h1 ("Contains conditional variable rates: " . $contains_conditional_variable_rates);
-*/
+
 
 $duty_array = array();
 

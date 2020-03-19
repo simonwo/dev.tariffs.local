@@ -1,11 +1,9 @@
 <?php
 global $measure_activity;
-//$measure_activity->measure_activity_sid = 110;
-//h1 ($measure_activity->measure_activity_sid);
 ?>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <link rel="stylesheet" href="/css/pqgrid.min.css" />
+        <link rel="stylesheet" href="/css/pqgrid.dev.css" />
         <script src="/grid-2.4.1/pqgrid.dev.js"></script>
         <link rel="stylesheet" href="/css/themes/govuk/pqgrid.css" />
         <script>
@@ -35,7 +33,7 @@ global $measure_activity;
 
                 index = 0;
                 Object.keys(prototype).forEach(function(item) {
-                    index ++;
+                    index++;
                     if ((item == "commodity_code") || (item == "additional_code")) {
                         title = fmt_title(item);
                     } else {
@@ -45,12 +43,30 @@ global $measure_activity;
                     column["title"] = title;
                     column["dataType"] = "string";
                     column["dataIndx"] = item;
+
+                    /*
+                    if ((item != "commodity_code") && (item != "additional_code")) {
+                        column["render"] = function(ui) {
+                            //return (parse_duty_value(ui.cellData));
+                            //return "$" + parseFloat(ui.cellData).toFixed(2);
+                            if (ui.cellData == null) {
+                                return "";
+                            } else {
+                                return "$" + parse_duty_value(ui.cellData);
+                            }
+                            
+                        }
+
+                    }
+                    */
+
+
                     if (index < column_count) {
                         column["width"] = column_width_standard;
                     } else {
                         column["width"] = column_width_last;
                     }
-                    
+
                     if (non_editable_fields.indexOf(item) == -1) {
                         column["editable"] = true;
                     } else {
@@ -74,7 +90,7 @@ global $measure_activity;
                     showTop: false,
                     showBottom: false,
                     numberCell: {
-                        show: false
+                        show: true
                     },
                     title: "",
                     collapsible: {
@@ -141,90 +157,8 @@ global $measure_activity;
             );
             ?>
             <div id="grid_json" style="margin:20px auto;"></div>
-            <?php
-            if (1 > 2) {
 
-                $code_count = 0;
-                if (count($measure_activity->additional_code_list) == 0) {
-                    $ac = new additional_code();
-                    $ac->code = "Dummy";
-                    array_push($measure_activity->additional_code_list, $ac);
-                }
-                foreach ($measure_activity->additional_code_list as $additional_code) {
-                    $row_index = 0;
-                    $code_count++;
-            ?>
-                    <table class="govuk-table govuk-table--m sticky" id="duty_table_<?= $additional_code->code ?>">
-                        <!--<caption class="govuk-table__caption--m">Applicable duties</caption>//-->
-                        <thead class="govuk-table__head">
-                            <?php
-                            if ($additional_code->code != "Dummy") {
-                            ?>
-                                <tr class="govuk-table__row">
-                                    <th colspan="4" class="additional_code_head govuk-table__cell">Additional code <?= $code_count ?> : <?= $additional_code->code ?> - <?= $additional_code->description ?></th>
-                                </tr>
-                            <?php
-                            }
-                            ?>
-
-                            <tr class="govuk-table__row">
-                                <th scope="col" class="govuk-table__header" style="width:5%">#</th>
-                                <th scope="col" class="govuk-table__header" style="width:15%" nowrap>Commodity code</th>
-                                <th scope="col" class="govuk-table__header" style="width:60%">Duty</th>
-                                <th scope="col" class="govuk-table__header" style="width:25%">&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                            <?php
-                            $row_count = count($measure_activity->commodity_code_list);
-                            foreach ($measure_activity->commodity_code_list as $commodity_code) {
-                                $row_index++;
-                                if (($measure_activity->duties_same_for_all_commodities) && ($row_index > 1)) {
-                            ?>
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__cell vertical_align_middle"><?= $row_index ?></td>
-                                        <td class="govuk-table__cell vertical_align_middle">
-                                            <?= format_goods_nomenclature_item_id($commodity_code->goods_nomenclature_item_id) ?>
-                                        </td>
-                                        <td class="govuk-table__cell vertical_align_middle">
-                                            As above
-                                        </td>
-                                    </tr>
-                                <?php
-                                } else {
-                                ?>
-                                    <tr class="govuk-table__row">
-                                        <td class="govuk-table__cell vertical_align_middle"><?= $row_index ?></td>
-                                        <td class="govuk-table__cell vertical_align_middle">
-                                            <?= format_goods_nomenclature_item_id($commodity_code->goods_nomenclature_item_id) ?>
-                                        </td>
-                                        <td class="govuk-table__cell vertical_align_middle">
-                                            <input class="govuk-input govuk-input--width-40 duty" id="duty_<?= $commodity_code->goods_nomenclature_item_id ?>" name="duty_<?= $commodity_code->goods_nomenclature_item_id ?>" type="text">
-                                        </td>
-                                        <?php
-                                        if ((!$measure_activity->duties_same_for_all_commodities) && ($row_index == 1) && ($row_count > 1)) {
-                                        ?>
-                                            <td class="govuk-table__cell vertical_align_middle">
-                                                <a class="govuk-link copy_to_all_rows" href="#">Copy to all rows</a>
-                                            </td>
-                                        <?php
-                                        } else {
-                                        ?>
-                                            <td class="govuk-table__cell vertical_align_middle">&nbsp;</td>
-                                        <?php
-                                        }
-                                        ?>
-                                    </tr>
-                            <?php
-                                }
-                            }
-                            ?>
-                        </tbody>
-                    </table>
-                    <!-- End table //-->
         <?php
-                }
-            }
         }
         ?>
     </div>

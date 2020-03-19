@@ -55,7 +55,6 @@
 "origin_quota","Please identify if this is an origin quota","origin_quota"
 "commodity_codes","Please enter a list of valid 10-digit commodity codes","commodity_codes"
 "additional_codes","Please enter a list of valid 4-digit additional codes","additional_codes"
-"duties_same_for_all_commodities","Please identify if duties are the same for all commodity codes","duties_same_for_all_commodities"
 "maximum_precision","Please enter a maximum precision for this quota","maximum_precision"
 "critical_threshold","Please enter a maximum precision for this quota","critical_threshold"
 "introductory_period_option","Please identify if there are any introductory periods","introductory_period_option"

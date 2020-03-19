@@ -761,7 +761,7 @@ class workbasket
             $content_close = "<img alt='Close workbasket' src='/assets/images/close.png' /><span>Close workbasket</span>";
             $content_archive = "<img alt='Archive workbasket' src='/assets/images/archive.png' /><span>Archive workbasket</span>";
         } else {
-            $content_open = "Withdraw workbasket";
+            $content_open = "Open workbasket";
             $content_close = "Close workbasket";
             $content_archive = "Archive workbasket";
         }

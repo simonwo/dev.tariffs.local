@@ -20,7 +20,6 @@ if ($submitted == 1) {
 }
 
 $quota_order_number = new quota_order_number;
-$quota_order_number->duties_same_for_all_commodities = get_formvar("duties_same_for_all_commodities");
 $quota_order_number->commodity_codes = get_formvar("commodity_codes");
 $quota_order_number->get_commodity_code_array();
 

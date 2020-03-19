@@ -77,7 +77,7 @@ require("../includes/metadata.php");
                                         <?php
                                         if ($import_started != "") {
                                         ?>
-                                            <form action="/actions/rollback_actions.html" method="get">
+                                            <form action="./rollback_actions.html" method="get">
                                                 <input type="hidden" name="phase" value="perform_rollback" />
                                                 <input type="hidden" name="import_file" value="<?= $import_file ?>" />
                                                 <input type="hidden" name="import_started" value="<?= $import_started ?>" />

@@ -2206,13 +2206,6 @@ class application
         array_push($this->quota_origin_quota_options, new simple_object("1", "Yes", "", ""));
     }
 
-    public function get_duties_same_for_all_commodities()
-    {
-        $this->duties_same_for_all_commodities = array();
-        array_push($this->duties_same_for_all_commodities, new simple_object("1", "Yes", "", ""));
-        array_push($this->duties_same_for_all_commodities, new simple_object("0", "No", "", ""));
-    }
-
     public function get_quota_introductory_period_options()
     {
         $this->quota_introductory_period_options = array();
