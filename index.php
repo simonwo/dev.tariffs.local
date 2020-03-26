@@ -63,7 +63,7 @@ require("includes/metadata.php");
                     <h2 class="govuk-heading-m govuk-!-margin-0">View goods classification</h2>
                     <!--<p class="govuk-body-xs">Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet </p>//-->
                     <ul class="menu">
-                        <li><a class="govuk-link" href="/goods_nomenclatures/">Find commodities</a></li>
+                        <li><a class="govuk-link" href="/goods_nomenclatures/">Browse and find commodities</a></li>
                         <!--<li><a class="govuk-link" href="/goods_nomenclatures/create_edit.html">Create commodities</a></li>//-->
                     </ul>
 
@@ -132,7 +132,7 @@ require("includes/metadata.php");
                 <div class="govuk-grid-column-one-quarter">
                     <h2 class="govuk-heading-m govuk-!-margin-0">Reference documents</h2>
                     <ul class="menu">
-                        <li><a class="govuk-link" href="">Manage reference documents</a></li>
+                        <li><a class="govuk-link" href="/reference_documents">Generate reference documents</a></li>
                     </ul>
 
                     <h2 class="govuk-heading-m govuk-!-margin-0">Reporting and auditing</h2>
@@ -150,6 +150,11 @@ require("includes/metadata.php");
                     <h2 class="govuk-heading-m govuk-!-margin-0">Prototype links</h2>
                     <ul class="menu">
                         <li><a class="govuk-link" href="/global_tariff/">The UK Global Tariff</a></li>
+                    </ul>
+
+                    <h2 class="govuk-heading-m govuk-!-margin-0">EU data changes</h2>
+                    <ul class="menu">
+                        <li><a class="govuk-link" href="/eu_data/">View and approve EU data changes</a></li>
                     </ul>
                 </div>
                 <!-- End column four //-->

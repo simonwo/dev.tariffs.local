@@ -3,9 +3,9 @@
         "config": {
             "object_name": "Reference documents",
             "title": "Find and edit reference documents",
-            "title_create": "Create a new agreement",
-            "title_edit": "Edit agreement for {area_name}",
-            "xtitle_view": "Agreement for {area_name}",
+            "title_create": "Create a reference document",
+            "title_edit": "Edit reference document for {area_name}",
+            "xtitle_view": "Reference document for {area_name}",
             "title_view": "",
             "url_edit": "./create_edit.html?mode=update&unique_id={unique_id}",
             "xurl_view": "./fta.html?mode=view&unique_id={unique_id}",
@@ -15,6 +15,8 @@
             "freetext_fields": "",
             "default_sort_fields": "unique_id",
             "description_keys": "",
+            "breadcrumb_insert_text": "Trade agreements",
+            "breadcrumb_insert_url": "/reference_documents/fta.html",
             "buttons": {
                 "heading_text": "Finish now",
                 "submit_button_text_create": "Create agreement",
@@ -79,7 +81,7 @@
             {
                 "control_type": "warning_control",
                 "control_scope": "",
-                "text": "Use this form to change the regulation associated with the x measures that you have selected. This is especially useful in migrating measures that have been set up with a draft regulation to a fully operational equivalent."
+                "text": "This is not to be included in the reference document builder application. It is just a note to show that the biggest change in the page compared to the existing application is to modify the way in which the extended information is managed, i.e. it is removed from this part of the application and thrown back at the quotas section - i.e. managed on a per quota basis."
             },
             {
                 "control_type": "xinset_control",

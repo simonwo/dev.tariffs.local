@@ -34,4 +34,5 @@ require("../includes/metadata.php");
     require("../includes/footer.php");
     ?>
 </body>
+
 </html>

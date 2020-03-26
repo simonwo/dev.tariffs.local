@@ -43,6 +43,10 @@ require("../includes/metadata.php");
 
                     <?php
                     //pre ($application->reference_documents);
+                    new warning_control(
+                        $text = "Download and regenerate links are dummies. Edit link takes you the edit page, where the form does not 'do anything' for show only. Create new reference document link above the table and below the table take you to the create form (which again does nothing).",
+                    );
+            
                     new table_control($application->reference_documents, "", "<p class='govuk-body' style='margin-top:2em;margin-bottom:2em'>There are currently no reference documents created.</p>", "");
                     ?>
                     <p class="govuk-body"><a class="govuk-link" href="./create_edit.html?mode=insert">Create a new reference document</a></p>
