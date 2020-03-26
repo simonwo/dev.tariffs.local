@@ -14,10 +14,8 @@ class data_entry_form
 
     public function __construct($control_content, $object, $left_nav, $action = "")
     {
-        //pre ($object);
         $this->control_content = $control_content;
         $this->object = $object;
-        //pre ($this->object);
         $this->action = $action;
         $this->get_class_name();
 
@@ -141,14 +139,16 @@ class data_entry_form
                 <?php
                 //pre ($this->page_title_create);
                 if (($application->mode == "update") || (strpos($this->page_title_create, "description") !== false)) {
+                    if ($this->page_title_view != "") {
                 ?>
-                    <li class="govuk-breadcrumbs__list-item">
-                        <a class="govuk-breadcrumbs__link" href="<?= $this->url_view ?>"><?= $this->page_title_view ?></a>
-                    </li>
-                <?php
+                        <li class="govuk-breadcrumbs__list-item">
+                            <a class="govuk-breadcrumbs__link" href="<?= $this->url_view ?>"><?= $this->page_title_view ?></a>
+                        </li>
+                    <?php
+                    }
                 }
                 if (($this->breadcrumb_insert_text != null) && ($this->breadcrumb_insert_url != null)) {
-                ?>
+                    ?>
                     <li class="govuk-breadcrumbs__list-item">
                         <a class="govuk-breadcrumbs__link" href="<?= $this->breadcrumb_insert_url ?>"><?= $this->breadcrumb_insert_text ?></a>
                     </li>

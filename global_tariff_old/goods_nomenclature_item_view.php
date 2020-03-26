@@ -289,7 +289,7 @@ require("../includes/metadata.php");
                         for ($i = 0; $i < $hier_count; $i++) {
                             $t = $array[$i];
                             $concat = $t->goods_nomenclature_item_id . $t->productline_suffix;
-                            $url = "goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $t->goods_nomenclature_item_id . "&productline_suffix=" . $t->productline_suffix . "#hierarchy";
+                            $url = "view.html?goods_nomenclature_item_id=" . $t->goods_nomenclature_item_id . "&productline_suffix=" . $t->productline_suffix . "#hierarchy";
                             $class = "indent" . $t->number_indents;
                             if ($obj_goods_nomenclature_item->ar_hierarchies[$i]->productline_suffix != "80") {
                                 $suffix_class = "filler";
@@ -707,7 +707,7 @@ require("../includes/metadata.php");
                                             if ($pos != 0) {
                                             ?>
                                                 <td class="govuk-table__cell vsmall" nowrap>
-                                                    <a class="nodecorate" class="govuk-link" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?= $m->goods_nomenclature_item_id ?>"><?= format_goods_nomenclature_item_id($goods_nomenclature_item_id) ?></a>
+                                                    <a class="nodecorate" class="govuk-link" href="view.html?goods_nomenclature_item_id=<?= $m->goods_nomenclature_item_id ?>"><?= format_goods_nomenclature_item_id($goods_nomenclature_item_id) ?></a>
                                                 </td>
                                             <?php
                                             } else {
@@ -899,7 +899,7 @@ require("../includes/metadata.php");
                                     $validity_start_date = short_date($row['validity_start_date']);
                                     $validity_end_date = short_date($row['validity_end_date']);
                                     $rowclass = rowclass($validity_start_date, $validity_end_date);
-                                    $url = "goods_nomenclature_item_view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_ix . "&productline_suffix=80";
+                                    $url = "view.html?goods_nomenclature_item_id=" . $goods_nomenclature_item_ix . "&productline_suffix=80";
                                     if ($goods_nomenclature_item_ix != $goods_nomenclature_item_id) {
                                 ?>
                                         <tr class="<?= $rowclass ?>">

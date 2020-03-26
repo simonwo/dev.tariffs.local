@@ -63,13 +63,15 @@ require("../includes/metadata.php");
                             <th class="govuk-table__header c tip" scope="col" style="width:5%" aria-describedby="tip_suffix">
                                 Suffix
                                 <span id="tip_suffix" class="tooltip govuk-visually-hidden" role="tooltip" aria-hidden="true"><span class="notch"></span>
-                                    The product line suffix field ...
+                                    The product line suffix field identifies if the commodity code is potentially declarable or just an intermediate 'header' line.<br /><br />
+                                    All commodities in the table below where the product line suffix is noted with a hyphen are potentially declarable. The hyphen has been used to represent '80', which identifies potentially declarable lines in Taric-related databases.<br /><br />
+                                    Any other value indicates that the commodity is a header line.
                                 </span>
                             </th>
                             <th class="govuk-table__header c tip" scope="col" style="width:5%" aria-describedby="tip_indent">
                                 Indent
                                 <span id="tip_indent" class="tooltip govuk-visually-hidden" role="tooltip" aria-hidden="true"><span class="notch"></span>
-                                    The indent field ...
+                                    The indent field is used to show parental relationships between one commodity code and its neighbours.<br /><br />For instance a commodity code with an indent of 2 will be the 'child' of a commodity code with an indent of 1 that appears immediately above it.
                                 </span>
                             </th>
                             <th class="govuk-table__header c" scope="col" style="width:5%">Manage</th>

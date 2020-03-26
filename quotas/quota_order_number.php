@@ -903,7 +903,7 @@ class quota_order_number
                     $gn->goods_nomenclature_sid = $row[1];
                     $gn->description = $row[2];
                     $gn->measure_type = $row[3];
-                    $url = "/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" . $gn->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $gn->goods_nomenclature_sid;
+                    $url = "/goods_nomenclatures/view.html?goods_nomenclature_item_id=" . $gn->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $gn->goods_nomenclature_sid;
                     $gn->goods_nomenclature_item_id_link = "<a class='nodecorate' href='" . $url . "'>" . format_goods_nomenclature_item_id($gn->goods_nomenclature_item_id) . "</a>";
                     array_push($this->quota_commodities, $gn);
                 }
@@ -945,7 +945,7 @@ class quota_order_number
                     $m->footnotes = "footnotes";
 
                     // Get commodity link
-                    $commodity_url = "/goods_nomenclatures/goods_nomenclature_item_view.html?mode=view&goods_nomenclature_item_id=" . $m->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $m->goods_nomenclature_sid;
+                    $commodity_url = "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_item_id=" . $m->goods_nomenclature_item_id . "&goods_nomenclature_sid=" . $m->goods_nomenclature_sid;
                     $m->goods_nomenclature_item_id_link = "<a class='nodecorate' href='" . $commodity_url . "'>" . format_goods_nomenclature_item_id($m->goods_nomenclature_item_id) . "</a>";
 
                     // Get measure type link

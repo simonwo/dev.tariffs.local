@@ -38,7 +38,7 @@ require("../includes/metadata.php");
                     require("commodity_search.php");
                     ?>
 
-                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky">
+                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky" id="table">
                         <tr class="govuk-table__row">
                             <th class="govuk-table__header" style="width:5%" scope="col">Section</th>
                             <th class="govuk-table__header" style="width:8%" scope="col">Chapters</th>
@@ -87,7 +87,7 @@ require("../includes/metadata.php");
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><?= $section->numeral ?></td>
                                 <td class="govuk-table__cell"><?= $section->chapter_string ?></td>
-                                <td class="govuk-table__cell"><a class="govuk-link" href="chapter.html?section_id=<?= $section->section_id ?>"><?= $section->title ?></a></td>
+                                <td class="govuk-table__cell"><a class="govuk-link" href="chapter.html?section_id=<?= $section->section_id ?>#table"><?= $section->title ?></a></td>
                             </tr>
                         <?php
                         }

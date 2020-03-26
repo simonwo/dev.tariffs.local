@@ -44,7 +44,7 @@
 	<ol class="govuk-breadcrumbs__list">
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/">Main menu</a></li>
 		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/sections.html">Goods nomenclature</a></li>
-		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/goods_nomenclature_item_view.html?productline_suffix=<?=$productline_suffix?>&goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">Commodity <?=$goods_nomenclature_item_id?>&nbsp;(<?=$productline_suffix?>)</a></li>
+		<li class="govuk-breadcrumbs__list-item"><a class="govuk-breadcrumbs__link" href="/view.html?productline_suffix=<?=$productline_suffix?>&goods_nomenclature_item_id=<?=$goods_nomenclature_item_id?>">Commodity <?=$goods_nomenclature_item_id?>&nbsp;(<?=$productline_suffix?>)</a></li>
 	</ol>
 </div>
 <!-- End breadcrumbs //-->

@@ -2687,8 +2687,6 @@ and m.validity_start_date <= '2020-01-01'
 and (m.validity_end_date is null or m.validity_end_date >= '2020-01-01')
 and m.measure_type_id in ('103', '105')  and left(m.goods_nomenclature_item_id, 4) = '2938'  order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id;
 
-
-
 select * from measure_components mc, measures m 
 where m.measure_type_id in ('109', '110')
 and mc.measure_sid = m.measure_sid 
@@ -2710,4 +2708,12 @@ where measure_activity_sid = 126
 and mac.action_code = ma.action_code 
 and ma.requires_duty = true
 order by condition_code, component_sequence_number ;
+
+select * from measures where measure_type_id = '489' order by validity_start_date desc;
+
+select * from ml.goods_nomenclature_export_new('%', '2020-02-01');
+
+select unique_id, area_name, country_codes, agreement_title, agreement_date, agreement_version, date_created 
+from reference_documents where unique_id = 'centralamerica';
+
 

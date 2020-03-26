@@ -53,6 +53,7 @@ require(dirname(__FILE__) . "../../classes/member.php");
 require(dirname(__FILE__) . "../../classes/cryptor.php");
 require(dirname(__FILE__) . "../../classes/link.php");
 require(dirname(__FILE__) . "../../rules_of_origin_schemes/rules_of_origin_scheme.php");
+require(dirname(__FILE__) . "../../reference_documents/reference_document.php");
 require(dirname(__FILE__) . "../../global_tariff_old/heading_text.php");
 
 /* Extract classes */
@@ -112,7 +113,9 @@ if ($server_name == "tariff-prototype.london.cloudapps.digital") {
     $dbuser = $dbuser_local;
     $pwd = $pwd_local;
 }
+$dbase_eu = "tariff_eu";
 $conn = pg_connect("host=" . $host . " port=5432 dbname=" . $dbase . " user=" . $dbuser . " password=" . $pwd);
+$conn_eu = pg_connect("host=" . $host . " port=5432 dbname=" . $dbase_eu . " user=" . $dbuser . " password=" . $pwd);
 
 $page = intval(get_querystring("page"));
 if ($page == 0) {

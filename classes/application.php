@@ -42,15 +42,14 @@ class application
     {
         $this->name = "Manage the UK Tariff";
         $this->create_session();
-        
+
         // Insert, edit or view mode
         if (isset($_REQUEST["mode"])) {
             $this->mode = $_REQUEST["mode"];
         } else {
-            if (strpos($_SERVER['PHP_SELF'], "create_edit") !== false){
+            if (strpos($_SERVER['PHP_SELF'], "create_edit") !== false) {
                 $this->mode = "insert";
-            }
-            elseif (strpos($_SERVER['PHP_SELF'], "view") !== false){
+            } elseif (strpos($_SERVER['PHP_SELF'], "view") !== false) {
                 $this->mode = "view";
             }
         }
@@ -103,19 +102,21 @@ class application
         // But if the workbasket belongs to someone else, then there needs to be a check, so that the user does not
         // accidentally move from approval into creation mode.
 
-        if (strpos($uri, 'create') !== false) {
-            if ($this->session->workbasket == null) {
-                //prend ($_SERVER);
-                $request_uri = urlencode($_SERVER["REQUEST_URI"]);
-                $url = "/workbaskets/create_or_open_workbasket.html?request_uri=" . $request_uri;
-                header("Location: " . $url);
-            } elseif ($this->session->workbasket->user_id != $this->session->user_id) {
-                // You are in someone else's workbasket
-                // Are you sure you want to carry on
-                if (get_session_variable("confirm_operate_others_workbasket") == "") {
+        if (strpos($uri, 'reference_documents') === false) {
+            if (strpos($uri, 'create') !== false) {
+                if ($this->session->workbasket == null) {
+                    //prend ($_SERVER);
                     $request_uri = urlencode($_SERVER["REQUEST_URI"]);
-                    $url = "/workbaskets/confirm_operate_others_workbasket.html?request_uri=" . $request_uri;
+                    $url = "/workbaskets/create_or_open_workbasket.html?request_uri=" . $request_uri;
                     header("Location: " . $url);
+                } elseif ($this->session->workbasket->user_id != $this->session->user_id) {
+                    // You are in someone else's workbasket
+                    // Are you sure you want to carry on
+                    if (get_session_variable("confirm_operate_others_workbasket") == "") {
+                        $request_uri = urlencode($_SERVER["REQUEST_URI"]);
+                        $url = "/workbaskets/confirm_operate_others_workbasket.html?request_uri=" . $request_uri;
+                        header("Location: " . $url);
+                    }
                 }
             }
         }
@@ -136,8 +137,6 @@ class application
             $this->data = json_decode($this->filters_content, true);
             $this->object_name =  $this->data[$this->tariff_object]["config"]["object_name"];
         }
-
-
     }
 
     public function get_duty_expressions()
@@ -1131,6 +1130,41 @@ class application
         }
     }
 
+    public function get_reference_documents()
+    {
+        global $conn;
+
+        $sql = "select unique_id, area_name, country_codes, agreement_title, agreement_date, agreement_version, date_created, last_updated
+        from reference_documents order by unique_id;";
+
+        $result = pg_query($conn, $sql);
+        $this->reference_documents = array();
+        if ($result) {
+            while ($row = pg_fetch_array($result)) {
+                $reference_document = new reference_document;
+                $reference_document->unique_id = $row['unique_id'];
+                $reference_document->area_name = $row['area_name'];
+                $reference_document->country_codes = $row['country_codes'];
+                $reference_document->agreement_title = $row['agreement_title'];
+                $reference_document->agreement_date = $row['agreement_date'];
+                $reference_document->agreement_date_string = short_date($row['agreement_date']);
+                $reference_document->agreement_version = $row['agreement_version'];
+                $reference_document->date_created = $row['date_created'];
+                $reference_document->last_updated = $row['last_updated'];
+                $reference_document->download_link = '<li><a href="">Download</a></li>';
+                $reference_document->edit_link = '<li><a class="govuk-link" href="./create_edit.html?mode=update&unique_id=' . $reference_document->unique_id . '">Edit</a></li>';
+                $reference_document->regenerate_link = '<li><a href="">Regenerate</a></li>';
+                $reference_document->action_column = '<ul class="measure_activity_action_list" style="margin-bottom:0.5em !important">';
+                $reference_document->action_column .= $reference_document->download_link;
+                $reference_document->action_column .= $reference_document->edit_link;
+                $reference_document->action_column .= $reference_document->regenerate_link;
+                $reference_document->action_column .= '</ul>';
+                $reference_document->action_column .= '<p class="govuk-body-xs">Last updated: Mon Mar 09 2020 13:36:22</p>';
+
+                array_push($this->reference_documents, $reference_document);
+            }
+        }
+    }
 
     public function get_measurement_units($use_common = false)
     {
@@ -2070,7 +2104,7 @@ class application
                 $goods_nomenclature->goods_nomenclature_sid = $row['goods_nomenclature_sid'];
                 $goods_nomenclature->goods_nomenclature_item_id = $row['goods_nomenclature_item_id'];
                 $goods_nomenclature->productline_suffix = $row['producline_suffix'];
-                $edit_url = 'goods_nomenclature_item_view.html?goods_nomenclature_item_id=' . $goods_nomenclature->goods_nomenclature_item_id . '&productline_suffix=' . $goods_nomenclature->productline_suffix . '&goods_nomenclature_sid=' . $goods_nomenclature->goods_nomenclature_sid;
+                $edit_url = 'view.html?goods_nomenclature_item_id=' . $goods_nomenclature->goods_nomenclature_item_id . '&productline_suffix=' . $goods_nomenclature->productline_suffix . '&goods_nomenclature_sid=' . $goods_nomenclature->goods_nomenclature_sid;
                 $goods_nomenclature->goods_nomenclature_item_id_formatted = format_goods_nomenclature_item_id($goods_nomenclature->goods_nomenclature_item_id);
                 $goods_nomenclature->goods_nomenclature_item_link = '<a class="nodecorate" href="' . $edit_url . '">' . $goods_nomenclature->goods_nomenclature_item_id_formatted . '</a>';
                 $goods_nomenclature->description = $row['description'];

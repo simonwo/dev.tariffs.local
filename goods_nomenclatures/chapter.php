@@ -46,27 +46,30 @@ require("../includes/metadata.php");
                             <li>Section <?= $section->numeral ?> - <?= $section->title ?></li>
                         </ul>
                     </nav>
-                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky">
+                    <table cellspacing="0" class="govuk-table xgovuk-table--m sticky" id="table">
                         <tr class="govuk-table__row">
-                            <th class="govuk-table__header" style="width:15%" scope="col">Section</th>
+                            <th class="govuk-table__header" style="width:15%" scope="col">Commodity code</th>
                             <th class="govuk-table__header" style="width:55%" scope="col">Description</th>
-                            <th class="govuk-table__header r" style="width:20%" scope="col">Extract</th>
-                            <th class="govuk-table__header c" style="width:10%" scope="col">Manage</th>
+                            <th class="govuk-table__header" style="width:20%" scope="col">Extract</th>
+                            <th class="govuk-table__header" style="width:10%" scope="col">Manage</th>
                         </tr>
 
                         <?php
                         foreach ($section->chapters as $chapter) {
+                            $url = "view.html?" . $chapter->query_string();
                         ?>
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><?= format_goods_nomenclature_item_id($chapter->goods_nomenclature_item_id) ?></td>
-                                <td class="govuk-table__cell"><a class="govuk-link" href="heading.html?section_id=<?= $section->section_id ?>&goods_nomenclature_sid=<?= $chapter->goods_nomenclature_sid ?>&goods_nomenclature_item_id=<?= $chapter->goods_nomenclature_item_id ?>&producline_suffix=<?= $chapter->producline_suffix ?>"><?= $chapter->description ?></a></td>
-                                <td class="govuk-table__cell r" nowrap>
-                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 4) ?>&depth=4">HS4</a>&nbsp;&nbsp;&nbsp;
-                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 6) ?>&depth=6">HS6</a>&nbsp;&nbsp;&nbsp;
-                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 8) ?>&depth=8">CN8</a>&nbsp;&nbsp;
-                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 10) ?>">CN10</a>
+                                <td class="govuk-table__cell"><a class="nodecorate" href='<?= $url ?>'><?= format_goods_nomenclature_item_id($chapter->goods_nomenclature_item_id) ?></a></td>
+                                <td class="govuk-table__cell"><a class="govuk-link" href="heading.html?section_id=<?= $section->section_id ?>&<?= $chapter->query_string() ?>#table"><?= $chapter->description ?></a></td>
+                                <td class="govuk-table__cell" nowrap>
+                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 2) ?>&depth=4">HS4</a>&nbsp;&nbsp;&nbsp;
+                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 2) ?>&depth=6">HS6</a>&nbsp;&nbsp;&nbsp;
+                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 2) ?>&depth=8">CN8</a>&nbsp;&nbsp;
+                                    <a class="govuk-link" target="_blank" href="goods_nomenclature_extract.html?chapter_id=<?= substr($chapter->goods_nomenclature_item_id, 0, 2) ?>">CN10</a>
                                 </td>
-                                <td class="govuk-table__cell c"><a href=""><img src='/assets/images/view.png' alt='View this commodity' /></a></td>
+                                <td class="govuk-table__cell nw">
+                                    <a class="icon govuk-link" href='<?= $url ?>'><img src="/assets/images/view.png" /><span>View commodity</span></a>
+                                </td>
                             </tr>
                         <?php
                         }

@@ -71,8 +71,8 @@ require("../includes/metadata.php");
             <td class="govuk-table__cell"><?= $file_size ?> kb</a></td>
             //-->
                                     <td class="govuk-table__cell nopad"><?= $import_file ?></td>
-                                    <td class="govuk-table__cell"><?= $import_started ?></a></td>
-                                    <td class="govuk-table__cell"><?= $import_completed ?></a></td>
+                                    <td class="govuk-table__cell nw"><?= $import_started ?></a></td>
+                                    <td class="govuk-table__cell nw"><?= $import_completed ?></a></td>
                                     <td class="govuk-table__cell c">
                                         <?php
                                         if ($import_started != "") {

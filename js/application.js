@@ -1122,7 +1122,7 @@ $(document).ready(function () {
                         sid = results[0]["goods_nomenclature_sid"].toString();
                         //console.log(results[0]["goods_nomenclature_sid"]);
                         out += "<span class='commodity_check'>";
-                        out += "<span class='commodity_check1'><a class='nodecorate' target='_blank' href='/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=" + part + "&productline_suffix=80&goods_nomenclature_sid=" + sid + "'>" + format_goods_nomenclature_item_id(part) + "</a></span>";
+                        out += "<span class='commodity_check1'><a class='nodecorate' target='_blank' href='/goods_nomenclatures/view.html?goods_nomenclature_item_id=" + part + "&productline_suffix=80&goods_nomenclature_sid=" + sid + "'>" + format_goods_nomenclature_item_id(part) + "</a></span>";
                         out += "<span class='commodity_check2'>" + results[0]["description"] + "</span>";
                         out += "</span>";
                     }

@@ -16,7 +16,7 @@ class goods_nomenclature
     public $validity_end_date = "";
     public $description = "";
     public $duty_prototype = null;
-    public $indent = null;
+    public $number_indents = null;
 
 
     public function __construct()
@@ -137,6 +137,7 @@ class goods_nomenclature
 
         $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
         $this->goods_nomenclature_item_id = trim(get_querystring("goods_nomenclature_item_id"));
+        $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
 
         if (empty($_GET)) {
             $this->clear_cookies();
@@ -171,19 +172,20 @@ class goods_nomenclature
             ORDER BY gn.goods_nomenclature_sid, gndp.validity_start_date desc;";
             pg_prepare($conn, "get_goods_nomenclature", $sql);
             $result = pg_execute($conn, "get_goods_nomenclature", array($this->goods_nomenclature_item_id, $this->productline_suffix));
-    
         } else {
             $sql = "select DISTINCT ON (gn.goods_nomenclature_sid)
             gn.goods_nomenclature_item_id, gn.producline_suffix, gn.statistical_indicator,
-            gn.validity_start_date, gn.validity_end_date, gnd.description, gn.goods_nomenclature_sid
-            from goods_nomenclatures gn, goods_nomenclature_descriptions gnd, goods_nomenclature_description_periods gndp
+            gn.validity_start_date, gn.validity_end_date, gnd.description, gn.goods_nomenclature_sid, gni.number_indents 
+            from goods_nomenclatures gn, goods_nomenclature_descriptions gnd, goods_nomenclature_description_periods gndp,
+            goods_nomenclature_indents gni 
             where gndp.goods_nomenclature_description_period_sid = gnd.goods_nomenclature_description_period_sid
             and gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid
             and gn.goods_nomenclature_sid = gndp.goods_nomenclature_sid
-            and gn.goods_nomenclature_sid = $1
-            ORDER BY gn.goods_nomenclature_sid, gndp.validity_start_date desc;";
+            and gn.goods_nomenclature_sid = gni.goods_nomenclature_sid 
+            and gn.goods_nomenclature_sid = $1;";
             pg_prepare($conn, "get_goods_nomenclature", $sql);
             $result = pg_execute($conn, "get_goods_nomenclature", array($this->goods_nomenclature_sid));
+            //pre ($sql);
     
         }
 
@@ -197,6 +199,7 @@ class goods_nomenclature
             $this->validity_end_date = $row[4];
             $this->description = $row[5];
             $this->goods_nomenclature_sid = $row[6];
+            $this->number_indents = $row[7];
 
             $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));
             $this->validity_start_date_month = date('m', strtotime($this->validity_start_date));
@@ -731,12 +734,23 @@ class goods_nomenclature
 
     function get_footnotes() {
         global $conn;
-        $sql = "select fagn.footnote_type, fagn.footnote_id, f.description, fagn.validity_start_date, fagn.validity_end_date
-        from footnote_association_goods_nomenclatures fagn, ml.ml_footnotes f
-        where fagn.footnote_type = f.footnote_type_id and fagn.footnote_id = f.footnote_id
-        and goods_nomenclature_sid = $1 order by 1,2;";
-        pg_prepare($conn, "get_footnotes", $sql);
-        $result = pg_execute($conn, "get_footnotes", array($this->goods_nomenclature_sid));
+        if ($this->goods_nomenclature_sid == "") {
+            $sql = "select fagn.footnote_type, fagn.footnote_id, f.description, fagn.validity_start_date, fagn.validity_end_date
+            from footnote_association_goods_nomenclatures fagn, ml.ml_footnotes f
+            where fagn.footnote_type = f.footnote_type_id and fagn.footnote_id = f.footnote_id
+            and goods_nomenclature_item_id = $1 order by 1,2;";
+            pg_prepare($conn, "get_footnotes", $sql);
+            $result = pg_execute($conn, "get_footnotes", array($this->goods_nomenclature_item_id));
+        
+        } else {
+            $sql = "select fagn.footnote_type, fagn.footnote_id, f.description, fagn.validity_start_date, fagn.validity_end_date
+            from footnote_association_goods_nomenclatures fagn, ml.ml_footnotes f
+            where fagn.footnote_type = f.footnote_type_id and fagn.footnote_id = f.footnote_id
+            and goods_nomenclature_sid = $1 order by 1,2;";
+            pg_prepare($conn, "get_footnotes", $sql);
+            $result = pg_execute($conn, "get_footnotes", array($this->goods_nomenclature_sid));
+        
+        }
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
             while ($row = pg_fetch_array($result)) {
@@ -749,5 +763,13 @@ class goods_nomenclature
                 array_push($this->footnotes, $temp);
             }
         }
+    }
+
+    function query_string() {
+        $s = "goods_nomenclature_sid=" . $this->goods_nomenclature_sid;
+        $s .= "&goods_nomenclature_item_id=" . $this->goods_nomenclature_item_id;
+        $s .= "&productline_suffix=" . $this->productline_suffix;
+        
+        return ($s);
     }
 }

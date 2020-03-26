@@ -39,7 +39,8 @@ class section
         WHERE cs.goods_nomenclature_sid = gn.goods_nomenclature_sid
         AND gn.goods_nomenclature_sid = gnd.goods_nomenclature_sid
         AND gnd.goods_nomenclature_sid = gndp.goods_nomenclature_sid
-        AND section_id = $1 ORDER BY gn.goods_nomenclature_item_id, gndp.validity_start_date desc;";
+        AND section_id = $1
+        ORDER BY gn.goods_nomenclature_item_id, gndp.validity_start_date desc;";
         pg_prepare($conn, "get_chapters", $sql);
         $result = pg_execute($conn, "get_chapters", array($this->section_id));
         $row_count = pg_num_rows($result);
@@ -48,7 +49,7 @@ class section
                 $chapter = new goods_nomenclature();
                 $chapter->goods_nomenclature_item_id = $row["goods_nomenclature_item_id"];
                 $chapter->goods_nomenclature_sid = $row["goods_nomenclature_sid"];
-                $chapter->producline_suffix = $row["producline_suffix"];
+                $chapter->productline_suffix = $row["producline_suffix"];
                 $chapter->description = $this->format_chapter_heading($row["description"]);
                 array_push($this->chapters, $chapter);
             }

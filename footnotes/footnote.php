@@ -705,7 +705,7 @@ class footnote
                 $fam->goods_nomenclature_sid = $row[7];
                 $fam->geographical_area_sid = $row[8];
 
-                $fam->goods_nomenclature_url = "<a class='nodecorate' href='/goods_nomenclatures/goods_nomenclature_item_view.html?goods_nomenclature_sid=" . $fam->goods_nomenclature_sid . "&productline_suffix=80&goods_nomenclature_item_id=" . $fam->goods_nomenclature_item_id . "'>" . format_goods_nomenclature_item_id($fam->goods_nomenclature_item_id) . "</a>";
+                $fam->goods_nomenclature_url = "<a class='nodecorate' href='/goods_nomenclatures/view.html?goods_nomenclature_sid=" . $fam->goods_nomenclature_sid . "&productline_suffix=80&goods_nomenclature_item_id=" . $fam->goods_nomenclature_item_id . "'>" . format_goods_nomenclature_item_id($fam->goods_nomenclature_item_id) . "</a>";
                 $fam->measure_type_id_description_url = "<a class='govuk-link' href=/measure_types/view.html?mode=view&measure_type_id=" . $fam->measure_type_id . "><b>" . $fam->measure_type_id . "</b> " . $fam->measure_type_description . "</a>";
                 $fam->geographical_area_id_url = "<a class='govuk-link' href=/geographical_areas/view.html?mode=view&geographical_area_id=" . $fam->geographical_area_id . "&geographical_area_sid=" . $fam->geographical_area_sid . ">" . $fam->geographical_area_id . "</a>";
 
@@ -741,7 +741,7 @@ class footnote
                 $fagn->goods_nomenclature_item_id = $row[3];
                 $fagn->goods_nomenclature_description = $row[4];
 
-                $fagn->goods_nomenclature_url = "<a class='nodecorate' href='/goods_nomenclatures/goods_nomenclature_item_view.html?goods_nomenclature_sid=" . $fagn->goods_nomenclature_sid . "&productline_suffix=80&goods_nomenclature_item_id=" . $fagn->goods_nomenclature_item_id . "'>" . format_goods_nomenclature_item_id($fagn->goods_nomenclature_item_id) . "</a>";
+                $fagn->goods_nomenclature_url = "<a class='nodecorate' href='/goods_nomenclatures/view.html?goods_nomenclature_sid=" . $fagn->goods_nomenclature_sid . "&productline_suffix=80&goods_nomenclature_item_id=" . $fagn->goods_nomenclature_item_id . "'>" . format_goods_nomenclature_item_id($fagn->goods_nomenclature_item_id) . "</a>";
 
                 array_push($this->footnote_assignments, $fagn);
             }

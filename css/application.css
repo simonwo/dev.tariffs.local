@@ -1519,6 +1519,12 @@ ul.measure_activity_action_list {
     top: -5px;
 }
 
+a.icon span {
+    margin-left: 8px;
+    position: relative;
+    top: -5px;
+}
+
 .json_key {
     width: 40%;
     float: left;

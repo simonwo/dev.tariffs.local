@@ -10,7 +10,9 @@ class table_control
         global $application;
         $this->dataset = $dataset;
         $uri = $_SERVER["REQUEST_URI"];
-        if (strpos($uri, "measures") !== false) {
+        if (strpos($uri, "reference") !== false) {
+            $this->table_class = " govuk-table--l";
+        } elseif (strpos($uri, "measures") !== false) {
             $this->table_class = " govuk-table--s";
         } else {
             $this->table_class = " govuk-table--m";
@@ -55,7 +57,6 @@ class table_control
             }
             return;
         }
-
         ?>
         <!-- Start table control //-->
         <table class="govuk-table <?= $this->table_class ?> sticky" id="results">
@@ -192,8 +193,6 @@ class table_control
                                             echo (", ");
                                         }
                                     }
-
-                                    //echo ('<a class="govuk-link" href="/geographical_areas/view.html?mode=view&geographical_area_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "link_additional_code":
                                     echo ('<a class="govuk-link" href="/additional_codes/view.html?mode=view&additional_code_sid=' . $data_item->additional_code_sid . '">' . $data_item->{$data_column} . "</a>");
@@ -208,7 +207,7 @@ class table_control
                                     echo ('<a class="govuk-link" href="/quotas/view.html?mode=view&quota_order_number_sid=' . $sid . '&quota_order_number_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");
                                     break;
                                 case "commodity":
-                                    echo ('<a class="nodecorate" href="/goods_nomenclatures/goods_nomenclature_item_view.php?goods_nomenclature_item_id=' . $data_item->{$data_column} . '">' . format_goods_nomenclature_item_id($data_item->{$data_column}) . "</a>");
+                                    echo ('<a class="nodecorate" href="/goods_nomenclatures/view.html?goods_nomenclature_item_id=' . $data_item->{$data_column} . '">' . format_goods_nomenclature_item_id($data_item->{$data_column}) . "</a>");
                                     break;
                                 case "status":
                                     echo (status_image($data_item->{$data_column}));

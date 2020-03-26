@@ -264,7 +264,7 @@
 ?>
     <tr class="govuk-table__row<?=$match_class?>" valign="top">
         <td class="govuk-table__cell vsmall nopad">
-            <a class="nodecorate vsmall" target="_blank" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$commodity->goods_nomenclature_item_id?>&productline_suffix=<?=$commodity->productline_suffix?>"><?=format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id)?></a>
+            <a class="nodecorate vsmall" target="_blank" href="view.html?goods_nomenclature_item_id=<?=$commodity->goods_nomenclature_item_id?>&productline_suffix=<?=$commodity->productline_suffix?>"><?=format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id)?></a>
         </td>
         <td class="govuk-table__cell vsmall c"><?=$commodity->productline_suffix?></a></td>
         <td class="govuk-table__cell vsmall c"><?=$number_indents_real?></a></td>
@@ -283,7 +283,7 @@
 ?>
     <tr class="govuk-table__row<?=$match_class?>" valign="top">
         <td class="govuk-table__cell vsmall nopad">
-            <a class="nodecorate vsmall" target="_blank" href="goods_nomenclature_item_view.html?goods_nomenclature_item_id=<?=$commodity->goods_nomenclature_item_id?>&productline_suffix=<?=$commodity->productline_suffix?>"><?=format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id)?></a>
+            <a class="nodecorate vsmall" target="_blank" href="view.html?goods_nomenclature_item_id=<?=$commodity->goods_nomenclature_item_id?>&productline_suffix=<?=$commodity->productline_suffix?>"><?=format_goods_nomenclature_item_id($commodity->goods_nomenclature_item_id)?></a>
         </td>
         <td class="govuk-table__cell vsmall c"><?=$commodity->productline_suffix?></a></td>
         <td class="govuk-table__cell vsmall c"><?=$number_indents_real?></a></td>
