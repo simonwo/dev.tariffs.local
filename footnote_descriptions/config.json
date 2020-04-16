@@ -9,6 +9,8 @@
             "override_root": "/footnotes/",
             "title_create": "Create a new footnote description",
             "title_edit": "Edit footnote description",
+            "url_view": "/footnotes/view.html?mode=view&footnote_type_id={footnote_type_id}&footnote_id={footnote_id}",
+            "title_view": "Footnote {footnote_type_id}{footnote_id}",
             "validate": true,
             "buttons": {
                 "heading_text": "Finish now",

@@ -89,7 +89,7 @@
                 "control_type": "select_control",
                 "label": "What is the type of this footnote?",
                 "label_style": "govuk-label--m",
-                "hint_text": "It's important that you select the right <a href='/footnote_types'>footnote type</a>, as this will determine whether it can be asssociated with measures, commodity codes or both.",
+                "hint_text": "It's important that you select the right <a class='govuk-link' href='/footnote_types'>footnote type</a>, as this will determine whether it can be asssociated with measures, commodity codes or both.",
                 "control_name": "footnote_type_id",
                 "default_value": "",
                 "default_string": "- Please select a footnote type -",

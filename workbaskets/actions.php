@@ -85,7 +85,7 @@ switch ($action) {
         $workbasket->workbasket_id = get_querystring("workbasket_id");
         $workbasket_item_sid = get_querystring("workbasket_item_sid");
         $workbasket->approve_workbasket_item($workbasket_item_sid);
-        $url = "view.html?workbasket_id=" . $workbasket->workbasket_id . "#workbasket_item_sid_" . $workbasket_item_sid;
+        $url = "view.html?workbasket_id=" . $workbasket->workbasket_id . "#workbasket_activities"; # . "#workbasket_item_sid_" . $workbasket_item_sid . "#workbasket_activities";
         header("Location: " . $url);
         break;
 
@@ -99,4 +99,9 @@ switch ($action) {
         $url = "view.html?workbasket_id=" . $workbasket->workbasket_id . "#workbasket_item_sid_" . $workbasket_item_sid;
         header("Location: " . $url);
         break;
+
+    case "partial_approval":
+        $workbasket = new workbasket();
+        $workbasket->workbasket_id = get_querystring("workbasket_id");
+        $workbasket->partially_approve_workbasket();
 }

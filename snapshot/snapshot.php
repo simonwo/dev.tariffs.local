@@ -192,28 +192,17 @@ class snapshot
             flush();
         }
 
-        //h1 (count($pairs));
         if ($this->omit_duties) {
             $index = 0;
 
 
             for ($x = count($pairs) - 1; $x >= 0; $x--) {
                 $pair = $pairs[$x];
-                //h1 ($pair->node . ":" . strlen($pair->node) . ":" . $this->depth);
                 if (strlen($pair->node) != $this->depth) {
                     array_splice($pairs, $x, 1);
                 }
             }
-            /*
-            foreach ($pairs as $pair) {
-                //h1 ($pair->node . ":" . strlen($pair->node) . ":" . $this->depth);
-                if (strlen($pair->node) != $this->depth) {
-                    array_splice($pairs, $index, 1);
-                }
-                $index += 1;
-            }*/
         }
-        //h1 (count($pairs));
 
         $pair_count = count($pairs);
         $pair_index = 0;
@@ -321,12 +310,18 @@ class snapshot
     private function get_geographical_area_description()
     {
         global $conn;
-        $sql = "select description from ml.ml_geographical_areas mga where geographical_area_id = $1;";
-        pg_prepare($conn, "get_description", $sql);
-        $result = pg_execute($conn, "get_description", array($this->scope));
-        if ($result) {
-            $row = pg_fetch_row($result);
-            $this->geographical_area_description = $row[0];
+        if ($this->scope == "MFN") {
+            $this->geographical_area_description = "Most Favoured nation";
+        } else {
+            $sql = "select description from ml.ml_geographical_areas mga where geographical_area_id = $1;";
+            pg_prepare($conn, "get_description", $sql);
+            //h1($this->scope);
+            //die();
+            $result = pg_execute($conn, "get_description", array($this->scope));
+            if ($result) {
+                $row = pg_fetch_row($result);
+                $this->geographical_area_description = $row[0];
+            }
         }
     }
 
@@ -430,7 +425,7 @@ class snapshot
                 and (m.validity_end_date is null or m.validity_end_date >= '" . $this->snapshot_date_start . "')
                 and mc.component_sequence_number = 1
                 and mcc.duty_expression_id = '01'
-                and m.measure_type_id in ('103', '105')" . $range_clause .
+                and m.measure_type_id in ('103', '105', '106')" . $range_clause .
                     " order by m.measure_sid, mcc.duty_expression_id, mcc.duty_amount";
             } else {
                 $sql = "select m.measure_sid, mc.measure_condition_sid, mcc.duty_expression_id, mcc.duty_amount,
@@ -472,7 +467,7 @@ class snapshot
                 where m.measure_type_id = mtd.measure_type_id
                 and m.validity_start_date <= '" . $this->snapshot_date_end . "'
                 and (m.validity_end_date is null or m.validity_end_date >= '" . $this->snapshot_date_start . "')
-                and m.measure_type_id in ('103', '105') " . $range_clause .
+                and m.measure_type_id in ('103', '105', '106') " . $range_clause .
                     " order by m.goods_nomenclature_item_id, m.validity_start_date, mc.duty_expression_id;";
             } else {
                 $sql = "select m.measure_sid, m.measure_type_id, m.goods_nomenclature_item_id, mc.duty_expression_id,
@@ -520,11 +515,11 @@ class snapshot
                             }
                             $duty->duty_string = "";
                             foreach ($duty->measure_condition_components as $mcc) {
-                                $duty->duty_string .= number_format($mcc->duty_amount, 3) . "%";
+                                $duty->duty_string .= number_format($mcc->duty_amount, 2) . "%";
                                 $duty->entry_price_string = "Y";
                             }
                         } else {
-                            $duty->get_duty_string(1);
+                            $duty->get_duty_string(2);
                         }
                         array_push($duties, $duty);
                     }

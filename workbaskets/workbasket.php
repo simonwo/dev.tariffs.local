@@ -622,7 +622,7 @@ class workbasket
             return "";
         }
         $record_type = "";
-        $sql = "select record_id, record_type, title from workbasket_items wi where workbasket_item_sid = $1;";
+        $sql = "select record_id, record_type from workbasket_items wi where workbasket_item_sid = $1;";
         $stmt = "get_workbasket_item_" . uniqid();
         pg_prepare($conn, $stmt, $sql);
         $result = pg_execute($conn, $stmt, array(
@@ -631,7 +631,8 @@ class workbasket
         if (($result) && (pg_num_rows($result) > 0)) {
             $row = pg_fetch_row($result);
             $record_type = $row[1];
-            $title = $row[2];
+            //$title = $row[2];
+            $title = "activity";
         }
         return ($title);
     }
@@ -1020,4 +1021,14 @@ class workbasket
         pg_prepare($conn, $stmt, $sql);
         pg_execute($conn, $stmt, array($this->workbasket_id, $application->session->user_id, $event_type, $description, $operation_date));
     }
+
+    public function partially_approve_workbasket() {
+        prend($_REQUEST);
+        /* Steps
+        - create a new workbasket
+        - assign to the original guy
+        */
+
+    }
+
 }

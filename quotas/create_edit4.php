@@ -44,7 +44,7 @@ require("../includes/metadata.php");
         <?php
         require("../includes/phase_banner.php");
         $control_content = array();
-        new data_entry_form($control_content, $quota_order_number, $left_nav = ""); //, "create_edit5.html");
+        new data_entry_form($control_content, $quota_order_number, $left_nav = "");
         ?>
 
     </div>

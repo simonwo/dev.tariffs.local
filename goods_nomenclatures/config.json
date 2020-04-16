@@ -2,7 +2,7 @@
     "goods_nomenclatures": {
         "config": {
             "title": "Find and edit commodity codes",
-            "title_create": "Create a new commodity code",
+            "title_create": "Create a new child commodity code",
             "title_edit": "Edit commodity code",
             "title_view": "Commodity {goods_nomenclature_item_id}",
             "url_view": "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
@@ -11,6 +11,8 @@
             "default_sort_fields": "goods_nomenclature_item_id|producline_suffix",
             "object_name": "Commodity codes",
             "description_keys": "goods_nomenclature_sid|goods_nomenclature_item_id",
+            "breadcrumb_insert_text": "Commodity {goods_nomenclature_item_id}",
+            "breadcrumb_insert_url": "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
             "validate": true,
             "buttons": {
                 "heading_text": "Finish now",
@@ -25,12 +27,18 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to create a new commodity code.[WORKBASKET]"
+                "text": "Use this form to create a new commodity code as a child of an existing code.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
                 "text": "Use this form to edit the details of an existing commodity code. If you would like to terminate the commodity code, please enter the termination date below.[WORKBASKET]"
+            },
+            {
+                "control_type": "summary_detail_control",
+                "control_scope": "insert",
+                "text1": "View details of parent commodity code",
+                "text2": "<table class='govuk-table'><tr class='govuk-table__row'><td class='govuk-table__cell b'>Commodity code</td><td class='govuk-table__cell'>{goods_nomenclature_item_id}</td></tr><tr class='govuk-table__row'><td class='govuk-table__cell b'>Product line suffix</td><td class='govuk-table__cell'>{productline_suffix}</td></tr><tr class='govuk-table__row'><td class='govuk-table__cell b'>Description</td><td class='govuk-table__cell'>Description goes here</td></tr><tr class='govuk-table__row'><td class='govuk-table__cell b'>Indents</td><td class='govuk-table__cell'>Indents go here</td></tr><tr class='govuk-table__row'><td class='govuk-table__cell b'>Code valid from</td><td class='govuk-table__cell'>Validity start date goes here</td></tr><tr class='govuk-table__row'><td class='govuk-table__cell b'>Code valid until</td><td class='govuk-table__cell'>Validity end date goes here</td></tr></table>"
             },
             {
                 "control_type": "error_block"
@@ -55,7 +63,7 @@
                 "label": "Enter the product line suffix",
                 "label_style": "govuk-label--m",
                 "hint_text": "Enter the 2-digit product line suffix (PLS). The product line suffix field identifies if the commodity code is potentially declarable or just an intermediate 'header' line. Enter '80' to identify a potentially declarable line or any other value to indicate that the commodity is a header line.",
-                "control_name": "producline_suffix",
+                "control_name": "productline_suffix",
                 "control_style": "govuk-input--width-2",
                 "size": 2,
                 "maxlength": 2,
@@ -95,6 +103,7 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "This is optional and should usually be left unset (open-ended) unless you know the commodity code must be terminated.",
                 "control_name": "validity_end_date",
+                "control_scope": "update",
                 "default": "",
                 "required": true
             },
@@ -106,7 +115,7 @@
                 "control_name": "description",
                 "control_scope": "insert",
                 "rows": 5,
-                "maxlength": 5000,
+                "maxlength": 10000,
                 "required": true,
                 "default": ""
             },

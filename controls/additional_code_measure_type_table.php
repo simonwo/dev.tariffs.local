@@ -32,8 +32,8 @@ class additional_code_measure_type_table_control
             $this->querystring .= $description_key . "=" .  $_GET[$description_key] . "&";
         }
         $this->querystring = rtrim($this->querystring, "&");
-        $this->create_url = "geographical_area_add_member.html?" . $this->querystring;
-        $this->terminate_url = "geographical_area_terminate_member.html?" . $this->querystring;
+        $this->create_url = "add_measure_type.html?" . $this->querystring;
+        $this->terminate_url = "terminate_measure_type.html?" . $this->querystring;
         $this->display();
     }
 
@@ -58,8 +58,8 @@ class additional_code_measure_type_table_control
                     <?php
                     foreach ($this->dataset as $item) {
                         //$this->edit_url .= "&validity_start_date=" .  $item->validity_start_date;
-                        //$terminate_url = $this->terminate_url . "&sid=" .  $item->geographical_area_sid . "&id=" . $item->geographical_area_id;
-                        $terminate_url = "";
+                        $terminate_url = $this->terminate_url . "&measure_type_id=" .  $item->measure_type_id;
+                        //$terminate_url = "";
                     ?>
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><?= $item->measure_type_id ?></td>

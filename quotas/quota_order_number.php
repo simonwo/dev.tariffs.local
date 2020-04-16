@@ -35,7 +35,7 @@ class quota_order_number
         $this->validity_end_date = $validity_end_date;
     }
 
-    function validate_form_step1()
+    function validate_form_core()
     {
         global $application;
         $errors = array();
@@ -135,12 +135,12 @@ class quota_order_number
  // Do edit scripts
  $this->update();
  }*/
-            $url = "./create_edit2.html?mode=" . $application->mode;
+            $url = "./create_edit_reference.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
 
-    function validate_form_step2()
+    function validate_form_reference()
     {
         global $application;
         $errors = array();
@@ -170,7 +170,7 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit2.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+            $url = "create_edit_reference.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
         } else {/*
             if ($create_edit == "create") {
             // Do create scripts
@@ -179,17 +179,15 @@ class quota_order_number
             // Do edit scripts
             $this->update();
             }*/
-            $url = "./create_edit3.html?mode=" . $application->mode;
+            $url = "./create_edit_measurements.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
 
-    function validate_form_step3()
+    function validate_form_commodities()
     {
         global $application;
         $errors = array();
-
-        //pre($_REQUEST);
 
         $this->commodity_codes = trim(get_formvar("commodity_codes", "", True));
         $this->commodity_codes = str_replace("\n", " ", $this->commodity_codes);
@@ -247,7 +245,7 @@ class quota_order_number
             // Do edit scripts
             $this->update();
             }*/
-            $url = "./create_edit5.html?mode=" . $application->mode;
+            $url = "./create_edit_measurements.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
@@ -281,7 +279,7 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit5.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+            $url = "create_edit_measurements.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
         } else {/*
             if ($create_edit == "create") {
             // Do create scripts
@@ -290,7 +288,7 @@ class quota_order_number
             // Do edit scripts
             $this->update();
             }*/
-            $url = "./create_edit6.html?mode=" . $application->mode;
+            $url = "./create_edit_definitions.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
@@ -359,7 +357,7 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit6.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+            $url = "create_edit_definitions.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
         } else {/*
             if ($create_edit == "create") {
             // Do create scripts
@@ -368,7 +366,7 @@ class quota_order_number
             // Do edit scripts
             $this->update();
             }*/
-            $url = "./create_edit7.html?mode=" . $application->mode;
+            $url = "./create_edit_volumes.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }

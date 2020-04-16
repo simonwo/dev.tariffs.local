@@ -18,6 +18,12 @@ if ($submitted == 1) {
 <?php
 require("../includes/metadata.php");
 ?>
+<script>
+    $(document).ready(function() {
+        $('#parent_goods_nomenclature_item_id').attr('disabled', 'disabled'); //Disable
+        $('#parent_productline_suffix').attr('disabled', 'disabled'); //Disable
+    });
+</script>
 
 <body class="govuk-template__body">
     <?php

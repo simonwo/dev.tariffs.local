@@ -123,7 +123,7 @@
             },
             {
                 "control_type": "select_control",
-                "label": "What is the measurement unit qualifier for this quota?",
+                "label": "What is the measurement qualifier unit for this quota?",
                 "label_style": "govuk-label",
                 "hint_text": "",
                 "control_name": "measurement_unit_qualifier_code",

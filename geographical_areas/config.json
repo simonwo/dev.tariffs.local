@@ -70,7 +70,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Use this form to create a new geographical area. Alternatively, <a href='./'>search for existing geographical areas</a>.[WORKBASKET]"
+                "text": "Use this form to create a new geographical area. Alternatively, <a class='govuk-link' href='./'>search for existing geographical areas</a>.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",

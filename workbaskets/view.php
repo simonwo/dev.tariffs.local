@@ -236,18 +236,56 @@ require("../includes/metadata.php");
                                 if ($application->session->permissions == "Approver") {
                                     //pre($workbasket->counts_by_status);
                                     $approved_count = 0;
+                                    $rejected_count = 0;
+                                    //pre ($workbasket->counts_by_status);
                                     foreach ($workbasket->counts_by_status as $item) {
                                         if ($item->status == 'Approved') {
                                             $approved_count = $item->status_count;
-                                            break;
+                                        } elseif ($item->status == 'Rejected') {
+                                            $rejected_count = $item->status_count;
                                         }
                                     }
                                     if ($workbasket->activity_count == $approved_count) {
+                                        // All itens are approved
                                         new hidden_control("action", "send_to_cds");
                                         new button_control("Send workbasket to CDS", "send_to_cds", "primary", true);
+                                    } elseif ($workbasket->activity_count == $rejected_count) {
+                                        // All itens are rejected
+                                        new hidden_control("action", "reject_workbasket");
+                                        new button_control("Reject workbasket", "reject_workbasket", "primary", true);
+                                    } elseif ($workbasket->activity_count == ($approved_count + $rejected_count)) {
+                                        // mixture of rejected and approved, but all dealt with
+                                        new hidden_control("action", "partial_approval");
+                                        new warning_control("On performing this action, you will commit the approved activities
+                                        to be submitted to CDS, while the remaining activities will be rejected and sent back to the
+                                        responsible tariff manager (<b>" . $workbasket->user_name . "</b>).");
+
+                                        new input_control(
+                                            $label = "Please enter the name of the workbasket that you would like to send back for review",
+                                            $label_style = "govuk-label--s",
+                                            $hint_text = "Please enter the geographical area ID of the country or country group to which you would like to apply these measures / quotas. ",
+                                            $control_name = "noscript_enter_country",
+                                            $control_style = "govuk-input--width-30",
+                                            $size = 100,
+                                            $maxlength = 100,
+                                            $pattern = "",
+                                            $required = true,
+                                            $default = $workbasket->title . " - rejected items",
+                                            $default_on_insert = "",
+                                            $disabled_on_edit = false,
+                                            $custom_errors = "",
+                                            $group_class = "");
+
+
+                                        new button_control("Send approved activities to CDS", "partial_approval", "primary", true);
                                     } else {
-                                        p("The workbasket cannot be submitted until all activities have been approved.");
+                                        p("The workbasket cannot be submitted until all activities have been approved. You may also approve a part of this workbasket and send it to CDS and reject the remainder.");
                                     }
+                                    /*
+                                    h1("total count - " . $workbasket->activity_count);
+                                    h1("approved count - " . $approved_count);
+                                    h1("rejected count - " . $rejected_count);
+                                    */
                                 }
                                 break;
                         }

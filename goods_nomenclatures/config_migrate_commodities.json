@@ -1,0 +1,220 @@
+{
+    "navigation": {
+        "title": "Commodity code migration steps",
+        "roll_forward": false,
+        "links": [
+            {
+                "url": "/goods_nomenclatures/commodity_migrate_start.html?goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+                "text": "Start"
+            },
+            {
+                "url": "/goods_nomenclatures/commodity_migrate_activity_name.html?goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+                "text": "Activity"
+            },
+            {
+                "url": "/goods_nomenclatures/commodity_migrate_select_codes.html?goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+                "text": "Enter new commodity codes"
+            },
+            {
+                "url": "/goods_nomenclatures/create_edit_summary.html?goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+                "text": "Summary"
+            },
+            {
+                "url": "/goods_nomenclatures/create_confirmation.html?goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+                "text": "Confirmation"
+            }
+        ]
+    },
+    "migrate_activity_name": {
+        "config": {
+            "title": "Commodity codes",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "",
+            "object_name": "Commodity codes",
+            "title_create": "Migrate commodity code(s)",
+            "title_edit": "",
+            "url_view": "",
+            "description_keys": "",
+            "breadcrumb_insert_text": "Commodity {goods_nomenclature_item_id}",
+            "breadcrumb_insert_url": "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue to select new commodity codes",
+                "submit_button_text_edit": "Continue to select new commodity codes",
+                "save_progress_button_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "",
+                "text": "Please use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "input_control",
+                "label": "What is the name of this activity?",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please provide a name for this activity, so that it can be identified later in your workbasket.",
+                "control_name": "activity_name",
+                "control_style": "govuk-input",
+                "size": 100,
+                "maxlength": 100,
+                "pattern": "",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When should these codes be moved?",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please enter the date on which the new codes and associated measures / footnotes should be created. The existing codes and their measures / footnotes will be terminated on the day before the date you specify here.",
+                "control_name": "migration_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "activity_name"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_item_id",
+                "value": "{goods_nomenclature_item_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_sid",
+                "value": "{goods_nomenclature_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "productline_suffix",
+                "value": "{productline_suffix}"
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    },
+    "migrate_select_codes": {
+        "config": {
+            "title": "Commodity codes",
+            "inset": "",
+            "freetext_fields": "",
+            "default_sort_fields": "",
+            "object_name": "Commodity codes",
+            "title_create": "Migrate commodity code(s)",
+            "title_edit": "",
+            "url_view": "",
+            "description_keys": "",
+            "breadcrumb_insert_text": "Commodity {goods_nomenclature_item_id}",
+            "breadcrumb_insert_url": "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_sid={goods_nomenclature_sid}&goods_nomenclature_item_id={goods_nomenclature_item_id}&productline_suffix={productline_suffix}",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue to view summary",
+                "submit_button_text_edit": "Continue to view summary",
+                "save_progress_button_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "",
+                "text": "Use this form to select the new commodity codes to which to migrate the identified commodities.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "input_control",
+                "label": "Enter the first commodity code",
+                "label_style": "govuk-label--m",
+                "hint_text": "Enter the 10-digit ID that you would like to use 0202203050",
+                "control_name": "first_commodity_code",
+                "control_style": "govuk-input--width-10",
+                "size": 10,
+                "maxlength": 10,
+                "pattern": "[0-9]{10}",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "input_control",
+                "label": "Enter the gap between commodity codes",
+                "label_style": "govuk-label--m",
+                "hint_text": "You can manually adjust the specific commodity codes below",
+                "control_name": "gap",
+                "control_style": "govuk-input--width-2",
+                "size": 2,
+                "maxlength": 2,
+                "pattern": "[0-9]{1,2}",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "input_control",
+                "label": "Enter the increment between indents",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "indent_increment",
+                "control_style": "govuk-input--width-2",
+                "size": 2,
+                "maxlength": 2,
+                "pattern": "[0-9]{1,2}",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "include_control",
+                "control_scope": "",
+                "path": "/goods_nomenclatures/includes/select_code_prototype.php"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "select_codes"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_item_id",
+                "value": "{goods_nomenclature_item_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_sid",
+                "value": "{goods_nomenclature_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "productline_suffix",
+                "value": "{productline_suffix}"
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ],
+        "filters": [],
+        "columns": []
+    }
+}

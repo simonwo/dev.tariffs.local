@@ -35,7 +35,15 @@ class left_nav_control
                 $index = 0;
                 $found_index = 999;
                 foreach ($this->links as $link) {
-                    if ($link["url"] == $REQUEST_URI) {
+                    $link_url = parse_placeholders($link["url"]);
+                    $qpos = strpos($link_url, "?");
+                    if ($qpos) {
+                        $link_url2 = substr($link_url, 0, $qpos);
+                    } else {
+                        $link_url2 = $link_url;
+                    }
+                    $link_text = parse_placeholders($link["text"]);
+                    if ($link_url2 == $REQUEST_URI) {
                         $current_class = "app-subnav__section-item--current";
                         $found_index = $index;
                     } else {
@@ -45,12 +53,12 @@ class left_nav_control
                     echo ('<li id="' . $link_id . '" class="app-subnav__section-item ' . $current_class . '">');
                     if (!$this->roll_forward) {
                         if ($index > $found_index) {
-                            echo ('<a class="app-subnav__link govuk-link">' . $link["text"] . '</a>');
+                            echo ('<a class="app-subnav__link govuk-link">' . $link_text . '</a>');
                         } else {
-                            echo ('<a class="app-subnav__link govuk-link" href="' . $link["url"] . '">' . $link["text"] . '</a>');
+                            echo ('<a class="app-subnav__link govuk-link" href="' . $link_url . '">' . $link_text . '</a>');
                         }
                     } else {
-                        echo ('<a class="app-subnav__link govuk-link" href="' . $link["url"] . '">' . $link["text"] . '</a>');
+                        echo ('<a class="app-subnav__link govuk-link" href="' . $link_url . '">' . $link_text . '</a>');
                     }
                     echo ("</li>");
                 ?>
@@ -64,7 +72,8 @@ class left_nav_control
 <?php
     }
 
-    private function fmt($s) {
+    private function fmt($s)
+    {
         $s = strtolower($s);
         $s = str_replace(" ", "_", $s);
         return ($s);

@@ -51,7 +51,7 @@ require("../includes/metadata.php");
                             <th class="govuk-table__header" style="width:15%" scope="col">Commodity code</th>
                             <th class="govuk-table__header" style="width:55%" scope="col">Description</th>
                             <th class="govuk-table__header" style="width:20%" scope="col">Extract</th>
-                            <th class="govuk-table__header" style="width:10%" scope="col">Manage</th>
+                            <th class="govuk-table__header" style="width:10%" scope="col">Actions</th>
                         </tr>
 
                         <?php

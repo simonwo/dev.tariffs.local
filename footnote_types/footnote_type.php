@@ -371,4 +371,24 @@ class footnote_type
             }
         }
     }
+
+
+    public function view_url()
+    {
+        return ("/footnote_types/view.html?mode=view&footnote_type_id=" . $this->footnote_type_id);
+    }
+
+    public function get_description(){
+        global $conn;
+        $sql = "select description from footnote_type_descriptions where footnote_type_id = $1;";
+        $stmt = "get_description" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->footnote_type_id));
+        $row_count = pg_num_rows($result);
+        if (($result) && ($row_count > 0)) {
+            $row = pg_fetch_row($result);
+            $this->description = $row[0];
+            //h1 ($this->description);
+        }
+    }
 }

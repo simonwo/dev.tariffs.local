@@ -112,7 +112,7 @@ require("../includes/metadata.php");
                                 </strong>
                             </div>
                             <?= $snapshot->error_handler->display_error_message("commodity_range"); ?>
-                            <input required value="<?= $snapshot->range ?>" class="govuk-input govuk-date-input__input govuk-input--width-10" id="range" maxlength="10" pattern="[0-9]{0,10}" name="range" type="text">
+                            <input value="<?= $snapshot->range ?>" class="govuk-input govuk-date-input__input govuk-input--width-10" id="range" maxlength="10" pattern="[0-9]{0,10}" name="range" type="text">
                         </div>
                         <!-- End commodity range field //-->
 

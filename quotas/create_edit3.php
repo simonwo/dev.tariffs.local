@@ -13,7 +13,7 @@ if ($submitted == 1) {
     $_SESSION["commodity_codes"] = get_formvar("commodity_codes");
 
     $quota_order_number = new quota_order_number();
-    $quota_order_number->validate_form_step3();
+    $quota_order_number->validate_form_commodities();
 } else {
     $quota_order_number = new quota_order_number();
     $quota_order_number->get_parameters();

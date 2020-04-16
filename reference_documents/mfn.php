@@ -34,7 +34,7 @@ require("../includes/metadata.php");
         <!-- End breadcrumbs //-->
         <main class="govuk-main-wrapper" id="main-content" role="main">
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
                     <h1 class="govuk-heading-xl">MFN schedules</h1>
                     <!-- End main title //-->
@@ -42,7 +42,7 @@ require("../includes/metadata.php");
                     <?php
                     //pre ($application->reference_documents);
                     new inset_control(
-                        $text = "Download and regenerate links are dummies. Edit link takes you the edit page, where the form does not 'do anything' for show only. Create new reference document link above the table and below the table take you to the create form (which again does nothing).",
+                        $text = "Use this screen to generate the tariff schedule (a list of all commodity codes and the applicable MFN (third country) duties, and the goods classification document, which lists the full set of UK commodity codes by chapter.",
                     );
 
                     ?>

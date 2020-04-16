@@ -67,7 +67,7 @@ require("../includes/metadata.php");
                                     The indent field is used to show parental relationships between one commodity code and its neighbours.<br /><br />For instance a commodity code with an indent of 2 will be the 'child' of a commodity code with an indent of 1 that appears immediately above it.
                                 </span>
                             </th>
-                            <th class="govuk-table__header" scope="col" style="width:5%">Manage</th>
+                            <th class="govuk-table__header" scope="col" style="width:5%">Actions</th>
                         </tr>
 
                         <?php

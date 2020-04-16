@@ -1,6 +1,6 @@
 <?php
     $title = "Add geographical area member";
-	require ("includes/db.php");
+	require(dirname(__FILE__) . "../../includes/db.php");
 	$application = new application;
 
 	# Initialise the error handler
@@ -34,7 +34,7 @@
 			break;
 	}
 
-    require ("includes/header.php");
+	require(dirname(__FILE__) . "../../includes/header.php");
 ?>
 <!-- Start breadcrumbs //-->
 <div id="wrapper" class="direction-ltr">

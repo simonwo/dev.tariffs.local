@@ -17,6 +17,9 @@ class goods_nomenclature
     public $description = "";
     public $duty_prototype = null;
     public $number_indents = null;
+    public $parent_goods_nomenclature_item_id = "";
+    public $parent_goods_nomenclature_sid = null;
+    public $parent_productline_suffix = "";
 
 
     public function __construct()
@@ -33,6 +36,11 @@ class goods_nomenclature
 
 
     public function validate_form()
+    {
+        return (false);
+    }
+
+    public function validate_description_form()
     {
         return (false);
     }
@@ -135,15 +143,20 @@ class goods_nomenclature
         global $application;
         global $error_handler;
 
-        $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
-        $this->goods_nomenclature_item_id = trim(get_querystring("goods_nomenclature_item_id"));
-        $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
-
         if (empty($_GET)) {
             $this->clear_cookies();
         } elseif ($application->mode == "insert") {
+            $this->parent_goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
+            $this->parent_goods_nomenclature_item_id = trim(get_querystring("goods_nomenclature_item_id"));
+            $this->parent_goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
+
+
             $this->populate_from_cookies();
         } else {
+            $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
+            $this->goods_nomenclature_item_id = trim(get_querystring("goods_nomenclature_item_id"));
+            $this->goods_nomenclature_sid = trim(get_querystring("goods_nomenclature_sid"));
+
             if (empty($error_handler->error_string)) {
                 $ret = $this->populate_from_db();
                 if (!$ret) {
@@ -160,7 +173,7 @@ class goods_nomenclature
     function populate_from_db()
     {
         global $conn;
-        if ($this->goods_nomenclature_sid == null ) {
+        if ($this->goods_nomenclature_sid == null) {
             $sql = "select DISTINCT ON (gn.goods_nomenclature_sid)
             gn.goods_nomenclature_item_id, gn.producline_suffix, gn.statistical_indicator,
             gn.validity_start_date, gn.validity_end_date, gnd.description, gn.goods_nomenclature_sid
@@ -186,7 +199,7 @@ class goods_nomenclature
             pg_prepare($conn, "get_goods_nomenclature", $sql);
             $result = pg_execute($conn, "get_goods_nomenclature", array($this->goods_nomenclature_sid));
             //pre ($sql);
-    
+
         }
 
         $row_count = pg_num_rows($result);
@@ -226,6 +239,7 @@ class goods_nomenclature
     public function get_descriptions()
     {
         global $conn;
+        h1("sdpfj");
         // THIS IS ALL WRONG
         $sql = "select validity_start_date, acd.description, acd.additional_code_description_period_sid
         from additional_code_description_periods acdp, additional_code_descriptions acd
@@ -307,7 +321,7 @@ class goods_nomenclature
         $this->description = $description;
         $this->leaf = $leaf;
 
-        // Do an initial check that this exisst in the database
+        // Do an initial check that this exists in the database
         $sql = "select goods_nomenclature_sid from goods_nomenclatures
         where goods_nomenclature_item_id = '" . $this->goods_nomenclature_item_id . "' and producline_suffix = '" . $this->productline_suffix . "'";
         $result = pg_query($conn, $sql);
@@ -327,10 +341,11 @@ class goods_nomenclature
 
     public function get_hierarchy($direction = "both")
     {
+        //h1 ("Getting hierarchy");
         global $conn, $critical_date;
         $stem = substr($this->goods_nomenclature_item_id, 0, 2);
         $sql = "SELECT goods_nomenclature_item_id, producline_suffix as productline_suffix, number_indents,
- description, leaf FROM ml.goods_nomenclature_export_new('" . $stem . "%', '" . $critical_date . "')
+ description, leaf, goods_nomenclature_sid FROM ml.goods_nomenclature_export_new('" . $stem . "%', '" . $critical_date . "')
  ORDER BY goods_nomenclature_item_id, producline_suffix";
 
         $result = pg_query($conn, $sql);
@@ -346,6 +361,7 @@ class goods_nomenclature
                 $leaf = $row['leaf'];
                 $gn = new goods_nomenclature;
                 $gn->set_properties($goods_nomenclature_item_id, $productline_suffix, $description, $number_indents, $leaf);
+                $gn->goods_nomenclature_sid = $row['goods_nomenclature_sid'];
                 $gn->deal_with_double_zeroes();
                 array_push($ar_goods_nomenclatures, $gn);
             }
@@ -456,10 +472,10 @@ class goods_nomenclature
     {
         global $conn;
         $sql = "SELECT gnd.description
- FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
- WHERE gnd.goods_nomenclature_description_period_sid = gndp.goods_nomenclature_description_period_sid
- AND gnd.goods_nomenclature_item_id = $1 AND gnd.productline_suffix = $2 AND gnd.goods_nomenclature_sid = $3 
- ORDER BY gndp.validity_start_date DESC LIMIT 1";
+        FROM goods_nomenclature_description_periods gndp, goods_nomenclature_descriptions gnd
+        WHERE gnd.goods_nomenclature_description_period_sid = gndp.goods_nomenclature_description_period_sid
+        AND gnd.goods_nomenclature_item_id = $1 AND gnd.productline_suffix = $2 AND gnd.goods_nomenclature_sid = $3 
+        ORDER BY gndp.validity_start_date DESC LIMIT 1";
 
         pg_prepare($conn, "get_latest_description", $sql);
         $result = pg_execute($conn, "get_latest_description", array(
@@ -476,7 +492,7 @@ class goods_nomenclature
     {
         global $conn;
         $sql = "SELECT validity_start_date FROM goods_nomenclatures
- WHERE goods_nomenclature_item_id = $1 AND producline_suffix = $2 ORDER BY operation_date DESC LIMIT 1";
+        WHERE goods_nomenclature_item_id = $1 AND producline_suffix = $2 ORDER BY operation_date DESC LIMIT 1";
         pg_prepare($conn, "get_validity_start_date", $sql);
         $result = pg_execute($conn, "get_validity_start_date", array($this->goods_nomenclature_item_id, $this->productline_suffix));
 
@@ -644,6 +660,8 @@ class goods_nomenclature
         $s = str_replace("\r", " ", $s);
         $s = str_replace(" ", " ", $s);
         $s = str_replace("'", "`", $s);
+        $s = preg_replace(' {1,10}', ' ', $s);
+        $s = preg_replace('!\s+!', ' ', $s);
         return ($s);
     }
 
@@ -732,7 +750,8 @@ class goods_nomenclature
         setcookie("goods_nomenclature_validity_end_date_year", "", time() + (86400 * 30), "/");
     }
 
-    function get_footnotes() {
+    function get_footnotes()
+    {
         global $conn;
         if ($this->goods_nomenclature_sid == "") {
             $sql = "select fagn.footnote_type, fagn.footnote_id, f.description, fagn.validity_start_date, fagn.validity_end_date
@@ -741,7 +760,6 @@ class goods_nomenclature
             and goods_nomenclature_item_id = $1 order by 1,2;";
             pg_prepare($conn, "get_footnotes", $sql);
             $result = pg_execute($conn, "get_footnotes", array($this->goods_nomenclature_item_id));
-        
         } else {
             $sql = "select fagn.footnote_type, fagn.footnote_id, f.description, fagn.validity_start_date, fagn.validity_end_date
             from footnote_association_goods_nomenclatures fagn, ml.ml_footnotes f
@@ -749,7 +767,6 @@ class goods_nomenclature
             and goods_nomenclature_sid = $1 order by 1,2;";
             pg_prepare($conn, "get_footnotes", $sql);
             $result = pg_execute($conn, "get_footnotes", array($this->goods_nomenclature_sid));
-        
         }
         $row_count = pg_num_rows($result);
         if (($result) && ($row_count > 0)) {
@@ -765,11 +782,30 @@ class goods_nomenclature
         }
     }
 
-    function query_string() {
+    function query_string()
+    {
         $s = "goods_nomenclature_sid=" . $this->goods_nomenclature_sid;
         $s .= "&goods_nomenclature_item_id=" . $this->goods_nomenclature_item_id;
         $s .= "&productline_suffix=" . $this->productline_suffix;
-        
+
         return ($s);
+    }
+
+    function get_details_for_migration()
+    {
+        global $conn;
+        $sql = "select goods_nomenclature_item_id, productline_suffix, number_indents, description, leaf
+        from ml.goods_nomenclature_export_by_sid($1, '2019-01-01') limit 1;";
+        $stmt = "get_details_for_migration" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->goods_nomenclature_sid));
+        if (($result) && (pg_num_rows($result) > 0)) {
+            $row = pg_fetch_array($result);
+            $this->goods_nomenclature_item_id = $row["goods_nomenclature_item_id"];
+            $this->productline_suffix = $row["productline_suffix"];
+            $this->number_indents = $row["number_indents"];
+            $this->description = $row["description"];
+            $this->leaf = $row["leaf"];
+        }
     }
 }

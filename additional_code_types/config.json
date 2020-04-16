@@ -143,13 +143,6 @@
             },
             {
                 "control_type": "button_cluster_control"
-            },
-            {
-                "control_type": "xadditional_code_measure_type_table_control",
-                "control_name": "measure_types",
-                "control_scope": "update",
-                "caption": "Measure types that permit additional codes of this type",
-                "subcaption": "An additional code may only be used on a measure type if the additional code type has been explicitly assigned to the measure type."
             }
         ],
         "filters": [],

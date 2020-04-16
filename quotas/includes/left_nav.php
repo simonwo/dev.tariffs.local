@@ -6,12 +6,12 @@ if ($qpos) {
 }
 $links = array();
 array_push($links, new link("/quotas/create_edit.html", "Core", true));
-array_push($links, new link("/quotas/create_edit2.html", "Reference documents", true));
+array_push($links, new link("/quotas/create_edit_reference.html", "Reference documents", true));
 array_push($links, new link("/quotas/create_edit3.html", "Commodities", true));
 array_push($links, new link("/quotas/create_edit4.html", "Duties", true));
-array_push($links, new link("/quotas/create_edit5.html", "Measurements", true));
-array_push($links, new link("/quotas/create_edit6.html", "Definitions", true));
-array_push($links, new link("/quotas/create_edit7.html", "Volumes", true));
+array_push($links, new link("/quotas/create_edit_measurements.html", "Measurements", true));
+array_push($links, new link("/quotas/create_edit_definitions.html", "Definitions", true));
+array_push($links, new link("/quotas/create_edit_volumes.html", "Volumes", true));
 array_push($links, new link("/quotas/create_edit8.html", "Confirmation", true));
 ?>
 <nav class="app-subnav">
@@ -37,7 +37,7 @@ array_push($links, new link("/quotas/create_edit8.html", "Confirmation", true));
             <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit.html">Core</a>
         </li>
         <li class="app-subnav__section-item">
-            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit2.html">Reference documents</a>
+            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit_reference.html">Reference documents</a>
         </li>
         <li class="app-subnav__section-item">
             <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit3.html">Commodities</a>
@@ -46,13 +46,13 @@ array_push($links, new link("/quotas/create_edit8.html", "Confirmation", true));
             <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit4.html">Duties</a>
         </li>
         <li class="app-subnav__section-item">
-            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit5.html">Measurements</a>
+            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit_measurements.html">Measurements</a>
         </li>
         <li class="app-subnav__section-item">
-            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit6.html">Definitions</a>
+            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit_definitions.html">Definitions</a>
         </li>
         <li class="app-subnav__section-item">
-            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit7.html">Volumes</a>
+            <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit_volumes.html">Volumes</a>
         </li>
         <li class="app-subnav__section-item">
             <a class="app-subnav__link govuk-link govuk-link--no-visited-state" href="/quotas/create_edit8.html">Confirmation</a>

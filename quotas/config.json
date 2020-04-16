@@ -1,14 +1,60 @@
 {
     "navigation": {
         "title": "Quota menu",
-        "roll_forward": true,
+        "roll_forward": false,
         "links": [
             {
                 "url": "/quotas/create_edit.html",
                 "text": "Core data"
             },
             {
-                "url": "/quotas/create_edit2.html",
+                "url": "/quotas/create_edit_reference.html",
+                "text": "Reference documents"
+            },
+            {
+                "url": "/quotas/create_edit_measurements.html",
+                "text": "Measurements"
+            },
+            {
+                "url": "/quotas/create_edit_definitions.html",
+                "text": "Definitions"
+            },
+            {
+                "url": "/quotas/create_edit_volumes.html",
+                "text": "Volumes"
+            },
+            {
+                "url": "/quotas/create_edit3.html",
+                "text": "Commodities"
+            },
+            {
+                "url": "/quotas/create_edit3.html",
+                "text": "Conditions"
+            },
+            {
+                "url": "/quotas/create_edit4.html",
+                "text": "Duties"
+            },
+            {
+                "url": "/quotas/create_edit4.html",
+                "text": "Footnotes"
+            },
+            {
+                "url": "/quotas/create_edit4.html",
+                "text": "Summary"
+            },
+            {
+                "url": "/quotas/create_edit8.html",
+                "text": "Confirmation"
+            }
+        ],
+        "links_safe": [
+            {
+                "url": "/quotas/create_edit.html",
+                "text": "Core data"
+            },
+            {
+                "url": "/quotas/create_edit_reference.html",
                 "text": "Reference documents"
             },
             {
@@ -20,15 +66,15 @@
                 "text": "Duties"
             },
             {
-                "url": "/quotas/create_edit5.html",
+                "url": "/quotas/create_edit_measurements.html",
                 "text": "Measurements"
             },
             {
-                "url": "/quotas/create_edit6.html",
+                "url": "/quotas/create_edit_definitions.html",
                 "text": "Definitions"
             },
             {
-                "url": "/quotas/create_edit7.html",
+                "url": "/quotas/create_edit_volumes.html",
                 "text": "Volumes"
             },
             {
@@ -243,7 +289,7 @@
                     "table_class": "govuk-table--m",
                     "caption": "Measures",
                     "intro_text": "The following measures have been set up against this quota order number.",
-                    "edit_text": "TBC",
+                    "edit_text": "",
                     "edit_url": "/tbc",
                     "fields": [
                         {
@@ -663,7 +709,7 @@
             }
         ]
     },
-    "quota_order_numbers2": {
+    "quota_order_numbers_reference": {
         "config": {
             "title": "Find and edit a quota",
             "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
@@ -749,6 +795,257 @@
                 "radio_control_style": "inline",
                 "required": false,
                 "disabled_on_edit": true
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ]
+    },
+    "quota_order_numbers_measurements": {
+        "config": {
+            "title": "Find and edit a quota",
+            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "freetext_fields": "ordernumber|description",
+            "default_sort_fields": "ordernumber",
+            "object_name": "Quotas",
+            "title_create": "Create quota - measurements",
+            "title_edit": "Edit quota",
+            "description_keys": "",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "info_text": "",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "Save progress",
+                "cancel_button_text": "Previous step",
+                "cancel_button_href": "./create_edit_reference.html"
+            }
+
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Use this form to identify how the goods in this quota will be measured.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "select_control",
+                "label": "How will the quota balance(s) be measured?",
+                "label_style": "govuk-label--m",
+                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Please ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
+                "control_name": "measurement_unit_code",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a measurement unit code -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "select_control",
+                "label": "What is the measurement qualifier unit for this quota?",
+                "label_style": "govuk-label",
+                "hint_text": "",
+                "control_name": "measurement_unit_qualifier_code",
+                "default_value": "Unspecified",
+                "default_string": "- Please select a measurement qualifier code -",
+                "selected": "",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "select_control",
+                "label": "What is the maximum precision for this quota?",
+                "label_style": "govuk-label--m",
+                "hint_text": "This is the maximum number of decimal places that a trader can enter on the SAD form in respect of the quantity being imported under this quota. Unless explicitly otherwise specified, the default value is set to '3' in the box below.",
+                "control_name": "maximum_precision",
+                "default_value": "Unspecified",
+                "default_string": "- Please select the maximum precision -",
+                "default": "3",
+                "selected": "3",
+                "required": true,
+                "group_by": "",
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "input_control",
+                "label": "Criticality threshold",
+                "label_style": "govuk-label--m",
+                "hint_text": "The criticality threshold identifies the percentage of the quota that needs to be used up before the status of the quota is set to 'critical'. At that point, HMRC will take securities on any usage of this quota. This is in almost all cases set to 90.",
+                "control_name": "critical_threshold",
+                "control_style": "govuk-input govuk-input--width-3",
+                "size": 3,
+                "maxlength": 3,
+                "pattern": "[0-9]{1,3}",
+                "required": true,
+                "default": "90",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ]
+    },
+    "quota_order_numbers_definitions": {
+        "config": {
+            "title": "Find and edit a quota",
+            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "freetext_fields": "ordernumber|description",
+            "default_sort_fields": "ordernumber",
+            "object_name": "Quotas",
+            "title_create": "Create quota - definitions",
+            "title_edit": "Edit quota",
+            "description_keys": "",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "Save progress",
+                "info_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Please use this form to identify this quota's annual cadence ...."
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "radio_control",
+                "label": "How will this quota recur?",
+                "label_style": "govuk-fieldset__legend--m",
+                "hint_text": "Please identify if this quota's regular recurrence will be as an annual, quarterly, monthly or custom period.",
+                "control_name": "period_type",
+                "dataset": "",
+                "selected": "",
+                "radio_control_style": "stacked",
+                "required": true,
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does the first regularly recurring period start?",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please enter the date on which the regular recurring period will start for the first time. If there is one or more introductory period required prior to the start of the first recurring period, please enter that period below.",
+                "control_name": "validity_start_date",
+                "control_scope": "",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does the first regularly recurring period end?",
+                "label_style": "govuk-label--m",
+                "hint_text": "Please leave this field blank for all period types other than a custom period.",
+                "control_name": "validity_end_date",
+                "control_scope": "",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "input_control",
+                "label": "How many years should the recurring period be set up for?",
+                "label_style": "govuk-label--m",
+                "hint_text": "You can always add further years at a later date.",
+                "control_name": "year_count",
+                "control_style": "govuk-input--width-4",
+                "size": 1,
+                "maxlength": 1,
+                "pattern": "[0-9]{1,2}",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
+                "control_type": "radio_control",
+                "label": "Will there be one or more introductory periods?",
+                "label_style": "govuk-fieldset__legend--m",
+                "hint_text": "Please define if there will be one or more introductory quota periods prior to the start of the first regularly repeating period",
+                "control_name": "introductory_period_option",
+                "dataset": "",
+                "selected": "",
+                "radio_control_style": "stacked",
+                "required": true,
+                "disabled_on_edit": true
+            },
+            {
+                "control_type": "comment",
+                "COMMENT": "ANNUAL BLOCKS BEGIN HERE"
+            },
+            {
+                "control_type": "xcharacter_count_control",
+                "label": "What is the description of this quota?",
+                "label_style": "govuk-label--m",
+                "hint_text": "This is for information purposes only, but it will be searchable so may help you find a quota at a later date.",
+                "control_name": "description",
+                "control_scope": "",
+                "rows": 3,
+                "maxlength": 500,
+                "required": true,
+                "default": ""
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ]
+    },
+    "quota_order_numbers_volumes": {
+        "config": {
+            "title": "Find and edit a quota",
+            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "freetext_fields": "ordernumber|description",
+            "default_sort_fields": "ordernumber",
+            "object_name": "Quotas",
+            "title_create": "Create quota - initial volumes",
+            "title_edit": "Edit quota",
+            "description_keys": "",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "Save progress",
+                "info_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "Use this form to specify the initial volumes for this quota's definition periods.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "include_control",
+                "control_scope": "",
+                "path": "/quotas/includes/create_volumes.php"
             },
             {
                 "control_type": "button_cluster_control"
@@ -859,256 +1156,6 @@
                 "control_type": "include_control",
                 "control_scope": "",
                 "path": "/quotas/includes/duty_prototype.php"
-            },
-            {
-                "control_type": "button_cluster_control"
-            }
-        ]
-    },
-    "quota_order_numbers5": {
-        "config": {
-            "title": "Find and edit a quota",
-            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
-            "freetext_fields": "ordernumber|description",
-            "default_sort_fields": "ordernumber",
-            "object_name": "Quotas",
-            "title_create": "Create quota - measurements",
-            "title_edit": "Edit quota",
-            "description_keys": "",
-            "validate": false,
-            "buttons": {
-                "heading_text": "Next steps",
-                "info_text": "",
-                "submit_button_text_create": "Add to workbasket",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "",
-                "cancel_button_text": "Cancel",
-                "cancel_button_href": "./"
-            }
-        },
-        "form": [
-            {
-                "control_type": "inset_control",
-                "control_scope": "insert",
-                "text": "Use this form to identify how the goods in this quota will be measured.[WORKBASKET]"
-            },
-            {
-                "control_type": "inset_control",
-                "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
-            },
-            {
-                "control_type": "error_block"
-            },
-            {
-                "control_type": "select_control",
-                "label": "How will the quota balance(s) be measured?",
-                "label_style": "govuk-label--m",
-                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Please ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
-                "control_name": "measurement_unit_code",
-                "default_value": "Unspecified",
-                "default_string": "- Please select a measurement unit code -",
-                "selected": "",
-                "required": true,
-                "group_by": "",
-                "disabled_on_edit": true
-            },
-            {
-                "control_type": "select_control",
-                "label": "What is the measurement unit qualifier for this quota?",
-                "label_style": "govuk-label",
-                "hint_text": "",
-                "control_name": "measurement_unit_qualifier_code",
-                "default_value": "Unspecified",
-                "default_string": "- Please select a measurement qualifier code -",
-                "selected": "",
-                "required": true,
-                "group_by": "",
-                "disabled_on_edit": true
-            },
-            {
-                "control_type": "select_control",
-                "label": "What is the maximum precision for this quota?",
-                "label_style": "govuk-label--m",
-                "hint_text": "This is the maximum number of decimal places that a trader can enter on the SAD form in respect of the quantity being imported under this quota. Unless explicitly otherwise specified, the default value is set to '3' in the box below.",
-                "control_name": "maximum_precision",
-                "default_value": "Unspecified",
-                "default_string": "- Please select the maximum precision -",
-                "default": "3",
-                "selected": "3",
-                "required": true,
-                "group_by": "",
-                "disabled_on_edit": true
-            },
-            {
-                "control_type": "input_control",
-                "label": "Criticality threshold",
-                "label_style": "govuk-label--m",
-                "hint_text": "The criticality threshold identifies the percentage of the quota that needs to be used up before the status of the quota is set to 'critical'. At that point, HMRC will take securities on any usage of this quota. This is in almost all cases set to 90.",
-                "control_name": "critical_threshold",
-                "control_style": "govuk-input govuk-input--width-3",
-                "size": 3,
-                "maxlength": 3,
-                "pattern": "[0-9]{1,3}",
-                "required": true,
-                "default": "90",
-                "disabled_on_edit": true,
-                "custom_errors": ""
-            },
-            {
-                "control_type": "button_cluster_control"
-            }
-        ]
-    },
-    "quota_order_numbers6": {
-        "config": {
-            "title": "Find and edit a quota",
-            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
-            "freetext_fields": "ordernumber|description",
-            "default_sort_fields": "ordernumber",
-            "object_name": "Quotas",
-            "title_create": "Create quota - definitions",
-            "title_edit": "Edit quota",
-            "description_keys": "",
-            "validate": false,
-            "buttons": {
-                "heading_text": "Next steps",
-                "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "Save progress",
-                "info_text": "",
-                "cancel_button_text": "Cancel",
-                "cancel_button_href": "./"
-            }
-        },
-        "form": [
-            {
-                "control_type": "inset_control",
-                "control_scope": "insert",
-                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.v"
-            },
-            {
-                "control_type": "error_block"
-            },
-            {
-                "control_type": "radio_control",
-                "label": "How will this quota recur?",
-                "label_style": "govuk-fieldset__legend--m",
-                "hint_text": "Please identify if this quota's regular recurrence will be as an annual, quarterly, monthly or custom period.",
-                "control_name": "period_type",
-                "dataset": "",
-                "selected": "",
-                "radio_control_style": "stacked",
-                "required": true,
-                "disabled_on_edit": true
-            },
-            {
-                "control_type": "date_picker_control",
-                "label": "When does the first regularly recurring period start?",
-                "label_style": "govuk-label--m",
-                "hint_text": "Please enter the date on which the regular recurring period will start for the first time. If there is one or more introductory period required prior to the start of the first recurring period, please enter that period below.",
-                "control_name": "validity_start_date",
-                "control_scope": "",
-                "default": "",
-                "required": true
-            },
-            {
-                "control_type": "date_picker_control",
-                "label": "When does the first regularly recurring period end?",
-                "label_style": "govuk-label--m",
-                "hint_text": "Please leave this field blank for all period types other than a custom period.",
-                "control_name": "validity_end_date",
-                "control_scope": "",
-                "default": "",
-                "required": true
-            },
-            {
-                "control_type": "input_control",
-                "label": "How many years should the recurring period be set up for?",
-                "label_style": "govuk-label--m",
-                "hint_text": "You can always add further years at a later date.",
-                "control_name": "year_count",
-                "control_style": "govuk-input--width-4",
-                "size": 1,
-                "maxlength": 1,
-                "pattern": "[0-9]{1,2}",
-                "required": true,
-                "default": "",
-                "disabled_on_edit": true,
-                "custom_errors": ""
-            },
-            {
-                "control_type": "radio_control",
-                "label": "Will there be one or more introductory periods?",
-                "label_style": "govuk-fieldset__legend--m",
-                "hint_text": "Please define if there will be one or more introductory quota periods prior to the start of the first regularly repeating period",
-                "control_name": "introductory_period_option",
-                "dataset": "",
-                "selected": "",
-                "radio_control_style": "stacked",
-                "required": true,
-                "disabled_on_edit": true
-            },
-            {
-                "control_type": "comment",
-                "COMMENT": "ANNUAL BLOCKS BEGIN HERE"
-            },
-            {
-                "control_type": "xcharacter_count_control",
-                "label": "What is the description of this quota?",
-                "label_style": "govuk-label--m",
-                "hint_text": "This is for information purposes only, but it will be searchable so may help you find a quota at a later date.",
-                "control_name": "description",
-                "control_scope": "",
-                "rows": 3,
-                "maxlength": 500,
-                "required": true,
-                "default": ""
-            },
-            {
-                "control_type": "button_cluster_control"
-            }
-        ]
-    },
-    "quota_order_numbers7": {
-        "config": {
-            "title": "Find and edit a quota",
-            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
-            "freetext_fields": "ordernumber|description",
-            "default_sort_fields": "ordernumber",
-            "object_name": "Quotas",
-            "title_create": "Create quota - initial volumes",
-            "title_edit": "Edit quota",
-            "description_keys": "",
-            "validate": false,
-            "buttons": {
-                "heading_text": "Next steps",
-                "info_text": "",
-                "submit_button_text_create": "Add to workbasket",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "",
-                "cancel_button_text": "Cancel",
-                "cancel_button_href": "./"
-            }
-        },
-        "form": [
-            {
-                "control_type": "inset_control",
-                "control_scope": "insert",
-                "text": "Use this form to specify the in-quota duties that will apply to each of the commodities that will be included within this quota.[WORKBASKET]"
-            },
-            {
-                "control_type": "inset_control",
-                "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
-            },
-            {
-                "control_type": "error_block"
-            },
-            {
-                "control_type": "include_control",
-                "control_scope": "",
-                "path": "/quotas/includes/create_definitions.php"
             },
             {
                 "control_type": "button_cluster_control"

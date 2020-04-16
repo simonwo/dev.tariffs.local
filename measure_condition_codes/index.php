@@ -54,7 +54,7 @@ $application->get_measure_condition_codes();
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/">Home</a>
                 </li>
-                <li class="govuk-breadcrumbs__list-item" aria-current="page">Measurecs</li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">Measure condition codes</li>
             </ol>
         </div>
         <!-- End breadcrumbs //-->

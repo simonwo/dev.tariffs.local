@@ -348,6 +348,14 @@ class data_entry_form
                                                 $text = $item["text"]
                                             );
                                             break;
+                                        case "summary_detail_control":
+                                            new summary_detail_control(
+                                                $text1 = $item["text1"],
+                                                $text2 = $item["text2"],
+                                                $control_scope = $control_scope
+                                            );
+                                            break;
+
                                         case "back_control":
                                             new back_control();
                                             break;

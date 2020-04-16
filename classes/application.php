@@ -56,7 +56,7 @@ class application
 
 
         // Paging parameters
-        $this->page_size = 50;
+        $this->page_size = 20;
         $this->page = intval(get_querystring("p"));
         if (($this->page == 0) || (!empty($_POST))) {
             $this->page = 1;
@@ -252,7 +252,7 @@ class application
         $sql = "SELECT rg.regulation_group_id, description, validity_start_date, validity_end_date
         FROM regulation_groups rg, regulation_group_descriptions rgd
         WHERE rg.regulation_group_id = rgd.regulation_group_id
-        AND validity_end_date IS NULL ORDER BY rgd.regulation_group_id;";
+        AND validity_end_date IS NULL and display = true ORDER BY rgd.regulation_group_id;";
         $result = pg_query($conn, $sql);
         $temp = array();
         if ($result) {
@@ -268,7 +268,7 @@ class application
                 $regulation_group->validity_start_date = $validity_start_date;
                 $regulation_group->validity_end_date = $validity_end_date;
                 $regulation_group->id = $regulation_group_id;
-                $regulation_group->string = "<b>" . $regulation_group_id . "</b> " . $description;
+                $regulation_group->string = "<b>" . $regulation_group_id . "</b> - " . $description;
 
                 $regulation_group->url = "/regulations/?filter_regulations_regulation_group_id=" . $regulation_group->id;
                 $regulation_group->regulation_url = "<a class='govuk-link' href='" . $regulation_group->url . "'>View regulations</a>";

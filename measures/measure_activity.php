@@ -1817,7 +1817,7 @@ class measure_activity
         if (count($this->siv_component_list) > 0) {
             $s = floatval($this->siv_component_list[0]->duty_amount);
         }
-        $this->combined_duty = "<span class='entry_price'>Entry Price</span> " . number_format($s, 3) . "%";
+        $this->combined_duty = "<span class='entry_price'>Entry Price</span> " . number_format($s, 2) . "%";
     }
 
     public function combine_duties()

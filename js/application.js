@@ -437,6 +437,8 @@ $(document).ready(function () {
 
     });
 
+ 
+
 
     function parse_duty_value(s) {
         //alert (s);
@@ -1062,11 +1064,11 @@ $(document).ready(function () {
         var data = getJson(url);
         var results = data.results;
         if (results.length == 0) {
-            // There are no valid measurement unit qualifiers
+            // There are no valid measurement qualifier units
             $("#measurement_unit_qualifier_code").val("Unspecified");
             $("#measurement_unit_qualifier_code").prop("disabled", true);
         } else {
-            // There is at least one valid measurement unit qualifier
+            // There is at least one valid measurement qualifier unit
             $("#measurement_unit_qualifier_code").prop("disabled", false);
             var option_array = [];
             $("#measurement_unit_qualifier_code option").each(function () {
@@ -1738,5 +1740,57 @@ $(document).ready(function () {
         );
     });
     */
+   $("a#populate_commodity_migration_form").click(function (e) {
+    var first_commodity_code = $("#first_commodity_code").val();
+    if (first_commodity_code == "") {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+
+    var tally = parseInt(first_commodity_code);
+
+    var gap = $("#gap").val();
+    gap = parseInt(gap);
+
+    var indent_increment = $("#indent_increment").val();
+    indent_increment = parseInt(indent_increment);
+
+    var last_commodity = "";
+    $("#migrate_table tr").each(function () {
+        var commodity = $(this).find("td.commodity").text();
+        var pls = $(this).find("td.productline_suffix").text();
+        var indent = parseInt($(this).find("td.indent").text());
+
+        // Get new comm code
+        if (last_commodity != "") {
+            if (commodity != last_commodity) {
+                tally += gap;
+            }
+        }
+        tally_string = tally.toString();
+        tally_string = tally_string.padStart(10, '0');
+
+        
+        // Get new pls
+        var pls_new = pls;
+
+        // Get new indent
+        var indent_new = indent + indent_increment;
+
+        $(this).find("input.commodity_new").val(tally_string);
+        $(this).find("input.productline_suffix_new").val(pls_new);
+        $(this).find("input.indent_new").val(indent_new);
+        
+        console.log(tally_string);
+        console.log("iterate");
+        last_commodity = commodity;
+    });
+
+    e.preventDefault();
+    e.stopPropagation();
+
+});
+
 
 });

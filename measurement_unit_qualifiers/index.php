@@ -54,7 +54,7 @@ $application->get_measurement_unit_qualifiers();
                 <li class="govuk-breadcrumbs__list-item">
                     <a class="govuk-breadcrumbs__link" href="/">Home</a>
                 </li>
-                <li class="govuk-breadcrumbs__list-item" aria-current="page">Measurement unit qualifiers</li>
+                <li class="govuk-breadcrumbs__list-item" aria-current="page">Measurement qualifier units</li>
             </ol>
         </div>
         <!-- End breadcrumbs //-->
@@ -63,12 +63,12 @@ $application->get_measurement_unit_qualifiers();
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <!-- Start main title //-->
-                    <h1 class="govuk-heading-xl">View measurement unit qualifiers</h1>
+                    <h1 class="govuk-heading-xl">View measurement qualifier units</h1>
                     <!-- End main title //-->
                     <?php
                     // Inset control
                     new inset_control(
-                        $text = "Use this screen to view measurement unit qualifiers. Measurement units cannot be modified, as doing so is likely
+                        $text = "Use this screen to view measurement qualifier units. Measurement units cannot be modified, as doing so is likely
                         to cause significant issues in CDS and other downstream systems. This screen is read-only."
                     );
 ?>
@@ -78,7 +78,7 @@ $application->get_measurement_unit_qualifiers();
                             <table class="govuk-table govuk-table--m sticky">
                                 <thead class="govuk-table__head">
                                     <tr class="govuk-table__row">
-                                        <th scope="col" class="govuk-table__header" nowrap>Measurement unit qualifier</th>
+                                        <th scope="col" class="govuk-table__header" nowrap>Measurement qualifier unit</th>
                                         <th scope="col" class="govuk-table__header">Description</th>
                                         <th scope="col" class="govuk-table__header" nowrap>Start date</th>
                                         <th scope="col" class="govuk-table__header" nowrap>End date</th>

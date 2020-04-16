@@ -23,7 +23,7 @@ class measure_condition_component
 		#	return
 
         $this->duty_string = "";
-        $duty_amount = number_format($this->duty_amount, 3);
+        $duty_amount = number_format($this->duty_amount, 2);
         
         switch ($this->duty_expression_id) {
             case "01":

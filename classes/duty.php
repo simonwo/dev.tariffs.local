@@ -145,6 +145,12 @@ class duty
         #if $this->duty_expression_id in ('12', '13', '14', '21', '23', '25', '27', '29'):
         #	$this->duty_string = ""
         #	return
+        
+        if ($this->monetary_unit_code == "") {
+            $decimal_places = 2;
+        } else {
+            $decimal_places = 2;
+        }
 
         $this->duty_string = "";
         $duty_amount = number_format($this->duty_amount, $decimal_places);

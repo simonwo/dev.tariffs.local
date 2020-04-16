@@ -19,7 +19,7 @@ if ($submitted == 1) {
     $_SESSION["geographical_area_id_countries"] = get_formvar("geographical_area_id_countries");
 
     $quota_order_number = new quota_order_number();
-    $quota_order_number->validate_form_step1();
+    $quota_order_number->validate_form_core();
 } else {
     $quota_order_number = new quota_order_number();
     $quota_order_number->get_parameters();
@@ -45,7 +45,7 @@ require("../includes/metadata.php");
         $control_content["measure_type_id"] = $application->quota_measure_types;
         $control_content["origin_quota"] = $application->quota_origin_quota_options;
         $control_content["period_type"] = $application->quota_period_types;
-        new data_entry_form($control_content, $quota_order_number, $left_nav = ""); // "create_edit2.html");
+        new data_entry_form($control_content, $quota_order_number, $left_nav = ""); // "create_edit_reference.html");
         ?>
 
     </div>

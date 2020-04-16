@@ -77,6 +77,7 @@ require(dirname(__FILE__) . "../../classes/extract/extract_certificates.php");
 
 /* Prototype classes */
 require(dirname(__FILE__) . "../../measures/measure_activity.php");
+require(dirname(__FILE__) . "../../goods_nomenclatures/commodity_migrate_activity.php");
 
 
 
@@ -871,7 +872,7 @@ function duty_format($var)
     if ($var == Null) {
         return ("");
     } else {
-        return (number_format($var, 3));
+        return (number_format($var, 2));
     }
 }
 
@@ -1165,6 +1166,7 @@ function parse_placeholders($s, $obj = null)
             }
         }
     }
+    //h1 ($s);
     return ($s);
 }
 

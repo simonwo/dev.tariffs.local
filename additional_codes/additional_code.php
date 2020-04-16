@@ -269,7 +269,7 @@ class additional_code
         ));
 
         if ($operation == "C") {
-            # Create the additional_code description period record
+            # Create the additional code description period record
             $sql = "INSERT INTO additional_code_description_periods_oplog (
             additional_code_description_period_sid, additional_code_sid, additional_code, additional_code_type_id,
             validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)
@@ -281,7 +281,7 @@ class additional_code
                 $this->validity_start_date, $operation, $operation_date, $application->session->workbasket->workbasket_id, $status, $workbasket_item_sid
             ));
 
-            # Create the additional_code description record
+            # Create the additional code description record
             $sql = "INSERT INTO additional_code_descriptions_oplog (
             additional_code_description_period_sid, additional_code_sid, additional_code, additional_code_type_id,
             language_id, description, operation, operation_date, workbasket_id, status, workbasket_item_sid)
@@ -311,7 +311,7 @@ class additional_code
         }
         $status = 'In progress';
 
-        # Create the additional_code description record
+        # Create the additional code description record
         $sql = "INSERT INTO additional_code_descriptions_oplog (
             additional_code_description_period_sid, additional_code_sid, additional_code,
             additional_code_type_id, language_id, description, operation, operation_date, workbasket_id, status)
@@ -339,7 +339,7 @@ class additional_code
         $description .= '}]';
         $workbasket_item_sid = $application->session->workbasket->insert_workbasket_item($oid, "additional code description", $status, $operation, $operation_date, $description);
 
-        // Then update the additional_code description record with unique ID of the workbasket item record
+        // Then update the additional code description record with unique ID of the workbasket item record
         $sql = "UPDATE additional_code_descriptions_oplog set workbasket_item_sid = $1 where oid = $2";
         $stmt = "update_description_" . uniqid();
         pg_prepare($conn, $stmt, $sql);
@@ -347,7 +347,7 @@ class additional_code
             $workbasket_item_sid, $oid
         ));
 
-        # Create the additional_code description period record
+        # Create the additional code description period record
         if ($operation == "C") {
             $sql = "INSERT INTO additional_code_description_periods_oplog (additional_code_description_period_sid, additional_code, additional_code_sid,
             additional_code_type_id, validity_start_date, operation, operation_date, workbasket_id, status, workbasket_item_sid)

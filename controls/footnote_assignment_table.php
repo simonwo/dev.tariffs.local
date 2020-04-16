@@ -64,7 +64,7 @@ class footnote_assignment_table_control
                 $error_key = ""
             );
             new date_picker_control(
-                $label = "Please select the date of which to associate the commodities",
+                $label = "Please select the date on which to associate the commodities",
                 $label_style = "govuk-label--s",
                 $hint_text = "",
                 $control_name = "date",

@@ -1,0 +1,90 @@
+{
+    "goods_nomenclature_descriptions": {
+        "config": {
+            "title": "n/a",
+            "inset": "n/a",
+            "freetext_fields": "n/a",
+            "default_sort_fields": "n/a",
+            "object_name": "commodity codes",
+            "override_root": "/goods_nomenclatures/",
+            "title_create": "Create a new commodity code description",
+            "title_edit": "Edit commodity code description",
+            "url_view": "/goods_nomenclatures/view.html?mode=view&goods_nomenclature_item_id={goods_nomenclature_item_id}&goods_nomenclature_sid={goods_nomenclature_sid}&productline_suffix={productline_suffix}",
+            "title_view": "Commodity {goods_nomenclature_item_id} ({productline_suffix})",
+            "validate": true,
+            "buttons": {
+                "heading_text": "Finish now",
+                "submit_button_text_create": "Add to workbasket",
+                "submit_button_text_edit": "Add to workbasket",
+                "save_progress_button_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "insert",
+                "text": "You are creating an commodity code description for commodity code <b>{goods_nomenclature_item_id} ({productline_suffix})</b>.[WORKBASKET]"
+            },
+            {
+                "control_type": "inset_control",
+                "control_scope": "update",
+                "text": "You are editing an commodity code description for commodity code <b>{goods_nomenclature_item_id} ({productline_suffix})</b>.[WORKBASKET]"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_item_id",
+                "value": "{goods_nomenclature_item_id}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "productline_suffix",
+                "value": "{productline_suffix}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "goods_nomenclature_sid",
+                "value": "{goods_nomenclature_sid}"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_scope": "update",
+                "control_name": "goods_nomenclature_description_period_sid",
+                "value": "{period_sid}"
+            },
+            {
+                "control_type": "error_block"
+            },
+            {
+                "control_type": "date_picker_control",
+                "label": "When does this description start?",
+                "label_style": "govuk-label--m",
+                "hint_text": "",
+                "control_name": "validity_start_date",
+                "default": "",
+                "required": true
+            },
+            {
+                "control_type": "character_count_control",
+                "control_scope": "",
+                "label": "Please enter the commodity code description",
+                "label_style": "govuk-label--m",
+                "hint_text": "The latest commodity code description is included. Please edit or overwrite the existing description.",
+                "control_name": "description",
+                "rows": 5,
+                "maxlength": 10000,
+                "required": true,
+                "default": ""
+            },
+            {
+                "control_type": "include_control",
+                "control_scope": "",
+                "path": "/includes/common/formatting_help.html"
+            },
+            {
+                "control_type": "button_cluster_control"
+            }
+        ]
+    }
+}
