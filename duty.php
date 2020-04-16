@@ -72,7 +72,7 @@ if ($result) {
     }
 }
 
-// replace the measurement unit qualifiers
+// replace the measurement qualifier units
 $sql = "select measurement_unit_qualifier_code, upper(description) as description from measurement_unit_qualifier_descriptions mud
 order by 1 desc;";
 $stmt = "stmt_2";
@@ -356,7 +356,7 @@ require("includes/metadata.php");
                                     <th scope="col" class="govuk-table__header">Duty amount</th>
                                     <th scope="col" class="govuk-table__header">Monetary unit</th>
                                     <th scope="col" class="govuk-table__header">Measurement unit</th>
-                                    <th scope="col" class="govuk-table__header">Measurement unit qualifier</th>
+                                    <th scope="col" class="govuk-table__header">Measurement qualifier unit</th>
                                     <th scope="col" class="govuk-table__header c">Validity</th>
                                 </tr>
                             </thead>
