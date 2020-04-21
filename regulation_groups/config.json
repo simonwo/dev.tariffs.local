@@ -33,7 +33,7 @@
                 "control_type": "input_control",
                 "label": "What is the ID of this regulation group?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter two one-digit alphabetical string. Click here to view <a href='/certificate_types/'>existing regulation groups</a>.",
+                "hint_text": "Enter two one-digit alphabetical string. Click here to view <a href='/certificate_types/'>existing regulation groups</a>.",
                 "control_name": "regulation_group_id",
                 "control_style": "govuk-input--width-4",
                 "size": 2,

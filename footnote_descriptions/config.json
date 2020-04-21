@@ -58,9 +58,9 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "insert",
-                "label": "Please enter the footnote description",
+                "label": "Enter the footnote description",
                 "label_style": "govuk-label--m",
-                "hint_text": "The latest footnote description is included. Please edit or overwrite the existing description.",
+                "hint_text": "The latest footnote description is included. Edit or overwrite the existing description.",
                 "control_name": "description",
                 "rows": 5,
                 "maxlength": 2000,
@@ -70,7 +70,7 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "update",
-                "label": "Please enter the footnote description",
+                "label": "Enter the footnote description",
                 "label_style": "govuk-label--m",
                 "hint_text": "",
                 "control_name": "description",

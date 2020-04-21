@@ -24,11 +24,11 @@
                 "text": "Volumes"
             },
             {
-                "url": "/quotas/create_edit3.html",
+                "url": "/quotas/create_edit_commodities.html",
                 "text": "Commodities"
             },
             {
-                "url": "/quotas/create_edit3.html",
+                "url": "/quotas/create_edit_conditions.html",
                 "text": "Conditions"
             },
             {
@@ -42,40 +42,6 @@
             {
                 "url": "/quotas/create_edit4.html",
                 "text": "Summary"
-            },
-            {
-                "url": "/quotas/create_edit8.html",
-                "text": "Confirmation"
-            }
-        ],
-        "links_safe": [
-            {
-                "url": "/quotas/create_edit.html",
-                "text": "Core data"
-            },
-            {
-                "url": "/quotas/create_edit_reference.html",
-                "text": "Reference documents"
-            },
-            {
-                "url": "/quotas/create_edit3.html",
-                "text": "Commodities"
-            },
-            {
-                "url": "/quotas/create_edit4.html",
-                "text": "Duties"
-            },
-            {
-                "url": "/quotas/create_edit_measurements.html",
-                "text": "Measurements"
-            },
-            {
-                "url": "/quotas/create_edit_definitions.html",
-                "text": "Definitions"
-            },
-            {
-                "url": "/quotas/create_edit_volumes.html",
-                "text": "Volumes"
             },
             {
                 "url": "/quotas/create_edit8.html",
@@ -100,7 +66,7 @@
             "buttons": {
                 "heading_text": "Next steps",
                 "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
+                "submit_button_text_edit": "Continue",
                 "save_progress_button_text": "Save progress",
                 "info_text": "",
                 "cancel_button_text": "Cancel",
@@ -261,7 +227,7 @@
                     "control_name": "quota_commodities",
                     "table_class": "govuk-table--m",
                     "caption": "Commodities",
-                    "intro_text": "The following unique commodities are currently associated with this quota. Please also view the <a class='govuk-link' href='#tab_quota_measures'>measures</a> tab for a historical view of past assignments.",
+                    "intro_text": "The following unique commodities are currently associated with this quota. You can also view the <a class='govuk-link' href='#tab_quota_measures'>measures</a> tab for a historical view of past assignments.",
                     "edit_text": "",
                     "edit_url": "",
                     "fields": [
@@ -446,7 +412,7 @@
                     "control_scope": "view",
                     "control_name": "quota_suspension_periods",
                     "caption": "Suspension periods",
-                    "intro_text": "Quota suspensions are functions that are enabled in legal text to allow for First Come First Serve quotas to be made effectively unavailable to traders for a given period of time, for a number of reasons – these reasons are typically written into the initial legal text, such that there is no requirement to legislate to bring in the suspension.<br /><br />Please note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
+                    "intro_text": "Quota suspensions are functions that are enabled in legal text to allow for First Come First Serve quotas to be made effectively unavailable to traders for a given period of time, for a number of reasons – these reasons are typically written into the initial legal text, such that there is no requirement to legislate to bring in the suspension.<br /><br />Note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
                     "edit_text": "Create a new suspension period",
                     "edit_url": "/quota_suspension_periods/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
                     "fields": [
@@ -482,7 +448,7 @@
                     "control_scope": "view",
                     "control_name": "quota_blocking_periods",
                     "caption": "Blocking periods",
-                    "intro_text": "Quota blocks are placed on quotas for a limited period of time to prevent allocations from being taken. They do not prevent declarations from being made against a quota. A quota blocking period usually coincides with the start of a definition period, though not always; for instance, a common blocking reason is to protect the re-opening of a quota after significant returns.<br /><br />Please note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
+                    "intro_text": "Quota blocks are placed on quotas for a limited period of time to prevent allocations from being taken. They do not prevent declarations from being made against a quota. A quota blocking period usually coincides with the start of a definition period, though not always; for instance, a common blocking reason is to protect the re-opening of a quota after significant returns.<br /><br />Note: you can only delete future blocking periods and you can only edit blocking periods that have not yet started.",
                     "edit_text": "Create a new blocking period",
                     "edit_url": "/quota_blocking_periods/create_edit.html?mode=insert&quota_order_number_sid={quota_order_number_sid}&quota_order_number_id={quota_order_number_id}",
                     "fields": [
@@ -524,7 +490,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to provide the basic information necessary to support the creation of a quota.[WORKBASKET]"
+                "text": "Use this form to provide the basic information necessary to support the creation of a quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
@@ -565,10 +531,10 @@
                 "control_type": "select_control",
                 "label": "What is the category of this quota?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please identify if this quota is a WTO quota, an ATQ (Autonomous tariff rate quota) or a preferential quota (which is typically a part of a multilateral or bilateral Trade Agreement).",
+                "hint_text": "Specify if this quota is a WTO quota, an ATQ (Autonomous tariff rate quota) or a preferential quota (which is typically a part of a multilateral or bilateral Trade Agreement).",
                 "control_name": "quota_category",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a quota category -",
+                "default_string": "- Select a quota category -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -583,7 +549,7 @@
                 "control_type": "input_control",
                 "label": "Quota order number",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter the quota order number ID for this quota. This should be in the form of a 6-digit number starting with 09. If the third character is &quot;4&quot;, that signifies that this quota will be managed via the licensing mechanism. All other quotas are First Come, First Served (FCFS).",
+                "hint_text": "Enter the quota order number ID for this quota. This should be in the form of a 6-digit number starting with 08. If the third character is &quot;4&quot;, that signifies that this quota will be managed via the licensing mechanism. All other quotas are First Come, First Served (FCFS).<br /><br />The quota order number ID will also be used as the name of this activity.",
                 "control_name": "quota_order_number_id",
                 "control_style": "govuk-!-width-one-quarter",
                 "size": 6,
@@ -604,13 +570,28 @@
                 "required": true
             },
             {
+                "control_type": "input_control",
+                "label": "What type of measures do you want to create?",
+                "label_style": "govuk-label--m",
+                "hint_text": "Type the measure type ID or phrases contained in the measure type description.",
+                "control_name": "measure_type_id",
+                "control_style": "govuk-input govuk-input--width-30",
+                "size": 100,
+                "maxlength": 100,
+                "pattern": "",
+                "required": true,
+                "default": "",
+                "disabled_on_edit": true,
+                "custom_errors": ""
+            },
+            {
                 "control_type": "xselect_control",
                 "label": "What is the period of this quota?",
                 "label_style": "govuk-label--m",
                 "hint_text": "xxx",
                 "control_name": "period_type",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a quota category -",
+                "default_string": "- Select a quota category -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -722,19 +703,19 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
-                "info_text": "",
                 "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
+                "submit_button_text_edit": "Continue",
                 "save_progress_button_text": "Save progress",
-                "cancel_button_text": "Previous step",
-                "cancel_button_href": "./create_edit.html"
+                "info_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
             }
         },
         "form": [
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "While this information is not passed down to the border systems, it is required to enable the creation of reference documents for Trade Agreements. Please complete now or return later once the quotas have been set up.[WORKBASKET]"
+                "text": "While this information is not passed down to the border systems, it is required to enable the creation of reference documents for Trade Agreements. Complete now or return later once the quotas have been set up.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
@@ -750,7 +731,7 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "This information is used to provide additional information about a quota on reference documents.",
                 "control_name": "quota_scope",
-                "control_style": "govuk-!-width-full",
+                "control_style": "govuk-input govuk-input--width-30",
                 "size": 100,
                 "maxlength": 100,
                 "pattern": "",
@@ -770,7 +751,7 @@
                 "label_style": "govuk-label--m",
                 "hint_text": "This information is used to provide additional information about a quota's staging on reference documents..",
                 "control_name": "quota_staging",
-                "control_style": "govuk-!-width-full",
+                "control_style": "govuk-input govuk-input--width-30",
                 "size": 100,
                 "maxlength": 100,
                 "pattern": "",
@@ -814,14 +795,13 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
-                "info_text": "",
                 "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
+                "submit_button_text_edit": "Continue",
                 "save_progress_button_text": "Save progress",
-                "cancel_button_text": "Previous step",
-                "cancel_button_href": "./create_edit_reference.html"
+                "info_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
             }
-
         },
         "form": [
             {
@@ -841,10 +821,10 @@
                 "control_type": "select_control",
                 "label": "How will the quota balance(s) be measured?",
                 "label_style": "govuk-label--m",
-                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Please ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
+                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
                 "control_name": "measurement_unit_code",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a measurement unit code -",
+                "default_string": "- Select a measurement unit code -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -857,7 +837,7 @@
                 "hint_text": "",
                 "control_name": "measurement_unit_qualifier_code",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a measurement qualifier code -",
+                "default_string": "- Select a measurement qualifier code -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -870,7 +850,7 @@
                 "hint_text": "This is the maximum number of decimal places that a trader can enter on the SAD form in respect of the quantity being imported under this quota. Unless explicitly otherwise specified, the default value is set to '3' in the box below.",
                 "control_name": "maximum_precision",
                 "default_value": "Unspecified",
-                "default_string": "- Please select the maximum precision -",
+                "default_string": "- Select the maximum precision -",
                 "default": "3",
                 "selected": "3",
                 "required": true,
@@ -911,7 +891,7 @@
             "buttons": {
                 "heading_text": "Next steps",
                 "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
+                "submit_button_text_edit": "Continue",
                 "save_progress_button_text": "Save progress",
                 "info_text": "",
                 "cancel_button_text": "Cancel",
@@ -922,7 +902,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to identify this quota's annual cadence ...."
+                "text": "Use this form to identify this quota's annual cadence and any introductory periods."
             },
             {
                 "control_type": "error_block"
@@ -931,7 +911,7 @@
                 "control_type": "radio_control",
                 "label": "How will this quota recur?",
                 "label_style": "govuk-fieldset__legend--m",
-                "hint_text": "Please identify if this quota's regular recurrence will be as an annual, quarterly, monthly or custom period.",
+                "hint_text": "Specify if this quota's regular recurrence will be as an annual, quarterly, monthly or custom period.",
                 "control_name": "period_type",
                 "dataset": "",
                 "selected": "",
@@ -943,7 +923,7 @@
                 "control_type": "date_picker_control",
                 "label": "When does the first regularly recurring period start?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter the date on which the regular recurring period will start for the first time. If there is one or more introductory period required prior to the start of the first recurring period, please enter that period below.",
+                "hint_text": "Enter the date on which the regular recurring period will start for the first time. If there is one or more introductory period required prior to the start of the first recurring period, enter that period below.",
                 "control_name": "validity_start_date",
                 "control_scope": "",
                 "default": "",
@@ -953,7 +933,7 @@
                 "control_type": "date_picker_control",
                 "label": "When does the first regularly recurring period end?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please leave this field blank for all period types other than a custom period.",
+                "hint_text": "Leave this field blank for all period types other than a custom period.",
                 "control_name": "validity_end_date",
                 "control_scope": "",
                 "default": "",
@@ -978,7 +958,7 @@
                 "control_type": "radio_control",
                 "label": "Will there be one or more introductory periods?",
                 "label_style": "govuk-fieldset__legend--m",
-                "hint_text": "Please define if there will be one or more introductory quota periods prior to the start of the first regularly repeating period",
+                "hint_text": "Define if there will be one or more introductory quota periods prior to the start of the first regularly repeating period",
                 "control_name": "introductory_period_option",
                 "dataset": "",
                 "selected": "",
@@ -1021,7 +1001,7 @@
             "buttons": {
                 "heading_text": "Next steps",
                 "submit_button_text_create": "Continue",
-                "submit_button_text_edit": "Add to workbasket",
+                "submit_button_text_edit": "Continue",
                 "save_progress_button_text": "Save progress",
                 "info_text": "",
                 "cancel_button_text": "Cancel",
@@ -1052,7 +1032,7 @@
             }
         ]
     },
-    "quota_order_numbers3": {
+    "quota_order_numbers_commodities": {
         "config": {
             "title": "Find and edit a quota",
             "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
@@ -1065,10 +1045,10 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Continue",
+                "save_progress_button_text": "Save progress",
                 "info_text": "",
-                "submit_button_text_create": "Add to workbasket",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
             }
@@ -1076,13 +1056,8 @@
         "form": [
             {
                 "control_type": "inset_control",
-                "control_scope": "insert",
+                "control_scope": "",
                 "text": "Use this form to specify the commodities that will be included within this quota.[WORKBASKET]"
-            },
-            {
-                "control_type": "inset_control",
-                "control_scope": "update",
-                "text": "Page 2 Update text - Dolore sint incididunt ut nisi. Laborum duis sunt fugiat incididunt adipisicing irure excepteur nisi labore amet ad qui velit. Enim id laboris eu voluptate qui. Fugiat eu nulla ex aute aute voluptate velit duis veniam fugiat deserunt eiusmod. Ea est sit aliquip incididunt.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -1090,7 +1065,7 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "",
-                "label": "Please list the commodity codes to which this quota will apply",
+                "label": "List the commodity codes to which this quota will apply",
                 "label_style": "govuk-label--m",
                 "hint_text": "Type or paste a list of 10-digit commodity codes into the box below. Separate individual codes with a space, tab or line break. If you don't know which code you need, you can find it via the&nbsp;<a class='govuk-link nw' target='_blank' href='https://www.gov.uk/trade-tariff'>Trade Tariff tool</a>.",
                 "control_name": "commodity_codes",
@@ -1117,6 +1092,55 @@
             }
         ]
     },
+    "quota_order_numbers_conditions": {
+        "config": {
+            "title": "Find and edit a quota",
+            "inset": "Enter criteria to help find a quota. Alternatively, <a class='govuk-link' href='./create_edit.html'>create a new quota</a>.",
+            "freetext_fields": "ordernumber|description",
+            "default_sort_fields": "ordernumber",
+            "object_name": "Quotas",
+            "title_create": "Create quota - conditions",
+            "title_edit": "Edit quota",
+            "description_keys": "",
+            "validate": false,
+            "buttons": {
+                "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Continue",
+                "save_progress_button_text": "Save progress",
+                "info_text": "",
+                "cancel_button_text": "Cancel",
+                "cancel_button_href": "./"
+            }
+        },
+        "form": [
+            {
+                "control_type": "inset_control",
+                "control_scope": "",
+                "text": "Use this form to add one or more conditions to the measures that you are creating.[WORKBASKET]"
+            },
+            {
+                "control_type": "include_control",
+                "control_scope": "",
+                "path": "/quotas/includes/condition_prototype.php"
+            },
+            {
+                "control_type": "start_form"
+            },
+            {
+                "control_type": "hidden_control",
+                "control_name": "action",
+                "value": "conditions"
+            },
+            {
+                "control_type": "button_cluster_control"
+            },
+            {
+                "control_type": "end_form"
+            }
+        ]
+
+    },
     "quota_order_numbers4": {
         "config": {
             "title": "Find and edit a quota",
@@ -1130,10 +1154,10 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Continue",
+                "save_progress_button_text": "Save progress",
                 "info_text": "",
-                "submit_button_text_create": "Add to workbasket",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
             }
@@ -1175,10 +1199,10 @@
             "validate": false,
             "buttons": {
                 "heading_text": "Next steps",
+                "submit_button_text_create": "Continue",
+                "submit_button_text_edit": "Continue",
+                "save_progress_button_text": "Save progress",
                 "info_text": "",
-                "submit_button_text_create": "Add to workbasket",
-                "submit_button_text_edit": "Add to workbasket",
-                "save_progress_button_text": "",
                 "cancel_button_text": "Cancel",
                 "cancel_button_href": "./"
             }
@@ -1204,6 +1228,59 @@
             },
             {
                 "control_type": "button_cluster_control"
+            }
+        ]
+    },
+    "condition_table": {
+        "columns": [
+            {
+                "column_name": "Condition code",
+                "data_column": "condition_code",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "hanging table_indent"
+            },
+            {
+                "column_name": "Sequence",
+                "data_column": "component_sequence_number",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "c"
+            },
+            {
+                "column_name": "Certificate",
+                "data_column": "certificate_code",
+                "sort_field": "",
+                "tooltip": "",
+                "align": ""
+            },
+            {
+                "column_name": "Reference price",
+                "data_column": "reference_price",
+                "sort_field": "",
+                "tooltip": "",
+                "align": ""
+            },
+            {
+                "column_name": "Action code",
+                "data_column": "action_code",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "hanging2"
+            },
+            {
+                "column_name": "Duty",
+                "data_column": "applicable_duty",
+                "sort_field": "",
+                "tooltip": "",
+                "align": ""
+            },
+            {
+                "column_name": "Actions",
+                "data_column": "action_string",
+                "sort_field": "",
+                "tooltip": "",
+                "align": "nw r"
             }
         ]
     }

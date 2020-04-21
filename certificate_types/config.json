@@ -63,7 +63,7 @@
                 "control_type": "input_control",
                 "label": "What is the unique code of this certificate type?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter a single digit alphanumeric string. Click here to view <a href='/certificate_types/'>existing certificate types</a>.",
+                "hint_text": "Enter a single digit alphanumeric string. Click here to view <a href='/certificate_types/'>existing certificate types</a>.",
                 "control_name": "certificate_type_code",
                 "control_style": "govuk-input--width-4",
                 "size": 1,

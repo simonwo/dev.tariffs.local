@@ -397,6 +397,17 @@ function yn($var)
     }
 }
 
+function string_to_bool($var)
+{
+    $var = strtoupper($var);
+    $var2 = intval($var);
+    if (($var2 == "Y") || ($var == "Yes")) {
+        return (true);
+    } else {
+        return (false);
+    }
+}
+
 function yn2($var)
 {
     $var = intval($var);

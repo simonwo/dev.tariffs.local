@@ -33,8 +33,8 @@
                     "value": "{application_code_description}"
                 },
                 {
-                    "label": "Footnote ID",
-                    "value": "{footnote_type_id}{footnote_id}"
+                    "label": "Footnote type / ID",
+                    "value": "{footnote_type_id} {footnote_id}"
                 },
                 {
                     "label": "Current description",
@@ -92,7 +92,7 @@
                 "hint_text": "It's important that you select the right <a class='govuk-link' href='/footnote_types'>footnote type</a>, as this will determine whether it can be asssociated with measures, commodity codes or both.",
                 "control_name": "footnote_type_id",
                 "default_value": "",
-                "default_string": "- Please select a footnote type -",
+                "default_string": "- Select a footnote type -",
                 "selected": "",
                 "required": true,
                 "group_by": true,
@@ -107,7 +107,7 @@
                 "control_type": "input_control",
                 "label": "Footnote ID",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter an ID that will form a unique combination with the selected footnote type ID. Enter 3 or 5 numeric characters.",
+                "hint_text": "Enter an ID that will form a unique combination with the selected footnote type ID. Enter 3 or 5 numeric characters.",
                 "control_name": "footnote_id",
                 "control_style": "",
                 "xcontrol_style": "govuk-!-width-one-quarter",
@@ -143,7 +143,7 @@
                 "control_scope": "insert",
                 "label": "What is the description of this footnote?",
                 "label_style": "govuk-label--m",
-                "hint_text": "You may enter HTML formatting if required. Please see the guide below for more information.",
+                "hint_text": "You may enter HTML formatting if required. See the guide below for more information.",
                 "control_name": "description",
                 "rows": 5,
                 "maxlength": 2000,

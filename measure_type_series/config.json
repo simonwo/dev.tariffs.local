@@ -66,7 +66,7 @@
                 "control_type": "input_control",
                 "label": "What is the ID of this measure type series?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter a three-digit numeric string. Click here to view <a class='govuk-link' href='/measure_type_series/'>existing measure type series</a>.",
+                "hint_text": "Enter a three-digit numeric string. Click here to view <a class='govuk-link' href='/measure_type_series/'>existing measure type series</a>.",
                 "control_name": "measure_type_series_id",
                 "control_style": "govuk-input--width-4",
                 "size": 3,

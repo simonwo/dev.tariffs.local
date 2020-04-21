@@ -29,7 +29,7 @@ if ($submitted == 1) {
     $_SESSION["introductory_period_option"] = get_formvar("introductory_period_option");
 
     $quota_order_number = new quota_order_number();
-    $quota_order_number->validate_form_step6();
+    $quota_order_number->validate_form_step_definitions();
 } else {
     $quota_order_number = new quota_order_number();
     $quota_order_number->get_parameters();
@@ -53,7 +53,7 @@ require("../includes/metadata.php");
         $control_content = array();
         $control_content["period_type"] = $application->quota_period_types;
         $control_content["introductory_period_option"] = $application->quota_introductory_period_options;
-        new data_entry_form($control_content, $quota_order_number, $left_nav = ""); // , "create_edit_volumes.html");
+        new data_entry_form($control_content, $quota_order_number, $left_nav = "");
         ?>
 
     </div>

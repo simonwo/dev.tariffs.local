@@ -35,6 +35,7 @@ require (dirname(__FILE__) . "../../controls/version_control.php");
 require (dirname(__FILE__) . "../../controls/measures_table.php");
 require (dirname(__FILE__) . "../../controls/misc_data_table.php");
 require (dirname(__FILE__) . "../../controls/paragraph.php");
+require (dirname(__FILE__) . "../../controls/lock.php");
 require (dirname(__FILE__) . "../../controls/break.php");
 require (dirname(__FILE__) . "../../controls/summary.php");
 

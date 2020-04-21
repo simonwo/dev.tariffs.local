@@ -164,8 +164,6 @@ class data_entry_form
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-one-fifth nav-sticky">
                     <?php
-                    //$root = $_SERVER["DOCUMENT_ROOT"];
-                    //require($root . "quotas/includes/left_nav.php");
                     if ($this->show_navigation) {
                         new left_nav_control();
                     }

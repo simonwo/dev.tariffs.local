@@ -64,7 +64,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please use this form to create and edit certificates, licenses or other documents. A certificate code is made up of 4 digits. The first digit is a <a class='govuk-link' href='/certificate_type_codes/'>certificate type code</a>, followed by three alpha-numeric certificate code digits.[WORKBASKET]"
+                "text": "Use this form to create and edit certificates, licenses or other documents. A certificate code is made up of 4 digits. The first digit is a <a class='govuk-link' href='/certificate_type_codes/'>certificate type code</a>, followed by three alpha-numeric certificate code digits.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -73,10 +73,10 @@
                 "control_type": "select_control",
                 "label": "What is the type of this certificate?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please select the certificate type code from the list below. The next available certificate code will then be displayed.",
+                "hint_text": "Select the certificate type code from the list below. The next available certificate code will then be displayed.",
                 "control_name": "certificate_type_code",
                 "default_value": "",
-                "default_string": "- Please select a certificate type -",
+                "default_string": "- Select a certificate type -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -91,7 +91,7 @@
                 "control_type": "input_control",
                 "label": "Certificate code",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter a valid unique 3-digit numeric certificate code. <a id='check_certificate_code' class='govuk-link' href='#'>Check certificate code is available</a>.",
+                "hint_text": "Enter a valid unique 3-digit numeric certificate code. <a id='check_certificate_code' class='govuk-link' href='#'>Check certificate code is available</a>.",
                 "control_name": "certificate_code",
                 "control_style": "govuk-!-width-one-quarter",
                 "size": 3,
@@ -130,7 +130,7 @@
                 "control_type": "character_count_control",
                 "label": "What is the description of this certificate?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter a concise description of this certificate using language that will be meaningful to traders.",
+                "hint_text": "Enter a concise description of this certificate using language that will be meaningful to traders.",
                 "control_name": "description",
                 "control_scope": "insert",
                 "rows": 5,

@@ -81,7 +81,7 @@
                 "hint_text": "Select the additional code type first. The next available code in sequence will then be suggested.",
                 "control_name": "additional_code_type_id",
                 "default_value": "",
-                "default_string": "- Please select an additional code type -",
+                "default_string": "- Select an additional code type -",
                 "selected": "",
                 "required": true,
                 "group_by": "",

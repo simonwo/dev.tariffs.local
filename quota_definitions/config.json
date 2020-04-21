@@ -34,17 +34,17 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
+                "text": "Use this form to create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "duplicate",
-                "text": "This form has been pre-populated with the details of the definition period that you are copying. Please modify the details ... create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
+                "text": "This form has been pre-populated with the details of the definition period that you are copying. Modify the details ... create a new definition on quota {quota_order_number_id}.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Please use this form to update an existing definition on quota {quota_order_number_id}.[WORKBASKET]"
+                "text": "Use this form to update an existing definition on quota {quota_order_number_id}.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -74,7 +74,7 @@
                 "control_type": "date_picker_control",
                 "label": "When does this definition start?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please ensure that this date does not overlap any existing definitions on this quota.",
+                "hint_text": "Ensure that this date does not overlap any existing definitions on this quota.",
                 "control_name": "validity_start_date",
                 "default": "",
                 "required": true
@@ -97,7 +97,7 @@
                 "control_type": "input_control",
                 "label": "What will the initial volume of this definition period be?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please check the volume agains the unit provided.",
+                "hint_text": "Check the volume agains the unit provided.",
                 "control_name": "initial_volume",
                 "control_style": "govuk-input--width-10",
                 "size": 20,
@@ -112,10 +112,10 @@
                 "control_type": "select_control",
                 "label": "How will the quota balance(s) be measured?",
                 "label_style": "govuk-label--m",
-                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Please select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Please ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
+                "hint_text": "In most cases, quotas are measured according to physical attributes, such as weight or volume. Select that attribute here. You may also need to select a qualifier for the measurement unit that you select. Only the qualifiers that are applicable to the measurement unit selected are displayed.<br /><br />Ensure that you double check the measurement units provided and, if in doubt, use the smaller of two measurement units (e.g. prefer kilogrammes over tonnes).",
                 "control_name": "measurement_unit_code",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a measurement unit code -",
+                "default_string": "- Select a measurement unit code -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -128,7 +128,7 @@
                 "hint_text": "",
                 "control_name": "measurement_unit_qualifier_code",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a measurement qualifier code -",
+                "default_string": "- Select a measurement qualifier code -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -141,7 +141,7 @@
                 "hint_text": "This is the maximum number of decimal places that a trader can enter on the SAD form in respect of the quantity being imported under this quota. Unless explicitly otherwise specified, the default value is set to '3' in the box below.",
                 "control_name": "maximum_precision",
                 "default_value": "Unspecified",
-                "default_string": "- Please select the maximum precision -",
+                "default_string": "- Select the maximum precision -",
                 "default": "3",
                 "selected": "3",
                 "required": true,
@@ -164,7 +164,7 @@
                 "custom_errors": ""
             },            {
                 "control_type": "character_count_control",
-                "label": "Please enter a description for this definition",
+                "label": "Enter a description for this definition",
                 "label_style": "govuk-label--m",
                 "hint_text": "Optionally, enter a description / reason for this definition. This field is for informational purposes only.",
                 "control_name": "description",

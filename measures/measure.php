@@ -1129,7 +1129,7 @@ class measure
         justification_regulation_id, justification_regulation_role, stopped_flag, ordernumber,
         additional_code_type_id, additional_code_id, reduction_indicator,
         mtd.description as measure_type_description, ga.description as geographical_area_description,
-        gnd.description as goods_nomenclature_description
+        gnd.description as goods_nomenclature_description, m.status
         from measures m, measure_type_descriptions mtd, ml.ml_geographical_areas ga,
         goods_nomenclature_descriptions gnd, goods_nomenclature_description_periods gndp 
         where m.measure_type_id = mtd.measure_type_id
@@ -1163,6 +1163,7 @@ class measure
             $this->measure_type_description = $row[14];
             $this->geographical_area_description = $row[15];
             $this->goods_nomenclature_description = $row[16];
+            $this->status = $row[17];
 
             if ($this->validity_start_date != Null) {
                 $this->validity_start_date_day = date('d', strtotime($this->validity_start_date));

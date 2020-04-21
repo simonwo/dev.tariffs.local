@@ -33,12 +33,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to create a new origin for quota {quota_order_number_id}.[WORKBASKET]"
+                "text": "Use this form to create a new origin for quota {quota_order_number_id}.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Please use this form to update an existing origin for quota {quota_order_number_id}.[WORKBASKET]"
+                "text": "Use this form to update an existing origin for quota {quota_order_number_id}.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -79,7 +79,7 @@
             },
             {
                 "control_type": "input_control",
-                "label": "Please type the origin",
+                "label": "Enter the origin for this quotas",
                 "label_style": "govuk-label--m",
                 "hint_text": "Type into the box below to select the origin to be applied to this quota. If you select a country group, you will then be able to select individual countries to exclude.",
                 "control_name": "geographical_area_id",
@@ -96,7 +96,7 @@
                 "control_type": "input_control",
                 "label": "Exclusions",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter one or more exclusions.",
+                "hint_text": "Enter one or more exclusions.",
                 "control_name": "geographical_area_exclusions",
                 "control_style": "govuk-input--width-40",
                 "size": 60,

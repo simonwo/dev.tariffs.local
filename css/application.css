@@ -217,7 +217,7 @@ table#results th.r {
 }
 
 .govuk-table--m td, .govuk-table--m th {
-    font-size: 14px;
+    font-size: 14px !important;
 }
 
 .govuk-table.sticky th[scope=col] {
@@ -236,7 +236,7 @@ div.sticky {
 }
 
 .govuk-table--s td, .govuk-table--s th {
-    font-size: 12px;
+    font-size: 12px !important;
 }
 
 .tooltip {
@@ -888,8 +888,8 @@ td.vertical_align_middle {
 }
 
 .govuk-table__interstitial {
-    font-weight: bold;
-    background-color: #e0e0e0 !important;
+    font-weight: bold !important;
+    /*background-color: #e0e0e0 !important;*/
 }
 
 .govuk-table__interstitial2 {
@@ -1227,24 +1227,32 @@ td.vertical_align_middle {
     margin-bottom: 0px !important;
 }
 
-.govuk-accordion__section-content table tbody tr:last-of-type td.govuk-table__cell {
+.govuk-accordion__section-content table tbody tr:last-of-type>td.govuk-table__cell {
     border: 0px !important;
 }
 
-.govuk-accordion__section-content table tbody tr.noborder td.govuk-table__cell {
+.govuk-accordion__section-content table tbody tr.noborder>td.govuk-table__cell {
     border: 0px !important;
 }
 
-tr.noborder td.govuk-table__cell {
+tr.noborder>td.govuk-table__cell {
     border: 0px !important;
 }
 
 .govuk-accordion__section-content table tbody tr td.govuk-table__cell {
-    font-size: 14px !important;
+    xfont-size: 14px !important;
 }
 
 .govuk-accordion__section-content table thead tr th.govuk-table__header {
     font-size: 14px !important;
+}
+
+.govuk-accordion__section-content td table.govuk-table--m tbody tr td, .govuk-accordion__section-content table.govuk-table--m tbody tr th {
+    font-size: 14px !important;
+}
+
+.govuk-accordion__section-content td table.govuk-table--s tbody tr td, .govuk-accordion__section-content table.govuk-table--s tbody tr th {
+    font-size: 12px !important;
 }
 
 .govuk-accordion__section-button {
@@ -1694,18 +1702,60 @@ hr.scenario_divider {
 }
 
 p.scenario_divider {
-    color:#039;
-    margin:0px !important;
+    color: #039;
+    margin: 0px !important;
 }
+
 .govuk-input--s {
-    font-size:12px !important;
+    font-size: 12px !important;
     line-height: auto !important;
-    margin:0px !important;
-    height:auto !important;
+    margin: 0px !important;
+    height: auto !important;
 }
+
 .p5 {
-    padding:5px !important;
+    padding: 5px !important;
 }
+
 .pl0 {
-    padding-left:0px !important;
+    padding-left: 0px !important;
+}
+
+.silver {
+    background-color: #f6f6f6;
+    padding: 1em;
+}
+
+.mb0 {
+    margin-bottom: 0px !important
+}
+
+tr.hidden {
+    display: none
+}
+
+.measure_lock img {
+    margin: 0px 9px 0px 3px;
+}
+
+.measure_lock a {
+    display: inline-block;
+    position: relative;
+    top: -7px;
+}
+
+.lock {
+    margin-top: 1em;
+}
+
+.lock_img {
+    float: left;
+    width: 1em;
+}
+
+.lock_text {
+    display: block;
+    float: left;
+    margin-left: 1em;
+    width: 80%
 }

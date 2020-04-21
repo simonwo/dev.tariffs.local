@@ -21,10 +21,18 @@ class quota_order_number
     public $period_type = null;
     public $maximum_precision = null;
     public $year_count = null;
-    public $quota_category = "";
-    public $mechanism = "";
+    public $measure_type_id = null;
+    public $quota_category = null;
+    public $mechanism = null;
     public $origins = array();
     public $measure_types = array();
+
+    public $validity_end_date_day = "";
+    public $validity_end_date_month = "";
+    public $validity_end_date_year = "";
+
+    // Activity-related
+    public $measure_activity = null;
 
     #$quota_order_number_origin = new quota_order_number_origin;
 
@@ -40,8 +48,6 @@ class quota_order_number
         global $application;
         $errors = array();
 
-        //prend($_REQUEST);
-
         $this->measure_generating_regulation_id = strtoupper(get_formvar("measure_generating_regulation_id", "", True));
         $hyphen_pos = strpos($this->measure_generating_regulation_id, "-");
         if ($hyphen_pos !== -1) {
@@ -54,22 +60,11 @@ class quota_order_number
         $this->description = get_formvar("description", "", True);
         $this->geographical_area_id_countries = get_formvar("geographical_area_id_countries", "", True);
         $this->description = get_formvar("description", "", True);
-
-        /*
-        $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
-        $this->validity_start_date_month = get_formvar("validity_start_date_month", "", True);
-        $this->validity_start_date_year = get_formvar("validity_start_date_year", "", True);
-        $this->validity_start_date_string = $this->validity_start_date_day . "|" . $this->validity_start_date_month . "|" . $this->validity_start_date_year;
-        setcookie("validity_start_date_string", $this->validity_start_date_string, time() + (86400 * 30), "/");
-
-        $this->validity_end_date_day = get_formvar("validity_end_date_day", "", True);
-        $this->validity_end_date_month = get_formvar("validity_end_date_month", "", True);
-        $this->validity_end_date_year = get_formvar("validity_end_date_year", "", True);
-        $this->validity_end_date_string = $this->validity_end_date_day . "|" . $this->validity_end_date_month . "|" . $this->validity_end_date_year;
-        setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
-
-        //$this->set_dates();
-        */
+        $this->measure_activity = new measure_activity();
+        $this->measure_activity->activity_name = "Create quota " . $this->quota_order_number_id;
+        $this->measure_activity->measure_generating_regulation_id = $this->measure_generating_regulation_id;
+        $this->measure_type_id = get_before_hyphen(get_formvar("measure_type_id", "", True));
+        $this->measure_activity->measure_type_id = $this->measure_type_id;
 
         # Check on the measure_generating_regulation_id
         if (strlen($this->measure_generating_regulation_id) != 8) {
@@ -91,32 +86,17 @@ class quota_order_number
             array_push($errors, "quota_order_number_id");
         }
 
+        # Check on the measure_type_id
+        if (strlen($this->measure_activity->measure_type_id) != 3) {
+            array_push($errors, "measure_type_id");
+        }
+
         # If we are creating, check that the quota order number ID does not already exist
         if ($application->mode == "insert") {
             if ($this->exists()) {
                 array_push($errors, "quota_order_number_exists");
             }
         }
-
-        /*
-        # Check on the validity start date
-        $valid_start_date = checkdate($this->validity_start_date_month, $this->validity_start_date_day, $this->validity_start_date_year);
-        if ($valid_start_date != 1) {
-            array_push($errors, "validity_start_date");
-        }
-
-        # Check on the validity end date: must either be a valid date or blank
-        if ($application->mode == "update") {
-            if (($this->validity_end_date_day == "") && ($this->validity_end_date_month == "") && ($this->validity_end_date_year == "")) {
-                $valid_end_date = 1;
-            } else {
-                $valid_end_date = checkdate($this->validity_end_date_month, $this->validity_end_date_day, $this->validity_end_date_year);
-            }
-            if ($valid_end_date != 1) {
-                array_push($errors, "validity_end_date");
-            }
-        }
-        */
 
         # Check on the description
         if (($this->description == "") || (strlen($this->description) > 400)) {
@@ -126,15 +106,15 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
-        } else {/*
- if ($create_edit == "create") {
- // Do create scripts
- $this->create();
- } else {
- // Do edit scripts
- $this->update();
- }*/
+            $url = "create_edit.html?err=1&mode=" . $application->mode;
+        } else {
+            if ($application->mode == "insert") {
+                // Do create scripts
+                $this->create();
+            } else {
+                // Do edit scripts
+                $this->update();
+            }
             $url = "./create_edit_reference.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
@@ -145,42 +125,41 @@ class quota_order_number
         global $application;
         $errors = array();
 
-        $this->measure_generating_regulation_id = strtoupper(get_formvar("measure_generating_regulation_id", "", True));
-        $hyphen_pos = strpos($this->measure_generating_regulation_id, "-");
-        if ($hyphen_pos !== -1) {
-            $this->measure_generating_regulation_id = trim(substr($this->measure_generating_regulation_id, 0, $hyphen_pos - 1));
-        }
-        $this->quota_category = get_formvar("quota_category", "", True);
-        $this->quota_mechanism = get_formvar("quota_mechanism", "", True);
-        $this->quota_order_number_id = get_formvar("quota_order_number_id", "", True);
-        $this->quota_category = get_formvar("quota_category", "", True);
-        $this->description = get_formvar("description", "", True);
-        $this->geographical_area_id_countries = get_formvar("geographical_area_id_countries", "", True);
-        $this->description = get_formvar("description", "", True);
-
         $this->quota_scope = get_formvar("quota_scope", "", True);
         $this->quota_staging = get_formvar("quota_staging", "", True);
         $this->origin_quota = get_formvar("origin_quota", "", True);
-
-        # Check on the measure_generating_regulation_id
-        if (strlen($this->origin_quota) == "") {
-            array_push($errors, "origin_quota");
-        }
+        $this->origin_quota = null;
 
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit_reference.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
-        } else {/*
-            if ($create_edit == "create") {
-            // Do create scripts
-            $this->create();
-            } else {
-            // Do edit scripts
-            $this->update();
-            }*/
+            $url = "create_edit_reference.html?err=1&mode=" . $application->mode;
+        } else {
+            $this->update_reference_document_data();
             $url = "./create_edit_measurements.html?mode=" . $application->mode;
         }
+        header("Location: " . $url);
+    }
+
+    function update_reference_document_data()
+    {
+        global $conn;
+        $this->quota_order_number_sid = $_SESSION["quota_order_number_sid"];
+        $sql = "update quota_order_numbers set
+        origin_quota = $1,
+        quota_scope = $2,
+        quota_staging = $3
+        where quota_order_number_sid = $4";
+        $stmt = "update_reference_document_data" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array($this->origin_quota, $this->quota_scope, $this->quota_staging, $this->quota_order_number_sid));
+        //die();
+    }
+
+    function validate_form_volumes()
+    {
+        global $application;
+        $url = "./create_edit_commodities.html?mode=" . $application->mode;
         header("Location: " . $url);
     }
 
@@ -213,7 +192,7 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit3.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+            $url = "create_edit_commodities.html?err=1&mode=" . $application->mode;
         } else {/*
             if ($create_edit == "create") {
             // Do create scripts
@@ -222,9 +201,15 @@ class quota_order_number
             // Do edit scripts
             $this->update();
             }*/
-            $url = "./create_edit4.html?mode=" . $application->mode;
+            $url = "./create_edit_conditions.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
+    }
+
+    function validate_form_conditions()
+    {
+        h1 ("sdf");
+        prend ($_REQUEST);
     }
 
 
@@ -236,7 +221,7 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit4.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
+            $url = "create_edit4.html?err=1&mode=" . $application->mode;
         } else {/*
             if ($create_edit == "create") {
             // Do create scripts
@@ -250,13 +235,10 @@ class quota_order_number
         header("Location: " . $url);
     }
 
-    function validate_form_step5()
+    function validate_form_measurements()
     {
         global $application;
         $errors = array();
-
-        //prend ($_REQUEST);
-
 
         $this->measurement_unit_code = get_formvar("measurement_unit_code", "", True);
         $this->measurement_unit_qualifier_code = get_formvar("measurement_unit_qualifier_code", "", True);
@@ -279,27 +261,41 @@ class quota_order_number
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit_measurements.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
-        } else {/*
-            if ($create_edit == "create") {
-            // Do create scripts
-            $this->create();
-            } else {
-            // Do edit scripts
-            $this->update();
-            }*/
+            $url = "create_edit_measurements.html?err=1&mode=" . $application->mode;
+        } else {
+            $this->update_measurements();
             $url = "./create_edit_definitions.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
     }
 
+    function update_measurements()
+    {
+        global $conn;
+        $this->quota_order_number_sid = $_SESSION["quota_order_number_sid"];
+        $this->measure_activity = new measure_activity();
+        $this->measure_activity->measure_activity_sid = $_SESSION["measure_activity_sid"];
+        $sql = "update measure_activities set
+        measurement_unit_code = $1,
+        measurement_unit_qualifier_code = $2,
+        maximum_precision = $3,
+        critical_threshold = $4
+        where measure_activity_sid = $5";
+        $stmt = "update_measurements" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->measurement_unit_code, $this->measurement_unit_qualifier_code,
+            $this->maximum_precision, $this->critical_threshold, $this->measure_activity->measure_activity_sid
+        ));
+    }
 
-    function validate_form_step6()
+
+    function validate_form_step_definitions()
     {
         global $application;
         $errors = array();
 
-        //prend ($_REQUEST);
+        //prend($_REQUEST);
 
         $this->period_type = get_formvar("period_type", "", True);
         if ($this->period_type == "") {
@@ -316,21 +312,11 @@ class quota_order_number
             array_push($errors, "introductory_period_option");
         }
 
-
-
-
-
         $this->validity_start_date_day = get_formvar("validity_start_date_day", "", True);
         $this->validity_start_date_month = get_formvar("validity_start_date_month", "", True);
         $this->validity_start_date_year = get_formvar("validity_start_date_year", "", True);
         $this->validity_start_date_string = $this->validity_start_date_day . "|" . $this->validity_start_date_month . "|" . $this->validity_start_date_year;
         setcookie("validity_start_date_string", $this->validity_start_date_string, time() + (86400 * 30), "/");
-
-        $this->validity_end_date_day = get_formvar("validity_end_date_day", "", True);
-        $this->validity_end_date_month = get_formvar("validity_end_date_month", "", True);
-        $this->validity_end_date_year = get_formvar("validity_end_date_year", "", True);
-        $this->validity_end_date_string = $this->validity_end_date_day . "|" . $this->validity_end_date_month . "|" . $this->validity_end_date_year;
-        setcookie("validity_end_date_string", $this->validity_end_date_string, time() + (86400 * 30), "/");
 
         $this->set_dates();
 
@@ -340,35 +326,35 @@ class quota_order_number
             array_push($errors, "validity_start_date");
         }
 
-        # Check on the validity end date: must either be a valid date or blank
-        /*
-        if ($application->mode == "update") {
-            if (($this->validity_end_date_day == "") && ($this->validity_end_date_month == "") && ($this->validity_end_date_year == "")) {
-                $valid_end_date = 1;
-            } else {
-                $valid_end_date = checkdate($this->validity_end_date_month, $this->validity_end_date_day, $this->validity_end_date_year);
-            }
-            if ($valid_end_date != 1) {
-                array_push($errors, "validity_end_date");
-            }
-        }
-        */
-
         if (count($errors) > 0) {
             $error_string = serialize($errors);
             setcookie("errors", $error_string, time() + (86400 * 30), "/");
-            $url = "create_edit_definitions.html?err=1&mode=" . $application->mode . "&certificate_type_code=" . $this->certificate_type_code;
-        } else {/*
-            if ($create_edit == "create") {
-            // Do create scripts
-            $this->create();
-            } else {
-            // Do edit scripts
-            $this->update();
-            }*/
+            $url = "create_edit_definitions.html?err=1&mode=" . $application->mode;
+        } else {
+            $this->update_definitions();
             $url = "./create_edit_volumes.html?mode=" . $application->mode;
         }
         header("Location: " . $url);
+    }
+
+    function update_definitions()
+    {
+        global $conn;
+        $this->quota_order_number_sid = $_SESSION["quota_order_number_sid"];
+        $this->measure_activity = new measure_activity();
+        $this->measure_activity->measure_activity_sid = $_SESSION["measure_activity_sid"];
+        $sql = "update measure_activities set
+        period_type = $1,
+        cadence_start_date = $2,
+        year_count = $3,
+        introductory_period_option = $4
+        where measure_activity_sid = $5";
+        $stmt = "update_definitions" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->period_type, $this->validity_start_date,
+            $this->year_count, $this->introductory_period_option, $this->measure_activity->measure_activity_sid
+        ));
     }
 
     function exists()
@@ -397,7 +383,7 @@ class quota_order_number
         if (($this->validity_end_date_day == "") || ($this->validity_end_date_month == "") || ($this->validity_end_date_year == "")) {
             $this->validity_end_date = Null;
         } else {
-            $this->validity_end_date    = to_date_string($this->validity_end_date_day, $this->validity_end_date_month, $this->validity_end_date_year);
+            $this->validity_end_date = to_date_string($this->validity_end_date_day, $this->validity_end_date_month, $this->validity_end_date_year);
         }
     }
 
@@ -1022,7 +1008,7 @@ class quota_order_number
     }
 
 
-    function insert()
+    function create()
     {
         global $conn;
         $application = new application;
@@ -1030,45 +1016,36 @@ class quota_order_number
         $operation = "C";
         $operation_date = $application->get_operation_date();
 
+        $status = "In progress";
+
         $errors = $this->conflict_check();
-        h1(count($errors));
         if (count($errors) > 0) {
-            /*
- foreach ($errors as $error) {
- h1 ($error);
- }
- exit();
- */
             return ($errors);
         } else {
+            // Insert the quota order number (minus the validity start date, which will be inserted later)
             $sql = "INSERT INTO quota_order_numbers_oplog
- (
- quota_order_number_sid,
- quota_order_number_id,
- validity_start_date,
- description,
- origin_quota,
- quota_scope,
- quota_staging,
- operation,
- operation_date)
- VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
-            pg_prepare($conn, "quota_order_number_insert", $sql);
-            pg_execute($conn, "quota_order_number_insert", array(
-                $this->quota_order_number_sid,
-                $this->quota_order_number_id,
-                $this->validity_start_date,
-                $this->description,
-                $this->origin_quota,
-                $this->quota_scope,
-                $this->quota_staging,
-                $operation,
-                $operation_date
+            (
+            quota_order_number_sid, quota_order_number_id, description,
+            origin_quota, quota_scope, quota_staging, quota_category,
+            operation, operation_date, status
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
+            $stmt = "create_quota_" . uniqid();
+            pg_prepare($conn, $stmt, $sql);
+            pg_execute($conn, $stmt, array(
+                $this->quota_order_number_sid, $this->quota_order_number_id, $this->description,
+                $this->origin_quota, $this->quota_scope, $this->quota_staging, $this->quota_category,
+                $operation, $operation_date, $status
             ));
-            return (True);
-        }
-    }
+            $_SESSION["quota_order_number_id"] = $this->quota_order_number_id;
+            $_SESSION["quota_order_number_sid"] = $this->quota_order_number_sid;
 
+            // Secondly, create the measure activity that goes alongside this
+            $this->measure_activity->persist_activity_name("Create quota");
+            $this->measure_activity->persist_quota_core();
+        }
+        //die();
+    }
 
     function update()
     {
@@ -1079,18 +1056,18 @@ class quota_order_number
 
         $errors = array();
         $sql = "INSERT INTO quota_order_numbers_oplog
- (
- quota_order_number_sid,
- quota_order_number_id,
- validity_start_date,
- validity_end_date,
- description,
- origin_quota,
- quota_scope,
- quota_staging,
- operation,
- operation_date)
- VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
+        (
+        quota_order_number_sid,
+        quota_order_number_id,
+        validity_start_date,
+        validity_end_date,
+        description,
+        origin_quota,
+        quota_scope,
+        quota_staging,
+        operation,
+        operation_date)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)";
 
         pg_prepare($conn, "quota_order_number_insert", $sql);
 

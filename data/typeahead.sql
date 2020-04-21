@@ -2717,3 +2717,24 @@ select unique_id, area_name, country_codes, agreement_title, agreement_date, agr
 from reference_documents where unique_id = 'centralamerica';
 
 
+select * from quota_associations qa, quota_definitions qd where qa.main_quota_definition_sid = qd.quota_definition_sid order by qd.validity_start_date desc
+
+
+select * from quota_suspension_periods qsp, quota_definitions qd where qsp.quota_definition_sid = qd.quota_definition_sid order by qd.validity_start_date desc
+
+with cte as (select u.name as user_name, u.user_login, u.user_id, u.email as user_email,
+w.title, w.reason, w.status, w.created_at, w.updated_at, w.workbasket_id, ws.sequence_id, 
+case 
+when u.user_id = 1 then 'own'
+else 'other'
+end as ownership        
+from workbaskets w, users u, workbasket_statuses ws
+where w.user_id = u.user_id 
+and w.status = ws.status)
+select *, count(*) OVER() AS full_count from cte where 1 > 0 order by created_at 
+
+
+select * from quota_order_numbers_oplog qono where quota_order_number_sid = 10009;
+
+select * from measures where measure_sid >= 3702442 order by measure_sid limit 10;
+

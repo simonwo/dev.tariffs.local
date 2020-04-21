@@ -68,9 +68,9 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "",
-                "label": "Please enter the commodity code description",
+                "label": "Enter the commodity code description",
                 "label_style": "govuk-label--m",
-                "hint_text": "The latest commodity code description is included. Please edit or overwrite the existing description.",
+                "hint_text": "The latest commodity code description is included. Edit or overwrite the existing description.",
                 "control_name": "description",
                 "rows": 5,
                 "maxlength": 10000,

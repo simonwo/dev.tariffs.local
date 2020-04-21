@@ -17,6 +17,7 @@ $(document).ready(function () {
     // Variables used in measure condition logic
     var measure_condition_codes_json;
     var measure_action_codes_json;
+    var measure_types_json = "measure_types_quotas.json";
 
     url = "/api/v1/geographical_areas/current2.php";
     var geo_data = getJson(url);
@@ -100,11 +101,25 @@ $(document).ready(function () {
         limit: 20,
     });
 
-    $('#measure_type_id').typeahead(null, {
-        name: 'measure_types',
-        source: measure_types,
-        limit: 20,
+    refresh_measure_types_for_quotas_typeahead();
+
+    $("#quota_category").on("change", function () {
+        console.log("ui");
+        v = $(this).val();
+        console.log(v);
+        switch (parseInt($(this).val())) {
+            case "PRF":
+                measure_types_json = "measure_types_quotas_preferential.json";
+                break;
+            case "SAF", "WTO", "ATQ":
+                measure_types_json = "measure_types_quotas_non_preferential.json";
+                break;
+            default:
+                measure_types_json = "measure_types_quotas.json";
+        }
+        refresh_measure_types_for_quotas_typeahead();
     });
+
     /* End measure types typeahead */
 
 
@@ -437,7 +452,7 @@ $(document).ready(function () {
 
     });
 
- 
+
 
 
     function parse_duty_value(s) {
@@ -1740,57 +1755,93 @@ $(document).ready(function () {
         );
     });
     */
-   $("a#populate_commodity_migration_form").click(function (e) {
-    var first_commodity_code = $("#first_commodity_code").val();
-    if (first_commodity_code == "") {
+    $("a#populate_commodity_migration_form").click(function (e) {
+        var first_commodity_code = $("#first_commodity_code").val();
+        if (first_commodity_code == "") {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        var tally = parseInt(first_commodity_code);
+
+        var gap = $("#gap").val();
+        gap = parseInt(gap);
+
+        var indent_increment = $("#indent_increment").val();
+        indent_increment = parseInt(indent_increment);
+
+        var last_commodity = "";
+        $("#migrate_table tr").each(function () {
+            var commodity = $(this).find("td.commodity").text();
+            var pls = $(this).find("td.productline_suffix").text();
+            var indent = parseInt($(this).find("td.indent").text());
+
+            // Get new comm code
+            if (last_commodity != "") {
+                if (commodity != last_commodity) {
+                    tally += gap;
+                }
+            }
+            tally_string = tally.toString();
+            tally_string = tally_string.padStart(10, '0');
+
+
+            // Get new pls
+            var pls_new = pls;
+
+            // Get new indent
+            var indent_new = indent + indent_increment;
+
+            $(this).find("input.commodity_new").val(tally_string);
+            $(this).find("input.productline_suffix_new").val(pls_new);
+            $(this).find("input.indent_new").val(indent_new);
+
+            console.log(tally_string);
+            console.log("iterate");
+            last_commodity = commodity;
+        });
+
         e.preventDefault();
         e.stopPropagation();
-        return;
-    }
 
-    var tally = parseInt(first_commodity_code);
-
-    var gap = $("#gap").val();
-    gap = parseInt(gap);
-
-    var indent_increment = $("#indent_increment").val();
-    indent_increment = parseInt(indent_increment);
-
-    var last_commodity = "";
-    $("#migrate_table tr").each(function () {
-        var commodity = $(this).find("td.commodity").text();
-        var pls = $(this).find("td.productline_suffix").text();
-        var indent = parseInt($(this).find("td.indent").text());
-
-        // Get new comm code
-        if (last_commodity != "") {
-            if (commodity != last_commodity) {
-                tally += gap;
-            }
-        }
-        tally_string = tally.toString();
-        tally_string = tally_string.padStart(10, '0');
-
-        
-        // Get new pls
-        var pls_new = pls;
-
-        // Get new indent
-        var indent_new = indent + indent_increment;
-
-        $(this).find("input.commodity_new").val(tally_string);
-        $(this).find("input.productline_suffix_new").val(pls_new);
-        $(this).find("input.indent_new").val(indent_new);
-        
-        console.log(tally_string);
-        console.log("iterate");
-        last_commodity = commodity;
     });
 
-    e.preventDefault();
-    e.stopPropagation();
+    function refresh_measure_types_for_quotas_typeahead() {
+        /* Start measure types typeahead for quotas */
+        var measure_types_quotas = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.whitespace,
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            sufficient: 10,
+            prefetch: {
+                url: '../data/' + measure_types_json,
+                ttl: 100,
+                cache: true
+            }
+        });
 
-});
+        $('#form_quota_order_number #measure_type_id').typeahead(null, {
+            name: 'measure_types',
+            source: measure_types_quotas,
+            limit: 20,
+        });
+    }
+
+    $(".workbasket_view_detail").click(function (e) {
+        id = $(this).attr("id");
+        id2 = id.replace("view_", "");
+        display = $("#" + id2).css("display")
+        if (display == "none") {
+            $("#" + id2).css("display", "block");
+        } else {
+            $("#" + id2).css("display", "none");
+        }
+        console.log(id + id2 + display);
+
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
 
 
 });

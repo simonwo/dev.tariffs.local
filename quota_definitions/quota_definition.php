@@ -16,8 +16,10 @@ class quota_definition
     public $critical_threshold = null;
     public $monetary_unit_code = null;
     public $description = "";
+    public $index_number = null;
+    public $period_type = null;
     public $create_measures = null;
-    
+
     function populate_from_cookies()
     {
         $this->quota_order_number_id = get_cookie("quota_order_number_id");
@@ -169,8 +171,7 @@ class quota_definition
 
         if (isset($_GET["err"])) {
             $this->populate_from_cookies();
-        }
-        elseif ($application->mode == "insert") {
+        } elseif ($application->mode == "insert") {
             $this->clear_cookies();
         } else {
             if (empty($error_handler->error_string)) {

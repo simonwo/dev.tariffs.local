@@ -19,6 +19,7 @@ class measure_activity
     public $applicable_duty = null;
     public $applicable_duty_permutation = null;
     public $suppress_additional_codes_field = false;
+    public $introductory_period_option = null;
 
     public $activity_options = array();
     /* End prototype-specific fields */
@@ -361,8 +362,6 @@ class measure_activity
         ));
     }
 
-
-
     function persist_activity_name($sub_record_type)
     {
         // Create the measure activity record
@@ -408,6 +407,26 @@ class measure_activity
             $application->session->workbasket->workbasket_id, $_SESSION["measure_activity_sid"], "measure_activity", $sub_record_type,
             "In progress", $date, "C"
         ));
+    }
+
+    function persist_quota_core() {
+        //Persisting quota core
+        global $conn;
+
+        $this->measure_activity_sid = $_SESSION["measure_activity_sid"];
+
+        $sql = "update measure_activities set
+        measure_type_id = $1,
+        measure_generating_regulation_id = $2
+        where measure_activity_sid = $3";
+        $stmt = "persist_quota_core" . uniqid();
+        pg_prepare($conn, $stmt, $sql);
+        $result = pg_execute($conn, $stmt, array(
+            $this->measure_type_id,
+            $this->measure_generating_regulation_id,
+            $this->measure_activity_sid
+        ));
+        //die();
     }
 
     function persist_commodities()

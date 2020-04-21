@@ -32,7 +32,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Use this form to edit the details of an existing commodity code. If you would like to terminate the commodity code, please enter the termination date below.[WORKBASKET]"
+                "text": "Use this form to edit the details of an existing commodity code. If you would like to terminate the commodity code, enter the termination date below.[WORKBASKET]"
             },
             {
                 "control_type": "summary_detail_control",

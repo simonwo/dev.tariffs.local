@@ -103,8 +103,9 @@ class view_form
         $my_field_content = $application->data[$application->tariff_object]["view"]["fields"];
         $control_list = $application->data[$application->tariff_object]["view"]["controls"];
         $config = $application->data[$application->tariff_object]["config"];
-        //h1 ("Showing view form");
+        //pre ($this->object->status);
 ?>
+        <!-- Start view form control //-->
         <!-- Start breadcrumbs //-->
         <div class="govuk-breadcrumbs">
             <ol class="govuk-breadcrumbs__list">
@@ -204,6 +205,12 @@ class view_form
                                                 <h2 class="gem-c-related-navigation__main-heading" data-track-count="sidebarRelatedItemSection">
                                                     Actions
                                                 </h2>
+                                                <?php
+                                                if ($this->object->status == "Awaiting approval") {
+                                                    new lock_control("This item has been locked for editing as is current in a status of " . $this->object->status);
+                                                } else {
+                                                ?>
+
                                                 <nav role="navigation" class="gem-c-related-navigation__nav-section" aria-labelledby="related-nav-related_items-90f47a0c" data-module="gem-toggle">
                                                     <ul class="gem-c-related-navigation__link-list" data-module="track-click">
                                                         <li class="govuk-link gem-c-related-navigation__link"><a class="govuk-link" href="<?= $this->url_edit ?>"><img class='inline_icon' src='/assets/images/edit.png'/>Edit this <?= $this->singularise($config["object_name"]) ?></a></li>
@@ -211,6 +218,7 @@ class view_form
                                                     </ul>
                                                 </nav>
                                                 <?php
+                                                }
                                                 $warning_array = array("Footnotes", "Additional codes", "Geographical areas", "Certificates");
                                                 if (in_array($config["object_name"], $warning_array)) {
                                                     $tab_name = "#tab_" . $this->singularise($config["object_name"], true) . "_descriptions";

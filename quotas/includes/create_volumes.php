@@ -10,7 +10,6 @@ $quota_order_number->geographical_area_id_countries = $_SESSION["geographical_ar
 $quota_order_number->quota_scope = $_SESSION["quota_scope"];
 $quota_order_number->quota_staging = $_SESSION["quota_staging"];
 $quota_order_number->origin_quota = $_SESSION["origin_quota"];
-//$quota_order_number->commodity_codes = $_SESSION["commodity_codes"];
 $quota_order_number->measurement_unit_code = $_SESSION["measurement_unit_code"];
 $quota_order_number->measurement_unit_qualifier_code = $_SESSION["measurement_unit_qualifier_code"];
 $quota_order_number->maximum_precision = $_SESSION["maximum_precision"];

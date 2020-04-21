@@ -52,7 +52,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.[WORKBASKET]"
+                "text": "Use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -61,7 +61,7 @@
                 "control_type": "input_control",
                 "label": "What is the name of this activity?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please provide a name for this activity, so that it can be identified later in your workbasket.",
+                "hint_text": "Provide a name for this activity, so that it can be identified later in your workbasket.",
                 "control_name": "activity_name",
                 "control_style": "govuk-input",
                 "size": 100,
@@ -76,7 +76,7 @@
                 "control_type": "date_picker_control",
                 "label": "When should these codes be moved?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter the date on which the new codes and associated measures / footnotes should be created. The existing codes and their measures / footnotes will be terminated on the day before the date you specify here.",
+                "hint_text": "Enter the date on which the new codes and associated measures / footnotes should be created. The existing codes and their measures / footnotes will be terminated on the day before the date you specify here.",
                 "control_name": "migration_date",
                 "default": "",
                 "required": true

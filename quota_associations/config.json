@@ -33,12 +33,12 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "insert",
-                "text": "Please use this form to create a new quota association with this quota {quota_order_number_id} as the main (parent) quota.[WORKBASKET]"
+                "text": "Use this form to create a new quota association with this quota {quota_order_number_id} as the main (parent) quota.[WORKBASKET]"
             },
             {
                 "control_type": "inset_control",
                 "control_scope": "update",
-                "text": "Please use this form to update an existing quota association.[WORKBASKET]"
+                "text": "Use this form to update an existing quota association.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -65,7 +65,7 @@
                 "hint_text": "This is the quota definition to which the quota quota association will be assigned. This list only includes future and current definition periods.",
                 "control_name": "quota_definition_sid",
                 "default_value": "Unspecified",
-                "default_string": "- Please select a quota definition period -",
+                "default_string": "- Select a quota definition period -",
                 "selected": "",
                 "required": true,
                 "group_by": "",
@@ -75,7 +75,7 @@
                 "control_type": "input_control",
                 "label": "Enter the ID of the sub (child) quota",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please enter the 6-digit order number for the sub quota.",
+                "hint_text": "Enter the 6-digit order number for the sub quota.",
                 "control_name": "sub_quota_order_number_id",
                 "control_style": "govuk-input--width-10",
                 "size": 60,
@@ -110,7 +110,7 @@
                 "control_type": "input_control",
                 "label": "What is the coefficient?",
                 "label_style": "govuk-label--m",
-                "hint_text": "The coefficient determines the relative amounts by which the two quotas will be decremented when traders draw down on the sub-quota. If you select a relation type of 'NM' in the relation type field (above), then the coefficient field will automatically be set to the value '1.00000'.<br /><br />Please enter up to 5 decimal places. ",
+                "hint_text": "The coefficient determines the relative amounts by which the two quotas will be decremented when traders draw down on the sub-quota. If you select a relation type of 'NM' in the relation type field (above), then the coefficient field will automatically be set to the value '1.00000'.<br /><br />Enter up to 5 decimal places. ",
                 "control_name": "coefficient",
                 "control_style": "govuk-input--width-10",
                 "size": 10,

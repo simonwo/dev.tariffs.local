@@ -16,7 +16,7 @@ if ($submitted == 1) {
     $_SESSION["critical_threshold"] = get_formvar("critical_threshold");
 
     $quota_order_number = new quota_order_number();
-    $quota_order_number->validate_form_step5();
+    $quota_order_number->validate_form_measurements();
 } else {
     $quota_order_number = new quota_order_number();
     $quota_order_number->get_parameters();

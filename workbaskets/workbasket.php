@@ -137,7 +137,7 @@ class workbasket
                 </h2>
             </div>
             <div id="accordion-with-summary-sections-content-<?= $control_id ?>" class="govuk-accordion__section-content" aria-labelledby="accordion-with-summary-sections-heading-<?= $control_id ?>">
-                <table class="govuk-table">
+                <table class="govuk-table govuk-table--m">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             <?php
@@ -190,8 +190,9 @@ class workbasket
                             echo ('</tr>');
                             if (($row->rejection_reason != "") && ($row->status == "Rejected")) {
                                 echo ("<tr>");
-                                echo ("<td colspan='" . ($field_count + 1) . "'>");
-                                new warning_control("This activity has been rejected for the following reason:<br /><br /><span class='normal'>" . $row->rejection_reason . "</span>");
+                                echo ("<td class='silver' colspan='" . ($field_count + 1) . "'>");
+                                new inset_control("This activity has been rejected by <b>Marjorie Antrobus</b> for the following reason:<br /><br />
+                                <span class='normal'>" . $row->rejection_reason . "</span>");
                                 echo ("</td>");
                                 echo ("</tr>");
                             }
@@ -760,11 +761,11 @@ class workbasket
         if ($application->show_workbasket_icons) {
             $content_open = "<img alt='Open workbasket' src='/assets/images/open.png' /><span>Open workbasket</span>";
             $content_close = "<img alt='Close workbasket' src='/assets/images/close.png' /><span>Close workbasket</span>";
-            $content_archive = "<img alt='Archive workbasket' src='/assets/images/archive.png' /><span>Archive workbasket</span>";
+            //$content_archive = "<img alt='Archive workbasket' src='/assets/images/archive.png' /><span>Archive workbasket</span>";
         } else {
             $content_open = "Open workbasket";
             $content_close = "Close workbasket";
-            $content_archive = "Archive workbasket";
+            //$content_archive = "Archive workbasket";
         }
         if ($this->workbasket_id == $test) {
             $ret = "<li><a class='govuk-link' title='Close this workbasket' href='/workbaskets/actions.php?action=close'>" . $content_close . "</a></li>\r\n";
@@ -773,7 +774,8 @@ class workbasket
                 if (($this->status == 'In progress') || ($this->status == 'Awaiting approval')) {
                     $ret = "<li><a class='govuk-link' title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'>" . $content_open . "</a></li>\r\n";
                 } elseif ($this->status == 'Published') {
-                    $ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a><li>\r\n";
+                    //$ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a><li>\r\n";
+                    $ret = "";
                 } else {
                     $ret = "";
                 }
@@ -781,7 +783,8 @@ class workbasket
                 if ($this->status == 'In progress') {
                     $ret = "<li><a class='govuk-link' title='Open this workbasket' href='/workbaskets/actions.php?action=open&workbasket_id=" . $this->workbasket_id . "'>" . $content_open . "</a></li>\r\n";
                 } elseif ($this->status == 'Published') {
-                    $ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a></li>\r\n";
+                    $ret = "";
+                    //$ret = "<li><a class='govuk-link' title='Archive this workbasket' href='/workbaskets/actions.php?action=archive'>" . $content_archive . "</a></li>\r\n";
                 } else {
                     $ret = "";
                 }
@@ -807,6 +810,26 @@ class workbasket
             } else {
                 $ret = "";
             }
+        } else {
+            $ret = "";
+        }
+
+        return ($ret);
+    }
+
+    function show_workbasket_icon_archive()
+    {
+        // Archive is used to archive workbaskets that have been "Sent to CDS"
+        global $application;
+        if ($application->show_workbasket_icons) {
+            $content = "<img alt='Withdraw workbasket' src='/assets/images/archive.png' /><span>Archive</span>";
+        } else {
+            $content = "Archive workbasket";
+        }
+        $ret = "";
+
+        if ($this->status == 'Published') {
+            $ret = "<li><a class='govuk-link' title='Withdraw this workbasket' href='/workbaskets/archive.html?workbasket_id=" . $this->workbasket_id . "'>" . $content . "</a></li>\r\n";
         } else {
             $ret = "";
         }

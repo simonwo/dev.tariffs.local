@@ -298,7 +298,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.[WORKBASKET]"
+                "text": "Use this function to bulk-create measures. It is essential to plan your activities in advance of using this bulk measure creation functionality.[WORKBASKET]"
             },
             {
                 "control_type": "error_block"
@@ -307,7 +307,7 @@
                 "control_type": "input_control",
                 "label": "What is the name of this activity?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please provide a name for this activity, so that it can be identified later in your workbasket.",
+                "hint_text": "Provide a name for this activity, so that it can be identified later in your workbasket.",
                 "control_name": "activity_name",
                 "control_style": "govuk-input",
                 "size": 100,
@@ -414,7 +414,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please enter the basic shared data for these measures.[WORKBASKET_ACTIVITY]"
+                "text": "Enter the basic shared data for these measures.[WORKBASKET_ACTIVITY]"
             },
             {
                 "control_type": "error_block"
@@ -441,7 +441,7 @@
                 "control_type": "input_control",
                 "label": "Which regulation gives legal force to these measures?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please start typing the 8-character ID of the regulation or enter keywords to search for a regulation. Please note: the start date of the regulation must be no later than the proposed start date of the measures.",
+                "hint_text": "Start typing the 8-character ID of the regulation or enter keywords to search for a regulation. Note: the start date of the regulation must be no later than the proposed start date of the measures.",
                 "control_name": "measure_generating_regulation_id",
                 "control_style": "govuk-input tt-input",
                 "size": 100,
@@ -456,7 +456,7 @@
                 "control_type": "input_control",
                 "label": "What type of measures do you want to create?",
                 "label_style": "govuk-label--m",
-                "hint_text": "Please type the measure type ID or phrases contained in the measure type description.",
+                "hint_text": "Type the measure type ID or phrases contained in the measure type description.",
                 "control_name": "measure_type_id",
                 "control_style": "govuk-input",
                 "size": 100,
@@ -592,9 +592,9 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "",
-                "label": "Please list the commodity codes to which this measure will apply",
+                "label": "List the commodity codes to which this measure will apply",
                 "label_style": "govuk-label--m",
-                "hint_text": "Type or paste a list of 10-digit commodity codes into the box below. Separate individual codes with a space, tab or line break. If you don't know which code(s) you need, please search on the gov.uk&nbsp;<a class='govuk-link nw' target='_blank' href='https://www.gov.uk/trade-tariff'>Trade Tariff lookup</a> tool.",
+                "hint_text": "Type or paste a list of 10-digit commodity codes into the box below. Separate individual codes with a space, tab or line break. If you don't know which code(s) you need, search on the gov.uk&nbsp;<a class='govuk-link nw' target='_blank' href='https://www.gov.uk/trade-tariff'>Trade Tariff lookup</a> tool.",
                 "control_name": "commodity_codes",
                 "rows": 12,
                 "pattern": "[0-9]{10}",
@@ -605,9 +605,9 @@
             {
                 "control_type": "character_count_control",
                 "control_scope": "",
-                "label": "Please list the additional codes to which this measure will apply",
+                "label": "List the additional codes to which this measure will apply",
                 "label_style": "govuk-label--m",
-                "hint_text": "Type or paste a list of 4-digit additional codes into the box below. Separate individual codes with a space, tab or line break. If you need to enter a trade remedies residual code (e.g. C999, then please enter it in this box and it will be pre-selected on the following screen.",
+                "hint_text": "Type or paste a list of 4-digit additional codes into the box below. Separate individual codes with a space, tab or line break. If you need to enter a trade remedies residual code (e.g. C999, then enter it in this box and it will be pre-selected on the following screen.",
                 "control_name": "additional_codes",
                 "rows": 12,
                 "pattern": "[0-4]{10}",
@@ -946,7 +946,7 @@
             {
                 "control_type": "inset_control",
                 "control_scope": "",
-                "text": "Please check the details that you have entered before proceeding.[WORKBASKET_ACTIVITY]"
+                "text": "Check the details that you have entered before proceeding.[WORKBASKET_ACTIVITY]"
             },
             {
                 "control_type": "include_control",

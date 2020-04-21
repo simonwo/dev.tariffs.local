@@ -36,7 +36,7 @@ class application
     public $session = null;
     public $conditional_duty_application_options = array();
     public $quotas = array();
-    public $show_workbasket_icons = false;
+    public $show_workbasket_icons = true;
 
     public function __construct()
     {
@@ -1922,11 +1922,13 @@ class application
         end as ownership        
         from workbaskets w, users u, workbasket_statuses ws
         where w.user_id = u.user_id 
-        and w.status = ws.status)
-        select *, count(*) OVER() AS full_count from cte where 1 > 0 ";
+        and w.status = ws.status )
+        select *, count(*) OVER() AS full_count from cte where 1 > 0 "; // order by w.created_at asc";
 
+        //pre($sql);
         $sql .= $filter_clause;
         $sql .= " " . $this->sort_clause;
+        $this->sort_clause = "order by created_at asc";
         $sql .= " limit $this->page_size offset $offset";
 
         //pre ($sql);
@@ -1953,8 +1955,9 @@ class application
                 $wb->actions .= $wb->show_workbasket_icon_view();
                 $wb->actions .= $wb->show_workbasket_icon_open_close();
                 $wb->actions .= $wb->show_workbasket_icon_withdraw();
-                //$wb->actions .= $wb->show_workbasket_icon_submit();
+                $wb->actions .= $wb->show_workbasket_icon_submit();
                 $wb->actions .= $wb->show_workbasket_icon_delete();
+                $wb->actions .= $wb->show_workbasket_icon_archive();
                 $wb->actions .= "</ul>";
                 $status_text = $wb->status;
 
@@ -2204,6 +2207,7 @@ class application
         array_push($this->quota_categories, new simple_object("WTO", "WTO quota", "", ""));
         array_push($this->quota_categories, new simple_object("ATQ", "ATQ (Autonomous tariff rate quota)", "", ""));
         array_push($this->quota_categories, new simple_object("PRF", "Preferential quota", "", ""));
+        array_push($this->quota_categories, new simple_object("SAF", "Safeguard quota", "", ""));
     }
 
     public function get_quota_measure_types()

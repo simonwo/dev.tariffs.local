@@ -165,15 +165,35 @@ class table_control
                             }
 
                             echo ('<td class="govuk-table__cell ' . $align_class . '">');
+                            //echo (get_class($data_item));
+                            //pre ($data_item->status);
                             switch ($treatment) {
                                 case "checkbox":
-                                    $control_id = $data_column . "_" . $data_item->{$data_column};
-                                    echo ('<div class="govuk-checkboxes govuk-checkboxes--vsmall">');
-                                    echo ('<div class="govuk-checkboxes__item">');
-                                    echo ('<input checked class="govuk-checkboxes__input" id="' . $control_id . '" name="' . $data_column . '[]" type="checkbox" value="' . ($data_item->{$data_column}) . '">');
-                                    echo ('<label class="govuk-label govuk-checkboxes__label" for="' . $control_id . '"><a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=' . $data_item->{$data_column} . '">' . ($data_item->{$data_column}) . '</a></label>');
-                                    echo ('</div>');
-                                    echo ('</div>');
+                                    $show_lock = false;
+                                    /*
+                                    if (get_class($data_item) == "measure") {
+                                        if ($data_item->{$data_column} < 3702448) {
+                                            $show_lock = true;
+                                        }
+                                    }
+                                    */
+                                    if ($data_item->status != "Published") {
+                                        $show_lock = true;
+                                    }
+                                    if ($show_lock == true) {
+                                        echo ('<div class="measure_lock">');
+                                        echo ('<img src="/assets/images/lock.png" />');
+                                        echo ('<a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=' . $data_item->{$data_column} . '">' . ($data_item->{$data_column}) . '</a>');
+                                        echo ('</div>');
+                                    } else {
+                                        $control_id = $data_column . "_" . $data_item->{$data_column};
+                                        echo ('<div class="govuk-checkboxes govuk-checkboxes--vsmall">');
+                                        echo ('<div class="govuk-checkboxes__item">');
+                                        echo ('<input checked class="govuk-checkboxes__input" id="' . $control_id . '" name="' . $data_column . '[]" type="checkbox" value="' . ($data_item->{$data_column}) . '">');
+                                        echo ('<label class="govuk-label govuk-checkboxes__label" for="' . $control_id . '"><a class="govuk-link" href="/measures/view.html?mode=view&measure_sid=' . $data_item->{$data_column} . '">' . ($data_item->{$data_column}) . '</a></label>');
+                                        echo ('</div>');
+                                        echo ('</div>');
+                                        }
                                     break;
                                 case "link_measure_type_id":
                                     echo ('<a class="govuk-link" href="/measure_types/view.html?mode=view&measure_type_id=' . $data_item->{$data_column} . '">' . $data_item->{$data_column} . "</a>");

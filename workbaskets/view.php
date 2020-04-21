@@ -277,7 +277,7 @@ require("../includes/metadata.php");
                                             $group_class = "");
 
 
-                                        new button_control("Send approved activities to CDS", "partial_approval", "primary", true);
+                                        new button_control("Send approved activities to CDS and send rejected activities back to author", "partial_approval", "primary", true);
                                     } else {
                                         p("The workbasket cannot be submitted until all activities have been approved. You may also approve a part of this workbasket and send it to CDS and reject the remainder.");
                                     }
