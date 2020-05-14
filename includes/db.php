@@ -36,7 +36,6 @@ require(dirname(__FILE__) . "../../quota_definitions/quota_definition.php");
 require(dirname(__FILE__) . "../../quotas/quota_order_number.php");
 require(dirname(__FILE__) . "../../quota_order_number_origins/quota_order_number_origin.php");
 require(dirname(__FILE__) . "../../quota_order_number_origins/quota_order_number_origin_exclusion.php");
-require(dirname(__FILE__) . "../../regulations/base_regulation.php");
 require(dirname(__FILE__) . "../../regulation_groups/regulation_group.php");
 require(dirname(__FILE__) . "../../quota_associations/quota_association.php");
 require(dirname(__FILE__) . "../../quota_blocking_periods/quota_blocking_period.php");
