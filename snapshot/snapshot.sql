@@ -82,58 +82,20 @@ WHERE
   AND cc2.cc < cc1.next
   AND cc2.producline_suffix = '80';
 
--- This is beginning of the actual query, where we use a ton of CTEs.
--- The first two map geographical areas and CCs to their most up-to-date
--- English language descriptions.
-WITH geo_descriptions AS (
-  SELECT
-    *
-  FROM
-    (
-      SELECT
-        g.geographical_area_sid,
-        g.geographical_area_id,
-        gd.description,
-        ROW_NUMBER() OVER (
-          PARTITION BY g.geographical_area_id
-          ORDER BY
-            gdp.validity_start_date DESC
-        ) AS row
-      FROM
-        geographical_areas AS g
-        LEFT OUTER JOIN geographical_area_description_periods AS gdp ON g.geographical_area_sid = gdp.geographical_area_sid
-        LEFT OUTER JOIN geographical_area_descriptions AS gd ON gdp.geographical_area_description_period_sid = gd.geographical_area_description_period_sid
-    ) AS latest_desc
-  WHERE
-    latest_desc.row = 1
-),
-goods_descriptions AS (
-  SELECT
-    *
-  FROM
-    (
-      SELECT
-        g.goods_nomenclature_sid,
-        gd.description,
-        ROW_NUMBER() OVER (
-          PARTITION BY g.goods_nomenclature_sid
-          ORDER BY
-            gdp.validity_start_date DESC
-        ) AS row
-      FROM
-        goods_nomenclatures AS g
-        LEFT OUTER JOIN goods_nomenclature_description_periods AS gdp ON g.goods_nomenclature_sid = gdp.goods_nomenclature_sid
-        LEFT OUTER JOIN goods_nomenclature_descriptions AS gd ON gdp.goods_nomenclature_description_period_sid = gd.goods_nomenclature_description_period_sid
-    ) AS latest_desc
-  WHERE
-    latest_desc.row = 1
-),
+CREATE TEMPORARY TABLE goods_measures (
+  sid int4 NOT NULL,
+  measure_sid int4 NOT NULL,
+  ancestor_measure bool
+) ON COMMIT DROP;
+
+CREATE INDEX ON goods_measures (sid);
+
 -- Measure end dates are complex. The `validity_end_date` on the
 -- measures table is not an accurate reflection of when a measure
 -- actually end, because it also depends on the regulation that
 -- defines the measure. So this view contains a `real_end_date`
 -- that actually defines when the measure stops applying.
-real_measures AS (
+WITH real_measures AS (
   SELECT
     m.*,
     LEAST(
@@ -202,26 +164,101 @@ ancestor_measures AS (
     measures_of_type
   WHERE
     cc_children.parent_sid = measures_of_type.goods_nomenclature_sid
+)
+INSERT INTO
+  goods_measures
+SELECT
+  *,
+  FALSE AS ancestor_measure
+FROM
+  normal_measures
+UNION
+SELECT
+  *,
+  TRUE AS ancestor_measure
+FROM
+  ancestor_measures
+WHERE
+  NOT EXISTS (
+    SELECT
+      1
+    FROM
+      normal_measures
+    WHERE
+      normal_measures.sid = ancestor_measures.sid
+  );
+
+-- This is beginning of the actual query, where we use a ton of CTEs.
+-- The first two map geographical areas and CCs to their most up-to-date
+-- English language descriptions.
+WITH measures_mapping AS (
+  SELECT
+    *
+  FROM
+    goods_measures WHERE ancestor_measure <> TRUE
 ),
-goods_measures AS (
+geo_descriptions AS (
   SELECT
     *
   FROM
-    normal_measures
-  UNION
-  SELECT
-    *
-  FROM
-    ancestor_measures
-  WHERE
-    NOT EXISTS (
+    (
       SELECT
-        1
+        g.geographical_area_sid,
+        g.geographical_area_id,
+        gd.description,
+        ROW_NUMBER() OVER (
+          PARTITION BY g.geographical_area_id
+          ORDER BY
+            gdp.validity_start_date DESC
+        ) AS row
       FROM
-        normal_measures
-      WHERE
-        normal_measures.sid = ancestor_measures.sid
-    )
+        geographical_areas AS g
+        LEFT OUTER JOIN geographical_area_description_periods AS gdp ON g.geographical_area_sid = gdp.geographical_area_sid
+        LEFT OUTER JOIN geographical_area_descriptions AS gd ON gdp.geographical_area_description_period_sid = gd.geographical_area_description_period_sid
+    ) AS latest_desc
+  WHERE
+    latest_desc.row = 1
+),
+goods_descriptions AS (
+  SELECT
+    *
+  FROM
+    (
+      SELECT
+        g.goods_nomenclature_sid,
+        gd.description,
+        ROW_NUMBER() OVER (
+          PARTITION BY g.goods_nomenclature_sid
+          ORDER BY
+            gdp.validity_start_date DESC
+        ) AS row
+      FROM
+        goods_nomenclatures AS g
+        LEFT OUTER JOIN goods_nomenclature_description_periods AS gdp ON g.goods_nomenclature_sid = gdp.goods_nomenclature_sid
+        LEFT OUTER JOIN goods_nomenclature_descriptions AS gd ON gdp.goods_nomenclature_description_period_sid = gd.goods_nomenclature_description_period_sid
+    ) AS latest_desc
+  WHERE
+    latest_desc.row = 1
+),
+goods_indents AS (
+  SELECT
+    *
+  FROM
+    (
+      SELECT
+        g.goods_nomenclature_sid,
+        gi.number_indents,
+        ROW_NUMBER() OVER (
+          PARTITION BY g.goods_nomenclature_sid
+          ORDER BY
+            gi.validity_start_date DESC
+        ) AS row
+      FROM
+        goods_nomenclatures AS g
+        LEFT OUTER JOIN goods_nomenclature_indents AS gi ON g.goods_nomenclature_sid = gi.goods_nomenclature_sid
+    ) AS latest_desc
+  WHERE
+    latest_desc.row = 1
 ),
 -- We build a table of expression parts for all of the duty expressions.
 -- We want the duty expression as a single string but it is composed of
@@ -358,12 +395,41 @@ duty_expressions AS (
     expression_parts.measure_sid
   ORDER BY
     measure_sid ASC
+),
+real_measures AS (
+  SELECT
+    m.*,
+    LEAST(
+      m.validity_end_date,
+      r.validity_end_date,
+      r.effective_end_date
+    ) AS real_end_date
+  FROM
+    measures m,
+    base_regulations r
+  WHERE
+    m.measure_generating_regulation_id = r.base_regulation_id
+  UNION
+  SELECT
+    m.*,
+    LEAST(
+      m.validity_end_date,
+      r.validity_end_date,
+      r.effective_end_date
+    ) AS real_end_date
+  FROM
+    measures m,
+    modification_regulations r
+  WHERE
+    m.measure_generating_regulation_id = r.modification_regulation_id
 )
 -- The final query!
 SELECT
   goods_nomenclatures.goods_nomenclature_item_id AS "Commodity code",
   goods_nomenclatures.producline_suffix::integer AS "Suffix",
+  goods_indents.number_indents :: integer AS "Indent",
   goods_descriptions.description AS "Description",
+  EXISTS ( SELECT 1 FROM goods_measures WHERE goods_measures.sid = goods_nomenclatures.goods_nomenclature_sid ) :: bool AS "Assigned",
   measures.measure_sid AS "Measure SID",
   measure_type_descriptions.measure_type_id::integer AS "Measure type ID",
   measure_type_descriptions.description AS "Measure type",
@@ -374,7 +440,8 @@ SELECT
   measures.real_end_date::date AS "End date"
 FROM
   goods_nomenclatures
-  LEFT OUTER JOIN goods_measures ON goods_nomenclatures.goods_nomenclature_sid = goods_measures.sid
+  LEFT OUTER JOIN measures_mapping AS goods_measures ON goods_nomenclatures.goods_nomenclature_sid = goods_measures.sid
+  LEFT OUTER JOIN goods_indents ON goods_nomenclatures.goods_nomenclature_sid = goods_indents.goods_nomenclature_sid
   LEFT OUTER JOIN real_measures AS measures ON goods_measures.measure_sid = measures.measure_sid
   LEFT OUTER JOIN duty_expressions ON measures.measure_sid = duty_expressions.measure_sid
   LEFT OUTER JOIN goods_descriptions ON goods_descriptions.goods_nomenclature_sid = goods_nomenclatures.goods_nomenclature_sid
@@ -382,4 +449,5 @@ FROM
   LEFT OUTER JOIN measure_type_descriptions ON measures.measure_type_id = measure_type_descriptions.measure_type_id
 ORDER BY
   goods_nomenclatures.goods_nomenclature_item_id,
+  goods_indents.number_indents,
   geo_descriptions.geographical_area_id
