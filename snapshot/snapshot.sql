@@ -189,14 +189,86 @@ WHERE
   );
 
 -- This is beginning of the actual query, where we use a ton of CTEs.
--- The first two map geographical areas and CCs to their most up-to-date
--- English language descriptions.
-WITH measures_mapping AS (
+-- The first three define the common lookups for units, qualifiers and prefixes.
+WITH unit_codes AS (
+  SELECT * FROM (VALUES
+      ('ASV', '% vol'),
+      ('NAR', 'item'),
+      ('CCT', 'ct/l'),
+      ('CEN', '100 p/st'),
+      ('CTM', 'c/k'),
+      ('DTN', '100 kg'),
+      ('GFI', 'gi F/S'),
+      ('GRM', 'g'),
+      ('HLT', 'hl'),
+      ('HMT', '100 m'),
+      ('KGM', 'kg'),
+      ('KLT', '1,000 l'),
+      ('KMA', 'kg met.am.'),
+      ('KNI', 'kg N'),
+      ('KNS', 'kg H2O2'),
+      ('KPH', 'kg KOH'),
+      ('KPO', 'kg K2O'),
+      ('KPP', 'kg P2O5'),
+      ('KSD', 'kg 90 % sdt'),
+      ('KSH', 'kg NaOH'),
+      ('KUR', 'kg U'),
+      ('LPA', 'l alc. 100%'),
+      ('LTR', 'l'),
+      ('MIL', '1,000 items'),
+      ('MTK', 'm2'),
+      ('MTQ', 'm3'),
+      ('MTR', 'm'),
+      ('MWH', '1,000 kWh'),
+      ('NCL', 'ce/el'),
+      ('NPR', 'pa'),
+      ('TJO', 'TJ'),
+      ('TNE', 'tonne')
+    ) AS unit_codes (unit_code, description)
+),
+unit_qualifiers AS
+  (SELECT * FROM (VALUES
+    ('A', 'tot alc'),
+    ('C', '1 000'),
+    ('E', 'net drained wt'),
+    ('G', 'gross'),
+    ('I', 'of biodiesel content'),
+    ('M', 'net dry'),
+    ('P', 'lactic matter'),
+    ('R', 'std qual'),
+    ('S', ' raw sugar'),
+    ('T', 'dry lactic matter'),
+    ('X', ' hl'),
+    ('Z', '% sacchar.')
+  ) AS unit_qualifiers (unit_qualifier_code, description)
+),
+duty_expression_prefixes AS
+  (SELECT * FROM (VALUES
+    ('04', '+'),
+    ('12', '+'),
+    ('14', '+'),
+    ('19', '+'),
+    ('20', '+'),
+    ('21', '+'),
+    ('25', '+'),
+    ('27', '+'),
+    ('29', '+'),
+    ('02', '-'),
+    ('36', '-'),
+    ('17', 'MAX'),
+    ('35', 'MAX'),
+    ('15', 'MIN'),
+    ('36', 'MIN')
+  ) AS duty_expression_prefixes (duty_expression_id, description)
+),
+measures_mapping AS (
   SELECT
     *
   FROM
     goods_measures WHERE ancestor_measure <> TRUE
 ),
+-- The next two map geographical areas and CCs to their most up-to-date
+-- English language descriptions.
 geo_descriptions AS (
   SELECT
     *
@@ -269,25 +341,17 @@ goods_indents AS (
 expression_parts AS (
   SELECT
     measure_sid,
-    duty_expression_id,
+    measure_components.duty_expression_id,
+    duty_expression_prefixes.description AS prefix,
     (
       CASE
-        WHEN duty_expression_id IN ('04', '12', '14', '19', '20', '21', '25', '27', '29') THEN '+'
-        WHEN duty_expression_id IN ('02', '36') THEN '-'
-        WHEN duty_expression_id IN ('17', '35') THEN 'MAX'
-        WHEN duty_expression_id IN ('15', '36') THEN 'MIN'
-        ELSE NULL
-      END
-    ) AS prefix,
-    (
-      CASE
-        WHEN duty_expression_id = '12' THEN 'AC'
-        WHEN duty_expression_id = '14' THEN 'AC (reduced)'
-        WHEN duty_expression_id = '21' THEN 'SD'
-        WHEN duty_expression_id = '25' THEN 'SD (reduced)'
-        WHEN duty_expression_id = '27' THEN 'FD'
-        WHEN duty_expression_id = '29' THEN 'FD (reduced)'
-        WHEN duty_expression_id = '99' THEN measure_components.measurement_unit_code
+        WHEN measure_components.duty_expression_id = '12' THEN 'AC'
+        WHEN measure_components.duty_expression_id = '14' THEN 'AC (reduced)'
+        WHEN measure_components.duty_expression_id = '21' THEN 'SD'
+        WHEN measure_components.duty_expression_id = '25' THEN 'SD (reduced)'
+        WHEN measure_components.duty_expression_id = '27' THEN 'FD'
+        WHEN measure_components.duty_expression_id = '29' THEN 'FD (reduced)'
+        WHEN measure_components.duty_expression_id = '99' THEN measure_components.measurement_unit_code
         ELSE TO_CHAR(duty_amount, 'FM9999990D00') || (
           CASE
             WHEN monetary_unit_code IS NOT NULL THEN ' ' || monetary_unit_code
@@ -296,62 +360,13 @@ expression_parts AS (
         )
       END
     ) AS amount,
-    (
-      CASE
-        WHEN measure_components.measurement_unit_code = 'ASV' THEN '% vol'
-        WHEN measure_components.measurement_unit_code = 'NAR' THEN 'item'
-        WHEN measure_components.measurement_unit_code = 'CCT' THEN 'ct/l'
-        WHEN measure_components.measurement_unit_code = 'CEN' THEN '100 p/st'
-        WHEN measure_components.measurement_unit_code = 'CTM' THEN 'c/k'
-        WHEN measure_components.measurement_unit_code = 'DTN' THEN '100 kg'
-        WHEN measure_components.measurement_unit_code = 'GFI' THEN 'gi F/S'
-        WHEN measure_components.measurement_unit_code = 'GRM' THEN 'g'
-        WHEN measure_components.measurement_unit_code = 'HLT' THEN 'hl'
-        WHEN measure_components.measurement_unit_code = 'HMT' THEN '100 m'
-        WHEN measure_components.measurement_unit_code = 'KGM' THEN 'kg'
-        WHEN measure_components.measurement_unit_code = 'KLT' THEN '1,000 l'
-        WHEN measure_components.measurement_unit_code = 'KMA' THEN 'kg met.am.'
-        WHEN measure_components.measurement_unit_code = 'KNI' THEN 'kg N'
-        WHEN measure_components.measurement_unit_code = 'KNS' THEN 'kg H2O2'
-        WHEN measure_components.measurement_unit_code = 'KPH' THEN 'kg KOH'
-        WHEN measure_components.measurement_unit_code = 'KPO' THEN 'kg K2O'
-        WHEN measure_components.measurement_unit_code = 'KPP' THEN 'kg P2O5'
-        WHEN measure_components.measurement_unit_code = 'KSD' THEN 'kg 90 % sdt'
-        WHEN measure_components.measurement_unit_code = 'KSH' THEN 'kg NaOH'
-        WHEN measure_components.measurement_unit_code = 'KUR' THEN 'kg U'
-        WHEN measure_components.measurement_unit_code = 'LPA' THEN 'l alc. 100%'
-        WHEN measure_components.measurement_unit_code = 'LTR' THEN 'l'
-        WHEN measure_components.measurement_unit_code = 'MIL' THEN '1,000 items'
-        WHEN measure_components.measurement_unit_code = 'MTK' THEN 'm2'
-        WHEN measure_components.measurement_unit_code = 'MTQ' THEN 'm3'
-        WHEN measure_components.measurement_unit_code = 'MTR' THEN 'm'
-        WHEN measure_components.measurement_unit_code = 'MWH' THEN '1,000 kWh'
-        WHEN measure_components.measurement_unit_code = 'NCL' THEN 'ce/el'
-        WHEN measure_components.measurement_unit_code = 'NPR' THEN 'pa'
-        WHEN measure_components.measurement_unit_code = 'TJO' THEN 'TJ'
-        WHEN measure_components.measurement_unit_code = 'TNE' THEN 'tonne'
-        ELSE measure_components.measurement_unit_code
-      END
-    ) AS unit,
-    (
-      CASE
-        WHEN measurement_unit_qualifier_code = 'A' THEN 'tot alc'
-        WHEN measurement_unit_qualifier_code = 'C' THEN '1 000'
-        WHEN measurement_unit_qualifier_code = 'E' THEN 'net drained wt'
-        WHEN measurement_unit_qualifier_code = 'G' THEN 'gross'
-        WHEN measurement_unit_qualifier_code = 'I' THEN 'of biodiesel content'
-        WHEN measurement_unit_qualifier_code = 'M' THEN 'net dry'
-        WHEN measurement_unit_qualifier_code = 'P' THEN 'lactic matter'
-        WHEN measurement_unit_qualifier_code = 'R' THEN 'std qual'
-        WHEN measurement_unit_qualifier_code = 'S' THEN ' raw sugar'
-        WHEN measurement_unit_qualifier_code = 'T' THEN 'dry lactic matter'
-        WHEN measurement_unit_qualifier_code = 'X' THEN ' hl'
-        WHEN measurement_unit_qualifier_code = 'Z' THEN '% sacchar.'
-        ELSE measurement_unit_qualifier_code
-      END
-    ) AS qualifier
+    unit_codes.description AS unit,
+    unit_qualifiers.description AS qualifier
   FROM
     measure_components
+    LEFT OUTER JOIN duty_expression_prefixes ON duty_expression_prefixes.duty_expression_id = measure_components.duty_expression_id
+    LEFT OUTER JOIN unit_codes ON measure_components.measurement_unit_code = unit_codes.unit_code
+    LEFT OUTER JOIN unit_qualifiers ON measure_components.measurement_unit_qualifier_code = unit_qualifiers.unit_qualifier_code
   ORDER BY
     measure_sid ASC,
     duty_expression_id ASC
@@ -365,25 +380,10 @@ duty_expressions AS (
     expression_parts.measure_sid,
     string_agg(
       CONCAT(
-        (
-          CASE
-            WHEN expression_parts.prefix IS NOT NULL THEN expression_parts.prefix || ' '
-            ELSE ''
-          END
-        ),
-        expression_parts.amount,
-        (
-          CASE
-            WHEN expression_parts.unit IS NOT NULL THEN ' / ' || expression_parts.unit
-            ELSE ''
-          END
-        ),
-        (
-          CASE
-            WHEN expression_parts.qualifier IS NOT NULL THEN ' / ' || expression_parts.qualifier
-            ELSE ''
-          END
-        )
+        (CASE WHEN prefix IS NOT NULL THEN prefix || ' ' ELSE '' END),
+        amount,
+        (CASE WHEN unit IS NOT NULL THEN ' / ' || unit ELSE '' END),
+        (CASE WHEN qualifier IS NOT NULL THEN ' / ' || qualifier ELSE '' END)
       ),
       ' '
       ORDER BY
@@ -396,6 +396,109 @@ duty_expressions AS (
   ORDER BY
     measure_sid ASC
 ),
+-- We now repeat the above exercise for measure condition components.
+-- These are used in forming complex expressions for the Entry Price System.
+-- The first two CTEs are all of the duty expressions from measure condition components.
+condition_component_parts AS (
+  SELECT
+    measure_condition_sid,
+    measure_condition_components.duty_expression_id,
+    duty_expression_prefixes.description AS prefix,
+    (
+      CASE
+        WHEN measure_condition_components.duty_expression_id = '12' THEN 'AC'
+        WHEN measure_condition_components.duty_expression_id = '14' THEN 'AC (reduced)'
+        WHEN measure_condition_components.duty_expression_id = '21' THEN 'SD'
+        WHEN measure_condition_components.duty_expression_id = '25' THEN 'SD (reduced)'
+        WHEN measure_condition_components.duty_expression_id = '27' THEN 'FD'
+        WHEN measure_condition_components.duty_expression_id = '29' THEN 'FD (reduced)'
+        WHEN measure_condition_components.duty_expression_id = '99' THEN measure_condition_components.measurement_unit_code
+        ELSE TO_CHAR(duty_amount, 'FM9999990D00') || (
+          CASE
+            WHEN monetary_unit_code IS NOT NULL THEN ' ' || monetary_unit_code
+            ELSE '%'
+          END
+        )
+      END
+    ) AS amount,
+    unit_codes.description AS unit,
+    unit_qualifiers.description AS qualifier
+  FROM
+    measure_condition_components
+  LEFT OUTER JOIN duty_expression_prefixes ON duty_expression_prefixes.duty_expression_id = measure_condition_components.duty_expression_id
+  LEFT OUTER JOIN unit_codes ON measure_condition_components.measurement_unit_code = unit_codes.unit_code
+  LEFT OUTER JOIN unit_qualifiers ON measure_condition_components.measurement_unit_qualifier_code = unit_qualifiers.unit_qualifier_code
+  ORDER BY
+    measure_condition_sid ASC,
+    measure_condition_components.duty_expression_id ASC
+),
+condition_component_expressions AS (
+  SELECT
+    measure_condition_sid,
+    string_agg(
+        CONCAT(
+            (CASE WHEN prefix IS NOT NULL THEN prefix || ' ' ELSE '' END),
+            amount,
+            (CASE WHEN unit IS NOT NULL THEN ' / ' || unit ELSE '' END),
+            (CASE WHEN qualifier IS NOT NULL THEN ' / ' || qualifier ELSE '' END)
+        ), ' '
+        ORDER BY condition_component_parts.duty_expression_id ASC
+    ) AS duty_expression
+  FROM
+    condition_component_parts
+  GROUP BY
+    condition_component_parts.measure_condition_sid
+  ORDER BY
+    condition_component_parts.measure_condition_sid ASC
+),
+-- We now combine these into a full entry price expression.
+-- This is a "import price greater than" value + a duty expression that applies.
+entry_price_system_parts AS (
+  SELECT
+    measure_sid,
+    component_sequence_number,
+    (
+      TO_CHAR(condition_duty_amount, 'FM9999990D00') || (
+        CASE
+          WHEN condition_monetary_unit_code IS NOT NULL THEN ' ' || condition_monetary_unit_code
+          ELSE '%'
+        END
+      )
+    ) AS amount,
+    unit_codes.description AS unit,
+    unit_qualifiers.description AS qualifier,
+    condition_component_expressions.duty_expression AS duty_expression
+  FROM
+    measure_conditions
+  LEFT OUTER JOIN unit_codes ON measure_conditions.condition_measurement_unit_code = unit_codes.unit_code
+  LEFT OUTER JOIN unit_qualifiers ON measure_conditions.condition_measurement_unit_qualifier_code = unit_qualifiers.unit_qualifier_code
+  LEFT OUTER JOIN condition_component_expressions ON measure_conditions.measure_condition_sid = condition_component_expressions.measure_condition_sid
+    ORDER BY
+    measure_sid ASC,
+    component_sequence_number ASC
+),
+entry_price_system_expressions AS (
+  SELECT
+    measure_sid,
+    string_agg(
+      CONCAT(
+        '(≥ ',
+        amount,
+        (CASE WHEN unit IS NOT NULL THEN ' / ' || unit ELSE '' END),
+        (CASE WHEN qualifier IS NOT NULL THEN ' / ' || qualifier ELSE '' END),
+        '): ',
+        duty_expression
+      ),
+      E';\n' -- join with a newline
+      ORDER BY component_sequence_number ASC
+    ) AS entry_price_expression
+  FROM entry_price_system_parts
+  GROUP BY
+    measure_sid
+  ORDER BY
+    measure_sid ASC
+),
+-- Join on to legislation to get the real end dates of measures.
 real_measures AS (
   SELECT
     m.*,
@@ -433,7 +536,10 @@ SELECT
   measures.measure_sid AS "Measure SID",
   measure_type_descriptions.measure_type_id::integer AS "Measure type ID",
   measure_type_descriptions.description AS "Measure type",
-  duty_expressions.duty_expression AS "Duty expression",
+  (CASE
+    WHEN duty_expressions.duty_expression IS NOT NULL THEN duty_expressions.duty_expression
+    ELSE entry_price_system_expressions.entry_price_expression
+  END) AS "Duty expression",
   geo_descriptions.geographical_area_id AS "Origin ID",
   geo_descriptions.description AS "Origin",
   measures.validity_start_date::date AS "Start date",
@@ -444,6 +550,7 @@ FROM
   LEFT OUTER JOIN goods_indents ON goods_nomenclatures.goods_nomenclature_sid = goods_indents.goods_nomenclature_sid
   LEFT OUTER JOIN real_measures AS measures ON goods_measures.measure_sid = measures.measure_sid
   LEFT OUTER JOIN duty_expressions ON measures.measure_sid = duty_expressions.measure_sid
+  LEFT OUTER JOIN entry_price_system_expressions ON measures.measure_sid = entry_price_system_expressions.measure_sid
   LEFT OUTER JOIN goods_descriptions ON goods_descriptions.goods_nomenclature_sid = goods_nomenclatures.goods_nomenclature_sid
   LEFT OUTER JOIN geo_descriptions ON measures.geographical_area_sid = geo_descriptions.geographical_area_sid
   LEFT OUTER JOIN measure_type_descriptions ON measures.measure_type_id = measure_type_descriptions.measure_type_id
