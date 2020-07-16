@@ -563,6 +563,7 @@ SELECT
   END) AS "Duty expression",
   geo_descriptions.geographical_area_id AS "Origin ID",
   geo_descriptions.description AS "Origin",
+  measures.ordernumber AS "Quota #",
   measures.validity_start_date::date AS "Start date",
   measures.real_end_date::date AS "End date"
 FROM
