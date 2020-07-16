@@ -156,7 +156,8 @@ measures_of_type AS (
       --'695', -- Additional duties
       --'696'  -- Additional duties (safeguard)
     )
-    AND measures.validity_start_date <= NOW()
+    -- Uncomment to remove future measures
+    -- AND measures.validity_start_date <= NOW()
     AND (
       measures.real_end_date > NOW()
       OR measures.real_end_date IS NULL
