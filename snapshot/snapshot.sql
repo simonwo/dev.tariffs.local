@@ -133,8 +133,29 @@ measures_of_type AS (
   FROM
     real_measures AS measures
   WHERE
-    measures.measure_type_id IN ('142', '145') -- Tariff Preferences
-  --measures.measure_type_id IN ('103', '105', '106') -- Third country duties
+    measures.measure_type_id IN (
+      -- Preferential duties
+      '106', -- Customs Union Duty
+      '147', -- Customs Union Quota
+      '142', -- Tariff preference
+      '143', -- Preferential quota
+      '141', -- Preferential suspension
+      '145', -- Tariff preference under end use
+      '146'  -- Preferential quota under end use
+
+      -- Suspensions but not reliefs
+      --'112', -- Autonomous tariff suspension
+      --'115' -- Autonomous suspension under end use
+
+      -- Third country duties
+      --'103',
+      --'105',
+      --'106'
+
+      -- Disputes
+      --'695', -- Additional duties
+      --'696'  -- Additional duties (safeguard)
+    )
     AND measures.validity_start_date <= NOW()
     AND (
       measures.real_end_date > NOW()
