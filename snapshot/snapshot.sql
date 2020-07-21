@@ -100,8 +100,7 @@ WITH real_measures AS (
     m.*,
     LEAST(
       m.validity_end_date,
-      r.validity_end_date,
-      r.effective_end_date
+      COALESCE(r.effective_end_date, r.validity_end_date)
     ) AS real_end_date
   FROM
     measures m,
@@ -113,8 +112,7 @@ WITH real_measures AS (
     m.*,
     LEAST(
       m.validity_end_date,
-      r.validity_end_date,
-      r.effective_end_date
+      COALESCE(r.effective_end_date, r.validity_end_date)
     ) AS real_end_date
   FROM
     measures m,
